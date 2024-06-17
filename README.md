@@ -1,5 +1,7 @@
 # PsiMac
 
+[![build](https://github.com/inseven/PsiMac/actions/workflows/build.yaml/badge.svg)](https://github.com/inseven/PsiMac/actions/workflows/build.yaml)
+
 Psion connectivity for macOS.
 
 PsiMac is an attempt to recreate the original Psion PsiMac and MacConnect functionality and UI on modern macOS. It currently makes use of [plptools](https://github.com/rrthomas/plptools/) for the PLP (Psion Link Protocol) session layer (NCP) and reimplements the presentation layer. The plan is to contribute back to plptools where appropriate during development.
