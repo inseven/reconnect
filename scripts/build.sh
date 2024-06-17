@@ -32,7 +32,7 @@ BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
 TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
 
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
-ARCHIVE_PATH="${BUILD_DIRECTORY}/Thoughts.xcarchive"
+ARCHIVE_PATH="${BUILD_DIRECTORY}/PsiMac.xcarchive"
 ENV_PATH="${ROOT_DIRECTORY}/.env"
 
 RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
@@ -72,9 +72,10 @@ if [ -f "$ENV_PATH" ] ; then
     source "$ENV_PATH"
 fi
 
+# TODO: Remove this
 function xcode_project {
     xcodebuild \
-        -project Thoughts.xcodeproj "$@"
+        -project PsiMac.xcodeproj "$@"
 }
 
 function build_scheme {
@@ -145,9 +146,9 @@ xcodebuild \
     -exportPath "$BUILD_DIRECTORY" \
     -exportOptionsPlist "ExportOptions.plist"
 
-APP_BASENAME="Thoughts.app"
+APP_BASENAME="PsiMac.app"
 APP_PATH="$BUILD_DIRECTORY/$APP_BASENAME"
-PKG_PATH="$BUILD_DIRECTORY/Thoughts.pkg"
+PKG_PATH="$BUILD_DIRECTORY/PsiMac.pkg"
 
 # Install the private key.
 mkdir -p ~/.appstoreconnect/private_keys/
