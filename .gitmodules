@@ -1,3 +1,12 @@
 [submodule "DataStream"]
 	path = DataStream
 	url = git@github.com:jbmorley/DataStream.git
+[submodule "scripts/changes"]
+	path = scripts/changes
+	url = https://github.com/jbmorley/changes.git
+[submodule "scripts/build-tools"]
+	path = scripts/build-tools
+	url = https://github.com/jbmorley/build-tools.git
+[submodule "dependencies/diligence"]
+	path = dependencies/diligence
+	url = git@github.com:inseven/diligence.git
