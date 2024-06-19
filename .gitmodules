@@ -1,5 +1,5 @@
 [submodule "DataStream"]
-	path = DataStream
+	path = dependencies/DataStream
 	url = git@github.com:jbmorley/DataStream.git
 [submodule "scripts/changes"]
 	path = scripts/changes

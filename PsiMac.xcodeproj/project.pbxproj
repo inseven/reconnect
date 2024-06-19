@@ -679,7 +679,7 @@
 /* Begin XCLocalSwiftPackageReference section */
 		D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "DataStream" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = DataStream;
+			relativePath = "dependencies/DataStream";
 		};
 /* End XCLocalSwiftPackageReference section */
 
