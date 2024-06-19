@@ -288,7 +288,6 @@
 				D876E6062C22B80B004A6881 /* bufferarray.h */,
 				D876E5E72C22B76B004A6881 /* bufferstore.cc */,
 				D876E5E62C22B76B004A6881 /* bufferstore.h */,
-				D876E5DB2C22B692004A6881 /* config.h */,
 				D876E5D92C22B624004A6881 /* Enum.cc */,
 				D876E5D82C22B624004A6881 /* Enum.h */,
 				D876E5EC2C22B78B004A6881 /* iowatch.cc */,
@@ -311,6 +310,7 @@
 		D8AD8B502C2377F60063A613 /* plptools */ = {
 			isa = PBXGroup;
 			children = (
+				D876E5DB2C22B692004A6881 /* config.h */,
 				D876E6052C22B7E8004A6881 /* lib */,
 				D876E5EF2C22B7BC004A6881 /* ncpd */,
 			);
