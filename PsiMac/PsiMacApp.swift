@@ -20,6 +20,9 @@ import SwiftUI
 
 @main
 struct PsiMacApp: App {
+
+    let server = Server()
+
     var body: some Scene {
         WindowGroup {
             ContentView()

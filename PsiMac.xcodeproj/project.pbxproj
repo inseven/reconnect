@@ -21,6 +21,24 @@
 		D849653F2C1D07B500405656 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = D849653E2C1D07B500405656 /* Socket.swift */; };
 		D84965432C1D08AB00405656 /* DataReadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965422C1D08AB00405656 /* DataReadStream.swift */; };
 		D84965452C1D08C900405656 /* Packetable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965442C1D08C900405656 /* Packetable.swift */; };
+		D876E5DA2C22B624004A6881 /* Enum.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5D92C22B624004A6881 /* Enum.cc */; };
+		D876E5DE2C22B6A6004A6881 /* plpdirent.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5DC2C22B6A6004A6881 /* plpdirent.cc */; };
+		D876E5E22C22B709004A6881 /* psitime.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E12C22B709004A6881 /* psitime.cc */; };
+		D876E5E52C22B725004A6881 /* rfsv.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E42C22B725004A6881 /* rfsv.cc */; };
+		D876E5E82C22B76B004A6881 /* bufferstore.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E72C22B76B004A6881 /* bufferstore.cc */; };
+		D876E5EB2C22B77B004A6881 /* ppsocket.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E92C22B77B004A6881 /* ppsocket.cc */; };
+		D876E5EE2C22B78B004A6881 /* iowatch.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5EC2C22B78B004A6881 /* iowatch.cc */; };
+		D876E5F42C22B7C8004A6881 /* channel.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5F12C22B7C8004A6881 /* channel.cc */; };
+		D876E5F52C22B7C8004A6881 /* link.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5F32C22B7C8004A6881 /* link.cc */; };
+		D876E6002C22B7D5004A6881 /* socketchan.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5F82C22B7D5004A6881 /* socketchan.cc */; };
+		D876E6012C22B7D5004A6881 /* mp_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FB2C22B7D5004A6881 /* mp_serial.c */; };
+		D876E6022C22B7D5004A6881 /* linkchan.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FD2C22B7D5004A6881 /* linkchan.cc */; };
+		D876E6032C22B7D5004A6881 /* ncp.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FE2C22B7D5004A6881 /* ncp.cc */; };
+		D876E6042C22B7D5004A6881 /* packet.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FF2C22B7D5004A6881 /* packet.cc */; };
+		D876E6082C22B80B004A6881 /* bufferarray.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E6072C22B80B004A6881 /* bufferarray.cc */; };
+		D876E60B2C22B88A004A6881 /* log.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E6092C22B88A004A6881 /* log.cc */; };
+		D876E6122C22BD96004A6881 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E6102C22BD96004A6881 /* main.cc */; };
+		D8AD8B522C2378780063A613 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AD8B512C2378780063A613 /* Server.swift */; };
 		D8C080702C1D7BE1003128AB /* OwnerInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C0806F2C1D7BE1003128AB /* OwnerInfoResponse.swift */; };
 		D8C080742C1D7C1B003128AB /* RFSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080732C1D7C1B003128AB /* RFSV.swift */; };
 		D8C080762C1D7C43003128AB /* RPCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080752C1D7C43003128AB /* RPCS.swift */; };
@@ -63,6 +81,48 @@
 		D849653E2C1D07B500405656 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		D84965422C1D08AB00405656 /* DataReadStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReadStream.swift; sourceTree = "<group>"; };
 		D84965442C1D08C900405656 /* Packetable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Packetable.swift; sourceTree = "<group>"; };
+		D876E5D72C22B623004A6881 /* PsiMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PsiMac-Bridging-Header.h"; sourceTree = "<group>"; };
+		D876E5D82C22B624004A6881 /* Enum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Enum.h; path = dependencies/plptools/lib/Enum.h; sourceTree = SOURCE_ROOT; };
+		D876E5D92C22B624004A6881 /* Enum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Enum.cc; path = dependencies/plptools/lib/Enum.cc; sourceTree = SOURCE_ROOT; };
+		D876E5DB2C22B692004A6881 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = dependencies/plptools/config.h; sourceTree = SOURCE_ROOT; };
+		D876E5DC2C22B6A6004A6881 /* plpdirent.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plpdirent.cc; path = dependencies/plptools/lib/plpdirent.cc; sourceTree = SOURCE_ROOT; };
+		D876E5DD2C22B6A6004A6881 /* plpdirent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plpdirent.h; path = dependencies/plptools/lib/plpdirent.h; sourceTree = SOURCE_ROOT; };
+		D876E5DF2C22B6B8004A6881 /* plpintl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = plpintl.h; path = dependencies/plptools/lib/plpintl.h; sourceTree = SOURCE_ROOT; };
+		D876E5E02C22B709004A6881 /* psitime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = psitime.h; path = dependencies/plptools/lib/psitime.h; sourceTree = SOURCE_ROOT; };
+		D876E5E12C22B709004A6881 /* psitime.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = psitime.cc; path = dependencies/plptools/lib/psitime.cc; sourceTree = SOURCE_ROOT; };
+		D876E5E32C22B725004A6881 /* rfsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rfsv.h; path = dependencies/plptools/lib/rfsv.h; sourceTree = SOURCE_ROOT; };
+		D876E5E42C22B725004A6881 /* rfsv.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rfsv.cc; path = dependencies/plptools/lib/rfsv.cc; sourceTree = SOURCE_ROOT; };
+		D876E5E62C22B76B004A6881 /* bufferstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bufferstore.h; path = dependencies/plptools/lib/bufferstore.h; sourceTree = SOURCE_ROOT; };
+		D876E5E72C22B76B004A6881 /* bufferstore.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bufferstore.cc; path = dependencies/plptools/lib/bufferstore.cc; sourceTree = SOURCE_ROOT; };
+		D876E5E92C22B77B004A6881 /* ppsocket.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ppsocket.cc; path = dependencies/plptools/lib/ppsocket.cc; sourceTree = SOURCE_ROOT; };
+		D876E5EA2C22B77B004A6881 /* ppsocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ppsocket.h; path = dependencies/plptools/lib/ppsocket.h; sourceTree = SOURCE_ROOT; };
+		D876E5EC2C22B78B004A6881 /* iowatch.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = iowatch.cc; path = dependencies/plptools/lib/iowatch.cc; sourceTree = SOURCE_ROOT; };
+		D876E5ED2C22B78B004A6881 /* iowatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iowatch.h; path = dependencies/plptools/lib/iowatch.h; sourceTree = SOURCE_ROOT; };
+		D876E5F02C22B7C8004A6881 /* link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = link.h; path = dependencies/plptools/ncpd/link.h; sourceTree = SOURCE_ROOT; };
+		D876E5F12C22B7C8004A6881 /* channel.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = channel.cc; path = dependencies/plptools/ncpd/channel.cc; sourceTree = SOURCE_ROOT; };
+		D876E5F22C22B7C8004A6881 /* channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = channel.h; path = dependencies/plptools/ncpd/channel.h; sourceTree = SOURCE_ROOT; };
+		D876E5F32C22B7C8004A6881 /* link.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = link.cc; path = dependencies/plptools/ncpd/link.cc; sourceTree = SOURCE_ROOT; };
+		D876E5F62C22B7D5004A6881 /* linkchan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = linkchan.h; path = dependencies/plptools/ncpd/linkchan.h; sourceTree = SOURCE_ROOT; };
+		D876E5F72C22B7D5004A6881 /* packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = packet.h; path = dependencies/plptools/ncpd/packet.h; sourceTree = SOURCE_ROOT; };
+		D876E5F82C22B7D5004A6881 /* socketchan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = socketchan.cc; path = dependencies/plptools/ncpd/socketchan.cc; sourceTree = SOURCE_ROOT; };
+		D876E5F92C22B7D5004A6881 /* ncp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ncp.h; path = dependencies/plptools/ncpd/ncp.h; sourceTree = SOURCE_ROOT; };
+		D876E5FA2C22B7D5004A6881 /* mp_serial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp_serial.h; path = dependencies/plptools/ncpd/mp_serial.h; sourceTree = SOURCE_ROOT; };
+		D876E5FB2C22B7D5004A6881 /* mp_serial.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp_serial.c; path = dependencies/plptools/ncpd/mp_serial.c; sourceTree = SOURCE_ROOT; };
+		D876E5FC2C22B7D5004A6881 /* socketchan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = socketchan.h; path = dependencies/plptools/ncpd/socketchan.h; sourceTree = SOURCE_ROOT; };
+		D876E5FD2C22B7D5004A6881 /* linkchan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = linkchan.cc; path = dependencies/plptools/ncpd/linkchan.cc; sourceTree = SOURCE_ROOT; };
+		D876E5FE2C22B7D5004A6881 /* ncp.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ncp.cc; path = dependencies/plptools/ncpd/ncp.cc; sourceTree = SOURCE_ROOT; };
+		D876E5FF2C22B7D5004A6881 /* packet.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = packet.cc; path = dependencies/plptools/ncpd/packet.cc; sourceTree = SOURCE_ROOT; };
+		D876E6062C22B80B004A6881 /* bufferarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bufferarray.h; path = dependencies/plptools/lib/bufferarray.h; sourceTree = SOURCE_ROOT; };
+		D876E6072C22B80B004A6881 /* bufferarray.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bufferarray.cc; path = dependencies/plptools/lib/bufferarray.cc; sourceTree = SOURCE_ROOT; };
+		D876E6092C22B88A004A6881 /* log.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cc; path = dependencies/plptools/lib/log.cc; sourceTree = SOURCE_ROOT; };
+		D876E60A2C22B88A004A6881 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = dependencies/plptools/lib/log.h; sourceTree = SOURCE_ROOT; };
+		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
+		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
+		D876E6102C22BD96004A6881 /* main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cc; path = dependencies/plptools/ncpd/main.cc; sourceTree = SOURCE_ROOT; };
+		D876E6112C22BD96004A6881 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main.h; path = dependencies/plptools/ncpd/main.h; sourceTree = SOURCE_ROOT; };
+		D876E6132C22BEBB004A6881 /* ncpd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ncpd.h; path = ../dependencies/plptools/ncpd/ncpd.h; sourceTree = "<group>"; };
+		D876E6142C22C2F6004A6881 /* PsiMacRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PsiMacRelease.entitlements; sourceTree = "<group>"; };
+		D8AD8B512C2378780063A613 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		D8C0806F2C1D7BE1003128AB /* OwnerInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerInfoResponse.swift; sourceTree = "<group>"; };
 		D8C080732C1D7C1B003128AB /* RFSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFSV.swift; sourceTree = "<group>"; };
 		D8C080752C1D7C43003128AB /* RPCS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCS.swift; sourceTree = "<group>"; };
@@ -123,13 +183,17 @@
 			isa = PBXGroup;
 			children = (
 				D84964E22C1BFCB700405656 /* PsiMac.entitlements */,
+				D876E6142C22C2F6004A6881 /* PsiMacRelease.entitlements */,
+				D876E5D72C22B623004A6881 /* PsiMac-Bridging-Header.h */,
 				D84964DB2C1BFCB600405656 /* ContentView.swift */,
 				D84965392C1D077100405656 /* MachineType.swift */,
 				D84964D92C1BFCB600405656 /* PsiMacApp.swift */,
 				D8C080792C1D7D8D003128AB /* PsiMacError.swift */,
+				D8AD8B512C2378780063A613 /* Server.swift */,
 				D84964DD2C1BFCB700405656 /* Assets.xcassets */,
 				D849653D2C1D07AD00405656 /* Extensions */,
 				D84965362C1D06CA00405656 /* Messages */,
+				D8AD8B502C2377F60063A613 /* plptools */,
 				D84964DF2C1BFCB700405656 /* Preview Content */,
 				D8C080712C1D7C07003128AB /* Servers */,
 			);
@@ -164,6 +228,8 @@
 		D84965332C1C30E500405656 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D876E60D2C22BAB9004A6881 /* libSystem.tbd */,
+				D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -187,6 +253,66 @@
 				D84965442C1D08C900405656 /* Packetable.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		D876E5EF2C22B7BC004A6881 /* ncpd */ = {
+			isa = PBXGroup;
+			children = (
+				D876E5F12C22B7C8004A6881 /* channel.cc */,
+				D876E5F22C22B7C8004A6881 /* channel.h */,
+				D876E5F32C22B7C8004A6881 /* link.cc */,
+				D876E5F02C22B7C8004A6881 /* link.h */,
+				D876E5FD2C22B7D5004A6881 /* linkchan.cc */,
+				D876E5F62C22B7D5004A6881 /* linkchan.h */,
+				D876E6102C22BD96004A6881 /* main.cc */,
+				D876E6112C22BD96004A6881 /* main.h */,
+				D876E5FB2C22B7D5004A6881 /* mp_serial.c */,
+				D876E5FA2C22B7D5004A6881 /* mp_serial.h */,
+				D876E5FE2C22B7D5004A6881 /* ncp.cc */,
+				D876E5F92C22B7D5004A6881 /* ncp.h */,
+				D876E6132C22BEBB004A6881 /* ncpd.h */,
+				D876E5FF2C22B7D5004A6881 /* packet.cc */,
+				D876E5F72C22B7D5004A6881 /* packet.h */,
+				D876E5F82C22B7D5004A6881 /* socketchan.cc */,
+				D876E5FC2C22B7D5004A6881 /* socketchan.h */,
+			);
+			name = ncpd;
+			sourceTree = "<group>";
+		};
+		D876E6052C22B7E8004A6881 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				D876E6072C22B80B004A6881 /* bufferarray.cc */,
+				D876E6062C22B80B004A6881 /* bufferarray.h */,
+				D876E5E72C22B76B004A6881 /* bufferstore.cc */,
+				D876E5E62C22B76B004A6881 /* bufferstore.h */,
+				D876E5DB2C22B692004A6881 /* config.h */,
+				D876E5D92C22B624004A6881 /* Enum.cc */,
+				D876E5D82C22B624004A6881 /* Enum.h */,
+				D876E5EC2C22B78B004A6881 /* iowatch.cc */,
+				D876E5ED2C22B78B004A6881 /* iowatch.h */,
+				D876E6092C22B88A004A6881 /* log.cc */,
+				D876E60A2C22B88A004A6881 /* log.h */,
+				D876E5DC2C22B6A6004A6881 /* plpdirent.cc */,
+				D876E5DD2C22B6A6004A6881 /* plpdirent.h */,
+				D876E5DF2C22B6B8004A6881 /* plpintl.h */,
+				D876E5E92C22B77B004A6881 /* ppsocket.cc */,
+				D876E5EA2C22B77B004A6881 /* ppsocket.h */,
+				D876E5E12C22B709004A6881 /* psitime.cc */,
+				D876E5E02C22B709004A6881 /* psitime.h */,
+				D876E5E42C22B725004A6881 /* rfsv.cc */,
+				D876E5E32C22B725004A6881 /* rfsv.h */,
+			);
+			name = lib;
+			sourceTree = "<group>";
+		};
+		D8AD8B502C2377F60063A613 /* plptools */ = {
+			isa = PBXGroup;
+			children = (
+				D876E6052C22B7E8004A6881 /* lib */,
+				D876E5EF2C22B7BC004A6881 /* ncpd */,
+			);
+			name = plptools;
 			sourceTree = "<group>";
 		};
 		D8C080712C1D7C07003128AB /* Servers */ = {
@@ -270,6 +396,7 @@
 				TargetAttributes = {
 					D84964D52C1BFCB600405656 = {
 						CreatedOnToolsVersion = 15.4;
+						LastSwiftMigration = 1540;
 					};
 					D84964E62C1BFCB700405656 = {
 						CreatedOnToolsVersion = 15.4;
@@ -292,7 +419,7 @@
 			mainGroup = D84964CD2C1BFCB600405656;
 			packageReferences = (
 				D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */,
-				D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "DataStream" */,
+				D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -336,17 +463,35 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D876E6012C22B7D5004A6881 /* mp_serial.c in Sources */,
+				D876E5DA2C22B624004A6881 /* Enum.cc in Sources */,
+				D8AD8B522C2378780063A613 /* Server.swift in Sources */,
+				D876E5EB2C22B77B004A6881 /* ppsocket.cc in Sources */,
 				D84965382C1D075400405656 /* MachineInfoResponse.swift in Sources */,
 				D84965452C1D08C900405656 /* Packetable.swift in Sources */,
 				D8C080702C1D7BE1003128AB /* OwnerInfoResponse.swift in Sources */,
 				D8C0807A2C1D7D8D003128AB /* PsiMacError.swift in Sources */,
+				D876E6022C22B7D5004A6881 /* linkchan.cc in Sources */,
 				D8C080762C1D7C43003128AB /* RPCS.swift in Sources */,
+				D876E5DE2C22B6A6004A6881 /* plpdirent.cc in Sources */,
 				D84965432C1D08AB00405656 /* DataReadStream.swift in Sources */,
+				D876E6082C22B80B004A6881 /* bufferarray.cc in Sources */,
+				D876E5E52C22B725004A6881 /* rfsv.cc in Sources */,
 				D8C080742C1D7C1B003128AB /* RFSV.swift in Sources */,
+				D876E6032C22B7D5004A6881 /* ncp.cc in Sources */,
+				D876E5E22C22B709004A6881 /* psitime.cc in Sources */,
+				D876E6002C22B7D5004A6881 /* socketchan.cc in Sources */,
+				D876E60B2C22B88A004A6881 /* log.cc in Sources */,
+				D876E5F42C22B7C8004A6881 /* channel.cc in Sources */,
 				D849653A2C1D077100405656 /* MachineType.swift in Sources */,
 				D8C0807C2C1D7E79003128AB /* MachineTypeResponse.swift in Sources */,
+				D876E5F52C22B7C8004A6881 /* link.cc in Sources */,
 				D849653F2C1D07B500405656 /* Socket.swift in Sources */,
 				D8C080782C1D7C58003128AB /* DriveListResponse.swift in Sources */,
+				D876E6122C22BD96004A6881 /* main.cc in Sources */,
+				D876E5E82C22B76B004A6881 /* bufferstore.cc in Sources */,
+				D876E6042C22B7D5004A6881 /* packet.cc in Sources */,
+				D876E5EE2C22B78B004A6881 /* iowatch.cc in Sources */,
 				D84964DC2C1BFCB600405656 /* ContentView.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* PsiMacApp.swift in Sources */,
 			);
@@ -508,6 +653,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = PsiMac/PsiMac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -527,6 +674,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.psimac.apps.appstore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "PsiMac/PsiMac-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -536,7 +685,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = PsiMac/PsiMac.entitlements;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = PsiMac/PsiMacRelease.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "3rd Party Mac Developer Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -559,6 +710,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "PsiMac Mac App Store Profile";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "PsiMac/PsiMac-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -677,9 +829,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "DataStream" */ = {
+		D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "dependencies/DataStream";
+			relativePath = dependencies/DataStream;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -702,7 +854,7 @@
 		};
 		D84965342C1C30E500405656 /* DataStream */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "DataStream" */;
+			package = D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */;
 			productName = DataStream;
 		};
 /* End XCSwiftPackageProductDependency section */

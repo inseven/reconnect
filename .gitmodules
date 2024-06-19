@@ -10,3 +10,6 @@
 [submodule "dependencies/diligence"]
 	path = dependencies/diligence
 	url = git@github.com:inseven/diligence.git
+[submodule "dependencies/plptools"]
+	path = dependencies/plptools
+	url = git@github.com:jbmorley/plptools.git
