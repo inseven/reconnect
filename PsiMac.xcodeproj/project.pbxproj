@@ -123,6 +123,7 @@
 		D876E6132C22BEBB004A6881 /* ncpd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ncpd.h; path = ../dependencies/plptools/ncpd/ncpd.h; sourceTree = "<group>"; };
 		D876E6142C22C2F6004A6881 /* PsiMacRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PsiMacRelease.entitlements; sourceTree = "<group>"; };
 		D8AD8B512C2378780063A613 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8C0806F2C1D7BE1003128AB /* OwnerInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerInfoResponse.swift; sourceTree = "<group>"; };
 		D8C080732C1D7C1B003128AB /* RFSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFSV.swift; sourceTree = "<group>"; };
 		D8C080752C1D7C43003128AB /* RPCS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCS.swift; sourceTree = "<group>"; };
@@ -182,6 +183,7 @@
 		D84964D82C1BFCB600405656 /* PsiMac */ = {
 			isa = PBXGroup;
 			children = (
+				D8AD8B532C2379A10063A613 /* Info.plist */,
 				D84964E22C1BFCB700405656 /* PsiMac.entitlements */,
 				D876E6142C22C2F6004A6881 /* PsiMacRelease.entitlements */,
 				D876E5D72C22B623004A6881 /* PsiMac-Bridging-Header.h */,
@@ -664,6 +666,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PsiMac/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -698,6 +701,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PsiMac/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
