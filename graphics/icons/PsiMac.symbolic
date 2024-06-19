@@ -1,0 +1,33 @@
+{
+  "iconScale" : 0.8663560368342595,
+  "topColor" : {
+    "green" : 0.5763723254,
+    "alpha" : 1,
+    "blue" : 0,
+    "red" : 1
+  },
+  "version" : 1,
+  "symbolColor" : {
+    "red" : 0.9999999403953552,
+    "green" : 0.9999999403953552,
+    "blue" : 0.9999999403953552,
+    "alpha" : 1
+  },
+  "symbol" : {
+    "name" : "cable.connector",
+    "family" : "sf-symbols"
+  },
+  "iconOffset" : [
+    0.008556547619047672,
+    0
+  ],
+  "bottomColor" : {
+    "alpha" : 1,
+    "green" : 0.5763723254,
+    "red" : 1,
+    "blue" : 0
+  },
+  "id" : "24670896-9CE6-40DD-86CB-111B3E0DEB8D",
+  "shadowOpacity" : 0.4,
+  "shadowHeight" : 0.3
+}
