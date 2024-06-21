@@ -21,11 +21,21 @@ import SwiftUI
 @main
 struct PsiMacApp: App {
 
-    let server = Server()
+    @State var server = Server()
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+
+        MenuBarExtra {
+            Button("Connect") {
+
+            }
+        } label: {
+            if server.isConnected {
+                Image("Connected")
+            } else {
+                Image("Disconnected")
+            }
         }
+
     }
 }
