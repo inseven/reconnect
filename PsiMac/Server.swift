@@ -18,30 +18,32 @@
 
 import Foundation
 
-struct Server {
+@Observable
+class Server {
+
+    var isConnected: Bool = false
 
     func threadEntryPoint() {
 
-        let arguments = ["ncpd", "-d", "-s", "/dev/tty.usbserial-A91MGK6M", "-b", "115200", "-v", "nl"]
-
-        let argc = Int32(arguments.count)
-        var argv: [UnsafeMutablePointer<CChar>?] = arguments.map { strdup($0) }
-        argv.append(nil)  // Null-terminate the array
-
-        // Convert the array to an UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>
-        let argvPointer = UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>.allocate(capacity: argv.count)
-        argvPointer.initialize(from: &argv, count: argv.count)
-
-        // Call the C function
-        let result = run(argc, argvPointer)
-        print(result)
-
-        // Free the memory allocated for the C strings
-        for arg in argv {
-            free(arg)
+        let context = Unmanaged.passRetained(self).toOpaque()
+        let callback: statusCallback_t = { context, status in
+            guard let context else {
+                return
+            }
+            print("status = \(status)")
+            let server = Unmanaged<Server>.fromOpaque(context).takeUnretainedValue()
+            DispatchQueue.main.sync {
+                server.isConnected = status == 1 ? true : false
+            }
         }
-        argvPointer.deallocate()
 
+        let device = "/dev/tty.usbserial-AL00AYCG"
+//        let device = "/dev/tty.usbserial-A91MGK6M"
+
+//        let log: UInt16 = 1 | 2 | 4 | 8 | 18 | 32 | 64
+        let log: UInt16 = 0
+
+        ncpd(7501, 115200, "127.0.0.1", device, log, callback, context)
     }
 
     init() {
