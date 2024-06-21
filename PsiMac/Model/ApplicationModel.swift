@@ -20,34 +20,23 @@ import SwiftUI
 
 import Interact
 
-@main
-struct PsiMacApp: App {
+@Observable
+class ApplicationModel {
 
-    @State var server = Server()
-    @State var applicationModel: ApplicationModel
-
-    init() {
-        self.applicationModel = ApplicationModel()
+    enum SettingsKey: String {
+        case device
     }
 
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-        } label: {
-            if server.isConnected {
-                Image("Connected")
-            } else {
-                Image("Disconnected")
-            }
+    @MainActor var device: String {
+        didSet {
+            keyedDefaults.set(device, forKey: .device)
         }
+    }
 
-        Window("Settings", id: "settings") {
-            SettingsView()
-        }
-        .environment(applicationModel)
-        .handlesExternalEvents(matching: [.settings])
+    private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
+    @MainActor init() {
+        device = keyedDefaults.string(forKey: .device, default: "")
     }
 
 }

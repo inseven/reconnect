@@ -37,8 +37,8 @@ class Server {
             }
         }
 
-        let device = "/dev/tty.usbserial-AL00AYCG"
-//        let device = "/dev/tty.usbserial-A91MGK6M"
+//        let device = "/dev/tty.usbserial-AL00AYCG"
+        let device = "/dev/tty.usbserial-A91MGK6M"
 
 //        let log: UInt16 = 1 | 2 | 4 | 8 | 18 | 32 | 64
         let log: UInt16 = 0

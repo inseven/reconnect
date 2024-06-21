@@ -18,36 +18,14 @@
 
 import SwiftUI
 
-import Interact
+struct MainMenu: View {
 
-@main
-struct PsiMacApp: App {
+    @Environment(\.openURL) private var openURL
 
-    @State var server = Server()
-    @State var applicationModel: ApplicationModel
-
-    init() {
-        self.applicationModel = ApplicationModel()
-    }
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-        } label: {
-            if server.isConnected {
-                Image("Connected")
-            } else {
-                Image("Disconnected")
-            }
+    var body: some View {
+        Button("Settings") {
+            openURL(.settings)
         }
-
-        Window("Settings", id: "settings") {
-            SettingsView()
-        }
-        .environment(applicationModel)
-        .handlesExternalEvents(matching: [.settings])
-
     }
 
 }
