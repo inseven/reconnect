@@ -768,7 +768,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PsiMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PsiMac";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reconnect.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Reconnect";
 			};
 			name = Debug;
 		};
@@ -787,7 +787,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PsiMac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PsiMac";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reconnect.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Reconnect";
 			};
 			name = Release;
 		};
