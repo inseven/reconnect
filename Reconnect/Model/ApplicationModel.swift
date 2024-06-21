@@ -1,4 +1,4 @@
-// PsiMac -- Psion connectivity for macOS
+// Reconnect -- Psion connectivity for macOS
 //
 // Copyright (C) 2024 Jason Morley
 //
