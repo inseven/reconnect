@@ -78,9 +78,9 @@
 		D84964DD2C1BFCB700405656 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D84964E02C1BFCB700405656 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D84964E22C1BFCB700405656 /* Reconnect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Reconnect.entitlements; sourceTree = "<group>"; };
-		D84964E72C1BFCB700405656 /* PsiMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PsiMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D84964E72C1BFCB700405656 /* ReconnectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964EB2C1BFCB700405656 /* PsiMacTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacTests.swift; sourceTree = "<group>"; };
-		D84964F12C1BFCB700405656 /* PsiMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PsiMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964F52C1BFCB700405656 /* PsiMacUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacUITests.swift; sourceTree = "<group>"; };
 		D84964F72C1BFCB700405656 /* PsiMacUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D84965372C1D075400405656 /* MachineInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineInfoResponse.swift; sourceTree = "<group>"; };
@@ -88,7 +88,7 @@
 		D849653E2C1D07B500405656 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		D84965422C1D08AB00405656 /* DataReadStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReadStream.swift; sourceTree = "<group>"; };
 		D84965442C1D08C900405656 /* Packetable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Packetable.swift; sourceTree = "<group>"; };
-		D876E5D72C22B623004A6881 /* PsiMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PsiMac-Bridging-Header.h"; sourceTree = "<group>"; };
+		D876E5D72C22B623004A6881 /* Reconnect-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Reconnect-Bridging-Header.h"; sourceTree = "<group>"; };
 		D876E5D82C22B624004A6881 /* Enum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Enum.h; path = dependencies/plptools/lib/Enum.h; sourceTree = SOURCE_ROOT; };
 		D876E5D92C22B624004A6881 /* Enum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Enum.cc; path = dependencies/plptools/lib/Enum.cc; sourceTree = SOURCE_ROOT; };
 		D876E5DB2C22B692004A6881 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = dependencies/plptools/config.h; sourceTree = SOURCE_ROOT; };
@@ -191,8 +191,8 @@
 			isa = PBXGroup;
 			children = (
 				D84964D82C1BFCB600405656 /* Reconnect */,
-				D84964EA2C1BFCB700405656 /* PsiMacTests */,
-				D84964F42C1BFCB700405656 /* PsiMacUITests */,
+				D84964EA2C1BFCB700405656 /* ReconnectTests */,
+				D84964F42C1BFCB700405656 /* ReconnectUITests */,
 				D84964D72C1BFCB600405656 /* Products */,
 				D84965332C1C30E500405656 /* Frameworks */,
 			);
@@ -202,8 +202,8 @@
 			isa = PBXGroup;
 			children = (
 				D84964D62C1BFCB600405656 /* Reconnect.app */,
-				D84964E72C1BFCB700405656 /* PsiMacTests.xctest */,
-				D84964F12C1BFCB700405656 /* PsiMacUITests.xctest */,
+				D84964E72C1BFCB700405656 /* ReconnectTests.xctest */,
+				D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -212,7 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				D84964E22C1BFCB700405656 /* Reconnect.entitlements */,
-				D876E5D72C22B623004A6881 /* PsiMac-Bridging-Header.h */,
+				D876E5D72C22B623004A6881 /* Reconnect-Bridging-Header.h */,
 				D8AD8B532C2379A10063A613 /* Info.plist */,
 				D84965392C1D077100405656 /* MachineType.swift */,
 				D84964D92C1BFCB600405656 /* PsiMacApp.swift */,
@@ -237,21 +237,21 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		D84964EA2C1BFCB700405656 /* PsiMacTests */ = {
+		D84964EA2C1BFCB700405656 /* ReconnectTests */ = {
 			isa = PBXGroup;
 			children = (
 				D84964EB2C1BFCB700405656 /* PsiMacTests.swift */,
 			);
-			path = PsiMacTests;
+			path = ReconnectTests;
 			sourceTree = "<group>";
 		};
-		D84964F42C1BFCB700405656 /* PsiMacUITests */ = {
+		D84964F42C1BFCB700405656 /* ReconnectUITests */ = {
 			isa = PBXGroup;
 			children = (
 				D84964F52C1BFCB700405656 /* PsiMacUITests.swift */,
 				D84964F72C1BFCB700405656 /* PsiMacUITestsLaunchTests.swift */,
 			);
-			path = PsiMacUITests;
+			path = ReconnectUITests;
 			sourceTree = "<group>";
 		};
 		D84965332C1C30E500405656 /* Frameworks */ = {
@@ -379,9 +379,9 @@
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D84964E62C1BFCB700405656 /* PsiMacTests */ = {
+		D84964E62C1BFCB700405656 /* ReconnectTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D84964FE2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "PsiMacTests" */;
+			buildConfigurationList = D84964FE2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectTests" */;
 			buildPhases = (
 				D84964E32C1BFCB700405656 /* Sources */,
 				D84964E42C1BFCB700405656 /* Frameworks */,
@@ -392,14 +392,14 @@
 			dependencies = (
 				D84964E92C1BFCB700405656 /* PBXTargetDependency */,
 			);
-			name = PsiMacTests;
+			name = ReconnectTests;
 			productName = PsiMacTests;
-			productReference = D84964E72C1BFCB700405656 /* PsiMacTests.xctest */;
+			productReference = D84964E72C1BFCB700405656 /* ReconnectTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		D84964F02C1BFCB700405656 /* PsiMacUITests */ = {
+		D84964F02C1BFCB700405656 /* ReconnectUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D84965012C1BFCB700405656 /* Build configuration list for PBXNativeTarget "PsiMacUITests" */;
+			buildConfigurationList = D84965012C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectUITests" */;
 			buildPhases = (
 				D84964ED2C1BFCB700405656 /* Sources */,
 				D84964EE2C1BFCB700405656 /* Frameworks */,
@@ -410,9 +410,9 @@
 			dependencies = (
 				D84964F32C1BFCB700405656 /* PBXTargetDependency */,
 			);
-			name = PsiMacUITests;
+			name = ReconnectUITests;
 			productName = PsiMacUITests;
-			productReference = D84964F12C1BFCB700405656 /* PsiMacUITests.xctest */;
+			productReference = D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -458,8 +458,8 @@
 			projectRoot = "";
 			targets = (
 				D84964D52C1BFCB600405656 /* Reconnect */,
-				D84964E62C1BFCB700405656 /* PsiMacTests */,
-				D84964F02C1BFCB700405656 /* PsiMacUITests */,
+				D84964E62C1BFCB700405656 /* ReconnectTests */,
+				D84964F02C1BFCB700405656 /* ReconnectUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -695,12 +695,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"PsiMac/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Reconnect/Preview Content\"";
 				DEVELOPMENT_TEAM = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PsiMac/Info.plist;
+				INFOPLIST_FILE = Reconnect/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -711,7 +711,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.psimac.apps.appstore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "PsiMac/PsiMac-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Reconnect/Reconnect-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -729,13 +729,13 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"PsiMac/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Reconnect/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PsiMac/Info.plist;
+				INFOPLIST_FILE = Reconnect/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -748,7 +748,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "PsiMac Mac App Store Profile";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "PsiMac/PsiMac-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Reconnect/Reconnect-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -846,7 +846,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D84964FE2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "PsiMacTests" */ = {
+		D84964FE2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D84964FF2C1BFCB700405656 /* Debug */,
@@ -855,7 +855,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D84965012C1BFCB700405656 /* Build configuration list for PBXNativeTarget "PsiMacUITests" */ = {
+		D84965012C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D84965022C1BFCB700405656 /* Debug */,
