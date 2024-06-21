@@ -18,36 +18,16 @@
 
 import SwiftUI
 
-import Interact
+struct SettingsView: View {
 
-@main
-struct PsiMacApp: App {
+    @Environment(ApplicationModel.self) var applicationModel
 
-    @State var server = Server()
-    @State var applicationModel: ApplicationModel
-
-    init() {
-        self.applicationModel = ApplicationModel()
-    }
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-        } label: {
-            if server.isConnected {
-                Image("Connected")
-            } else {
-                Image("Disconnected")
-            }
+    var body: some View {
+        @Bindable var applicationModel = applicationModel
+        Form {
+            TextField("Serial Device", text: $applicationModel.device)
         }
-
-        Window("Settings", id: "settings") {
-            SettingsView()
-        }
-        .environment(applicationModel)
-        .handlesExternalEvents(matching: [.settings])
-
+        .formStyle(.grouped)
     }
 
 }

@@ -16,38 +16,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-import Interact
+extension URL {
 
-@main
-struct PsiMacApp: App {
-
-    @State var server = Server()
-    @State var applicationModel: ApplicationModel
-
-    init() {
-        self.applicationModel = ApplicationModel()
-    }
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-        } label: {
-            if server.isConnected {
-                Image("Connected")
-            } else {
-                Image("Disconnected")
-            }
-        }
-
-        Window("Settings", id: "settings") {
-            SettingsView()
-        }
-        .environment(applicationModel)
-        .handlesExternalEvents(matching: [.settings])
-
-    }
+    static let settings = URL(string: "x-reconnect://settings")!
 
 }
