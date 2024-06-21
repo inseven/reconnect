@@ -34,6 +34,7 @@ struct PsiMacApp: App {
 
         MenuBarExtra {
             MainMenu()
+                .environment(applicationModel)
         } label: {
             if server.isConnected {
                 Image("Connected")

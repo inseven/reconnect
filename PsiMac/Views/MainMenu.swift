@@ -18,14 +18,23 @@
 
 import SwiftUI
 
+import Interact
+
 struct MainMenu: View {
 
     @Environment(\.openURL) private var openURL
 
+    @Environment(ApplicationModel.self) var applicationModel
+
+    @ObservedObject var application = Application.shared
+
     var body: some View {
+        @Bindable var applicationModel = applicationModel
         Button("Settings") {
             openURL(.settings)
         }
+        Divider()
+        Toggle("Open at Login", isOn: $application.openAtLogin)
     }
 
 }
