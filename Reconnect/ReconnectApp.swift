@@ -18,10 +18,13 @@
 
 import SwiftUI
 
+import Diligence
 import Interact
 
 @main
 struct ReconnectApp: App {
+
+    static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
     @State var server = Server()
     @State var applicationModel: ApplicationModel
@@ -48,6 +51,21 @@ struct ReconnectApp: App {
         }
         .environment(applicationModel)
         .handlesExternalEvents(matching: [.settings])
+
+        About(repository: "inseven/reconnect", copyright: "Copyright © 2024 Jason Morley") {
+            Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)
+        } acknowledgements: {
+            Acknowledgements("Developers") {
+                Credit("Jason Morley", url: URL(string: "https://jbmorley.co.uk"))
+            }
+            Acknowledgements("Thanks") {
+                Credit("Lukas Fittl")
+                Credit("Sarah Barbour")
+            }
+        } licenses: {
+            (.reconnect)
+        }
+        .handlesExternalEvents(matching: [.about])
 
     }
 
