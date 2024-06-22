@@ -9,13 +9,13 @@
 /* Begin PBXBuildFile section */
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
 		D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C4A2C253D73008FA79B /* SettingsView.swift */; };
-		D84964DA2C1BFCB600405656 /* PsiMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* PsiMacApp.swift */; };
+		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
 		D84964DC2C1BFCB600405656 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964DB2C1BFCB600405656 /* ContentView.swift */; };
 		D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964DD2C1BFCB700405656 /* Assets.xcassets */; };
 		D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964E02C1BFCB700405656 /* Preview Assets.xcassets */; };
-		D84964EC2C1BFCB700405656 /* PsiMacTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964EB2C1BFCB700405656 /* PsiMacTests.swift */; };
-		D84964F62C1BFCB700405656 /* PsiMacUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F52C1BFCB700405656 /* PsiMacUITests.swift */; };
-		D84964F82C1BFCB700405656 /* PsiMacUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F72C1BFCB700405656 /* PsiMacUITestsLaunchTests.swift */; };
+		D84964EC2C1BFCB700405656 /* ReconnectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964EB2C1BFCB700405656 /* ReconnectTests.swift */; };
+		D84964F62C1BFCB700405656 /* ReconnectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F52C1BFCB700405656 /* ReconnectUITests.swift */; };
+		D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */; };
 		D84965062C1BFF1F00405656 /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = D84965052C1BFF1F00405656 /* Socket */; };
 		D84965352C1C30E500405656 /* DataStream in Frameworks */ = {isa = PBXBuildFile; productRef = D84965342C1C30E500405656 /* DataStream */; };
 		D84965382C1D075400405656 /* MachineInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965372C1D075400405656 /* MachineInfoResponse.swift */; };
@@ -45,7 +45,7 @@
 		D8C080742C1D7C1B003128AB /* RFSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080732C1D7C1B003128AB /* RFSV.swift */; };
 		D8C080762C1D7C43003128AB /* RPCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080752C1D7C43003128AB /* RPCS.swift */; };
 		D8C080782C1D7C58003128AB /* DriveListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080772C1D7C58003128AB /* DriveListResponse.swift */; };
-		D8C0807A2C1D7D8D003128AB /* PsiMacError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080792C1D7D8D003128AB /* PsiMacError.swift */; };
+		D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080792C1D7D8D003128AB /* ReconnectError.swift */; };
 		D8C0807C2C1D7E79003128AB /* MachineTypeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C0807B2C1D7E79003128AB /* MachineTypeResponse.swift */; };
 		D8D3E79D2C25407E003E696D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E79C2C25407E003E696D /* URL.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
@@ -73,16 +73,16 @@
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D8184C4A2C253D73008FA79B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D84964D92C1BFCB600405656 /* PsiMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacApp.swift; sourceTree = "<group>"; };
+		D84964D92C1BFCB600405656 /* ReconnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectApp.swift; sourceTree = "<group>"; };
 		D84964DB2C1BFCB600405656 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D84964DD2C1BFCB700405656 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D84964E02C1BFCB700405656 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D84964E22C1BFCB700405656 /* Reconnect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Reconnect.entitlements; sourceTree = "<group>"; };
 		D84964E72C1BFCB700405656 /* ReconnectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D84964EB2C1BFCB700405656 /* PsiMacTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacTests.swift; sourceTree = "<group>"; };
+		D84964EB2C1BFCB700405656 /* ReconnectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectTests.swift; sourceTree = "<group>"; };
 		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D84964F52C1BFCB700405656 /* PsiMacUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacUITests.swift; sourceTree = "<group>"; };
-		D84964F72C1BFCB700405656 /* PsiMacUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		D84964F52C1BFCB700405656 /* ReconnectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITests.swift; sourceTree = "<group>"; };
+		D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D84965372C1D075400405656 /* MachineInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineInfoResponse.swift; sourceTree = "<group>"; };
 		D84965392C1D077100405656 /* MachineType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineType.swift; sourceTree = "<group>"; };
 		D849653E2C1D07B500405656 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
@@ -134,7 +134,7 @@
 		D8C080732C1D7C1B003128AB /* RFSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFSV.swift; sourceTree = "<group>"; };
 		D8C080752C1D7C43003128AB /* RPCS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCS.swift; sourceTree = "<group>"; };
 		D8C080772C1D7C58003128AB /* DriveListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveListResponse.swift; sourceTree = "<group>"; };
-		D8C080792C1D7D8D003128AB /* PsiMacError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiMacError.swift; sourceTree = "<group>"; };
+		D8C080792C1D7D8D003128AB /* ReconnectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectError.swift; sourceTree = "<group>"; };
 		D8C0807B2C1D7E79003128AB /* MachineTypeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineTypeResponse.swift; sourceTree = "<group>"; };
 		D8D3E79C2C25407E003E696D /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
@@ -215,8 +215,8 @@
 				D876E5D72C22B623004A6881 /* Reconnect-Bridging-Header.h */,
 				D8AD8B532C2379A10063A613 /* Info.plist */,
 				D84965392C1D077100405656 /* MachineType.swift */,
-				D84964D92C1BFCB600405656 /* PsiMacApp.swift */,
-				D8C080792C1D7D8D003128AB /* PsiMacError.swift */,
+				D84964D92C1BFCB600405656 /* ReconnectApp.swift */,
+				D8C080792C1D7D8D003128AB /* ReconnectError.swift */,
 				D84964DD2C1BFCB700405656 /* Assets.xcassets */,
 				D849653D2C1D07AD00405656 /* Extensions */,
 				D84965362C1D06CA00405656 /* Messages */,
@@ -240,7 +240,7 @@
 		D84964EA2C1BFCB700405656 /* ReconnectTests */ = {
 			isa = PBXGroup;
 			children = (
-				D84964EB2C1BFCB700405656 /* PsiMacTests.swift */,
+				D84964EB2C1BFCB700405656 /* ReconnectTests.swift */,
 			);
 			path = ReconnectTests;
 			sourceTree = "<group>";
@@ -248,8 +248,8 @@
 		D84964F42C1BFCB700405656 /* ReconnectUITests */ = {
 			isa = PBXGroup;
 			children = (
-				D84964F52C1BFCB700405656 /* PsiMacUITests.swift */,
-				D84964F72C1BFCB700405656 /* PsiMacUITestsLaunchTests.swift */,
+				D84964F52C1BFCB700405656 /* ReconnectUITests.swift */,
+				D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */,
 			);
 			path = ReconnectUITests;
 			sourceTree = "<group>";
@@ -503,7 +503,7 @@
 				D84965452C1D08C900405656 /* Packetable.swift in Sources */,
 				D8C080702C1D7BE1003128AB /* OwnerInfoResponse.swift in Sources */,
 				D8D3E79D2C25407E003E696D /* URL.swift in Sources */,
-				D8C0807A2C1D7D8D003128AB /* PsiMacError.swift in Sources */,
+				D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */,
 				D876E6022C22B7D5004A6881 /* linkchan.cc in Sources */,
 				D8C080762C1D7C43003128AB /* RPCS.swift in Sources */,
 				D876E5DE2C22B6A6004A6881 /* plpdirent.cc in Sources */,
@@ -529,7 +529,7 @@
 				D876E6042C22B7D5004A6881 /* packet.cc in Sources */,
 				D876E5EE2C22B78B004A6881 /* iowatch.cc in Sources */,
 				D84964DC2C1BFCB600405656 /* ContentView.swift in Sources */,
-				D84964DA2C1BFCB600405656 /* PsiMacApp.swift in Sources */,
+				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,7 +537,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D84964EC2C1BFCB700405656 /* PsiMacTests.swift in Sources */,
+				D84964EC2C1BFCB700405656 /* ReconnectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,8 +545,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D84964F62C1BFCB700405656 /* PsiMacUITests.swift in Sources */,
-				D84964F82C1BFCB700405656 /* PsiMacUITestsLaunchTests.swift in Sources */,
+				D84964F62C1BFCB700405656 /* ReconnectUITests.swift in Sources */,
+				D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

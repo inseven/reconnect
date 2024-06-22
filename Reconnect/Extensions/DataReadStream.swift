@@ -36,7 +36,7 @@ extension DataReadStream {
     public func read(length: Int) throws -> String {
         let data = try read(count: length)
         guard let result = String(data: data, encoding: .ascii) else {
-            throw PsiMacError.invalidString
+            throw ReconnectError.invalidString
         }
         return result
     }
