@@ -21,6 +21,15 @@ import Foundation
 import Interact
 import Licensable
 
+fileprivate let plptoolsLicense = License(id: "https://github.com/inseven/thoughts",
+                                          name: "plptools",
+                                          author: "plptools Authors",
+                                          text: String(contentsOfResource: "plptools-license"),
+                                          attributes: [
+                                            .url(URL(string: "https://github.com/rrthomas/plptools/")!, title: "GitHub"),
+                                          ],
+                                          licenses: [])
+
 fileprivate let reconnectLicense = License(id: "https://github.com/inseven/thoughts",
                                            name: "Reconnect",
                                            author: "Jason Morley",
@@ -31,6 +40,7 @@ fileprivate let reconnectLicense = License(id: "https://github.com/inseven/thoug
                                            licenses: [
                                             .interact,
                                             .licensable,
+                                            plptoolsLicense,
                                            ])
 
 extension Licensable where Self == License {
