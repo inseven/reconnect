@@ -1,4 +1,4 @@
-# PsiMac
+# Reconnect
 
 [![build](https://github.com/inseven/PsiMac/actions/workflows/build.yaml/badge.svg)](https://github.com/inseven/PsiMac/actions/workflows/build.yaml)
 
@@ -10,7 +10,7 @@ The rationale behind creating a new app is that the existing approach taken by p
 
 ## Usage
 
-You probably don't want to try to use PsiMac right now unless you're looking to contribute to the project—functionality is currently incredibly limited. If you're looking to connect to a Psion on macOS today, [plptools](https://github.com/rrthomas/plptools/) provides command line utilities for SIS file installation and FTP-like functionality.
+You probably don't want to try to use Reconnect right now unless you're looking to contribute to the project—functionality is currently incredibly limited. If you're looking to connect to a Psion on macOS today, [plptools](https://github.com/rrthomas/plptools/) provides command line utilities for SIS file installation and FTP-like functionality.
 
 ## Status
 
@@ -154,7 +154,8 @@ At this early stage of development, progress can be tracked by seeing which serv
 
 ## License
 
-PsiMac is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
+Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
 
 - [DataStream](https://github.com/jbmorley/DataStream), MIT License
 - [Diligence](https://github.com/inseven/diligence), MIT License
+- [plptools](https://github.com/rrthomas/plptools/), GPL-2.0 license
