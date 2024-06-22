@@ -29,7 +29,7 @@ struct MachineTypeResponse: Packable {
         self.status = try stream.read()
         let rawMachineType: UInt16 = try stream.readLE()
         guard let machineType = MachineType(rawValue: UInt32(rawMachineType)) else {
-            throw PsiMacError.unknownMachineType
+            throw ReconnectError.unknownMachineType
         }
         self.machineType = machineType
     }

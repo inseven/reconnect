@@ -21,7 +21,7 @@ import SwiftUI
 import Interact
 
 @main
-struct PsiMacApp: App {
+struct ReconnectApp: App {
 
     @State var server = Server()
     @State var applicationModel: ApplicationModel
