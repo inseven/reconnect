@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
+		D813FF172C26EA7F009CF0DC /* datastream-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF162C26EA7F009CF0DC /* datastream-license */; };
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
 		D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C4A2C253D73008FA79B /* SettingsView.swift */; };
 		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
@@ -76,6 +77,7 @@
 
 /* Begin PBXFileReference section */
 		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
+		D813FF162C26EA7F009CF0DC /* datastream-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "datastream-license"; sourceTree = "<group>"; };
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D8184C4A2C253D73008FA79B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -370,6 +372,7 @@
 		D8E31EB82C26E1CA00350082 /* Licenses */ = {
 			isa = PBXGroup;
 			children = (
+				D813FF162C26EA7F009CF0DC /* datastream-license */,
 				D813FF142C26E869009CF0DC /* plptools-license */,
 				D8E31EB92C26E1E400350082 /* reconnect-license */,
 			);
@@ -493,6 +496,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D813FF172C26EA7F009CF0DC /* datastream-license in Resources */,
 				D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */,
 				D813FF152C26E869009CF0DC /* plptools-license in Resources */,
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
