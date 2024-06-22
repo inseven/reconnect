@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# PsiMac -- Psion connectivity for macOS
+# Reconnect -- Psion connectivity for macOS
 #
 # Copyright (C) 2024 Jason Morley
 #
@@ -30,7 +30,7 @@ BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
 TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
 
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
-ARCHIVE_PATH="${BUILD_DIRECTORY}/PsiMac.xcarchive"
+ARCHIVE_PATH="${BUILD_DIRECTORY}/Reconnect.xcarchive"
 ENV_PATH="${ROOT_DIRECTORY}/.env"
 
 RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
@@ -73,7 +73,7 @@ fi
 # TODO: Remove this
 function xcode_project {
     xcodebuild \
-        -project PsiMac.xcodeproj "$@"
+        -project Reconnect.xcodeproj "$@"
 }
 
 function build_scheme {
@@ -126,12 +126,12 @@ echo "$APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD" | build-tools import-base64-cert
 echo "$MACOS_DEVELOPER_INSTALLER_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$MACOS_DEVELOPER_INSTALLER_CERTIFICATE_BASE64"
 
 # Install the provisioning profiles.
-build-tools install-provisioning-profile "PsiMac_Mac_App_Store_Profile.provisionprofile"
+build-tools install-provisioning-profile "Reconnect_Mac_App_Store_Profile.provisionprofile"
 
 # Build and archive the macOS project.
 sudo xcode-select --switch "$MACOS_XCODE_PATH"
 xcode_project \
-    -scheme "PsiMac" \
+    -scheme "Reconnect" \
     -config Release \
     -archivePath "$ARCHIVE_PATH" \
     OTHER_CODE_SIGN_FLAGS="--keychain=\"${KEYCHAIN_PATH}\"" \
@@ -144,9 +144,9 @@ xcodebuild \
     -exportPath "$BUILD_DIRECTORY" \
     -exportOptionsPlist "ExportOptions.plist"
 
-APP_BASENAME="PsiMac.app"
+APP_BASENAME="Reconnect.app"
 APP_PATH="$BUILD_DIRECTORY/$APP_BASENAME"
-PKG_PATH="$BUILD_DIRECTORY/PsiMac.pkg"
+PKG_PATH="$BUILD_DIRECTORY/Reconnect.pkg"
 
 # Install the private key.
 mkdir -p ~/.appstoreconnect/private_keys/
