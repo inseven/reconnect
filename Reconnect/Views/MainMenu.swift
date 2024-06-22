@@ -30,11 +30,15 @@ struct MainMenu: View {
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
-        Button("Settings") {
+        Button("Settings...") {
             openURL(.settings)
         }
         Divider()
         Toggle("Open at Login", isOn: $application.openAtLogin)
+        Divider()
+        Button("Quit") {
+            applicationModel.quit()
+        }
     }
 
 }

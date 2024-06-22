@@ -39,4 +39,8 @@ class ApplicationModel {
         device = keyedDefaults.string(forKey: .device, default: "")
     }
 
+    @MainActor func quit() {
+        NSApplication.shared.terminate(nil)
+    }
+
 }
