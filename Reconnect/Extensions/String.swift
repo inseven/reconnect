@@ -18,9 +18,12 @@
 
 import Foundation
 
-extension URL {
+extension String {
 
-    static let about = URL(string: "x-reconnect://about")!
-    static let settings = URL(string: "x-reconnect://settings")!
+    init(contentsOfResource resource: String) {
+        let url = Bundle.main.url(forResource: resource, withExtension: nil)!
+        try! self.init(contentsOf: url)
+    }
 
 }
+

@@ -50,6 +50,10 @@
 		D8D3E79D2C25407E003E696D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E79C2C25407E003E696D /* URL.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E7A02C25410E003E696D /* MainMenu.swift */; };
+		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
+		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
+		D8E31EB72C26E13E00350082 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB62C26E13E00350082 /* String.swift */; };
+		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +142,9 @@
 		D8C0807B2C1D7E79003128AB /* MachineTypeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineTypeResponse.swift; sourceTree = "<group>"; };
 		D8D3E79C2C25407E003E696D /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
+		D8E31EB62C26E13E00350082 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D84965352C1C30E500405656 /* DataStream in Frameworks */,
+				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D84965062C1BFF1F00405656 /* Socket in Frameworks */,
 				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
 			);
@@ -219,6 +227,7 @@
 				D8C080792C1D7D8D003128AB /* ReconnectError.swift */,
 				D84964DD2C1BFCB700405656 /* Assets.xcassets */,
 				D849653D2C1D07AD00405656 /* Extensions */,
+				D8E31EB82C26E1CA00350082 /* Licenses */,
 				D84965362C1D06CA00405656 /* Messages */,
 				D8184C482C253C6F008FA79B /* Model */,
 				D8AD8B502C2377F60063A613 /* plptools */,
@@ -278,8 +287,10 @@
 			isa = PBXGroup;
 			children = (
 				D84965422C1D08AB00405656 /* DataReadStream.swift */,
+				D8E31EB42C26E10900350082 /* Licensable.swift */,
 				D84965442C1D08C900405656 /* Packetable.swift */,
 				D849653E2C1D07B500405656 /* Socket.swift */,
+				D8E31EB62C26E13E00350082 /* String.swift */,
 				D8D3E79C2C25407E003E696D /* URL.swift */,
 			);
 			path = Extensions;
@@ -354,6 +365,14 @@
 			path = Servers;
 			sourceTree = "<group>";
 		};
+		D8E31EB82C26E1CA00350082 /* Licenses */ = {
+			isa = PBXGroup;
+			children = (
+				D8E31EB92C26E1E400350082 /* reconnect-license */,
+			);
+			path = Licenses;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -374,6 +393,7 @@
 				D84965052C1BFF1F00405656 /* Socket */,
 				D84965342C1C30E500405656 /* DataStream */,
 				D8D3E79E2C2540D9003E696D /* Interact */,
+				D8E31EB22C26E09500350082 /* Diligence */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -452,6 +472,7 @@
 				D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */,
 				D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */,
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
+				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -471,6 +492,7 @@
 			files = (
 				D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */,
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
+				D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +526,7 @@
 				D8C080702C1D7BE1003128AB /* OwnerInfoResponse.swift in Sources */,
 				D8D3E79D2C25407E003E696D /* URL.swift in Sources */,
 				D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */,
+				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
 				D876E6022C22B7D5004A6881 /* linkchan.cc in Sources */,
 				D8C080762C1D7C43003128AB /* RPCS.swift in Sources */,
 				D876E5DE2C22B6A6004A6881 /* plpdirent.cc in Sources */,
@@ -521,6 +544,7 @@
 				D8C0807C2C1D7E79003128AB /* MachineTypeResponse.swift in Sources */,
 				D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */,
 				D876E5F52C22B7C8004A6881 /* link.cc in Sources */,
+				D8E31EB72C26E13E00350082 /* String.swift in Sources */,
 				D849653F2C1D07B500405656 /* Socket.swift in Sources */,
 				D8C080782C1D7C58003128AB /* DriveListResponse.swift in Sources */,
 				D876E6122C22BD96004A6881 /* main.cc in Sources */,
@@ -877,6 +901,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/interact;
 		};
+		D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = dependencies/diligence;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -905,6 +933,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
 			productName = Interact;
+		};
+		D8E31EB22C26E09500350082 /* Diligence */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Diligence;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
