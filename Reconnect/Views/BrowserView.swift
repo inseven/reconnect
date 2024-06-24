@@ -75,7 +75,6 @@ struct BrowserView: View {
                             model.navigate(to: items.first!)
                         }
                         .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
-                        }
                     } primaryAction: { items in
                         guard
                             items.count == 1,
