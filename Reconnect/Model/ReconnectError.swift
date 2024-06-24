@@ -16,29 +16,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-import Socket
-import DataStream
-
-struct RFSV {
-
-    enum Commands: UInt16 {
-        case getDriveList = 0x13
-    }
-
-    let socket: Socket
-
-    init(socket: Socket) throws {
-        self.socket = socket
-        try socket.send("SYS$RFSV.*")
-        try socket.process()
-    }
-
-    func getDriveList() throws -> [String] {
-        try socket.write([0x00, 0x00, 0x00, 0x04, 0x13, 0x00, 0x02, 0x00])
-        let response: DriveListResponse = try socket.response()
-        return response.drives
-    }
-
+enum ReconnectError: Error {
+    case invalidString
+    case unknownMachineType
+    case general
 }

@@ -31,6 +31,12 @@ struct MainMenu: View {
     var body: some View {
         @Bindable var applicationModel = applicationModel
         Button {
+            openURL(.browser)
+        } label: {
+            Text("My Psion...")
+        }
+        Divider()
+        Button {
             openURL(.about)
         } label: {
             Text("About...")

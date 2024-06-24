@@ -7,28 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D806342B2C27F87100DEA6DA /* plpftp in Frameworks */ = {isa = PBXBuildFile; productRef = D806342A2C27F87100DEA6DA /* plpftp */; };
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
 		D813FF172C26EA7F009CF0DC /* datastream-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF162C26EA7F009CF0DC /* datastream-license */; };
-		D815221A2C27603F008A4AD1 /* psiprocess.cc in Sources */ = {isa = PBXBuildFile; fileRef = D81522192C27603F008A4AD1 /* psiprocess.cc */; };
-		D815221D2C276066008A4AD1 /* rclip.cc in Sources */ = {isa = PBXBuildFile; fileRef = D815221C2C276066008A4AD1 /* rclip.cc */; };
-		D81522222C27607B008A4AD1 /* rfsv16.cc in Sources */ = {isa = PBXBuildFile; fileRef = D815221E2C27607B008A4AD1 /* rfsv16.cc */; };
-		D81522232C27607B008A4AD1 /* rfsv32.cc in Sources */ = {isa = PBXBuildFile; fileRef = D81522202C27607B008A4AD1 /* rfsv32.cc */; };
-		D81522262C276112008A4AD1 /* rfsvfactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = D81522242C276112008A4AD1 /* rfsvfactory.cc */; };
-		D815222F2C276135008A4AD1 /* rpcsfactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = D81522272C276135008A4AD1 /* rpcsfactory.cc */; };
-		D81522302C276135008A4AD1 /* rpcs32.cc in Sources */ = {isa = PBXBuildFile; fileRef = D81522292C276135008A4AD1 /* rpcs32.cc */; };
-		D81522312C276135008A4AD1 /* rpcs.cc in Sources */ = {isa = PBXBuildFile; fileRef = D815222A2C276135008A4AD1 /* rpcs.cc */; };
-		D81522322C276135008A4AD1 /* rpcs16.cc in Sources */ = {isa = PBXBuildFile; fileRef = D815222B2C276135008A4AD1 /* rpcs16.cc */; };
-		D81522352C276179008A4AD1 /* siscomponentrecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D81522342C276179008A4AD1 /* siscomponentrecord.cpp */; };
-		D81522422C27618F008A4AD1 /* sisfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D81522362C27618E008A4AD1 /* sisfile.cpp */; };
-		D81522432C27618F008A4AD1 /* sisfilerecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D81522372C27618E008A4AD1 /* sisfilerecord.cpp */; };
-		D81522442C27618F008A4AD1 /* sislangrecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D81522392C27618E008A4AD1 /* sislangrecord.cpp */; };
-		D81522452C27618F008A4AD1 /* sisfileheader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D815223A2C27618E008A4AD1 /* sisfileheader.cpp */; };
-		D81522462C27618F008A4AD1 /* sistypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D815223E2C27618F008A4AD1 /* sistypes.cpp */; };
-		D81522472C27618F008A4AD1 /* sisreqrecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D81522402C27618F008A4AD1 /* sisreqrecord.cpp */; };
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
 		D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C4A2C253D73008FA79B /* SettingsView.swift */; };
+		D81A0C162C27A90000EC2929 /* ncp in Frameworks */ = {isa = PBXBuildFile; productRef = D81A0C152C27A90000EC2929 /* ncp */; };
 		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
-		D84964DC2C1BFCB600405656 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964DB2C1BFCB600405656 /* ContentView.swift */; };
 		D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964DD2C1BFCB700405656 /* Assets.xcassets */; };
 		D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964E02C1BFCB700405656 /* Preview Assets.xcassets */; };
 		D84964EC2C1BFCB700405656 /* ReconnectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964EB2C1BFCB700405656 /* ReconnectTests.swift */; };
@@ -36,35 +21,14 @@
 		D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */; };
 		D84965062C1BFF1F00405656 /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = D84965052C1BFF1F00405656 /* Socket */; };
 		D84965352C1C30E500405656 /* DataStream in Frameworks */ = {isa = PBXBuildFile; productRef = D84965342C1C30E500405656 /* DataStream */; };
-		D84965382C1D075400405656 /* MachineInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965372C1D075400405656 /* MachineInfoResponse.swift */; };
-		D849653A2C1D077100405656 /* MachineType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965392C1D077100405656 /* MachineType.swift */; };
 		D849653F2C1D07B500405656 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = D849653E2C1D07B500405656 /* Socket.swift */; };
 		D84965432C1D08AB00405656 /* DataReadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965422C1D08AB00405656 /* DataReadStream.swift */; };
 		D84965452C1D08C900405656 /* Packetable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965442C1D08C900405656 /* Packetable.swift */; };
-		D876E5DA2C22B624004A6881 /* Enum.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5D92C22B624004A6881 /* Enum.cc */; };
-		D876E5DE2C22B6A6004A6881 /* plpdirent.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5DC2C22B6A6004A6881 /* plpdirent.cc */; };
-		D876E5E22C22B709004A6881 /* psitime.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E12C22B709004A6881 /* psitime.cc */; };
-		D876E5E52C22B725004A6881 /* rfsv.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E42C22B725004A6881 /* rfsv.cc */; };
-		D876E5E82C22B76B004A6881 /* bufferstore.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E72C22B76B004A6881 /* bufferstore.cc */; };
-		D876E5EB2C22B77B004A6881 /* ppsocket.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5E92C22B77B004A6881 /* ppsocket.cc */; };
-		D876E5EE2C22B78B004A6881 /* iowatch.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5EC2C22B78B004A6881 /* iowatch.cc */; };
-		D876E5F42C22B7C8004A6881 /* channel.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5F12C22B7C8004A6881 /* channel.cc */; };
-		D876E5F52C22B7C8004A6881 /* link.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5F32C22B7C8004A6881 /* link.cc */; };
-		D876E6002C22B7D5004A6881 /* socketchan.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5F82C22B7D5004A6881 /* socketchan.cc */; };
-		D876E6012C22B7D5004A6881 /* mp_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FB2C22B7D5004A6881 /* mp_serial.c */; };
-		D876E6022C22B7D5004A6881 /* linkchan.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FD2C22B7D5004A6881 /* linkchan.cc */; };
-		D876E6032C22B7D5004A6881 /* ncp.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FE2C22B7D5004A6881 /* ncp.cc */; };
-		D876E6042C22B7D5004A6881 /* packet.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E5FF2C22B7D5004A6881 /* packet.cc */; };
-		D876E6082C22B80B004A6881 /* bufferarray.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E6072C22B80B004A6881 /* bufferarray.cc */; };
-		D876E60B2C22B88A004A6881 /* log.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E6092C22B88A004A6881 /* log.cc */; };
-		D876E6122C22BD96004A6881 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = D876E6102C22BD96004A6881 /* main.cc */; };
+		D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87AAC892C27EB070091F442 /* FileServer.swift */; };
+		D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA732C28CDAD00E84BDA /* BrowserView.swift */; };
+		D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA752C29343900E84BDA /* BrowserModel.swift */; };
 		D8AD8B522C2378780063A613 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AD8B512C2378780063A613 /* Server.swift */; };
-		D8C080702C1D7BE1003128AB /* OwnerInfoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C0806F2C1D7BE1003128AB /* OwnerInfoResponse.swift */; };
-		D8C080742C1D7C1B003128AB /* RFSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080732C1D7C1B003128AB /* RFSV.swift */; };
-		D8C080762C1D7C43003128AB /* RPCS.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080752C1D7C43003128AB /* RPCS.swift */; };
-		D8C080782C1D7C58003128AB /* DriveListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080772C1D7C58003128AB /* DriveListResponse.swift */; };
 		D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080792C1D7D8D003128AB /* ReconnectError.swift */; };
-		D8C0807C2C1D7E79003128AB /* MachineTypeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C0807B2C1D7E79003128AB /* MachineTypeResponse.swift */; };
 		D8D3E79D2C25407E003E696D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E79C2C25407E003E696D /* URL.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E7A02C25410E003E696D /* MainMenu.swift */; };
@@ -94,43 +58,10 @@
 /* Begin PBXFileReference section */
 		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
 		D813FF162C26EA7F009CF0DC /* datastream-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "datastream-license"; sourceTree = "<group>"; };
-		D81522182C27603F008A4AD1 /* psiprocess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = psiprocess.h; path = dependencies/plptools/lib/psiprocess.h; sourceTree = SOURCE_ROOT; };
-		D81522192C27603F008A4AD1 /* psiprocess.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = psiprocess.cc; path = dependencies/plptools/lib/psiprocess.cc; sourceTree = SOURCE_ROOT; };
-		D815221B2C276066008A4AD1 /* rclip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rclip.h; path = dependencies/plptools/lib/rclip.h; sourceTree = SOURCE_ROOT; };
-		D815221C2C276066008A4AD1 /* rclip.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rclip.cc; path = dependencies/plptools/lib/rclip.cc; sourceTree = SOURCE_ROOT; };
-		D815221E2C27607B008A4AD1 /* rfsv16.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rfsv16.cc; path = dependencies/plptools/lib/rfsv16.cc; sourceTree = SOURCE_ROOT; };
-		D815221F2C27607B008A4AD1 /* rfsv16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rfsv16.h; path = dependencies/plptools/lib/rfsv16.h; sourceTree = SOURCE_ROOT; };
-		D81522202C27607B008A4AD1 /* rfsv32.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rfsv32.cc; path = dependencies/plptools/lib/rfsv32.cc; sourceTree = SOURCE_ROOT; };
-		D81522212C27607B008A4AD1 /* rfsv32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rfsv32.h; path = dependencies/plptools/lib/rfsv32.h; sourceTree = SOURCE_ROOT; };
-		D81522242C276112008A4AD1 /* rfsvfactory.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rfsvfactory.cc; path = dependencies/plptools/lib/rfsvfactory.cc; sourceTree = SOURCE_ROOT; };
-		D81522252C276112008A4AD1 /* rfsvfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rfsvfactory.h; path = dependencies/plptools/lib/rfsvfactory.h; sourceTree = SOURCE_ROOT; };
-		D81522272C276135008A4AD1 /* rpcsfactory.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rpcsfactory.cc; path = dependencies/plptools/lib/rpcsfactory.cc; sourceTree = SOURCE_ROOT; };
-		D81522282C276135008A4AD1 /* rpcs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rpcs.h; path = dependencies/plptools/lib/rpcs.h; sourceTree = SOURCE_ROOT; };
-		D81522292C276135008A4AD1 /* rpcs32.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rpcs32.cc; path = dependencies/plptools/lib/rpcs32.cc; sourceTree = SOURCE_ROOT; };
-		D815222A2C276135008A4AD1 /* rpcs.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rpcs.cc; path = dependencies/plptools/lib/rpcs.cc; sourceTree = SOURCE_ROOT; };
-		D815222B2C276135008A4AD1 /* rpcs16.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rpcs16.cc; path = dependencies/plptools/lib/rpcs16.cc; sourceTree = SOURCE_ROOT; };
-		D815222C2C276135008A4AD1 /* rpcs32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rpcs32.h; path = dependencies/plptools/lib/rpcs32.h; sourceTree = SOURCE_ROOT; };
-		D815222D2C276135008A4AD1 /* rpcs16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rpcs16.h; path = dependencies/plptools/lib/rpcs16.h; sourceTree = SOURCE_ROOT; };
-		D815222E2C276135008A4AD1 /* rpcsfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rpcsfactory.h; path = dependencies/plptools/lib/rpcsfactory.h; sourceTree = SOURCE_ROOT; };
-		D81522332C276178008A4AD1 /* siscomponentrecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = siscomponentrecord.h; path = dependencies/plptools/lib/siscomponentrecord.h; sourceTree = SOURCE_ROOT; };
-		D81522342C276179008A4AD1 /* siscomponentrecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = siscomponentrecord.cpp; path = dependencies/plptools/lib/siscomponentrecord.cpp; sourceTree = SOURCE_ROOT; };
-		D81522362C27618E008A4AD1 /* sisfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sisfile.cpp; path = dependencies/plptools/lib/sisfile.cpp; sourceTree = SOURCE_ROOT; };
-		D81522372C27618E008A4AD1 /* sisfilerecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sisfilerecord.cpp; path = dependencies/plptools/lib/sisfilerecord.cpp; sourceTree = SOURCE_ROOT; };
-		D81522382C27618E008A4AD1 /* sisfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sisfile.h; path = dependencies/plptools/lib/sisfile.h; sourceTree = SOURCE_ROOT; };
-		D81522392C27618E008A4AD1 /* sislangrecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sislangrecord.cpp; path = dependencies/plptools/lib/sislangrecord.cpp; sourceTree = SOURCE_ROOT; };
-		D815223A2C27618E008A4AD1 /* sisfileheader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sisfileheader.cpp; path = dependencies/plptools/lib/sisfileheader.cpp; sourceTree = SOURCE_ROOT; };
-		D815223B2C27618F008A4AD1 /* sislangrecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sislangrecord.h; path = dependencies/plptools/lib/sislangrecord.h; sourceTree = SOURCE_ROOT; };
-		D815223C2C27618F008A4AD1 /* sisreqrecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sisreqrecord.h; path = dependencies/plptools/lib/sisreqrecord.h; sourceTree = SOURCE_ROOT; };
-		D815223D2C27618F008A4AD1 /* sisfileheader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sisfileheader.h; path = dependencies/plptools/lib/sisfileheader.h; sourceTree = SOURCE_ROOT; };
-		D815223E2C27618F008A4AD1 /* sistypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sistypes.cpp; path = dependencies/plptools/lib/sistypes.cpp; sourceTree = SOURCE_ROOT; };
-		D815223F2C27618F008A4AD1 /* sisfilerecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sisfilerecord.h; path = dependencies/plptools/lib/sisfilerecord.h; sourceTree = SOURCE_ROOT; };
-		D81522402C27618F008A4AD1 /* sisreqrecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sisreqrecord.cpp; path = dependencies/plptools/lib/sisreqrecord.cpp; sourceTree = SOURCE_ROOT; };
-		D81522412C27618F008A4AD1 /* sistypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sistypes.h; path = dependencies/plptools/lib/sistypes.h; sourceTree = SOURCE_ROOT; };
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D8184C4A2C253D73008FA79B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964D92C1BFCB600405656 /* ReconnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectApp.swift; sourceTree = "<group>"; };
-		D84964DB2C1BFCB600405656 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D84964DD2C1BFCB700405656 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D84964E02C1BFCB700405656 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D84964E22C1BFCB700405656 /* Reconnect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Reconnect.entitlements; sourceTree = "<group>"; };
@@ -139,59 +70,17 @@
 		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964F52C1BFCB700405656 /* ReconnectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITests.swift; sourceTree = "<group>"; };
 		D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		D84965372C1D075400405656 /* MachineInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineInfoResponse.swift; sourceTree = "<group>"; };
-		D84965392C1D077100405656 /* MachineType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineType.swift; sourceTree = "<group>"; };
 		D849653E2C1D07B500405656 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		D84965422C1D08AB00405656 /* DataReadStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReadStream.swift; sourceTree = "<group>"; };
 		D84965442C1D08C900405656 /* Packetable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Packetable.swift; sourceTree = "<group>"; };
-		D876E5D72C22B623004A6881 /* Reconnect-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Reconnect-Bridging-Header.h"; sourceTree = "<group>"; };
-		D876E5D82C22B624004A6881 /* Enum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Enum.h; path = dependencies/plptools/lib/Enum.h; sourceTree = SOURCE_ROOT; };
-		D876E5D92C22B624004A6881 /* Enum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Enum.cc; path = dependencies/plptools/lib/Enum.cc; sourceTree = SOURCE_ROOT; };
-		D876E5DB2C22B692004A6881 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config.h; path = dependencies/plptools/config.h; sourceTree = SOURCE_ROOT; };
-		D876E5DC2C22B6A6004A6881 /* plpdirent.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plpdirent.cc; path = dependencies/plptools/lib/plpdirent.cc; sourceTree = SOURCE_ROOT; };
-		D876E5DD2C22B6A6004A6881 /* plpdirent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plpdirent.h; path = dependencies/plptools/lib/plpdirent.h; sourceTree = SOURCE_ROOT; };
-		D876E5DF2C22B6B8004A6881 /* plpintl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = plpintl.h; path = dependencies/plptools/lib/plpintl.h; sourceTree = SOURCE_ROOT; };
-		D876E5E02C22B709004A6881 /* psitime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = psitime.h; path = dependencies/plptools/lib/psitime.h; sourceTree = SOURCE_ROOT; };
-		D876E5E12C22B709004A6881 /* psitime.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = psitime.cc; path = dependencies/plptools/lib/psitime.cc; sourceTree = SOURCE_ROOT; };
-		D876E5E32C22B725004A6881 /* rfsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rfsv.h; path = dependencies/plptools/lib/rfsv.h; sourceTree = SOURCE_ROOT; };
-		D876E5E42C22B725004A6881 /* rfsv.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rfsv.cc; path = dependencies/plptools/lib/rfsv.cc; sourceTree = SOURCE_ROOT; };
-		D876E5E62C22B76B004A6881 /* bufferstore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bufferstore.h; path = dependencies/plptools/lib/bufferstore.h; sourceTree = SOURCE_ROOT; };
-		D876E5E72C22B76B004A6881 /* bufferstore.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bufferstore.cc; path = dependencies/plptools/lib/bufferstore.cc; sourceTree = SOURCE_ROOT; };
-		D876E5E92C22B77B004A6881 /* ppsocket.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ppsocket.cc; path = dependencies/plptools/lib/ppsocket.cc; sourceTree = SOURCE_ROOT; };
-		D876E5EA2C22B77B004A6881 /* ppsocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ppsocket.h; path = dependencies/plptools/lib/ppsocket.h; sourceTree = SOURCE_ROOT; };
-		D876E5EC2C22B78B004A6881 /* iowatch.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = iowatch.cc; path = dependencies/plptools/lib/iowatch.cc; sourceTree = SOURCE_ROOT; };
-		D876E5ED2C22B78B004A6881 /* iowatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iowatch.h; path = dependencies/plptools/lib/iowatch.h; sourceTree = SOURCE_ROOT; };
-		D876E5F02C22B7C8004A6881 /* link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = link.h; path = dependencies/plptools/ncpd/link.h; sourceTree = SOURCE_ROOT; };
-		D876E5F12C22B7C8004A6881 /* channel.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = channel.cc; path = dependencies/plptools/ncpd/channel.cc; sourceTree = SOURCE_ROOT; };
-		D876E5F22C22B7C8004A6881 /* channel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = channel.h; path = dependencies/plptools/ncpd/channel.h; sourceTree = SOURCE_ROOT; };
-		D876E5F32C22B7C8004A6881 /* link.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = link.cc; path = dependencies/plptools/ncpd/link.cc; sourceTree = SOURCE_ROOT; };
-		D876E5F62C22B7D5004A6881 /* linkchan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = linkchan.h; path = dependencies/plptools/ncpd/linkchan.h; sourceTree = SOURCE_ROOT; };
-		D876E5F72C22B7D5004A6881 /* packet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = packet.h; path = dependencies/plptools/ncpd/packet.h; sourceTree = SOURCE_ROOT; };
-		D876E5F82C22B7D5004A6881 /* socketchan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = socketchan.cc; path = dependencies/plptools/ncpd/socketchan.cc; sourceTree = SOURCE_ROOT; };
-		D876E5F92C22B7D5004A6881 /* ncp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ncp.h; path = dependencies/plptools/ncpd/ncp.h; sourceTree = SOURCE_ROOT; };
-		D876E5FA2C22B7D5004A6881 /* mp_serial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mp_serial.h; path = dependencies/plptools/ncpd/mp_serial.h; sourceTree = SOURCE_ROOT; };
-		D876E5FB2C22B7D5004A6881 /* mp_serial.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mp_serial.c; path = dependencies/plptools/ncpd/mp_serial.c; sourceTree = SOURCE_ROOT; };
-		D876E5FC2C22B7D5004A6881 /* socketchan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = socketchan.h; path = dependencies/plptools/ncpd/socketchan.h; sourceTree = SOURCE_ROOT; };
-		D876E5FD2C22B7D5004A6881 /* linkchan.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = linkchan.cc; path = dependencies/plptools/ncpd/linkchan.cc; sourceTree = SOURCE_ROOT; };
-		D876E5FE2C22B7D5004A6881 /* ncp.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ncp.cc; path = dependencies/plptools/ncpd/ncp.cc; sourceTree = SOURCE_ROOT; };
-		D876E5FF2C22B7D5004A6881 /* packet.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = packet.cc; path = dependencies/plptools/ncpd/packet.cc; sourceTree = SOURCE_ROOT; };
-		D876E6062C22B80B004A6881 /* bufferarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bufferarray.h; path = dependencies/plptools/lib/bufferarray.h; sourceTree = SOURCE_ROOT; };
-		D876E6072C22B80B004A6881 /* bufferarray.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bufferarray.cc; path = dependencies/plptools/lib/bufferarray.cc; sourceTree = SOURCE_ROOT; };
-		D876E6092C22B88A004A6881 /* log.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = log.cc; path = dependencies/plptools/lib/log.cc; sourceTree = SOURCE_ROOT; };
-		D876E60A2C22B88A004A6881 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = log.h; path = dependencies/plptools/lib/log.h; sourceTree = SOURCE_ROOT; };
 		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
 		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
-		D876E6102C22BD96004A6881 /* main.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cc; path = dependencies/plptools/ncpd/main.cc; sourceTree = SOURCE_ROOT; };
-		D876E6112C22BD96004A6881 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main.h; path = dependencies/plptools/ncpd/main.h; sourceTree = SOURCE_ROOT; };
-		D876E6132C22BEBB004A6881 /* ncpd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ncpd.h; path = ../dependencies/plptools/ncpd/ncpd.h; sourceTree = "<group>"; };
+		D87AAC892C27EB070091F442 /* FileServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileServer.swift; sourceTree = "<group>"; };
+		D886DA732C28CDAD00E84BDA /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
+		D886DA752C29343900E84BDA /* BrowserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserModel.swift; sourceTree = "<group>"; };
 		D8AD8B512C2378780063A613 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D8C0806F2C1D7BE1003128AB /* OwnerInfoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerInfoResponse.swift; sourceTree = "<group>"; };
-		D8C080732C1D7C1B003128AB /* RFSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFSV.swift; sourceTree = "<group>"; };
-		D8C080752C1D7C43003128AB /* RPCS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCS.swift; sourceTree = "<group>"; };
-		D8C080772C1D7C58003128AB /* DriveListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveListResponse.swift; sourceTree = "<group>"; };
 		D8C080792C1D7D8D003128AB /* ReconnectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectError.swift; sourceTree = "<group>"; };
-		D8C0807B2C1D7E79003128AB /* MachineTypeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MachineTypeResponse.swift; sourceTree = "<group>"; };
 		D8D3E79C2C25407E003E696D /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
@@ -204,7 +93,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D806342B2C27F87100DEA6DA /* plpftp in Frameworks */,
 				D84965352C1C30E500405656 /* DataStream in Frameworks */,
+				D81A0C162C27A90000EC2929 /* ncp in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D84965062C1BFF1F00405656 /* Socket in Frameworks */,
 				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
@@ -228,18 +119,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D81522172C275FC2008A4AD1 /* plpfuse */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = plpfuse;
-			sourceTree = "<group>";
-		};
 		D8184C482C253C6F008FA79B /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				D8184C462C253C59008FA79B /* ApplicationModel.swift */,
-				D8AD8B512C2378780063A613 /* Server.swift */,
+				D886DA752C29343900E84BDA /* BrowserModel.swift */,
+				D8C080792C1D7D8D003128AB /* ReconnectError.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -247,7 +132,7 @@
 		D8184C492C253D62008FA79B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D84964DB2C1BFCB600405656 /* ContentView.swift */,
+				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D8D3E7A02C25410E003E696D /* MainMenu.swift */,
 				D8184C4A2C253D73008FA79B /* SettingsView.swift */,
 			);
@@ -279,19 +164,14 @@
 			isa = PBXGroup;
 			children = (
 				D84964E22C1BFCB700405656 /* Reconnect.entitlements */,
-				D876E5D72C22B623004A6881 /* Reconnect-Bridging-Header.h */,
 				D8AD8B532C2379A10063A613 /* Info.plist */,
-				D84965392C1D077100405656 /* MachineType.swift */,
 				D84964D92C1BFCB600405656 /* ReconnectApp.swift */,
-				D8C080792C1D7D8D003128AB /* ReconnectError.swift */,
 				D84964DD2C1BFCB700405656 /* Assets.xcassets */,
 				D849653D2C1D07AD00405656 /* Extensions */,
 				D8E31EB82C26E1CA00350082 /* Licenses */,
-				D84965362C1D06CA00405656 /* Messages */,
 				D8184C482C253C6F008FA79B /* Model */,
-				D8AD8B502C2377F60063A613 /* plptools */,
+				D886DA772C29345E00E84BDA /* PLP */,
 				D84964DF2C1BFCB700405656 /* Preview Content */,
-				D8C080712C1D7C07003128AB /* Servers */,
 				D8184C492C253D62008FA79B /* Views */,
 			);
 			path = Reconnect;
@@ -331,17 +211,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D84965362C1D06CA00405656 /* Messages */ = {
-			isa = PBXGroup;
-			children = (
-				D8C080772C1D7C58003128AB /* DriveListResponse.swift */,
-				D84965372C1D075400405656 /* MachineInfoResponse.swift */,
-				D8C0806F2C1D7BE1003128AB /* OwnerInfoResponse.swift */,
-				D8C0807B2C1D7E79003128AB /* MachineTypeResponse.swift */,
-			);
-			path = Messages;
-			sourceTree = "<group>";
-		};
 		D849653D2C1D07AD00405656 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -355,106 +224,13 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		D876E5EF2C22B7BC004A6881 /* ncpd */ = {
+		D886DA772C29345E00E84BDA /* PLP */ = {
 			isa = PBXGroup;
 			children = (
-				D876E5F12C22B7C8004A6881 /* channel.cc */,
-				D876E5F22C22B7C8004A6881 /* channel.h */,
-				D876E5F32C22B7C8004A6881 /* link.cc */,
-				D876E5F02C22B7C8004A6881 /* link.h */,
-				D876E5FD2C22B7D5004A6881 /* linkchan.cc */,
-				D876E5F62C22B7D5004A6881 /* linkchan.h */,
-				D876E6102C22BD96004A6881 /* main.cc */,
-				D876E6112C22BD96004A6881 /* main.h */,
-				D876E5FB2C22B7D5004A6881 /* mp_serial.c */,
-				D876E5FA2C22B7D5004A6881 /* mp_serial.h */,
-				D876E5FE2C22B7D5004A6881 /* ncp.cc */,
-				D876E5F92C22B7D5004A6881 /* ncp.h */,
-				D876E6132C22BEBB004A6881 /* ncpd.h */,
-				D876E5FF2C22B7D5004A6881 /* packet.cc */,
-				D876E5F72C22B7D5004A6881 /* packet.h */,
-				D876E5F82C22B7D5004A6881 /* socketchan.cc */,
-				D876E5FC2C22B7D5004A6881 /* socketchan.h */,
+				D87AAC892C27EB070091F442 /* FileServer.swift */,
+				D8AD8B512C2378780063A613 /* Server.swift */,
 			);
-			name = ncpd;
-			sourceTree = "<group>";
-		};
-		D876E6052C22B7E8004A6881 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				D876E6072C22B80B004A6881 /* bufferarray.cc */,
-				D876E6062C22B80B004A6881 /* bufferarray.h */,
-				D876E5E72C22B76B004A6881 /* bufferstore.cc */,
-				D876E5E62C22B76B004A6881 /* bufferstore.h */,
-				D876E5D92C22B624004A6881 /* Enum.cc */,
-				D876E5D82C22B624004A6881 /* Enum.h */,
-				D876E5EC2C22B78B004A6881 /* iowatch.cc */,
-				D876E5ED2C22B78B004A6881 /* iowatch.h */,
-				D876E6092C22B88A004A6881 /* log.cc */,
-				D876E60A2C22B88A004A6881 /* log.h */,
-				D876E5DC2C22B6A6004A6881 /* plpdirent.cc */,
-				D876E5DD2C22B6A6004A6881 /* plpdirent.h */,
-				D876E5DF2C22B6B8004A6881 /* plpintl.h */,
-				D876E5E92C22B77B004A6881 /* ppsocket.cc */,
-				D876E5EA2C22B77B004A6881 /* ppsocket.h */,
-				D81522192C27603F008A4AD1 /* psiprocess.cc */,
-				D81522182C27603F008A4AD1 /* psiprocess.h */,
-				D876E5E12C22B709004A6881 /* psitime.cc */,
-				D876E5E02C22B709004A6881 /* psitime.h */,
-				D815221C2C276066008A4AD1 /* rclip.cc */,
-				D815221B2C276066008A4AD1 /* rclip.h */,
-				D876E5E42C22B725004A6881 /* rfsv.cc */,
-				D876E5E32C22B725004A6881 /* rfsv.h */,
-				D815221E2C27607B008A4AD1 /* rfsv16.cc */,
-				D815221F2C27607B008A4AD1 /* rfsv16.h */,
-				D81522202C27607B008A4AD1 /* rfsv32.cc */,
-				D81522212C27607B008A4AD1 /* rfsv32.h */,
-				D81522242C276112008A4AD1 /* rfsvfactory.cc */,
-				D81522252C276112008A4AD1 /* rfsvfactory.h */,
-				D815222A2C276135008A4AD1 /* rpcs.cc */,
-				D81522282C276135008A4AD1 /* rpcs.h */,
-				D815222B2C276135008A4AD1 /* rpcs16.cc */,
-				D815222D2C276135008A4AD1 /* rpcs16.h */,
-				D81522292C276135008A4AD1 /* rpcs32.cc */,
-				D815222C2C276135008A4AD1 /* rpcs32.h */,
-				D81522272C276135008A4AD1 /* rpcsfactory.cc */,
-				D815222E2C276135008A4AD1 /* rpcsfactory.h */,
-				D81522342C276179008A4AD1 /* siscomponentrecord.cpp */,
-				D81522332C276178008A4AD1 /* siscomponentrecord.h */,
-				D81522362C27618E008A4AD1 /* sisfile.cpp */,
-				D81522382C27618E008A4AD1 /* sisfile.h */,
-				D815223A2C27618E008A4AD1 /* sisfileheader.cpp */,
-				D815223D2C27618F008A4AD1 /* sisfileheader.h */,
-				D81522372C27618E008A4AD1 /* sisfilerecord.cpp */,
-				D815223F2C27618F008A4AD1 /* sisfilerecord.h */,
-				D81522392C27618E008A4AD1 /* sislangrecord.cpp */,
-				D815223B2C27618F008A4AD1 /* sislangrecord.h */,
-				D81522402C27618F008A4AD1 /* sisreqrecord.cpp */,
-				D815223C2C27618F008A4AD1 /* sisreqrecord.h */,
-				D815223E2C27618F008A4AD1 /* sistypes.cpp */,
-				D81522412C27618F008A4AD1 /* sistypes.h */,
-			);
-			name = lib;
-			sourceTree = "<group>";
-		};
-		D8AD8B502C2377F60063A613 /* plptools */ = {
-			isa = PBXGroup;
-			children = (
-				D876E5DB2C22B692004A6881 /* config.h */,
-				D876E6052C22B7E8004A6881 /* lib */,
-				D876E5EF2C22B7BC004A6881 /* ncpd */,
-				D81522172C275FC2008A4AD1 /* plpfuse */,
-			);
-			name = plptools;
-			sourceTree = "<group>";
-		};
-		D8C080712C1D7C07003128AB /* Servers */ = {
-			isa = PBXGroup;
-			children = (
-				D8C080732C1D7C1B003128AB /* RFSV.swift */,
-				D8C080752C1D7C43003128AB /* RPCS.swift */,
-			);
-			path = Servers;
+			path = PLP;
 			sourceTree = "<group>";
 		};
 		D8E31EB82C26E1CA00350082 /* Licenses */ = {
@@ -488,6 +264,8 @@
 				D84965342C1C30E500405656 /* DataStream */,
 				D8D3E79E2C2540D9003E696D /* Interact */,
 				D8E31EB22C26E09500350082 /* Diligence */,
+				D81A0C152C27A90000EC2929 /* ncp */,
+				D806342A2C27F87100DEA6DA /* plpftp */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -567,6 +345,7 @@
 				D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */,
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
+				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -613,58 +392,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D876E6012C22B7D5004A6881 /* mp_serial.c in Sources */,
-				D876E5DA2C22B624004A6881 /* Enum.cc in Sources */,
 				D8AD8B522C2378780063A613 /* Server.swift in Sources */,
-				D876E5EB2C22B77B004A6881 /* ppsocket.cc in Sources */,
-				D81522322C276135008A4AD1 /* rpcs16.cc in Sources */,
-				D84965382C1D075400405656 /* MachineInfoResponse.swift in Sources */,
 				D84965452C1D08C900405656 /* Packetable.swift in Sources */,
-				D8C080702C1D7BE1003128AB /* OwnerInfoResponse.swift in Sources */,
 				D8D3E79D2C25407E003E696D /* URL.swift in Sources */,
 				D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */,
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
-				D81522422C27618F008A4AD1 /* sisfile.cpp in Sources */,
-				D876E6022C22B7D5004A6881 /* linkchan.cc in Sources */,
-				D8C080762C1D7C43003128AB /* RPCS.swift in Sources */,
-				D876E5DE2C22B6A6004A6881 /* plpdirent.cc in Sources */,
+				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
 				D84965432C1D08AB00405656 /* DataReadStream.swift in Sources */,
-				D876E6082C22B80B004A6881 /* bufferarray.cc in Sources */,
-				D81522312C276135008A4AD1 /* rpcs.cc in Sources */,
-				D876E5E52C22B725004A6881 /* rfsv.cc in Sources */,
-				D81522432C27618F008A4AD1 /* sisfilerecord.cpp in Sources */,
-				D8C080742C1D7C1B003128AB /* RFSV.swift in Sources */,
-				D876E6032C22B7D5004A6881 /* ncp.cc in Sources */,
-				D876E5E22C22B709004A6881 /* psitime.cc in Sources */,
-				D876E6002C22B7D5004A6881 /* socketchan.cc in Sources */,
-				D876E60B2C22B88A004A6881 /* log.cc in Sources */,
-				D81522262C276112008A4AD1 /* rfsvfactory.cc in Sources */,
-				D876E5F42C22B7C8004A6881 /* channel.cc in Sources */,
-				D815221D2C276066008A4AD1 /* rclip.cc in Sources */,
-				D849653A2C1D077100405656 /* MachineType.swift in Sources */,
-				D81522462C27618F008A4AD1 /* sistypes.cpp in Sources */,
+				D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */,
 				D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */,
-				D8C0807C2C1D7E79003128AB /* MachineTypeResponse.swift in Sources */,
 				D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */,
-				D876E5F52C22B7C8004A6881 /* link.cc in Sources */,
-				D81522472C27618F008A4AD1 /* sisreqrecord.cpp in Sources */,
+				D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */,
 				D8E31EB72C26E13E00350082 /* String.swift in Sources */,
-				D81522442C27618F008A4AD1 /* sislangrecord.cpp in Sources */,
 				D849653F2C1D07B500405656 /* Socket.swift in Sources */,
-				D8C080782C1D7C58003128AB /* DriveListResponse.swift in Sources */,
-				D815221A2C27603F008A4AD1 /* psiprocess.cc in Sources */,
-				D81522452C27618F008A4AD1 /* sisfileheader.cpp in Sources */,
-				D876E6122C22BD96004A6881 /* main.cc in Sources */,
-				D81522302C276135008A4AD1 /* rpcs32.cc in Sources */,
-				D876E5E82C22B76B004A6881 /* bufferstore.cc in Sources */,
 				D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */,
-				D815222F2C276135008A4AD1 /* rpcsfactory.cc in Sources */,
-				D81522232C27607B008A4AD1 /* rfsv32.cc in Sources */,
-				D81522352C276179008A4AD1 /* siscomponentrecord.cpp in Sources */,
-				D876E6042C22B7D5004A6881 /* packet.cc in Sources */,
-				D876E5EE2C22B78B004A6881 /* iowatch.cc in Sources */,
-				D81522222C27607B008A4AD1 /* rfsv16.cc in Sources */,
-				D84964DC2C1BFCB600405656 /* ContentView.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -848,7 +589,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.psimac.apps.appstore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Reconnect/Reconnect-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -886,7 +627,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "PsiMac Mac App Store Profile";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Reconnect/Reconnect-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -1017,6 +758,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/diligence;
 		};
+		D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = dependencies;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1031,6 +776,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D806342A2C27F87100DEA6DA /* plpftp */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */;
+			productName = plpftp;
+		};
+		D81A0C152C27A90000EC2929 /* ncp */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */;
+			productName = ncp;
+		};
 		D84965052C1BFF1F00405656 /* Socket */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */;
