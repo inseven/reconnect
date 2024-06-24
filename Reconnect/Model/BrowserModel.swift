@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-@Observable
+@MainActor @Observable
 class BrowserModel {
 
     enum State {
@@ -30,8 +30,7 @@ class BrowserModel {
     // TODO: Surface errors here.
 
     let fileServer = FileServer(host: "127.0.0.1", port: 7501)
-    var history: [String] = []
-    var path: String?
+    private var navigationStack = NavigationStack()
     var state: State = .loading
     var selection = Set<FileServer.DirectoryEntry.ID>()
 
@@ -43,45 +42,60 @@ class BrowserModel {
         _ = fileServer.devlist()
     }
 
-    func load(path: String, skipHistory: Bool = false) {
-        if !skipHistory {
-            self.history.append(path)
+    func navigate(to path: String) {
+        navigationStack.navigate(path)
+        update()
+    }
+
+    func navigate(to item: NavigationStack.Item) {
+        navigationStack.navigate(item)
+        update()
+    }
+
+    private func update() {
+        guard let path = navigationStack.path else {
+            return
         }
-        self.path = path // TODO: This should be in the view state.
         state = .loading
-        do {
-            let files = try fileServer.dir(path: path)
-                .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-            state = .ready(files)
-        } catch {
-            state = .error(error)
+        Task {
+            do {
+                let files = try await fileServer.dir(path: path)
+                    .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+                state = .ready(files)
+            } catch {
+                state = .error(error)
+            }
         }
     }
 
-    // TODO: Make this a string function?
-    func parent() {
-        guard let path else {
-            return
-        }
-        var components = path.components(separatedBy: "\\")
-        components.removeLast()
-        guard components.count > 1 else {
-            return
-        }
-        components.removeLast()
-        self.load(path: components.joined(separator: "\\") + "\\")
+    var path: String? {
+        return navigationStack.path
     }
 
-    // TODO: HIstory shoudl be a struct.
+    var previousItems: [NavigationStack.Item] {
+        return navigationStack.previousItems
+    }
+
+    var nextItems: [NavigationStack.Item] {
+        return navigationStack.nextItems
+    }
+
+    func canGoBack() -> Bool {
+        return navigationStack.canGoBack()
+    }
+
     func back() {
-        guard history.count > 1 else {
-            return
-        }
-        history.removeLast()
-        guard let path = history.last else {
-            return
-        }
-        load(path: path, skipHistory: false)
+        navigationStack.back()
+        update()
+    }
+
+    func canGoForward() -> Bool {
+        return navigationStack.canGoForward()
+    }
+
+    func forward() {
+        navigationStack.forward()
+        update()
     }
 
 }

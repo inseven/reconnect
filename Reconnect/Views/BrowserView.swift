@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+@MainActor
 struct BrowserView: View {
 
     @State var model = BrowserModel()
@@ -74,9 +75,7 @@ struct BrowserView: View {
                         else {
                             return
                         }
-                        print(item)
-                        // TODO: Differentiate between files and items.
-                        model.load(path: item)
+                        model.navigate(to: item)
                     }
                 case .error(let error):
                     Text(String(describing: error))
@@ -84,26 +83,49 @@ struct BrowserView: View {
             }
 
         }
-        .toolbar {
-            ToolbarItem(placement: .navigation) {
-                Button {
-                    model.back()
-                } label: {
-                    Label("Back", systemImage: "chevron.backward")
-                }
-                .disabled(model.history.count < 2)
-            }
-            ToolbarItem(placement: .navigation) {
-                Button {
+        .toolbar(id: "main") {
+            ToolbarItem(id: "navigation", placement: .navigation) {
+                HStack(spacing: 8) {
 
-                } label: {
-                    Label("Back", systemImage: "chevron.forward")
+                    Menu {
+                        ForEach(model.previousItems) { item in
+                            Button {
+                                model.navigate(to: item)
+                            } label: {
+                                HistoryItemView(item: item)
+                            }
+                        }
+                    } label: {
+                        Label("Back", systemImage: "chevron.backward")
+                    } primaryAction: {
+                        model.back()
+                    }
+                    .menuIndicator(.hidden)
+                    .disabled(!model.canGoBack())
+
+                    Menu {
+                        ForEach(model.nextItems) { item in
+                            Button {
+                                model.navigate(to: item)
+                            } label: {
+                                HistoryItemView(item: item)
+                            }
+                        }
+                    } label: {
+                        Label("Forward", systemImage: "chevron.forward")
+                    } primaryAction: {
+                        model.forward()
+                    }
+                    .menuIndicator(.hidden)
+                    .disabled(!model.canGoForward())
+
                 }
-                .disabled(true)
+                .help("See folders you viewed previously")
             }
         }
+        .navigationTitle(model.path?.windowsLastPathComponent ?? "My Psion")
         .onAppear {
-            model.load(path: "C:\\")
+            model.navigate(to: "C:\\")
         }
     }
 
