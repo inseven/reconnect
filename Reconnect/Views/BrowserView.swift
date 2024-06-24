@@ -71,7 +71,18 @@ struct BrowserView: View {
                         model.navigate(to: items.first!)
                     }
                     .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
+
                     Divider()
+
+                    Button("Download") {
+                        for item in items {
+                            // TODO: Directories?
+                            model.download(path: item)
+                        }
+                    }
+
+                    Divider()
+
                     Button("Delete") {
                         for item in items {
                             model.delete(path: item)
