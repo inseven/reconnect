@@ -150,6 +150,48 @@ class FileServer {
         }
     }
 
+    func syncQueue_rmdir(path: String) throws {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        let result = client.rmdir(path)
+        guard result.rawValue == 0 else {
+            throw ReconnectError.rfsvError(result)
+        }
+    }
+
+    func rmdir(path: String) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            workQueue.async {
+                do {
+                    try self.syncQueue_rmdir(path: path)
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    func syncQueue_remove(path: String) throws {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        let result = client.remove(path)
+        guard result.rawValue == 0 else {
+            throw ReconnectError.rfsvError(result)
+        }
+    }
+
+    func remove(path: String) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            workQueue.async {
+                do {
+                    try self.syncQueue_remove(path: path)
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     func devlist() -> [String] {
         var devbits: UInt32 = 0
         client.devlist(&devbits)

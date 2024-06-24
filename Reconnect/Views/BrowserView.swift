@@ -71,6 +71,12 @@ struct BrowserView: View {
                         model.navigate(to: items.first!)
                     }
                     .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
+                    Divider()
+                    Button("Delete") {
+                        for item in items {
+                            model.delete(path: item)
+                        }
+                    }
                 } primaryAction: { items in
                     guard
                         items.count == 1,
