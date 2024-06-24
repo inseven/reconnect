@@ -31,9 +31,16 @@ struct BrowserView: View {
                 Table(files, selection: $model.selection) {
                     TableColumn("") { file in
                         if file.attributes.contains(.directory) {
-                            Image(systemName: "folder")
+                            let image = NSWorkspace.shared.icon(for: .folder)
+                            Image(nsImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 16.0)
                         } else {
-                            Image(systemName: "doc")
+                            Image("FileUnknown")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 16.0)
                         }
                     }
                     .width(16.0)
