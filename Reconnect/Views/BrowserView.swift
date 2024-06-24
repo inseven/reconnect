@@ -32,7 +32,7 @@ struct BrowserView: View {
                     Label {
                         Text("Internal (C:)")
                     } icon: {
-                        Image(systemName: "internaldrive")
+                        Image("Drive16")
                     }
                     .tag(1)
                 }
