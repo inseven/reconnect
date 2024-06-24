@@ -57,6 +57,7 @@ class FileServer {
         let name: String
         let size: UInt32
         let attributes: FileAttributes
+        let modificationDate: Date
 
         func hash(into hasher: inout Hasher) {
             hasher.combine(path)
@@ -102,10 +103,15 @@ class FileServer {
                 filePath = path + name
             }
 
+            var modificationTime = entry.getPsiTime()
+            let modificationTimeInterval = TimeInterval(modificationTime.getTime())
+            let modificationDate = Date(timeIntervalSince1970: modificationTimeInterval)
+
             entries.append(DirectoryEntry(path: filePath,
                                           name: name,
                                           size: entry.getSize(),
-                                          attributes: attributes))
+                                          attributes: attributes,
+                                          modificationDate: modificationDate))
         }
         return entries
     }
