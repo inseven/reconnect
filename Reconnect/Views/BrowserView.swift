@@ -61,7 +61,13 @@ struct BrowserView: View {
                                 .foregroundStyle(.secondary)
                         }
                         TableColumn("Size") { file in
-                            Text(String(file.size))
+                            if file.attributes.contains(.directory) {
+                                Text("--")
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                Text(file.size.formatted(.byteCount(style: .file)))
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                     .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
