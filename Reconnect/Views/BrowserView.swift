@@ -39,59 +39,52 @@ struct BrowserView: View {
             }
         } detail: {
             VStack {
-                switch model.state {
-                case .loading:
-                    Text("Loading...")
-                case .ready(let files):
-                    Table(files, selection: $model.selection) {
-                        TableColumn("") { file in
-                            if file.attributes.contains(.directory) {
-                                Image("Directory16")
-                            } else {
-                                Image("FileUnknown16")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 16.0)
-                            }
+                Table(model.files, selection: $model.selection) {
+                    TableColumn("") { file in
+                        if file.attributes.contains(.directory) {
+                            Image("Directory16")
+                        } else {
+                            Image("FileUnknown16")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 16.0)
                         }
-                        .width(16.0)
-                        TableColumn("Name", value: \.name)
-                        TableColumn("Date Modified") { file in
-                            Text(file.modificationDate.formatted(date: .long, time: .shortened))
+                    }
+                    .width(16.0)
+                    TableColumn("Name", value: \.name)
+                    TableColumn("Date Modified") { file in
+                        Text(file.modificationDate.formatted(date: .long, time: .shortened))
+                            .foregroundStyle(.secondary)
+                    }
+                    TableColumn("Size") { file in
+                        if file.attributes.contains(.directory) {
+                            Text("--")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text(file.size.formatted(.byteCount(style: .file)))
                                 .foregroundStyle(.secondary)
                         }
-                        TableColumn("Size") { file in
-                            if file.attributes.contains(.directory) {
-                                Text("--")
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                Text(file.size.formatted(.byteCount(style: .file)))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
                     }
-                    .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
-                        Button("Open") {
-                            model.navigate(to: items.first!)
-                        }
-                        .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
-                    } primaryAction: { items in
-                        guard
-                            items.count == 1,
-                            let item = items.first,
-                            item.isDirectory
-                        else {
-                            return
-                        }
-                        model.navigate(to: item)
+                }
+                .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
+                    Button("Open") {
+                        model.navigate(to: items.first!)
                     }
-                    .contextMenu {
-                        Button("New Folder") {
-                            model.newFolder()
-                        }
+                    .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
+                } primaryAction: { items in
+                    guard
+                        items.count == 1,
+                        let item = items.first,
+                        item.isDirectory
+                    else {
+                        return
                     }
-                case .error(let error):
-                    Text(String(describing: error))
+                    model.navigate(to: item)
+                }
+                .contextMenu {
+                    Button("New Folder") {
+                        model.newFolder()
+                    }
                 }
             }
 
