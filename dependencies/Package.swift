@@ -19,6 +19,12 @@ let package = Package(
             targets: [
                 "ncp"
             ]
+        ),
+        .library(
+            name: "plpftp",
+            targets: [
+                "plpftp"
+            ]
         )
     ],
     dependencies: [],
@@ -54,6 +60,24 @@ let package = Package(
                 .headerSearchPath("lib"),  // TODO: Put the config in an extra directory here?
             ]
             // swiftSettings: [.interoperabilityMode(.Cxx)]
+        ),
+        .target(
+            name: "plpftp",
+            dependencies: [
+                "plptools",
+            ],
+            path: "plptools",
+            exclude: [
+                "plpftp/Makefile.am",
+                "plpftp/main.cc",
+            ],
+            sources: [
+                "plpftp"
+            ],
+            publicHeadersPath: "plpftp",
+            cSettings: [
+                .headerSearchPath("lib"),  // TODO: Put the config in an extra directory here?
+            ]
         )
     ]
 )

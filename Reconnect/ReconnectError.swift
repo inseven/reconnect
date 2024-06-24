@@ -21,4 +21,5 @@ import Foundation
 enum ReconnectError: Error {
     case invalidString
     case unknownMachineType
+    case general
 }

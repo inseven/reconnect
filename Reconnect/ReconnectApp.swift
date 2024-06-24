@@ -52,6 +52,12 @@ struct ReconnectApp: App {
         .environment(applicationModel)
         .handlesExternalEvents(matching: [.settings])
 
+        Window("My Psion", id: "browser") {
+            BrowserView()
+        }
+        .environment(applicationModel)
+        .handlesExternalEvents(matching: [.browser])
+
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024 Jason Morley") {
             Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)
         } acknowledgements: {
