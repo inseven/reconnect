@@ -83,6 +83,11 @@ struct BrowserView: View {
                         }
                         model.navigate(to: item)
                     }
+                    .contextMenu {
+                        Button("New Folder") {
+                            model.newFolder()
+                        }
+                    }
                 case .error(let error):
                     Text(String(describing: error))
                 }
@@ -136,8 +141,20 @@ struct BrowserView: View {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
             }
+
+            ToolbarItem(id: "action") {
+                Menu {
+                    Button("New Folder") {
+                        model.newFolder()
+                    }
+                } label: {
+                    Label("Action", systemImage: "ellipsis.circle")
+                }
+            }
+
         }
         .navigationTitle(model.path?.windowsLastPathComponent ?? "My Psion")
+        .presents($model.lastError)
         .onAppear {
             model.navigate(to: "C:\\")
         }

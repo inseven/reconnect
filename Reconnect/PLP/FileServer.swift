@@ -129,6 +129,27 @@ class FileServer {
         }
     }
 
+    func syncQueue_mkdir(path: String) throws {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        let result = client.mkdir(path)
+        guard result.rawValue == 0 else {
+            throw ReconnectError.rfsvError(result)
+        }
+    }
+
+    func mkdir(path: String) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            workQueue.async {
+                do {
+                    try self.syncQueue_mkdir(path: path)
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     func devlist() -> [String] {
         var devbits: UInt32 = 0
         client.devlist(&devbits)

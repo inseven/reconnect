@@ -18,8 +18,11 @@
 
 import Foundation
 
+import plpftp
+
 enum ReconnectError: Error {
     case invalidString
     case unknownMachineType
     case general
+    case rfsvError(rfsv.errs)
 }

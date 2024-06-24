@@ -33,6 +33,7 @@ class BrowserModel {
     private var navigationStack = NavigationStack()
     var state: State = .loading
     var selection = Set<FileServer.DirectoryEntry.ID>()
+    var lastError: Error? = nil
 
     init() {
         guard fileServer.connect() else {
@@ -100,6 +101,21 @@ class BrowserModel {
     func forward() {
         navigationStack.forward()
         update()
+    }
+
+    func newFolder() {
+        guard let path = navigationStack.path else {
+            return
+        }
+        Task {
+            do {
+                try await fileServer.mkdir(path: path + "untitled folder")
+                update()
+            } catch {
+                print("Failed to create new folder with error \(error).")
+                lastError = error
+            }
+        }
     }
 
 }
