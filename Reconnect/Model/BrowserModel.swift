@@ -40,6 +40,7 @@ class BrowserModel {
             state = .error(ReconnectError.general)
             return
         }
+        _ = fileServer.devlist()
     }
 
     func load(path: String, skipHistory: Bool = false) {

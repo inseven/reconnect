@@ -105,4 +105,11 @@ class FileServer {
         return entries
     }
 
+    func devlist() -> [String] {
+        var devbits: UInt32 = 0
+        client.devlist(&devbits)
+        print("devbits = \(devbits)")
+        return []
+    }
+
 }
