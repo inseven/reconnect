@@ -71,13 +71,16 @@ struct BrowserView: View {
                         }
                     }
                     .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
-                        Button("Hello, World!") {
-
+                        Button("Open") {
+                            model.navigate(to: items.first!)
+                        }
+                        .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
                         }
                     } primaryAction: { items in
                         guard
                             items.count == 1,
-                            let item = items.first
+                            let item = items.first,
+                            item.isDirectory
                         else {
                             return
                         }
