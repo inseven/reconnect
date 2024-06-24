@@ -21,17 +21,6 @@ import Foundation
 import ncp
 import plpftp
 
-//@Observable
-//class DeviceModel {
-//
-//    struct Drive {
-//        let path: String
-//    }
-//
-//    let drives: [Drive] = []
-//
-//}
-
 class FileServer {
 
     struct FileAttributes: OptionSet {
