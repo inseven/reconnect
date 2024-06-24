@@ -134,4 +134,27 @@ class BrowserModel {
         }
     }
 
+    func download(path: String) {
+        Task {
+            let fileManager = FileManager.default
+            let downloadsUrl = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+
+            let filename = path.windowsLastPathComponent
+            let destinationURL = downloadsUrl.appendingPathComponent(filename)
+
+            do {
+                try await fileServer.copyFile(fromRemotePath: filename, toLocalPath: destinationURL.path)
+            } catch {
+                print("Failed to download file at path '\(path)' to destination path '\(destinationURL.path)' with error \(error).")
+                lastError = error
+            }
+
+            do {
+                if let directoryUrls = try? FileManager.default.contentsOfDirectory(at: downloadsUrl, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants) {
+                    print(directoryUrls)
+                }
+            }
+        }
+    }
+
 }
