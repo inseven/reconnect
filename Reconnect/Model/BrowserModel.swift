@@ -118,4 +118,20 @@ class BrowserModel {
         }
     }
 
+    func delete(path: String) {
+        Task {
+            do {
+                if path.isDirectory {
+                    try await fileServer.rmdir(path: path)
+                } else {
+                    try await fileServer.remove(path: path)
+                }
+                update()
+            } catch {
+                print("Failed to delete item at path '\(path)' with error \(error).")
+                lastError = error
+            }
+        }
+    }
+
 }
