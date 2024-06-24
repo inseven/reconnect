@@ -40,9 +40,9 @@ struct ReconnectApp: App {
                 .environment(applicationModel)
         } label: {
             if server.isConnected {
-                Image("Connected")
+                Image("StatusConnected")
             } else {
-                Image("Disconnected")
+                Image("StatusDisconnected")
             }
         }
 
