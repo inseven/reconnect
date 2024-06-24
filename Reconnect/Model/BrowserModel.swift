@@ -21,23 +21,19 @@ import SwiftUI
 @MainActor @Observable
 class BrowserModel {
 
-    enum State {
-        case loading
-        case ready([FileServer.DirectoryEntry])
-        case error(Error)
-    }
-
     // TODO: Surface errors here.
 
     let fileServer = FileServer(host: "127.0.0.1", port: 7501)
-    private var navigationStack = NavigationStack()
-    var state: State = .loading
+
+    var files: [FileServer.DirectoryEntry] = []
     var selection = Set<FileServer.DirectoryEntry.ID>()
     var lastError: Error? = nil
 
+    private var navigationStack = NavigationStack()
+
     init() {
         guard fileServer.connect() else {
-            state = .error(ReconnectError.general)
+            lastError = ReconnectError.general
             return
         }
         _ = fileServer.devlist()
@@ -61,14 +57,14 @@ class BrowserModel {
         guard let path = navigationStack.path else {
             return
         }
-        state = .loading
+        self.files = []
         Task {
             do {
                 let files = try await fileServer.dir(path: path)
                     .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-                state = .ready(files)
+                self.files = files
             } catch {
-                state = .error(error)
+                lastError = error
             }
         }
     }
@@ -109,8 +105,12 @@ class BrowserModel {
         }
         Task {
             do {
-                try await fileServer.mkdir(path: path + "untitled folder")
-                update()
+                let folderPath = path + "untitled folder"
+                try await fileServer.mkdir(path: folderPath)
+                let files = try await fileServer.dir(path: path)
+                    .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+                self.files = files
+                selection = Set([folderPath + "\\"])
             } catch {
                 print("Failed to create new folder with error \(error).")
                 lastError = error
