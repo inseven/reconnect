@@ -52,6 +52,10 @@ class BrowserModel {
         update()
     }
 
+    func refresh() {
+        update()
+    }
+
     private func update() {
         guard let path = navigationStack.path else {
             return
