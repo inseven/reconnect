@@ -65,6 +65,7 @@ struct ReconnectApp: App {
                 Credit("Jason Morley", url: URL(string: "https://jbmorley.co.uk"))
             }
             Acknowledgements("Thanks") {
+                Credit("George Wright")
                 Credit("Lukas Fittl")
                 Credit("Sarah Barbour")
             }
