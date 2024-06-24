@@ -13,6 +13,9 @@
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
 		D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C4A2C253D73008FA79B /* SettingsView.swift */; };
 		D81A0C162C27A90000EC2929 /* ncp in Frameworks */ = {isa = PBXBuildFile; productRef = D81A0C152C27A90000EC2929 /* ncp */; };
+		D83658B72C29596F00B45693 /* NavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B62C29596F00B45693 /* NavigationStackTests.swift */; };
+		D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B82C298C4F00B45693 /* NavigationStack.swift */; };
+		D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658BA2C29A09300B45693 /* HistoryItemView.swift */; };
 		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
 		D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964DD2C1BFCB700405656 /* Assets.xcassets */; };
 		D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964E02C1BFCB700405656 /* Preview Assets.xcassets */; };
@@ -60,6 +63,9 @@
 		D813FF162C26EA7F009CF0DC /* datastream-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "datastream-license"; sourceTree = "<group>"; };
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D8184C4A2C253D73008FA79B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D83658B62C29596F00B45693 /* NavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
+		D83658B82C298C4F00B45693 /* NavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStack.swift; sourceTree = "<group>"; };
+		D83658BA2C29A09300B45693 /* HistoryItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryItemView.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964D92C1BFCB600405656 /* ReconnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectApp.swift; sourceTree = "<group>"; };
 		D84964DD2C1BFCB700405656 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -124,6 +130,7 @@
 			children = (
 				D8184C462C253C59008FA79B /* ApplicationModel.swift */,
 				D886DA752C29343900E84BDA /* BrowserModel.swift */,
+				D83658B82C298C4F00B45693 /* NavigationStack.swift */,
 				D8C080792C1D7D8D003128AB /* ReconnectError.swift */,
 			);
 			path = Model;
@@ -133,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
+				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
 				D8D3E7A02C25410E003E696D /* MainMenu.swift */,
 				D8184C4A2C253D73008FA79B /* SettingsView.swift */,
 			);
@@ -189,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				D84964EB2C1BFCB700405656 /* ReconnectTests.swift */,
+				D83658B62C29596F00B45693 /* NavigationStackTests.swift */,
 			);
 			path = ReconnectTests;
 			sourceTree = "<group>";
@@ -393,11 +402,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8AD8B522C2378780063A613 /* Server.swift in Sources */,
+				D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */,
 				D84965452C1D08C900405656 /* Packetable.swift in Sources */,
 				D8D3E79D2C25407E003E696D /* URL.swift in Sources */,
 				D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */,
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
+				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
 				D84965432C1D08AB00405656 /* DataReadStream.swift in Sources */,
 				D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */,
 				D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */,
@@ -414,6 +425,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D83658B72C29596F00B45693 /* NavigationStackTests.swift in Sources */,
 				D84964EC2C1BFCB700405656 /* ReconnectTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -502,6 +514,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -558,6 +571,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 			};
 			name = Release;
 		};
@@ -589,7 +603,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.psimac.apps.appstore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -627,7 +640,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "PsiMac Mac App Store Profile";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

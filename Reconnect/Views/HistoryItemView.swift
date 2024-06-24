@@ -16,16 +16,26 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import SwiftUI
 
-extension String {
+struct HistoryItemView: View {
 
-    var windowsLastPathComponent: String {
-        return components(separatedBy: "\\").filter { !$0.isEmpty }.last ?? ""
+    var image: NSImage {
+        let representation = NSWorkspace.shared.icon(for: .folder)
+            .bestRepresentation(for: NSRect(origin: .zero, size: CGSize(width: 16, height: 16)),
+                                context: nil,
+                                hints: nil)!
+        let image = NSImage(size: representation.size)
+        image.addRepresentation(representation)
+        return image
     }
 
-    init(contentsOfResource resource: String) {
-        let url = Bundle.main.url(forResource: resource, withExtension: nil)!
-        try! self.init(contentsOf: url)
+    let item: NavigationStack.Item
+
+    var body: some View {
+        HStack {
+            Image(nsImage: image)
+            Text(item.path.windowsLastPathComponent)
+        }
     }
 }

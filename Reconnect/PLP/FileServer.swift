@@ -64,6 +64,8 @@ class FileServer {
         
     }
 
+    let workQueue: DispatchQueue = DispatchQueue(label: "FileServer.workQueue")
+
     let host: String
     let port: Int32
 
@@ -75,10 +77,13 @@ class FileServer {
     }
 
     func connect() -> Bool {
-        return client.connect(host, port)
+        return workQueue.sync {
+            return self.client.connect(self.host, self.port)
+        }
     }
 
-    func dir(path: String) throws -> [DirectoryEntry] {
+    private func syncQueue_dir(path: String) throws -> [DirectoryEntry] {
+        dispatchPrecondition(condition: .onQueue(workQueue))
         var details = PlpDir()
         client.dir(path, &details)
 
@@ -103,6 +108,19 @@ class FileServer {
                                           attributes: attributes))
         }
         return entries
+    }
+
+    func dir(path: String) async throws -> [DirectoryEntry] {
+        return try await withCheckedThrowingContinuation { continuation in
+            workQueue.async {
+                do {
+                    let result = try self.syncQueue_dir(path: path)
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
     }
 
     func devlist() -> [String] {
