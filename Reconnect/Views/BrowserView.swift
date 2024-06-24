@@ -56,6 +56,10 @@ struct BrowserView: View {
                         }
                         .width(16.0)
                         TableColumn("Name", value: \.name)
+                        TableColumn("Date Modified") { file in
+                            Text(file.modificationDate.formatted(date: .long, time: .shortened))
+                                .foregroundStyle(.secondary)
+                        }
                         TableColumn("Size") { file in
                             Text(String(file.size))
                         }
