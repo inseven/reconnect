@@ -20,6 +20,10 @@ import Foundation
 
 extension String {
 
+    var isDirectory: Bool {
+        return hasSuffix("\\")
+    }
+
     var windowsLastPathComponent: String {
         return components(separatedBy: "\\").filter { !$0.isEmpty }.last ?? ""
     }
