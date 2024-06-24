@@ -118,6 +118,14 @@ struct BrowserView: View {
                 }
                 .help("See folders you viewed previously")
             }
+
+            ToolbarItem(id: "refresh") {
+                Button {
+                    model.refresh()
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                }
+            }
         }
         .navigationTitle(model.path?.windowsLastPathComponent ?? "My Psion")
         .onAppear {
