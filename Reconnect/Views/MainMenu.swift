@@ -47,19 +47,6 @@ struct MainMenu: View {
         Divider()
         Toggle("Open at Login", isOn: $application.openAtLogin)
         Divider()
-        Button("List Files") {
-            DispatchQueue.global(qos: .userInitiated).async {
-                do {
-                    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
-                    fileServer.connect()
-                    print(try fileServer.dir(path: "C:\\"))
-                    print(try fileServer.dir(path: "C:\\Screenshots\\"))
-                } catch {
-                    print("Failed to list directories with error \(error).")
-                }
-            }
-        }
-        Divider()
         Button("Quit") {
             applicationModel.quit()
         }

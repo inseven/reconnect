@@ -18,48 +18,69 @@
 
 import SwiftUI
 
-@Observable
-class BrowserModel {
-
-    // TODO: Surface errors here.
-
-    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
-
-    var files: [FileServer.DirectoryEntry] = []
-    var error: Error? = nil
-
-    init() {
-        fileServer.connect()
-        do {
-            files = try fileServer.dir(path: "C:\\")
-        } catch {
-            self.error = error
-        }
-    }
-
-}
-
-extension FileServer.DirectoryEntry: Identifiable {
-
-    var id: String {
-        return name
-    }
-
-}
-
 struct BrowserView: View {
 
     @State var model = BrowserModel()
 
     var body: some View {
-        Table(model.files) {
-            TableColumn("Name", value: \.name)
-            TableColumn("Size") { file in
-                Text(String(file.size))
+        VStack {
+            switch model.state {
+            case .loading:
+                Text("Loading...")
+            case .ready(let files):
+                Table(files, selection: $model.selection) {
+                    TableColumn("") { file in
+                        if file.attributes.contains(.directory) {
+                            Image(systemName: "folder")
+                        } else {
+                            Image(systemName: "doc")
+                        }
+                    }
+                    .width(16.0)
+                    TableColumn("Name", value: \.name)
+                    TableColumn("Size") { file in
+                        Text(String(file.size))
+                    }
+                }
+                .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
+                    Button("Hello, World!") {
+
+                    }
+                } primaryAction: { items in
+                    guard
+                        items.count == 1,
+                        let item = items.first
+                    else {
+                        return
+                    }
+                    print(item)
+                    // TODO: Differentiate between files and items.
+                    model.load(path: item)
+                }
+            case .error(let error):
+                Text(String(describing: error))
             }
-            TableColumn("Attributes") { file in
-                Text(String(file.attributes))
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button {
+                    model.back()
+                } label: {
+                    Label("Back", systemImage: "chevron.backward")
+                }
+                .disabled(model.history.count < 2)
             }
+            ToolbarItem(placement: .navigation) {
+                Button {
+
+                } label: {
+                    Label("Back", systemImage: "chevron.forward")
+                }
+                .disabled(true)
+            }
+        }
+        .onAppear {
+            model.load(path: "C:\\")
         }
     }
 
