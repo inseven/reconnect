@@ -36,4 +36,6 @@ process handle SIGUSR1 -n true -p true -s false
 Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
 
 - [Diligence](https://github.com/inseven/diligence), MIT License
+- [Interact](https://github.com/inseven/interact), MIT License
+- [Licensable](https://github.com/inseven/licensable), MIT License
 - [plptools](https://github.com/rrthomas/plptools/), GPL-2.0 license
