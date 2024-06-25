@@ -18,26 +18,37 @@
 
 import Foundation
 
-extension String {
+extension FileServer.DriveInfo {
 
-    var isDirectory: Bool {
-        return hasSuffix("\\")
+    var displayName: String {
+        if let name {
+            return name
+        } else {
+            return "\(drive):"
+        }
     }
 
-    var isRoot: Bool {
-        return windowsPathComponents.count == 1
+    var image: String {
+        switch mediaType {
+        case .notPresent:
+            return "Drive16"
+        case .unknown:
+            return "Drive16"
+        case .floppy:
+            return "Drive16"
+        case .disk:
+            return "Disk16"
+        case .compactDisc:
+            return "Drive16"
+        case .ram:
+            return "Drive16"
+        case .flashDisk:
+            return "Drive16"
+        case .rom:
+            return "Drive16"
+        case .remote:
+            return "Drive16"
+        }
     }
 
-    var windowsLastPathComponent: String {
-        return windowsPathComponents.last ?? ""
-    }
-
-    var windowsPathComponents: [String] {
-        return components(separatedBy: "\\").filter { !$0.isEmpty }
-    }
-
-    init(contentsOfResource resource: String) {
-        let url = Bundle.main.url(forResource: resource, withExtension: nil)!
-        try! self.init(contentsOf: url)
-    }
 }

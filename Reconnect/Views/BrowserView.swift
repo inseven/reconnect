@@ -23,26 +23,15 @@ struct BrowserView: View {
 
     @State var model = BrowserModel()
 
-    @State var selection: Int = 1
-
     var body: some View {
         NavigationSplitView {
-            List(selection: $selection) {
-                Section("Drives") {
-                    Label {
-                        Text("Internal (C:)")
-                    } icon: {
-                        Image("Drive16")
-                    }
-                    .tag(1)
-                }
-            }
+            Sidebar(model: model)
         } detail: {
             VStack {
-                Table(model.files, selection: $model.selection) {
+                Table(model.files, selection: $model.fileSelection) {
                     TableColumn("") { file in
                         if file.attributes.contains(.directory) {
-                            Image("Directory16")
+                            Image("Folder16")
                         } else {
                             Image("FileUnknown16")
                                 .resizable()
@@ -165,11 +154,15 @@ struct BrowserView: View {
             }
 
         }
-        .navigationTitle(model.path?.windowsLastPathComponent ?? "My Psion")
+        .navigationTitle(model.navigationTitle ?? "My Psion")
         .presents($model.lastError)
         .onAppear {
             model.navigate(to: "C:\\")
         }
+        .task {
+            await model.start()
+        }
+        .environment(model)
     }
 
 }
