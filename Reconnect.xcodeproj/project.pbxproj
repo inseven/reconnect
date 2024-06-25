@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		D806342B2C27F87100DEA6DA /* plpftp in Frameworks */ = {isa = PBXBuildFile; productRef = D806342A2C27F87100DEA6DA /* plpftp */; };
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
-		D813FF172C26EA7F009CF0DC /* datastream-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF162C26EA7F009CF0DC /* datastream-license */; };
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
 		D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C4A2C253D73008FA79B /* SettingsView.swift */; };
 		D81A0C162C27A90000EC2929 /* ncp in Frameworks */ = {isa = PBXBuildFile; productRef = D81A0C152C27A90000EC2929 /* ncp */; };
@@ -23,10 +22,6 @@
 		D84964F62C1BFCB700405656 /* ReconnectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F52C1BFCB700405656 /* ReconnectUITests.swift */; };
 		D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */; };
 		D84965062C1BFF1F00405656 /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = D84965052C1BFF1F00405656 /* Socket */; };
-		D84965352C1C30E500405656 /* DataStream in Frameworks */ = {isa = PBXBuildFile; productRef = D84965342C1C30E500405656 /* DataStream */; };
-		D849653F2C1D07B500405656 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = D849653E2C1D07B500405656 /* Socket.swift */; };
-		D84965432C1D08AB00405656 /* DataReadStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965422C1D08AB00405656 /* DataReadStream.swift */; };
-		D84965452C1D08C900405656 /* Packetable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84965442C1D08C900405656 /* Packetable.swift */; };
 		D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87AAC892C27EB070091F442 /* FileServer.swift */; };
 		D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA732C28CDAD00E84BDA /* BrowserView.swift */; };
 		D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA752C29343900E84BDA /* BrowserModel.swift */; };
@@ -60,7 +55,6 @@
 
 /* Begin PBXFileReference section */
 		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
-		D813FF162C26EA7F009CF0DC /* datastream-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "datastream-license"; sourceTree = "<group>"; };
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D8184C4A2C253D73008FA79B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D83658B62C29596F00B45693 /* NavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
@@ -76,9 +70,6 @@
 		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964F52C1BFCB700405656 /* ReconnectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITests.swift; sourceTree = "<group>"; };
 		D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		D849653E2C1D07B500405656 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
-		D84965422C1D08AB00405656 /* DataReadStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReadStream.swift; sourceTree = "<group>"; };
-		D84965442C1D08C900405656 /* Packetable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Packetable.swift; sourceTree = "<group>"; };
 		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
 		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
 		D87AAC892C27EB070091F442 /* FileServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileServer.swift; sourceTree = "<group>"; };
@@ -100,7 +91,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D806342B2C27F87100DEA6DA /* plpftp in Frameworks */,
-				D84965352C1C30E500405656 /* DataStream in Frameworks */,
 				D81A0C162C27A90000EC2929 /* ncp in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D84965062C1BFF1F00405656 /* Socket in Frameworks */,
@@ -223,10 +213,7 @@
 		D849653D2C1D07AD00405656 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				D84965422C1D08AB00405656 /* DataReadStream.swift */,
 				D8E31EB42C26E10900350082 /* Licensable.swift */,
-				D84965442C1D08C900405656 /* Packetable.swift */,
-				D849653E2C1D07B500405656 /* Socket.swift */,
 				D8E31EB62C26E13E00350082 /* String.swift */,
 				D8D3E79C2C25407E003E696D /* URL.swift */,
 			);
@@ -245,7 +232,6 @@
 		D8E31EB82C26E1CA00350082 /* Licenses */ = {
 			isa = PBXGroup;
 			children = (
-				D813FF162C26EA7F009CF0DC /* datastream-license */,
 				D813FF142C26E869009CF0DC /* plptools-license */,
 				D8E31EB92C26E1E400350082 /* reconnect-license */,
 			);
@@ -270,7 +256,6 @@
 			name = Reconnect;
 			packageProductDependencies = (
 				D84965052C1BFF1F00405656 /* Socket */,
-				D84965342C1C30E500405656 /* DataStream */,
 				D8D3E79E2C2540D9003E696D /* Interact */,
 				D8E31EB22C26E09500350082 /* Diligence */,
 				D81A0C152C27A90000EC2929 /* ncp */,
@@ -351,7 +336,6 @@
 			mainGroup = D84964CD2C1BFCB600405656;
 			packageReferences = (
 				D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */,
-				D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */,
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */,
@@ -372,7 +356,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D813FF172C26EA7F009CF0DC /* datastream-license in Resources */,
 				D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */,
 				D813FF152C26E869009CF0DC /* plptools-license in Resources */,
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
@@ -403,19 +386,16 @@
 			files = (
 				D8AD8B522C2378780063A613 /* Server.swift in Sources */,
 				D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */,
-				D84965452C1D08C900405656 /* Packetable.swift in Sources */,
 				D8D3E79D2C25407E003E696D /* URL.swift in Sources */,
 				D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */,
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
-				D84965432C1D08AB00405656 /* DataReadStream.swift in Sources */,
 				D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */,
 				D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */,
 				D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */,
 				D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */,
 				D8E31EB72C26E13E00350082 /* String.swift in Sources */,
-				D849653F2C1D07B500405656 /* Socket.swift in Sources */,
 				D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 			);
@@ -758,10 +738,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/DataStream;
-		};
 		D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/interact;
@@ -802,11 +778,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */;
 			productName = Socket;
-		};
-		D84965342C1C30E500405656 /* DataStream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D84965322C1C30DB00405656 /* XCLocalSwiftPackageReference "dependencies/DataStream" */;
-			productName = DataStream;
 		};
 		D8D3E79E2C2540D9003E696D /* Interact */ = {
 			isa = XCSwiftPackageProductDependency;

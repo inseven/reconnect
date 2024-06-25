@@ -21,15 +21,6 @@ import Foundation
 import Interact
 import Licensable
 
-fileprivate let dataStreamLicense = License(id: "https://github.com/codelynx/DataStream",
-                                            name: "DataStream",
-                                            author: "Electricwoods LLC, Kaz Yoshikawa",
-                                            text: String(contentsOfResource: "datastream-license"),
-                                            attributes: [
-                                                .url(URL(string: "https://github.com/codelynx/DataStream")!, title: "GitHub"),
-                                            ],
-                                            licenses: [])
-
 fileprivate let plptoolsLicense = License(id: "https://github.com/rrthomas/plptools",
                                           name: "plptools",
                                           author: "plptools Authors",
@@ -49,7 +40,6 @@ fileprivate let reconnectLicense = License(id: "https://github.com/inseven/thoug
                                            licenses: [
                                             .interact,
                                             .licensable,
-                                            dataStreamLicense,
                                             plptoolsLicense,
                                            ])
 
