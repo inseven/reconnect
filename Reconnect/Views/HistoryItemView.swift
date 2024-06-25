@@ -20,22 +20,14 @@ import SwiftUI
 
 struct HistoryItemView: View {
 
-    var image: NSImage {
-        let representation = NSWorkspace.shared.icon(for: .folder)
-            .bestRepresentation(for: NSRect(origin: .zero, size: CGSize(width: 16, height: 16)),
-                                context: nil,
-                                hints: nil)!
-        let image = NSImage(size: representation.size)
-        image.addRepresentation(representation)
-        return image
-    }
-
+    @Environment(BrowserModel.self) var browserModel
+    
     let item: NavigationStack.Item
 
     var body: some View {
         HStack {
-            Image(nsImage: image)
-            Text(item.path.windowsLastPathComponent)
+            Image(browserModel.image(for: item.path))
+            Text(browserModel.name(for: item.path) ?? "Unknown")
         }
     }
 }

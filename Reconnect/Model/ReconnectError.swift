@@ -21,8 +21,38 @@ import Foundation
 import plpftp
 
 enum ReconnectError: Error {
-    case invalidString
-    case unknownMachineType
-    case general
+    case unknown
     case rfsvError(rfsv.errs)
+    case unknownMediaType
+}
+
+extension ReconnectError: LocalizedError {
+
+    public var errorDescription: String? {
+        switch self {
+        case .unknown:
+            return "Unknown error."
+        case .rfsvError(let error):
+            return error.localizedDescription
+        case .unknownMediaType:
+            return "Unknown media type."
+        }
+    }
+
+}
+
+extension rfsv.errs {
+
+    var localizedDescription: String {
+        switch self.rawValue {
+        case -33:
+            return "File doesn't exist."
+        case -62:
+            return "File not ready."
+        default:
+            return "Unknown remote file server error (\(self.rawValue))."
+        }
+
+    }
+
 }

@@ -23,6 +23,18 @@ import plpftp
 
 class FileServer {
 
+    enum MediaType: UInt32 {
+        case notPresent = 0
+        case unknown = 1
+        case floppy = 2
+        case disk = 3
+        case compactDisc = 4
+        case ram = 5
+        case flashDisk = 6
+        case rom = 7
+        case remote = 8
+    }
+
     struct FileAttributes: OptionSet {
 
         let rawValue: UInt32
@@ -47,6 +59,17 @@ class FileServer {
 
     }
 
+    struct DriveInfo: Identifiable {
+
+        var id: String {
+            return drive
+        }
+
+        let drive: String
+        let mediaType: MediaType
+        let name: String?
+    }
+
     struct DirectoryEntry: Identifiable, Hashable {
 
         var id: String {
@@ -64,6 +87,10 @@ class FileServer {
         }
         
     }
+
+    static var drives: [String] = {
+        return Array(65..<91).map { String(UnicodeScalar($0)) }
+    }()
 
     let workQueue: DispatchQueue = DispatchQueue(label: "FileServer.workQueue")
 
@@ -216,11 +243,61 @@ class FileServer {
         }
     }
 
-    func devlist() -> [String] {
+    func syncQueue_devlist() throws -> [String] {
+        dispatchPrecondition(condition: .onQueue(workQueue))
         var devbits: UInt32 = 0
-        client.devlist(&devbits)
-        print("devbits = \(devbits)")
-        return []
+        let result = client.devlist(&devbits)
+        guard result.rawValue == 0 else {
+            throw ReconnectError.rfsvError(result)
+        }
+        return Self.drives
+            .enumerated()
+            .compactMap { index, drive -> String? in
+                guard (devbits & (0x01 << index)) > 0 else {
+                    return nil
+                }
+                return drive
+            }
+    }
+
+    func syncQueue_devinfo(drive: String) throws -> DriveInfo {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        let d = drive.cString(using: .ascii)!.first!
+        var driveInfo = PlpDrive()
+        let result = client.devinfo(d, &driveInfo)
+        guard result.rawValue == 0 else {
+            throw ReconnectError.rfsvError(result)
+        }
+        guard let mediaType = MediaType(rawValue: driveInfo.getMediaType()) else {
+            throw ReconnectError.unknownMediaType
+        }
+        let name = string_cstr(driveInfo.getName())!
+
+        return DriveInfo(drive: drive,
+                         mediaType: mediaType,
+                         name: String(cString: name))
+    }
+
+    func drives() async throws -> [DriveInfo] {
+        return try await withCheckedThrowingContinuation { continuation in
+            workQueue.async {
+                do {
+                    var result: [DriveInfo] = []
+                    for drive in try self.syncQueue_devlist() {
+                        do {
+                            result.append(try self.syncQueue_devinfo(drive: drive))
+                        } catch ReconnectError.rfsvError(let error) {
+                            if error.rawValue == -62 {
+                                continue
+                            }
+                        }
+                    }
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
     }
 
 }

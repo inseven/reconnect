@@ -21,22 +21,60 @@ import SwiftUI
 @MainActor @Observable
 class BrowserModel {
 
-    // TODO: Surface errors here.
+    var navigationTitle: String? {
+        guard let path else {
+            return nil
+        }
+        return name(for: path)
+    }
 
     let fileServer = FileServer(host: "127.0.0.1", port: 7501)
 
+    var drives: [FileServer.DriveInfo] = []
     var files: [FileServer.DirectoryEntry] = []
-    var selection = Set<FileServer.DirectoryEntry.ID>()
+
+    var driveSelection: String? = nil {
+        didSet {
+            guard let driveSelection else {
+                return
+            }
+            navigate(to: driveSelection + ":\\")
+        }
+    }
+
+    var fileSelection = Set<FileServer.DirectoryEntry.ID>()
+
     var lastError: Error? = nil
 
     private var navigationStack = NavigationStack()
 
     init() {
         guard fileServer.connect() else {
-            lastError = ReconnectError.general
+            lastError = ReconnectError.unknown
             return
         }
-        _ = fileServer.devlist()
+    }
+
+    func start() async {
+        do {
+            drives = try await fileServer.drives()
+        } catch {
+            lastError = error
+        }
+    }
+
+    func name(for path: String) -> String? {
+        if path.isRoot, let drive = drives.first(where: { path.hasPrefix($0.drive) }) {
+            return drive.displayName
+        }
+        return path.windowsLastPathComponent
+    }
+
+    func image(for path: String) -> String {
+        if path.isRoot, let drive = drives.first(where: { path.hasPrefix($0.drive) }) {
+            return drive.image
+        }
+        return "Folder16"
     }
 
     func navigate(to path: String) {
@@ -74,7 +112,7 @@ class BrowserModel {
     }
 
     var previousItems: [NavigationStack.Item] {
-        return navigationStack.previousItems
+        return navigationStack.previousItems.reversed()
     }
 
     var nextItems: [NavigationStack.Item] {
@@ -110,7 +148,7 @@ class BrowserModel {
                 let files = try await fileServer.dir(path: path)
                     .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
                 self.files = files
-                selection = Set([folderPath + "\\"])
+                fileSelection = Set([folderPath + "\\"])
             } catch {
                 print("Failed to create new folder with error \(error).")
                 lastError = error
@@ -143,7 +181,7 @@ class BrowserModel {
             let destinationURL = downloadsUrl.appendingPathComponent(filename)
 
             do {
-                try await fileServer.copyFile(fromRemotePath: filename, toLocalPath: destinationURL.path)
+                try await fileServer.copyFile(fromRemotePath: path, toLocalPath: destinationURL.path)
             } catch {
                 print("Failed to download file at path '\(path)' to destination path '\(destinationURL.path)' with error \(error).")
                 lastError = error

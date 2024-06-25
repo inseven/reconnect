@@ -16,28 +16,26 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import SwiftUI
 
-extension String {
+struct Sidebar: View {
 
-    var isDirectory: Bool {
-        return hasSuffix("\\")
+    var model: BrowserModel
+
+    var body: some View {
+        @Bindable var model = model
+        List(selection: $model.driveSelection) {
+            Section("Drives") {
+                ForEach(model.drives) { driveInfo in
+                    Label {
+                        Text(driveInfo.displayName)
+                    } icon: {
+                        Image(driveInfo.image)
+                    }
+                }
+            }
+        }
+
     }
 
-    var isRoot: Bool {
-        return windowsPathComponents.count == 1
-    }
-
-    var windowsLastPathComponent: String {
-        return windowsPathComponents.last ?? ""
-    }
-
-    var windowsPathComponents: [String] {
-        return components(separatedBy: "\\").filter { !$0.isEmpty }
-    }
-
-    init(contentsOfResource resource: String) {
-        let url = Bundle.main.url(forResource: resource, withExtension: nil)!
-        try! self.init(contentsOf: url)
-    }
 }
