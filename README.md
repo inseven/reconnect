@@ -19,6 +19,14 @@ You probably don't want to try to use Reconnect right now unless you're looking 
 - Working menu bar item showing connection status
 - Simple file browser
 
+## Development
+
+Debugging Reconnect is a little more awkward than normal since plptools uses signals internally which are trapped by Xcode and lldb by default. Disable this automatic behavior by adding the following line to '~/.lldbinit-Xcode':
+
+```
+process handle SIGUSR1 -n true -p true -s false
+```
+
 ## References
 
 - [Psion Link Protocol](https://thoukydides.github.io/riscos-psifs/plp.html)
