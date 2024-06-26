@@ -157,7 +157,7 @@ mkdir -p ~/.appstoreconnect/private_keys/
 echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8"
 
 # Notarize the app.
-xcrun notarytool submit "$ZIP_PATH" \
+xcrun notarytool submit "$RELEASE_ZIP_PATH" \
     --output-format json \
     --wait | tee command-notarization-response.json
 NOTARIZATION_ID=`cat command-notarization-response.json | jq -r ".id"`
@@ -183,6 +183,6 @@ if $RELEASE ; then
         --pre-release \
         --push \
         --exec "${RELEASE_SCRIPT_PATH}" \
-        "${APP_ZIP_PATH}" "${ZIP_PATH}"
+        "${RELEASE_ZIP_PATH}" "${ZIP_PATH}"
 
 fi
