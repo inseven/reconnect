@@ -10,8 +10,8 @@
 		D806342B2C27F87100DEA6DA /* plpftp in Frameworks */ = {isa = PBXBuildFile; productRef = D806342A2C27F87100DEA6DA /* plpftp */; };
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
-		D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C4A2C253D73008FA79B /* SettingsView.swift */; };
 		D81A0C162C27A90000EC2929 /* ncp in Frameworks */ = {isa = PBXBuildFile; productRef = D81A0C152C27A90000EC2929 /* ncp */; };
+		D822EA132C2BA92E008A4BAA /* SerialDeviceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D822EA122C2BA92E008A4BAA /* SerialDeviceMonitor.swift */; };
 		D83658B72C29596F00B45693 /* NavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B62C29596F00B45693 /* NavigationStackTests.swift */; };
 		D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B82C298C4F00B45693 /* NavigationStack.swift */; };
 		D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658BA2C29A09300B45693 /* HistoryItemView.swift */; };
@@ -58,7 +58,7 @@
 /* Begin PBXFileReference section */
 		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
-		D8184C4A2C253D73008FA79B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D822EA122C2BA92E008A4BAA /* SerialDeviceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SerialDeviceMonitor.swift; sourceTree = "<group>"; };
 		D83658B62C29596F00B45693 /* NavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
 		D83658B82C298C4F00B45693 /* NavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStack.swift; sourceTree = "<group>"; };
 		D83658BA2C29A09300B45693 /* HistoryItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryItemView.swift; sourceTree = "<group>"; };
@@ -124,7 +124,6 @@
 			children = (
 				D8184C462C253C59008FA79B /* ApplicationModel.swift */,
 				D886DA752C29343900E84BDA /* BrowserModel.swift */,
-				D83658B82C298C4F00B45693 /* NavigationStack.swift */,
 				D8C080792C1D7D8D003128AB /* ReconnectError.swift */,
 			);
 			path = Model;
@@ -136,10 +135,18 @@
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
 				D8D3E7A02C25410E003E696D /* MainMenu.swift */,
-				D8184C4A2C253D73008FA79B /* SettingsView.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		D822EA0F2C2BA305008A4BAA /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D83658B82C298C4F00B45693 /* NavigationStack.swift */,
+				D822EA122C2BA92E008A4BAA /* SerialDeviceMonitor.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		D84964CD2C1BFCB600405656 = {
@@ -175,6 +182,7 @@
 				D8184C482C253C6F008FA79B /* Model */,
 				D886DA772C29345E00E84BDA /* PLP */,
 				D84964DF2C1BFCB700405656 /* Preview Content */,
+				D822EA0F2C2BA305008A4BAA /* Utilities */,
 				D8184C492C253D62008FA79B /* Views */,
 			);
 			path = Reconnect;
@@ -398,8 +406,8 @@
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
+				D822EA132C2BA92E008A4BAA /* SerialDeviceMonitor.swift in Sources */,
 				D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */,
-				D8184C4B2C253D73008FA79B /* SettingsView.swift in Sources */,
 				D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */,
 				D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */,
 				D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */,

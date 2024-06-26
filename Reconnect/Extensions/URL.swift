@@ -22,6 +22,5 @@ extension URL {
 
     static let about = URL(string: "x-reconnect://about")!
     static let browser = URL(string: "x-reconnect://browser")!
-    static let settings = URL(string: "x-reconnect://settings")!
 
 }

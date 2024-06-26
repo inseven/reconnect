@@ -21,6 +21,22 @@ import SwiftUI
 import Diligence
 import Interact
 
+struct ContentView: View {
+
+    var applicationModel: ApplicationModel
+    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
+
+    var body: some View {
+        if applicationModel.isConnected {
+            BrowserView(fileServer: fileServer)
+        } else {
+            ContentUnavailableView("Not Connected", systemImage: "star")
+        }
+    }
+
+}
+
+
 @main
 struct ReconnectApp: App {
 
@@ -39,21 +55,15 @@ struct ReconnectApp: App {
             MainMenu()
                 .environment(applicationModel)
         } label: {
-            if server.isConnected {
+            if applicationModel.isConnected {
                 Image("StatusConnected")
             } else {
                 Image("StatusDisconnected")
             }
         }
 
-        Window("Settings", id: "settings") {
-            SettingsView()
-        }
-        .environment(applicationModel)
-        .handlesExternalEvents(matching: [.settings])
-
-        Window("My Psion", id: "browser") {
-            BrowserView()
+        WindowGroup {
+            ContentView(applicationModel: applicationModel)
         }
         .environment(applicationModel)
         .handlesExternalEvents(matching: [.browser])

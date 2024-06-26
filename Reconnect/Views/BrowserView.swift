@@ -21,7 +21,11 @@ import SwiftUI
 @MainActor
 struct BrowserView: View {
 
-    @State var model = BrowserModel()
+    @State var model: BrowserModel
+
+    init(fileServer: FileServer) {
+        _model = State(initialValue: BrowserModel(fileServer: fileServer))
+    }
 
     var body: some View {
         NavigationSplitView {
