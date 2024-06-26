@@ -104,14 +104,15 @@ class FileServer {
         self.port = port
     }
 
-    func connect() -> Bool {
-        return workQueue.sync {
-            return self.client.connect(self.host, self.port)
+    private func syncQueue_connect() throws {
+        guard self.client.connect(self.host, self.port) else {
+            throw ReconnectError.unknown
         }
     }
 
     private func syncQueue_dir(path: String) throws -> [DirectoryEntry] {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
         var details = PlpDir()
         client.dir(path, &details)
 
@@ -158,6 +159,7 @@ class FileServer {
 
     func syncQueue_copyFile(fromRemotePath remoteSourcePath: String, toLocalPath localDestinationPath: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
         let result = client.copyFromPsion(remoteSourcePath, localDestinationPath, nil) { context, status in
             print("progress = \(status)")
             return 1  // 0 is cancel
@@ -182,6 +184,7 @@ class FileServer {
 
     func syncQueue_mkdir(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
         let result = client.mkdir(path)
         guard result.rawValue == 0 else {
             throw ReconnectError.rfsvError(result)
@@ -203,6 +206,7 @@ class FileServer {
 
     func syncQueue_rmdir(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
         let result = client.rmdir(path)
         guard result.rawValue == 0 else {
             throw ReconnectError.rfsvError(result)
@@ -224,6 +228,7 @@ class FileServer {
 
     func syncQueue_remove(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
         let result = client.remove(path)
         guard result.rawValue == 0 else {
             throw ReconnectError.rfsvError(result)
@@ -245,6 +250,7 @@ class FileServer {
 
     func syncQueue_devlist() throws -> [String] {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
         var devbits: UInt32 = 0
         let result = client.devlist(&devbits)
         guard result.rawValue == 0 else {
@@ -262,6 +268,7 @@ class FileServer {
 
     func syncQueue_devinfo(drive: String) throws -> DriveInfo {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
         let d = drive.cString(using: .ascii)!.first!
         var driveInfo = PlpDrive()
         let result = client.devinfo(d, &driveInfo)

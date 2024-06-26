@@ -20,12 +20,42 @@ import Foundation
 
 import ncp
 
-@Observable
+protocol ServerDelegate: NSObject {
+
+    func server(server: Server, didChangeConnectionState isConnected: Bool)
+
+}
+
 class Server {
 
-    var isConnected: Bool = false
+    weak var delegate: ServerDelegate? = nil
+
+    var lock = NSLock()
+    var threadID: pthread_t? = nil  // Synchronized with lock.
+    var devices: [String] = []  // Synchronized with lock.
+
+    func device() -> String {
+        print("Getting device...")
+        while true {
+            let devices = lock.withLock {
+                return self.devices
+            }
+            if let device = devices.first {
+                return device
+            }
+            print("Waiting for devices...")
+            sleep(1)
+        }
+    }
 
     func threadEntryPoint() {
+
+        setup_signal_handlers()
+
+        // TODO: Maybe this shouldn't be a member?
+        lock.withLock {
+            threadID = pthread_self()
+        }
 
         let context = Unmanaged.passRetained(self).toOpaque()
         let callback: statusCallback_t = { context, status in
@@ -35,20 +65,51 @@ class Server {
             print("status = \(status)")
             let server = Unmanaged<Server>.fromOpaque(context).takeUnretainedValue()
             DispatchQueue.main.sync {
-                server.isConnected = status == 1 ? true : false
+                let isConnected = status == 1 ? true : false
+                server.delegate?.server(server: server, didChangeConnectionState: isConnected)
             }
         }
 
-//        let device = "/dev/tty.usbserial-AL00AYCG"
-        let device = "/dev/tty.usbserial-A91MGK6M"
-
-        ncpd(7501, 115200, "127.0.0.1", device, 0, callback, context)
+        while true {
+            let device = self.device()
+            print("Using device \(device)...")
+            ncpd(7501, 115200, "127.0.0.1", device, 0x0000, callback, context)
+            DispatchQueue.main.async {
+                self.delegate?.server(server: self, didChangeConnectionState: false)
+            }
+            print("ncpd ended")
+        }
     }
 
     init() {
         // Create a new thread and start it
+    }
+
+    func start() {
+        // TODO: ONLY DO THIS ONCE!
         let thread = Thread(block: threadEntryPoint)
         thread.start()
+
+        // TODO: This should probably block until we're ready??
+    }
+
+    func setDevices(_ devices: [String]) {
+        // SIGHUP?
+        guard let threadID = lock.withLock({
+            return self.threadID
+        }) else {
+            return
+        }
+
+        print("Setting devices \(devices)")
+
+        lock.withLock {
+            self.devices = devices
+        }
+
+        print("Signalling thread...")
+        pthread_kill(threadID, SIGINT)
+        print("DONE?")
     }
 
 }

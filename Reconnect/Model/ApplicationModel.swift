@@ -38,6 +38,8 @@ class ApplicationModel: NSObject {
         case selectedDevices
     }
 
+    var isConnected: Bool = false
+
     var devices: [SerialDevice] {
         return connectedDevices.union(selectedDevices)
             .map { device in
@@ -62,22 +64,43 @@ class ApplicationModel: NSObject {
     private var selectedDevices: Set<String> {
         didSet {
             keyedDefaults.set(Array(selectedDevices), forKey: .selectedDevices)
+            update()
         }
     }
 
-    private var connectedDevices: Set<String> = []
+    private var connectedDevices: Set<String> = [] {
+        didSet {
+            update()
+        }
+    }
+
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
+    private let server: Server = Server()
     private let serialDeviceMonitor = SerialDeviceMonitor()
 
     override init() {
         selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
         super.init()
+        server.delegate = self
         serialDeviceMonitor.delegate = self
+        server.start()
         serialDeviceMonitor.start()
     }
 
     @MainActor func quit() {
         NSApplication.shared.terminate(nil)
+    }
+
+    func update() {
+        server.setDevices(selectedDevices.intersection(connectedDevices).sorted())
+    }
+
+}
+
+extension ApplicationModel: ServerDelegate {
+
+    func server(server: Server, didChangeConnectionState isConnected: Bool) {
+        self.isConnected = isConnected
     }
 
 }

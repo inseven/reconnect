@@ -28,7 +28,7 @@ class BrowserModel {
         return name(for: path)
     }
 
-    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
+    let fileServer: FileServer
 
     var drives: [FileServer.DriveInfo] = []
     var files: [FileServer.DirectoryEntry] = []
@@ -48,11 +48,8 @@ class BrowserModel {
 
     private var navigationStack = NavigationStack()
 
-    init() {
-        guard fileServer.connect() else {
-            lastError = ReconnectError.unknown
-            return
-        }
+    init(fileServer: FileServer) {
+        self.fileServer = fileServer
     }
 
     func start() async {
