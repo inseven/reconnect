@@ -126,7 +126,7 @@ echo "$APPLE_DISTRIBUTION_CERTIFICATE_PASSWORD" | build-tools import-base64-cert
 echo "$MACOS_DEVELOPER_INSTALLER_CERTIFICATE_PASSWORD" | build-tools import-base64-certificate --password "$KEYCHAIN_PATH" "$MACOS_DEVELOPER_INSTALLER_CERTIFICATE_BASE64"
 
 # Install the provisioning profiles.
-build-tools install-provisioning-profile "Reconnect_Mac_App_Store_Profile.provisionprofile"
+build-tools install-provisioning-profile "profiles/Reconnect_Developer_ID_Profile.provisionprofile"
 
 # Build and archive the macOS project.
 sudo xcode-select --switch "$MACOS_XCODE_PATH"
@@ -144,13 +144,28 @@ xcodebuild \
     -exportPath "$BUILD_DIRECTORY" \
     -exportOptionsPlist "ExportOptions.plist"
 
-APP_BASENAME="Reconnect.app"
-APP_PATH="$BUILD_DIRECTORY/$APP_BASENAME"
-PKG_PATH="$BUILD_DIRECTORY/Reconnect.pkg"
+# Apple recommends we use ditto to prepare zips for notarization.
+# https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow
+RELEASE_ZIP_BASENAME="Reconnect-$VERSION_NUMBER-$BUILD_NUMBER.zip"
+RELEASE_ZIP_PATH="$BUILD_DIRECTORY/$RELEASE_ZIP_BASENAME"
+pushd "$BUILD_DIRECTORY"
+/usr/bin/ditto -c -k --keepParent "Reconnect.app" "$RELEASE_ZIP_BASENAME"
+rm -r "Reconnect.app"
+popd
 
 # Install the private key.
 mkdir -p ~/.appstoreconnect/private_keys/
 echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8"
+
+# Notarize the app.
+# xcrun notarytool submit "$ZIP_PATH" \
+#     --key "$API_KEY_PATH" \
+#     --key-id "$APPLE_API_KEY_ID" \
+#     --issuer "$APPLE_API_KEY_ISSUER_ID" \
+#     --output-format json \
+#     --wait | tee command-notarization-response.json
+# NOTARIZATION_ID=`cat command-notarization-response.json | jq -r ".id"`
+# NOTARIZATION_RESPONSE=`cat command-notarization-response.json | jq -r ".status"`
 
 # Archive the build directory.
 ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
@@ -167,6 +182,6 @@ if $RELEASE ; then
         --pre-release \
         --push \
         --exec "${RELEASE_SCRIPT_PATH}" \
-        "${PKG_PATH}" "${ZIP_PATH}"
+        "${APP_ZIP_PATH}" "${ZIP_PATH}"
 
 fi
