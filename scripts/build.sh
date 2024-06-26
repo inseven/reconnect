@@ -184,7 +184,6 @@ if $RELEASE ; then
     changes \
         release \
         --skip-if-empty \
-        --pre-release \
         --push \
         --exec "${RELEASE_SCRIPT_PATH}" \
         "${RELEASE_ZIP_PATH}" "${ZIP_PATH}"
