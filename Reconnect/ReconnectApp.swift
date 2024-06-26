@@ -46,12 +46,6 @@ struct ReconnectApp: App {
             }
         }
 
-        Window("Settings", id: "settings") {
-            SettingsView()
-        }
-        .environment(applicationModel)
-        .handlesExternalEvents(matching: [.settings])
-
         Window("My Psion", id: "browser") {
             BrowserView()
         }

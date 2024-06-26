@@ -20,27 +20,77 @@ import SwiftUI
 
 import Interact
 
-@Observable
-class ApplicationModel {
+@MainActor @Observable
+class ApplicationModel: NSObject {
 
-    enum SettingsKey: String {
-        case device
+    struct SerialDevice: Identifiable {
+
+        var id: String {
+            return path
+        }
+
+        var path: String
+        var available: Bool
+        var enabled: Binding<Bool>
     }
 
-    @MainActor var device: String {
+    enum SettingsKey: String {
+        case selectedDevices
+    }
+
+    var devices: [SerialDevice] {
+        return connectedDevices.union(selectedDevices)
+            .map { device in
+                let binding: Binding<Bool> = Binding {
+                    return self.selectedDevices.contains(device)
+                } set: { newValue in
+                    if newValue {
+                        self.selectedDevices.insert(device)
+                    } else {
+                        self.selectedDevices.remove(device)
+                    }
+                }
+                return SerialDevice(path: device,
+                                    available: connectedDevices.contains(device),
+                                    enabled: binding)
+            }
+            .sorted { device1, device2 in
+                return device1.path.localizedStandardCompare(device2.path) == .orderedAscending
+            }
+    }
+
+    private var selectedDevices: Set<String> {
         didSet {
-            keyedDefaults.set(device, forKey: .device)
+            keyedDefaults.set(Array(selectedDevices), forKey: .selectedDevices)
         }
     }
 
+    private var connectedDevices: Set<String> = []
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
+    private let serialDeviceMonitor = SerialDeviceMonitor()
 
-    @MainActor init() {
-        device = keyedDefaults.string(forKey: .device, default: "")
+    override init() {
+        selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
+        super.init()
+        serialDeviceMonitor.delegate = self
+        serialDeviceMonitor.start()
     }
 
     @MainActor func quit() {
         NSApplication.shared.terminate(nil)
+    }
+
+}
+
+extension ApplicationModel: SerialDeviceMonitorDelegate {
+
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
+        connectedDevices.insert(device)
+
+    }
+    
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
+        connectedDevices.remove(device)
     }
 
 }

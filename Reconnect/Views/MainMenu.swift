@@ -41,11 +41,16 @@ struct MainMenu: View {
         } label: {
             Text("About...")
         }
-        Button("Settings...") {
-            openURL(.settings)
+        Menu("Settings") {
+            ForEach(applicationModel.devices) { device in
+                Toggle(isOn: device.enabled) {
+                    Text(device.path)
+                        .foregroundStyle(device.available ? .primary : .secondary)
+                }
+            }
+            Divider()
+            Toggle("Open at Login", isOn: $application.openAtLogin)
         }
-        Divider()
-        Toggle("Open at Login", isOn: $application.openAtLogin)
         Divider()
         Button("Quit") {
             applicationModel.quit()
