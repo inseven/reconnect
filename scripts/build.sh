@@ -157,14 +157,16 @@ mkdir -p ~/.appstoreconnect/private_keys/
 echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o ~/".appstoreconnect/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8"
 
 # Notarize the app.
-# xcrun notarytool submit "$ZIP_PATH" \
-#     --key "$API_KEY_PATH" \
-#     --key-id "$APPLE_API_KEY_ID" \
-#     --issuer "$APPLE_API_KEY_ISSUER_ID" \
-#     --output-format json \
-#     --wait | tee command-notarization-response.json
-# NOTARIZATION_ID=`cat command-notarization-response.json | jq -r ".id"`
-# NOTARIZATION_RESPONSE=`cat command-notarization-response.json | jq -r ".status"`
+xcrun notarytool submit "$ZIP_PATH" \
+    --output-format json \
+    --wait | tee command-notarization-response.json
+NOTARIZATION_ID=`cat command-notarization-response.json | jq -r ".id"`
+NOTARIZATION_RESPONSE=`cat command-notarization-response.json | jq -r ".status"`
+
+if [ "$NOTARIZATION_RESPONSE" != "Accepted" ] ; then
+    echo "Failed to notarize command."
+    exit 1
+fi
 
 # Archive the build directory.
 ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
