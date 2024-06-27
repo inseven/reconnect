@@ -28,6 +28,7 @@ SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
 BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
 TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
+ARCHIVES_DIRECTORY="${ROOT_DIRECTORY}/archives"
 SPARKLE_DIRECTORY="${SCRIPTS_DIRECTORY}/Sparkle"
 
 KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
@@ -173,20 +174,20 @@ if [ "$NOTARIZATION_RESPONSE" != "Accepted" ] ; then
     exit 1
 fi
 
-# Build Sparkle so we can sign the build and generate an appcast.
+# Build Sparkle.
 cd "$SPARKLE_DIRECTORY"
 xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast SYMROOT=`pwd`/.build
 GENERATE_APPCAST=`pwd`/.build/Debug/generate_appcast
 
 SPARKLE_PRIVATE_KEY_FILE="$TEMPORARY_DIRECTORY/private-key-file"
-echo -n "$SPARKLE_PRIVATE_KEY" | base64 --decode -o "$SPARKLE_PRIVATE_KEY_FILE"
+echo -n "$SPARKLE_PRIVATE_KEY_BASE64" | base64 --decode -o "$SPARKLE_PRIVATE_KEY_FILE"
 
-# SPARKLE CALLS THIS ARCHIVES
+# Generate the appcast.
 cd "$ROOT_DIRECTORY"
-mkdir "releases"
-cp "$RELEASE_ZIP_PATH" "releases"
-"$GENERATE_APPCAST" --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" "releases"
-APPCAST_PATH="$ROOT_DIRECTORY/releases/appcast.xml"
+mkdir -p "$ARCHIVES_DIRECTORY"
+cp "$RELEASE_ZIP_PATH" "$ARCHIVES_DIRECTORY"
+"$GENERATE_APPCAST" --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" "$ARCHIVES_DIRECTORY"
+APPCAST_PATH="$ARCHIVES_DIRECTORY/appcast.xml"
 cp "$APPCAST_PATH" "$BUILD_DIRECTORY"
 
 # Archive the build directory.
