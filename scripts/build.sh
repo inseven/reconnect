@@ -175,8 +175,9 @@ fi
 
 # Build Sparkle so we can sign the build and generate an appcast.
 cd "$SPARKLE_DIRECTORY"
-xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast
-./.build/artifacts/sparkle/Sparkle/bin/generate_appcast
+# xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast
+xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast SYMROOT=`pwd`/.build
+./.build/Debug/generate_appcast
 
 # Archive the build directory.
 cd "$ROOT_DIRECTORY"
