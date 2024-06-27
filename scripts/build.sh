@@ -178,11 +178,13 @@ cd "$SPARKLE_DIRECTORY"
 xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast SYMROOT=`pwd`/.build
 GENERATE_APPCAST=`pwd`/.build/Debug/generate_appcast
 
+SPARKLE_PRIVATE_KEY_FILE="$TEMPORARY_DIRECTORY/private-key-file"
+echo -n "$SPARKLE_PRIVATE_KEY" | base64 --decode -o "$SPARKLE_PRIVATE_KEY_FILE"
+
 cd "$ROOT_DIRECTORY"
 mkdir "releases"
 cp "$RELEASE_ZIP_PATH" "releases"
-cd "releases"
-"$GENERATE_APPCAST"
+"$GENERATE_APPCAST" --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" "releases"
 
 # Archive the build directory.
 cd "$ROOT_DIRECTORY"
