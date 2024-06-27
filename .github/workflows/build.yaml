@@ -50,7 +50,7 @@ jobs:
         if-no-files-found: error
 
   sparkle-update:
-    needs: build
+    needs: macos-build
     if: ${{ github.ref == 'refs/heads/main' }}
 
     runs-on: ubuntu-latest
