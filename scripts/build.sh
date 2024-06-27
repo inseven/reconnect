@@ -181,10 +181,13 @@ GENERATE_APPCAST=`pwd`/.build/Debug/generate_appcast
 SPARKLE_PRIVATE_KEY_FILE="$TEMPORARY_DIRECTORY/private-key-file"
 echo -n "$SPARKLE_PRIVATE_KEY" | base64 --decode -o "$SPARKLE_PRIVATE_KEY_FILE"
 
+# SPARKLE CALLS THIS ARCHIVES
 cd "$ROOT_DIRECTORY"
 mkdir "releases"
 cp "$RELEASE_ZIP_PATH" "releases"
 "$GENERATE_APPCAST" --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" "releases"
+APPCAST_PATH="$ROOT_DIRECTORY/releases/appcast.xml"
+cp "$APPCAST_PATH" "$BUILD_DIRECTORY"
 
 # Archive the build directory.
 cd "$ROOT_DIRECTORY"
@@ -201,6 +204,6 @@ if $RELEASE ; then
         --skip-if-empty \
         --push \
         --exec "${RELEASE_SCRIPT_PATH}" \
-        "${RELEASE_ZIP_PATH}" "${ZIP_PATH}"
+        "${RELEASE_ZIP_PATH}" "${ZIP_PATH}" "$BUILD_DIRECTORY/appcast.xml"
 
 fi
