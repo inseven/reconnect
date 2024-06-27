@@ -173,9 +173,6 @@ if [ "$NOTARIZATION_RESPONSE" != "Accepted" ] ; then
     exit 1
 fi
 
-# List all the files in the build directory.
-find "$BUILD_DIRECTORY"
-
 # Build Sparkle so we can sign the build and generate an appcast.
 cd "$SPARKLE_DIRECTORY"
 xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast
