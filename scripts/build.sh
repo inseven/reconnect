@@ -182,6 +182,7 @@ xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast
 ./.build/artifacts/sparkle/Sparkle/bin/generate_appcast
 
 # Archive the build directory.
+cd "$ROOT_DIRECTORY"
 ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
 ZIP_PATH="${BUILD_DIRECTORY}/${ZIP_BASENAME}"
 pushd "${BUILD_DIRECTORY}"
