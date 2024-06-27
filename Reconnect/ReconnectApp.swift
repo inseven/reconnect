@@ -20,22 +20,37 @@ import SwiftUI
 
 import Diligence
 import Interact
+import Sparkle
 
-struct ContentView: View {
+// This view model class publishes when new updates can be checked by the user
+final class CheckForUpdatesViewModel: ObservableObject {
+    @Published var canCheckForUpdates = false
 
-    var applicationModel: ApplicationModel
-    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
-
-    var body: some View {
-        if applicationModel.isConnected {
-            BrowserView(fileServer: fileServer)
-        } else {
-            ContentUnavailableView("Not Connected", systemImage: "star")
-        }
+    init(updater: SPUUpdater) {
+        updater.publisher(for: \.canCheckForUpdates)
+            .assign(to: &$canCheckForUpdates)
     }
-
 }
 
+// This is the view for the Check for Updates menu item
+// Note this intermediate view is necessary for the disabled state on the menu item to work properly before Monterey.
+// See https://stackoverflow.com/questions/68553092/menu-not-updating-swiftui-bug for more info
+struct CheckForUpdatesView: View {
+    @ObservedObject private var checkForUpdatesViewModel: CheckForUpdatesViewModel
+    private let updater: SPUUpdater
+
+    init(updater: SPUUpdater) {
+        self.updater = updater
+
+        // Create our view model for our CheckForUpdatesView
+        self.checkForUpdatesViewModel = CheckForUpdatesViewModel(updater: updater)
+    }
+
+    var body: some View {
+        Button("Check for Updates…", action: updater.checkForUpdates)
+            .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
+    }
+}
 
 @main
 struct ReconnectApp: App {

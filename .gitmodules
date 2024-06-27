@@ -16,3 +16,6 @@
 [submodule "dependencies/interact"]
 	path = dependencies/interact
 	url = https://github.com/inseven/interact.git
+[submodule "scripts/Sparkle"]
+	path = scripts/Sparkle
+	url = https://github.com/sparkle-project/Sparkle
