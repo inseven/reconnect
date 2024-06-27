@@ -172,6 +172,9 @@ if [ "$NOTARIZATION_RESPONSE" != "Accepted" ] ; then
     exit 1
 fi
 
+# List all the files in the build directory.
+find "$BUILD_DIRECTORY"
+
 # Archive the build directory.
 ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
 ZIP_PATH="${BUILD_DIRECTORY}/${ZIP_BASENAME}"

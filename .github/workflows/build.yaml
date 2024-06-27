@@ -35,6 +35,8 @@ jobs:
         APPLE_API_KEY_ISSUER_ID: ${{ secrets.PERSONAL_APPLE_API_KEY_ISSUER_ID }}
         APPLE_API_KEY_ID: ${{ secrets.PERSONAL_APPLE_API_KEY_ID }}
 
+        SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         RELEASE: ${{ github.ref == 'refs/heads/main' }}
 
