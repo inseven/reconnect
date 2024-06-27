@@ -34,6 +34,7 @@ ARCHIVE_PATH="${BUILD_DIRECTORY}/Reconnect.xcarchive"
 ENV_PATH="${ROOT_DIRECTORY}/.env"
 
 RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
+SPARKLE_PATH="${SCRIPTS_DIRECTORY}/Sparkle"
 
 IOS_XCODE_PATH=${IOS_XCODE_PATH:-/Applications/Xcode.app}
 MACOS_XCODE_PATH=${MACOS_XCODE_PATH:-/Applications/Xcode.app}
@@ -174,6 +175,11 @@ fi
 
 # List all the files in the build directory.
 find "$BUILD_DIRECTORY"
+
+# Build Sparkle so we can sign the build and generate an appcast.
+cd "$SPARKLE_DIRECTORY"
+xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast
+./.build/artifacts/sparkle/Sparkle/bin/generate_appcast
 
 # Archive the build directory.
 ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
