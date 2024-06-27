@@ -19,6 +19,7 @@
 import SwiftUI
 
 import Interact
+import Sparkle
 
 @MainActor @Observable
 class ApplicationModel: NSObject {
@@ -74,6 +75,10 @@ class ApplicationModel: NSObject {
         }
     }
 
+    let updaterController = SPUStandardUpdaterController(startingUpdater: false,
+                                                         updaterDelegate: nil,
+                                                         userDriverDelegate: nil)
+
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
     private let server: Server = Server()
     private let serialDeviceMonitor = SerialDeviceMonitor()
@@ -83,8 +88,13 @@ class ApplicationModel: NSObject {
         super.init()
         server.delegate = self
         serialDeviceMonitor.delegate = self
+        start()
+    }
+
+    func start() {
         server.start()
         serialDeviceMonitor.start()
+        updaterController.startUpdater()
     }
 
     @MainActor func quit() {
