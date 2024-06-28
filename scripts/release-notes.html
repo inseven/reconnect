@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Release Notes</title>
+    </head>
+    <body>
+        {% for release in releases -%}
+            <h1>{{ release.version }}{% if not release.is_released %} (Unreleased){% endif %}</h1>
+            {% for section in release.sections %}
+                <h2>{{ section.title }}</h2>
+                <ul>
+                    {% for change in section.changes | reverse -%}
+                        <li>{{ change.description }}{% if change.scope %}{{ change.scope }}{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        {% endfor %}
+    </body>
+</html>

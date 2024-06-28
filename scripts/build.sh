@@ -37,6 +37,8 @@ ENV_PATH="${ROOT_DIRECTORY}/.env"
 
 RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
 
+RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.html"
+
 IOS_XCODE_PATH=${IOS_XCODE_PATH:-/Applications/Xcode.app}
 MACOS_XCODE_PATH=${MACOS_XCODE_PATH:-/Applications/Xcode.app}
 
@@ -173,6 +175,10 @@ if [ "$NOTARIZATION_RESPONSE" != "Accepted" ] ; then
     echo "Failed to notarize command."
     exit 1
 fi
+
+# Generate the release notes.
+cd "$BUILD_DIRECTORY"
+changes notes --template "$RELEASE_NOTES_TEMPLATE_PATH" >> release-notes.html
 
 # Build Sparkle.
 cd "$SPARKLE_DIRECTORY"
