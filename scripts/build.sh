@@ -149,7 +149,8 @@ xcodebuild \
 
 # Apple recommends we use ditto to prepare zips for notarization.
 # https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow
-RELEASE_ZIP_BASENAME="Reconnect-$VERSION_NUMBER-$BUILD_NUMBER.zip"
+RELEASE_BASENAME="Reconnect-$VERSION_NUMBER-$BUILD_NUMBER"
+RELEASE_ZIP_BASENAME="$RELEASE_BASENAME.zip"
 RELEASE_ZIP_PATH="$BUILD_DIRECTORY/$RELEASE_ZIP_BASENAME"
 pushd "$BUILD_DIRECTORY"
 /usr/bin/ditto -c -k --keepParent "Reconnect.app" "$RELEASE_ZIP_BASENAME"
@@ -178,7 +179,8 @@ fi
 
 # Generate the release notes.
 cd "$BUILD_DIRECTORY"
-changes notes --template "$RELEASE_NOTES_TEMPLATE_PATH" >> release-notes.html
+RELEASE_NOTES_PATH="$BUILD_DIRECTORY/$RELEASE_BASENAME.html"
+changes notes --template "$RELEASE_NOTES_TEMPLATE_PATH" >> "$RELEASE_NOTES_PATH"
 
 # Build Sparkle.
 cd "$SPARKLE_DIRECTORY"
@@ -192,6 +194,7 @@ echo -n "$SPARKLE_PRIVATE_KEY_BASE64" | base64 --decode -o "$SPARKLE_PRIVATE_KEY
 cd "$ROOT_DIRECTORY"
 mkdir -p "$ARCHIVES_DIRECTORY"
 cp "$RELEASE_ZIP_PATH" "$ARCHIVES_DIRECTORY"
+cp "$RELEASE_NOTES_PATH" "$ARCHIVES_DIRECTORY"
 "$GENERATE_APPCAST" --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" "$ARCHIVES_DIRECTORY"
 APPCAST_PATH="$ARCHIVES_DIRECTORY/appcast.xml"
 cp "$APPCAST_PATH" "$BUILD_DIRECTORY"
