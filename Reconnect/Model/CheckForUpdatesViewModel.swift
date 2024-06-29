@@ -18,20 +18,15 @@
 
 import SwiftUI
 
-struct ContentView: View {
+import Sparkle
 
-    var applicationModel: ApplicationModel
-    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
+// This view model class publishes when new updates can be checked by the user
+final class CheckForUpdatesViewModel: ObservableObject {
+    @Published var canCheckForUpdates = false
 
-    var body: some View {
-        VStack {
-            if applicationModel.isConnected {
-                BrowserView(fileServer: fileServer)
-            } else {
-                ContentUnavailableView("Not Connected", systemImage: "star")
-            }
-        }
-        .showsDockIcon()
+    init(updater: SPUUpdater) {
+        updater.publisher(for: \.canCheckForUpdates)
+            .assign(to: &$canCheckForUpdates)
     }
-
 }
+
