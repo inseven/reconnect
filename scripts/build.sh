@@ -37,6 +37,8 @@ ENV_PATH="${ROOT_DIRECTORY}/.env"
 
 RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
 
+RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.html"
+
 IOS_XCODE_PATH=${IOS_XCODE_PATH:-/Applications/Xcode.app}
 MACOS_XCODE_PATH=${MACOS_XCODE_PATH:-/Applications/Xcode.app}
 
@@ -147,7 +149,8 @@ xcodebuild \
 
 # Apple recommends we use ditto to prepare zips for notarization.
 # https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution/customizing_the_notarization_workflow
-RELEASE_ZIP_BASENAME="Reconnect-$VERSION_NUMBER-$BUILD_NUMBER.zip"
+RELEASE_BASENAME="Reconnect-$VERSION_NUMBER-$BUILD_NUMBER"
+RELEASE_ZIP_BASENAME="$RELEASE_BASENAME.zip"
 RELEASE_ZIP_PATH="$BUILD_DIRECTORY/$RELEASE_ZIP_BASENAME"
 pushd "$BUILD_DIRECTORY"
 /usr/bin/ditto -c -k --keepParent "Reconnect.app" "$RELEASE_ZIP_BASENAME"
@@ -186,6 +189,7 @@ echo -n "$SPARKLE_PRIVATE_KEY_BASE64" | base64 --decode -o "$SPARKLE_PRIVATE_KEY
 cd "$ROOT_DIRECTORY"
 mkdir -p "$ARCHIVES_DIRECTORY"
 cp "$RELEASE_ZIP_PATH" "$ARCHIVES_DIRECTORY"
+changes notes --template "$RELEASE_NOTES_TEMPLATE_PATH" >> "$ARCHIVES_DIRECTORY/$RELEASE_BASENAME.html"
 "$GENERATE_APPCAST" --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" "$ARCHIVES_DIRECTORY"
 APPCAST_PATH="$ARCHIVES_DIRECTORY/appcast.xml"
 cp "$APPCAST_PATH" "$BUILD_DIRECTORY"
@@ -205,6 +209,6 @@ if $RELEASE ; then
         --skip-if-empty \
         --push \
         --exec "${RELEASE_SCRIPT_PATH}" \
-        "${RELEASE_ZIP_PATH}" "${ZIP_PATH}" "$BUILD_DIRECTORY/appcast.xml"
+        "${RELEASE_ZIP_PATH}" "${ZIP_PATH}" "$BUILD_DIRECTORY/release-notes.html" "$BUILD_DIRECTORY/appcast.xml"
 
 fi

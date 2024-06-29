@@ -1,0 +1,10 @@
+{% for release in releases -%}
+    {% for section in release.sections %}
+        <strong>{{ section.title }}</strong>
+        <ul>
+            {% for change in section.changes | reverse -%}
+                <li>{{ change.description }}{% if change.scope %}{{ change.scope }}{% endif %}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endfor %}
