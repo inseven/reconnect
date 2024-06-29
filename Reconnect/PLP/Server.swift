@@ -101,15 +101,23 @@ class Server {
             return
         }
 
-        print("Setting devices \(devices)")
+        print("Updating serial devices \(devices)")
 
-        lock.withLock {
+        let needsRestart = lock.withLock {
+            guard self.devices != devices else {
+                return false
+            }
             self.devices = devices
+            return true
         }
 
-        print("Signalling thread...")
+        guard needsRestart else {
+            print("Serial devices haven't changed; ignoring.")
+            return
+        }
+
+        print("Restarting ncpd...")
         pthread_kill(threadID, SIGINT)
-        print("DONE?")
     }
 
 }
