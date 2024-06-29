@@ -53,6 +53,13 @@ struct MainMenu: View {
         }
         Divider()
         CheckForUpdatesView(updater: applicationModel.updaterController.updater)
+
+        Divider()
+
+        Button("Show icon") {
+            NSApp.setActivationPolicy(.regular)
+        }
+
         Divider()
         Button("Quit") {
             applicationModel.quit()

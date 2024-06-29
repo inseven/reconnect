@@ -18,20 +18,45 @@
 
 import SwiftUI
 
-struct ContentView: View {
+fileprivate class DockIconManager {
 
-    var applicationModel: ApplicationModel
-    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
+    static var shared: DockIconManager = {
+        return DockIconManager()
+    }()
 
-    var body: some View {
-        VStack {
-            if applicationModel.isConnected {
-                BrowserView(fileServer: fileServer)
+    @MainActor var activeRequests: Int = 0 {
+        didSet {
+            if activeRequests > 0 {
+                NSApp.setActivationPolicy(.regular)
             } else {
-                ContentUnavailableView("Not Connected", systemImage: "star")
+                NSApp.setActivationPolicy(.accessory)
             }
         }
-        .showsDockIcon()
+    }
+
+    func requestDockIcon() async {
+        await MainActor.run {
+            activeRequests = activeRequests + 1
+        }
+        defer {
+            Task { @MainActor in
+                activeRequests = activeRequests - 1
+            }
+        }
+        while !Task.isCancelled {
+            try? await Task.sleep(for: .seconds(60*60*24))
+        }
+    }
+
+}
+
+extension View {
+
+    func showsDockIcon() -> some View {
+        self
+            .task {
+                await DockIconManager.shared.requestDockIcon()
+            }
     }
 
 }
