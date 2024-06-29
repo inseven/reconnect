@@ -177,11 +177,6 @@ if [ "$NOTARIZATION_RESPONSE" != "Accepted" ] ; then
     exit 1
 fi
 
-# Generate the release notes.
-cd "$BUILD_DIRECTORY"
-RELEASE_NOTES_PATH="$BUILD_DIRECTORY/$RELEASE_BASENAME.html"
-changes notes --template "$RELEASE_NOTES_TEMPLATE_PATH" >> "$RELEASE_NOTES_PATH"
-
 # Build Sparkle.
 cd "$SPARKLE_DIRECTORY"
 xcodebuild -project Sparkle.xcodeproj -scheme generate_appcast SYMROOT=`pwd`/.build
@@ -194,7 +189,7 @@ echo -n "$SPARKLE_PRIVATE_KEY_BASE64" | base64 --decode -o "$SPARKLE_PRIVATE_KEY
 cd "$ROOT_DIRECTORY"
 mkdir -p "$ARCHIVES_DIRECTORY"
 cp "$RELEASE_ZIP_PATH" "$ARCHIVES_DIRECTORY"
-cp "$RELEASE_NOTES_PATH" "$ARCHIVES_DIRECTORY"
+changes notes --template "$RELEASE_NOTES_TEMPLATE_PATH" >> "$BUILD_DIRECTORY/$RELEASE_BASENAME.html"
 "$GENERATE_APPCAST" --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" "$ARCHIVES_DIRECTORY"
 APPCAST_PATH="$ARCHIVES_DIRECTORY/appcast.xml"
 cp "$APPCAST_PATH" "$BUILD_DIRECTORY"
