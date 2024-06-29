@@ -1,23 +1,10 @@
-<html>
-    <head>
-        <title>Release Notes</title>
-        <style>
-            body {
-                font-family: -apple-system;
-                font-weight: 300;
-            }
-        </style>
-    </head>
-    <body>
-        {% for release in releases -%}
-            {% for section in release.sections %}
-                <strong>{{ section.title }}</strong>
-                <ul>
-                    {% for change in section.changes | reverse -%}
-                        <li>{{ change.description }}{% if change.scope %}{{ change.scope }}{% endif %}</li>
-                    {% endfor %}
-                </ul>
+{% for release in releases -%}
+    {% for section in release.sections %}
+        <strong>{{ section.title }}</strong>
+        <ul>
+            {% for change in section.changes | reverse -%}
+                <li>{{ change.description }}{% if change.scope %}{{ change.scope }}{% endif %}</li>
             {% endfor %}
-        {% endfor %}
-    </body>
-</html>
+        </ul>
+    {% endfor %}
+{% endfor %}
