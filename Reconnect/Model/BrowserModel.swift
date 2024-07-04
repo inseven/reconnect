@@ -182,7 +182,6 @@ class BrowserModel {
             print("Downloading file at path '\(path)' to destination path '\(destinationURL.path)'...")
             transfersModel.add(filename) { transfer in
                 try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: destinationURL.path) { progress, size in
-                    print("\(progress) / \(size)")
                     transfer.setStatus(.active(Float(progress) / Float(size)))
                     return .continue
                 }
