@@ -16,33 +16,33 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import SwiftUI
 
-import plpftp
+struct TransferRow: View {
 
-enum ReconnectError: Error {
-    case unknown
-    case rfsvError(rfsv.errs)
-    case unknownMediaType
-    case invalidFilePath
-    case unknownFileSize
-}
+    let transfer: Transfer
 
-extension ReconnectError: LocalizedError {
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(transfer.title)
+            switch transfer.status {
+            case .waiting:
+                Text("Waiting...")
+                    .foregroundStyle(.secondary)
+            case .active(let progress):
+                ProgressView(value: progress)
+            case .complete:
+                Text("Complete!")
+                    .foregroundStyle(.secondary)
+            case .cancelled:
+                Text("Cancelled")
+            case .failed(let error):
+                Text(String(describing: error))
+                    .foregroundStyle(.secondary)
+            }
 
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "Unknown error."
-        case .rfsvError(let error):
-            return error.localizedDescription
-        case .unknownMediaType:
-            return "Unknown media type."
-        case .invalidFilePath:
-            return "Invalid file path."
-        case .unknownFileSize:
-            return "Unknown file size."
         }
+        .padding()
     }
 
 }

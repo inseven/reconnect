@@ -35,6 +35,7 @@ struct MainMenu: View {
         } label: {
             Text("My Psion...")
         }
+        .disabled(!applicationModel.isConnected)
         Divider()
         Button {
             openURL(.about)

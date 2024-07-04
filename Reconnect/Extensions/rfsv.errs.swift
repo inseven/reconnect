@@ -18,30 +18,26 @@
 
 import Foundation
 
-import plpftp
+import plptools
 
-enum ReconnectError: Error {
-    case unknown
-    case rfsvError(rfsv.errs)
-    case unknownMediaType
-    case invalidFilePath
-    case unknownFileSize
-}
+extension rfsv.errs {
 
-extension ReconnectError: LocalizedError {
+    var localizedDescription: String {
+        switch self.rawValue {
+        case -33:
+            return "File doesn't exist."
+        case -38:
+            return "invalid name"
+        case -62:
+            return "File not ready."
+        default:
+            return "Unknown remote file server error (\(self.rawValue))."
+        }
+    }
 
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "Unknown error."
-        case .rfsvError(let error):
-            return error.localizedDescription
-        case .unknownMediaType:
-            return "Unknown media type."
-        case .invalidFilePath:
-            return "Invalid file path."
-        case .unknownFileSize:
-            return "Unknown file size."
+    func check() throws {
+        if self.rawValue != 0 {
+            throw ReconnectError.rfsvError(self)
         }
     }
 

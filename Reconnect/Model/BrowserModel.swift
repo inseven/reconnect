@@ -28,6 +28,8 @@ class BrowserModel {
         return name(for: path)
     }
 
+    var transfersModel = TransfersModel()
+
     let fileServer: FileServer
 
     var drives: [FileServer.DriveInfo] = []
@@ -156,7 +158,7 @@ class BrowserModel {
     func delete(path: String) {
         Task {
             do {
-                if path.isDirectory {
+                if path.isWindowsDirectory {
                     try await fileServer.rmdir(path: path)
                 } else {
                     try await fileServer.remove(path: path)
@@ -177,11 +179,13 @@ class BrowserModel {
             let filename = path.windowsLastPathComponent
             let destinationURL = downloadsUrl.appendingPathComponent(filename)
 
-            do {
-                try await fileServer.copyFile(fromRemotePath: path, toLocalPath: destinationURL.path)
-            } catch {
-                print("Failed to download file at path '\(path)' to destination path '\(destinationURL.path)' with error \(error).")
-                lastError = error
+            print("Downloading file at path '\(path)' to destination path '\(destinationURL.path)'...")
+            transfersModel.add(filename) { transfer in
+                try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: destinationURL.path) { progress, size in
+                    transfer.setStatus(.active(Float(progress) / Float(size)))
+                    return .continue
+                }
+                transfer.setStatus(.complete)
             }
 
             do {
@@ -200,8 +204,14 @@ class BrowserModel {
                 }
                 let destinationPath = path + url.lastPathComponent
                 print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
-                try await fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath)
-                update()
+                transfersModel.add(url.lastPathComponent) { transfer in
+                    try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
+                        transfer.setStatus(.active(Float(progress) / Float(size)))
+                        return .continue
+                    }
+                    transfer.setStatus(.complete)
+                    self.update()
+                }
             } catch {
                 print("Failed to upload file with error \(error).")
                 lastError = error

@@ -18,31 +18,10 @@
 
 import Foundation
 
-import plpftp
+extension Array {
 
-enum ReconnectError: Error {
-    case unknown
-    case rfsvError(rfsv.errs)
-    case unknownMediaType
-    case invalidFilePath
-    case unknownFileSize
-}
-
-extension ReconnectError: LocalizedError {
-
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "Unknown error."
-        case .rfsvError(let error):
-            return error.localizedDescription
-        case .unknownMediaType:
-            return "Unknown media type."
-        case .invalidFilePath:
-            return "Invalid file path."
-        case .unknownFileSize:
-            return "Unknown file size."
-        }
+    func appending(_ element: Element) -> [Element] {
+        return self + [element]
     }
 
 }
