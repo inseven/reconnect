@@ -129,7 +129,6 @@ class FileServer {
 
     }
 
-    // TODO: This should be Int32
     private class FileTransferContext {
 
         let callback: (UInt32, UInt32) -> ProgressResponse

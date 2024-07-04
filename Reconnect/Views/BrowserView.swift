@@ -32,49 +32,6 @@ struct TransferRow: View {
 
 }
 
-struct TransfersButton: View {
-
-    let transfers: Transfers
-
-    @State var showPopover = false
-
-    var body: some View {
-        @Bindable var transfers = transfers
-        Button {
-            showPopover = true
-        } label: {
-            Label {
-                Text("Transfers")
-            } icon: {
-                if transfers.active {
-                    Image(systemName: "arrow.up.arrow.down")
-                        .foregroundStyle(.tint)
-                } else {
-                    Image(systemName: "arrow.up.arrow.down")
-                }
-            }
-        }
-        .disabled(transfers.transfers.isEmpty)
-        .popover(isPresented: $showPopover, arrowEdge: .bottom) {
-            VStack(spacing: 0) {
-                Text("Transfers")
-                    .padding()
-                Divider()
-                List(selection: $transfers.selection) {
-                    ForEach(transfers.transfers) { transfer in
-                        TransferRow(transfer: transfer)
-                    }
-                }
-                .scrollContentBackground(.hidden)
-                .frame(minHeight: 300)
-            }
-            .frame(minWidth: 400)
-            .background(.thinMaterial)
-        }
-    }
-
-}
-
 @MainActor
 struct BrowserView: View {
 

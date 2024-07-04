@@ -26,6 +26,7 @@
 		D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */; };
 		D84965062C1BFF1F00405656 /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = D84965052C1BFF1F00405656 /* Socket */; };
 		D8631DAB2C36867400344DC3 /* BrowserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */; };
+		D8631DAD2C3739E600344DC3 /* TransfersButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAC2C3739E600344DC3 /* TransfersButton.swift */; };
 		D86924C82C30964400A8492C /* DockIconManaager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86924C72C30964400A8492C /* DockIconManaager.swift */; };
 		D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87AAC892C27EB070091F442 /* FileServer.swift */; };
 		D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA732C28CDAD00E84BDA /* BrowserView.swift */; };
@@ -82,6 +83,7 @@
 		D84964F52C1BFCB700405656 /* ReconnectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITests.swift; sourceTree = "<group>"; };
 		D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserDetailView.swift; sourceTree = "<group>"; };
+		D8631DAC2C3739E600344DC3 /* TransfersButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersButton.swift; sourceTree = "<group>"; };
 		D86924C72C30964400A8492C /* DockIconManaager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockIconManaager.swift; sourceTree = "<group>"; };
 		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
 		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
@@ -152,6 +154,7 @@
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
 				D8D3E7A02C25410E003E696D /* MainMenu.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
+				D8631DAC2C3739E600344DC3 /* TransfersButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -437,6 +440,7 @@
 				D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */,
 				D8E31EB72C26E13E00350082 /* String.swift in Sources */,
 				D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */,
+				D8631DAD2C3739E600344DC3 /* TransfersButton.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
