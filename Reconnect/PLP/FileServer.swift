@@ -104,6 +104,19 @@ class FileServer {
         self.port = port
     }
 
+    private func perform<T>(action: @escaping () throws -> T) async throws -> T {
+        return try await withCheckedThrowingContinuation { continuation in
+            workQueue.async {
+                do {
+                    let result = try action()
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     private func syncQueue_connect() throws {
         guard self.client.connect(self.host, self.port) else {
             throw ReconnectError.unknown
@@ -144,19 +157,6 @@ class FileServer {
         return entries
     }
 
-    func dir(path: String) async throws -> [DirectoryEntry] {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
-                do {
-                    let result = try self.syncQueue_dir(path: path)
-                    continuation.resume(returning: result)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
     func syncQueue_copyFile(fromRemotePath remoteSourcePath: String, toLocalPath localDestinationPath: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
@@ -169,38 +169,12 @@ class FileServer {
         }
     }
 
-    func copyFile(fromRemotePath remoteSourcePath: String, toLocalPath localDestinationPath: String) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
-                do {
-                    try self.syncQueue_copyFile(fromRemotePath: remoteSourcePath, toLocalPath: localDestinationPath)
-                    continuation.resume()
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
     func syncQueue_mkdir(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
         let result = client.mkdir(path)
         guard result.rawValue == 0 else {
             throw ReconnectError.rfsvError(result)
-        }
-    }
-
-    func mkdir(path: String) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
-                do {
-                    try self.syncQueue_mkdir(path: path)
-                    continuation.resume()
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
         }
     }
 
@@ -213,38 +187,12 @@ class FileServer {
         }
     }
 
-    func rmdir(path: String) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
-                do {
-                    try self.syncQueue_rmdir(path: path)
-                    continuation.resume()
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
     func syncQueue_remove(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
         let result = client.remove(path)
         guard result.rawValue == 0 else {
             throw ReconnectError.rfsvError(result)
-        }
-    }
-
-    func remove(path: String) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
-                do {
-                    try self.syncQueue_remove(path: path)
-                    continuation.resume()
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
         }
     }
 
@@ -285,25 +233,49 @@ class FileServer {
                          name: String(cString: name))
     }
 
+    func dir(path: String) async throws -> [DirectoryEntry] {
+        return try await perform {
+            return try self.syncQueue_dir(path: path)
+        }
+    }
+
+    func copyFile(fromRemotePath remoteSourcePath: String, toLocalPath localDestinationPath: String) async throws {
+        try await perform {
+            try self.syncQueue_copyFile(fromRemotePath: remoteSourcePath, toLocalPath: localDestinationPath)
+        }
+    }
+
+    func mkdir(path: String) async throws {
+        try await perform {
+            try self.syncQueue_mkdir(path: path)
+        }
+    }
+
+    func rmdir(path: String) async throws {
+        try await perform {
+            try self.syncQueue_rmdir(path: path)
+        }
+    }
+
+    func remove(path: String) async throws {
+        try await perform {
+            try self.syncQueue_remove(path: path)
+        }
+    }
+
     func drives() async throws -> [DriveInfo] {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
+        try await perform {
+            var result: [DriveInfo] = []
+            for drive in try self.syncQueue_devlist() {
                 do {
-                    var result: [DriveInfo] = []
-                    for drive in try self.syncQueue_devlist() {
-                        do {
-                            result.append(try self.syncQueue_devinfo(drive: drive))
-                        } catch ReconnectError.rfsvError(let error) {
-                            if error.rawValue == -62 {
-                                continue
-                            }
-                        }
+                    result.append(try self.syncQueue_devinfo(drive: drive))
+                } catch ReconnectError.rfsvError(let error) {
+                    if error.rawValue == -62 {
+                        continue
                     }
-                    continuation.resume(returning: result)
-                } catch {
-                    continuation.resume(throwing: error)
                 }
             }
+            return result
         }
     }
 
