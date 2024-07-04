@@ -192,4 +192,21 @@ class BrowserModel {
         }
     }
 
+    func upload(url: URL) {
+        Task {
+            do {
+                guard let path else {
+                    throw ReconnectError.invalidFilePath
+                }
+                let destinationPath = path + url.lastPathComponent
+                print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
+                try await fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath)
+                update()
+            } catch {
+                print("Failed to upload file with error \(error).")
+                lastError = error
+            }
+        }
+    }
+
 }

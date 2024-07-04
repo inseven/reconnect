@@ -97,7 +97,17 @@ struct BrowserView: View {
                     }
                 }
             }
-
+            .onDrop(of: [.fileURL], isTargeted: Binding.constant(false)) { providers in
+                for provider in providers {
+                    _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                        guard let url = url else {
+                            return
+                        }
+                        model.upload(url: url)
+                    }
+                }
+                return true
+            }
         }
         .toolbar(id: "main") {
             ToolbarItem(id: "navigation", placement: .navigation) {

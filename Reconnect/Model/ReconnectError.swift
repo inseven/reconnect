@@ -24,6 +24,7 @@ enum ReconnectError: Error {
     case unknown
     case rfsvError(rfsv.errs)
     case unknownMediaType
+    case invalidFilePath
 }
 
 extension ReconnectError: LocalizedError {
@@ -36,6 +37,8 @@ extension ReconnectError: LocalizedError {
             return error.localizedDescription
         case .unknownMediaType:
             return "Unknown media type."
+        case .invalidFilePath:
+            return "Invalid file path."
         }
     }
 
@@ -47,6 +50,8 @@ extension rfsv.errs {
         switch self.rawValue {
         case -33:
             return "File doesn't exist."
+        case -38:
+            return "invalid name"
         case -62:
             return "File not ready."
         default:
