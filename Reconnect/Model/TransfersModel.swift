@@ -18,31 +18,29 @@
 
 import SwiftUI
 
-struct TransferRow: View {
+// TODO: MainActor?
+@Observable
+class TransfersModel {
 
-    let transfer: Transfer
+    var transfers: [Transfer] = []
+    var selection: UUID? = nil
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(transfer.title)
-            switch transfer.status {
-            case .waiting:
-                Text("Waiting...")
-                    .foregroundStyle(.secondary)
-            case .active(let progress):
-                ProgressView(value: progress)
-            case .complete:
-                Text("Complete!")
-                    .foregroundStyle(.secondary)
-            case .cancelled:
-                Text("Cancelled")
-            case .failed(let error):
-                Text(String(describing: error))
-                    .foregroundStyle(.secondary)
-            }
+    var isActive: Bool {
+        return transfers
+            .map { $0.isActive }
+            .reduce(false) { $0 || $1 }
+    }
 
-        }
-        .padding()
+    init() {
+    }
+
+    func add(_ title: String, action: @escaping (Transfer) async throws -> Void) {
+        transfers.append(Transfer(title: title, action: action))
+    }
+
+    func clear() {
+        self.transfers
+            .removeAll { !$0.isActive }
     }
 
 }

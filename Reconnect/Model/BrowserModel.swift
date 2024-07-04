@@ -18,60 +18,6 @@
 
 import SwiftUI
 
-actor Progress {
-    var value: Float = 0
-}
-
-@Observable
-class Transfer: Identifiable {
-
-    let id = UUID()
-
-    var title: String
-    var progress: Float = 0.0
-    var task: Task<Void, Never>? = nil
-
-    init(title: String, action: @escaping (Transfer) async throws -> Void) {
-        self.title = title
-        let task = Task {
-            do {
-                try await action(self)
-            } catch {
-                print("Failed with error \(error).")
-            }
-        }
-        self.task = task
-    }
-
-    func setProgress(_ progress: Float) {
-        DispatchQueue.main.async {
-            self.progress = progress
-        }
-    }
-
-}
-
-@Observable
-class Transfers {
-
-    var transfers: [Transfer] = []
-    var selection: UUID? = nil
-
-    var active: Bool {
-        return transfers
-            .map { $0.progress < 1.0 }
-            .reduce(false) { $0 || $1 }
-    }
-
-    init() {
-    }
-
-    func add(_ title: String, action: @escaping (Transfer) async throws -> Void) {
-        transfers.append(Transfer(title: title, action: action))
-    }
-
-}
-
 @MainActor @Observable
 class BrowserModel {
 
@@ -82,7 +28,7 @@ class BrowserModel {
         return name(for: path)
     }
 
-    var transfers = Transfers()
+    var transfersModel = TransfersModel()
 
     let fileServer: FileServer
 
@@ -234,12 +180,13 @@ class BrowserModel {
             let destinationURL = downloadsUrl.appendingPathComponent(filename)
 
             print("Downloading file at path '\(path)' to destination path '\(destinationURL.path)'...")
-            transfers.add(filename) { transfer in
+            transfersModel.add(filename) { transfer in
                 try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: destinationURL.path) { progress, size in
                     print("\(progress) / \(size)")
-                    transfer.setProgress(Float(progress) / Float(size))
+                    transfer.setStatus(.active(Float(progress) / Float(size)))
                     return .continue
                 }
+                transfer.setStatus(.complete)
                 print("Done.")
             }
 
@@ -259,12 +206,14 @@ class BrowserModel {
                 }
                 let destinationPath = path + url.lastPathComponent
                 print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
-                transfers.add(url.lastPathComponent) { transfer in
+                transfersModel.add(url.lastPathComponent) { transfer in
                     try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
-                        transfer.setProgress(Float(progress) / Float(size))
+                        transfer.setStatus(.active(Float(progress) / Float(size)))
                         return .continue
                     }
-                    self.update()  // TODO: Broadcast this instead?
+                    transfer.setStatus(.complete)
+                    self.update()
+                    print("Done.")
                 }
             } catch {
                 print("Failed to upload file with error \(error).")

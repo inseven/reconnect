@@ -85,7 +85,6 @@ class FileServer {
         let name: String?
     }
 
-    // TODO: Support initializing with DirEnt
     // TODO: Should this also contain the directory? (Seems leaky)
     struct DirectoryEntry: Identifiable, Hashable {
 

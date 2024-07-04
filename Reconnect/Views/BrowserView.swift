@@ -88,7 +88,7 @@ struct BrowserView: View {
             }
 
             ToolbarItem(id: "transfers") {
-                TransfersButton(transfers: model.transfers)
+                TransfersPopoverButton(transfers: model.transfersModel)
             }
 
             ToolbarItem(id: "action") {
