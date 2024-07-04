@@ -58,13 +58,12 @@ struct BrowserDetailView: View {
                 Button("Open") {
                     model.navigate(to: items.first!)
                 }
-                .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
+                .disabled(items.count != 1 || !(items.first?.isWindowsDirectory ?? false))
 
                 Divider()
 
                 Button("Download") {
                     for item in items {
-                        // TODO: Directories?
                         model.download(path: item)
                     }
                 }
@@ -80,7 +79,7 @@ struct BrowserDetailView: View {
                 guard
                     items.count == 1,
                     let item = items.first,
-                    item.isDirectory
+                    item.isWindowsDirectory
                 else {
                     return
                 }

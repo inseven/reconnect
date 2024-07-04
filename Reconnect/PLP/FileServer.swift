@@ -75,7 +75,6 @@ class FileServer {
         let name: String?
     }
 
-    // TODO: Should this also contain the directory? (Seems leaky)
     struct DirectoryEntry: Identifiable, Hashable {
 
         var id: String {
@@ -96,15 +95,8 @@ class FileServer {
             var entry = entry
             let name = String(cString: plpdirent_get_name(&entry))
             let attributes = FileAttributes(rawValue: entry.getAttr())
-
-            let filePath: String
-            switch attributes.contains(.directory) {
-            case true:
-                filePath = directoryPath + name + "\\"
-            case false:
-                filePath = directoryPath + name
-            }
-
+            let filePath = directoryPath
+                .appendingWindowsPathComponent(name, isDirectory: attributes.contains(.directory))
             var modificationTime = entry.getPsiTime()
             let modificationTimeInterval = TimeInterval(modificationTime.getTime())
             let modificationDate = Date(timeIntervalSince1970: modificationTimeInterval)
@@ -183,7 +175,7 @@ class FileServer {
         try syncQueue_connect()
         var entry = PlpDirent()
         try client.fgeteattr(path, &entry).check()
-        return DirectoryEntry(directoryPath: path, entry: entry)  // TODO: This doesn't create the correct path.
+        return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
     }
 
     func syncQueue_copyFile(fromRemotePath remoteSourcePath: String,
@@ -212,7 +204,7 @@ class FileServer {
         try syncQueue_connect()
         let attributes = try FileManager.default.attributesOfItem(atPath: localSourcePath)
         guard let size = attributes[.size] as? NSNumber else {
-            throw ReconnectError.unknown  // TODO: UGLY
+            throw ReconnectError.unknownFileSize
         }
         let o = FileTransferContext(size: UInt32(size.intValue), callback: callback)
         let context = Unmanaged.passUnretained(o).toOpaque()

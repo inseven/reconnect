@@ -20,12 +20,20 @@ import Foundation
 
 extension String {
 
-    var isDirectory: Bool {
-        return hasSuffix("\\")
+    static let windowsPathSeparator = "\\"
+
+    var deletingLastWindowsPathComponent: String {
+        return windowsPathComponents
+            .dropLast()
+            .joined(separator: .windowsPathSeparator)
     }
 
     var isRoot: Bool {
         return windowsPathComponents.count == 1
+    }
+
+    var isWindowsDirectory: Bool {
+        return hasSuffix(.windowsPathSeparator)
     }
 
     var windowsLastPathComponent: String {
@@ -40,4 +48,24 @@ extension String {
         let url = Bundle.main.url(forResource: resource, withExtension: nil)!
         try! self.init(contentsOf: url)
     }
+
+    func appendingWindowsPathComponent(_ component: String, isDirectory: Bool = false) -> String {
+        return windowsPathComponents
+            .appending(component)
+            .joined(separator: .windowsPathSeparator)
+            .ensuringTrailingWindowsPathSeparator(isPresent: isDirectory)
+    }
+
+    func ensuringTrailingWindowsPathSeparator(isPresent: Bool = true) -> String {
+        switch (isWindowsDirectory, isPresent) {
+        case (true, false):
+            return windowsPathComponents
+                .joined(separator: .windowsPathSeparator)
+        case (false, true):
+            return self.appending(String.windowsPathSeparator)
+        case (true, true), (false, false):
+            return self
+        }
+    }
+
 }

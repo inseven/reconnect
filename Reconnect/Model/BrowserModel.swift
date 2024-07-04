@@ -158,7 +158,7 @@ class BrowserModel {
     func delete(path: String) {
         Task {
             do {
-                if path.isDirectory {
+                if path.isWindowsDirectory {
                     try await fileServer.rmdir(path: path)
                 } else {
                     try await fileServer.remove(path: path)
