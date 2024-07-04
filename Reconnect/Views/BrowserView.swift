@@ -18,20 +18,6 @@
 
 import SwiftUI
 
-struct TransferRow: View {
-
-    let transfer: Transfer
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(transfer.title)
-            ProgressView(value: transfer.progress)
-        }
-        .padding()
-    }
-
-}
-
 @MainActor
 struct BrowserView: View {
 
