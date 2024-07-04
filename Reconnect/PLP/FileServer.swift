@@ -21,16 +21,6 @@ import Foundation
 import ncp
 import plpftp
 
-extension rfsv.errs {
-
-    func check() throws {
-        if self.rawValue != 0 {
-            throw ReconnectError.rfsvError(self)
-        }
-    }
-
-}
-
 class FileServer {
 
     enum MediaType: UInt32 {
