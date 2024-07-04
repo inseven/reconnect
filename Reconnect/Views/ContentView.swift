@@ -25,11 +25,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            if applicationModel.isConnected {
-                BrowserView(fileServer: fileServer)
-            } else {
-                ContentUnavailableView("Not Connected", systemImage: "star")
-            }
+            BrowserView(fileServer: fileServer)
         }
         .showsDockIcon()
     }

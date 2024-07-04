@@ -21,6 +21,16 @@ import Foundation
 import ncp
 import plpftp
 
+extension rfsv.errs {
+
+    func check() throws {
+        if self.rawValue != 0 {
+            throw ReconnectError.rfsvError(self)
+        }
+    }
+
+}
+
 class FileServer {
 
     enum MediaType: UInt32 {
@@ -33,6 +43,11 @@ class FileServer {
         case flashDisk = 6
         case rom = 7
         case remote = 8
+    }
+
+    enum ProgressResponse: Int32 {
+        case cancel = 0
+        case `continue` = 1
     }
 
     struct FileAttributes: OptionSet {
@@ -70,6 +85,8 @@ class FileServer {
         let name: String?
     }
 
+    // TODO: Support initializing with DirEnt
+    // TODO: Should this also contain the directory? (Seems leaky)
     struct DirectoryEntry: Identifiable, Hashable {
 
         var id: String {
@@ -85,7 +102,44 @@ class FileServer {
         func hash(into hasher: inout Hasher) {
             hasher.combine(path)
         }
-        
+
+        init(directoryPath: String, entry: PlpDirent) {
+            var entry = entry
+            let name = String(cString: plpdirent_get_name(&entry))
+            let attributes = FileAttributes(rawValue: entry.getAttr())
+
+            let filePath: String
+            switch attributes.contains(.directory) {
+            case true:
+                filePath = directoryPath + name + "\\"
+            case false:
+                filePath = directoryPath + name
+            }
+
+            var modificationTime = entry.getPsiTime()
+            let modificationTimeInterval = TimeInterval(modificationTime.getTime())
+            let modificationDate = Date(timeIntervalSince1970: modificationTimeInterval)
+
+            self.path = filePath
+            self.name = name
+            self.size = entry.getSize()
+            self.attributes = attributes
+            self.modificationDate = modificationDate
+        }
+
+    }
+
+    // TODO: This should be Int32
+    private class FileTransferContext {
+
+        let callback: (UInt32, UInt32) -> ProgressResponse
+        let size: UInt32
+
+        init(size: UInt32, callback: @escaping (UInt32, UInt32) -> ProgressResponse) {
+            self.size = size
+            self.callback = callback
+        }
+
     }
 
     static var drives: [String] = {
@@ -127,95 +181,86 @@ class FileServer {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
         var details = PlpDir()
-        client.dir(path, &details)
+        try client.dir(path, &details).check()
 
         var entries: [DirectoryEntry] = []
-
         for i in 0..<details.count {
-            var entry: PlpDirent = details[i]
-            let name = String(cString: plpdirent_get_name(&entry))
-            let attributes = FileAttributes(rawValue: entry.getAttr())
-
-            let filePath: String
-            switch attributes.contains(.directory) {
-            case true:
-                filePath = path + name + "\\"
-            case false:
-                filePath = path + name
-            }
-
-            var modificationTime = entry.getPsiTime()
-            let modificationTimeInterval = TimeInterval(modificationTime.getTime())
-            let modificationDate = Date(timeIntervalSince1970: modificationTimeInterval)
-
-            entries.append(DirectoryEntry(path: filePath,
-                                          name: name,
-                                          size: entry.getSize(),
-                                          attributes: attributes,
-                                          modificationDate: modificationDate))
+            entries.append(DirectoryEntry(directoryPath: path, entry: details[i]))
         }
         return entries
     }
 
-    func syncQueue_copyFile(fromRemotePath remoteSourcePath: String, toLocalPath localDestinationPath: String) throws {
+    func syncQueue_getExtendedAttributes(path: String) throws -> DirectoryEntry {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
-        let result = client.copyFromPsion(remoteSourcePath, localDestinationPath, nil) { context, status in
-            print("progress = \(status)")
-            return 1  // 0 is cancel
-        }
-        guard result.rawValue == 0 else {
-            throw ReconnectError.rfsvError(result)
-        }
+        var entry = PlpDirent()
+        try client.fgeteattr(path, &entry).check()
+        return DirectoryEntry(directoryPath: path, entry: entry)  // TODO: This doesn't create the correct path.
     }
 
-    func syncQueue_copyFile(fromLocalPath localSourcePath: String, toRemotePath remoteDestinationPath: String) throws {
+    func syncQueue_copyFile(fromRemotePath remoteSourcePath: String,
+                            toLocalPath localDestinationPath: String,
+                            callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
-        let result = client.copyToPsion(localSourcePath, remoteDestinationPath, nil) { context, status in
-            print("progress = \(status)")
-            return 1  // 0 is cancel
+
+        let attributes = try syncQueue_getExtendedAttributes(path: remoteSourcePath)
+        let o = FileTransferContext(size: attributes.size, callback: callback)
+        let context = Unmanaged.passUnretained(o).toOpaque()
+        let result = client.copyFromPsion(remoteSourcePath, localDestinationPath, context) { context, status in
+            guard let context else {
+                return 0
+            }
+            let o = Unmanaged<FileTransferContext>.fromOpaque(context).takeUnretainedValue()
+            return o.callback(status, o.size).rawValue
         }
-        guard result.rawValue == 0 else {
-            throw ReconnectError.rfsvError(result)
+        try result.check()
+    }
+
+    func syncQueue_copyFile(fromLocalPath localSourcePath: String,
+                            toRemotePath remoteDestinationPath: String,
+                            callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
+        let attributes = try FileManager.default.attributesOfItem(atPath: localSourcePath)
+        guard let size = attributes[.size] as? NSNumber else {
+            throw ReconnectError.unknown  // TODO: UGLY
         }
+        let o = FileTransferContext(size: UInt32(size.intValue), callback: callback)
+        let context = Unmanaged.passUnretained(o).toOpaque()
+        let result = client.copyToPsion(localSourcePath, remoteDestinationPath, context) { context, status in
+            guard let context else {
+                return 0
+            }
+            let o = Unmanaged<FileTransferContext>.fromOpaque(context).takeUnretainedValue()
+            return o.callback(status, o.size).rawValue
+        }
+        try result.check()
     }
 
     func syncQueue_mkdir(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
-        let result = client.mkdir(path)
-        guard result.rawValue == 0 else {
-            throw ReconnectError.rfsvError(result)
-        }
+        try client.mkdir(path).check()
     }
 
     func syncQueue_rmdir(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
-        let result = client.rmdir(path)
-        guard result.rawValue == 0 else {
-            throw ReconnectError.rfsvError(result)
-        }
+        try client.rmdir(path).check()
     }
 
     func syncQueue_remove(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
-        let result = client.remove(path)
-        guard result.rawValue == 0 else {
-            throw ReconnectError.rfsvError(result)
-        }
+        try client.remove(path).check()
     }
 
     func syncQueue_devlist() throws -> [String] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
         var devbits: UInt32 = 0
-        let result = client.devlist(&devbits)
-        guard result.rawValue == 0 else {
-            throw ReconnectError.rfsvError(result)
-        }
+        try client.devlist(&devbits).check()
         return Self.drives
             .enumerated()
             .compactMap { index, drive -> String? in
@@ -231,10 +276,7 @@ class FileServer {
         try syncQueue_connect()
         let d = drive.cString(using: .ascii)!.first!
         var driveInfo = PlpDrive()
-        let result = client.devinfo(d, &driveInfo)
-        guard result.rawValue == 0 else {
-            throw ReconnectError.rfsvError(result)
-        }
+        try client.devinfo(d, &driveInfo).check()
         guard let mediaType = MediaType(rawValue: driveInfo.getMediaType()) else {
             throw ReconnectError.unknownMediaType
         }
@@ -251,15 +293,23 @@ class FileServer {
         }
     }
 
-    func copyFile(fromRemotePath remoteSourcePath: String, toLocalPath localDestinationPath: String) async throws {
+    func copyFile(fromRemotePath remoteSourcePath: String,
+                  toLocalPath localDestinationPath: String,
+                  callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
         try await perform {
-            try self.syncQueue_copyFile(fromRemotePath: remoteSourcePath, toLocalPath: localDestinationPath)
+            try self.syncQueue_copyFile(fromRemotePath: remoteSourcePath,
+                                        toLocalPath: localDestinationPath,
+                                        callback: callback)
         }
     }
 
-    func copyFile(fromLocalPath localSourcePath: String, toRemotePath remoteDestinationPath: String) async throws {
+    func copyFile(fromLocalPath localSourcePath: String,
+                  toRemotePath remoteDestinationPath: String,
+                  callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
         try await perform {
-            try self.syncQueue_copyFile(fromLocalPath: localSourcePath, toRemotePath: remoteDestinationPath)
+            try self.syncQueue_copyFile(fromLocalPath: localSourcePath,
+                                        toRemotePath: remoteDestinationPath,
+                                        callback: callback)
         }
     }
 

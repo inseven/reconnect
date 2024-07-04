@@ -18,9 +18,68 @@
 
 import SwiftUI
 
+struct TransferRow: View {
+
+    let transfer: Transfer
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(transfer.title)
+            ProgressView(value: transfer.progress)
+        }
+        .padding()
+    }
+
+}
+
+struct TransfersButton: View {
+
+    let transfers: Transfers
+
+    @State var showPopover = false
+
+    var body: some View {
+        @Bindable var transfers = transfers
+        Button {
+            showPopover = true
+        } label: {
+            Label {
+                Text("Transfers")
+            } icon: {
+                if transfers.active {
+                    Image(systemName: "arrow.up.arrow.down")
+                        .foregroundStyle(.tint)
+                } else {
+                    Image(systemName: "arrow.up.arrow.down")
+                }
+            }
+        }
+        .disabled(transfers.transfers.isEmpty)
+        .popover(isPresented: $showPopover, arrowEdge: .bottom) {
+            VStack(spacing: 0) {
+                Text("Transfers")
+                    .padding()
+                Divider()
+                List(selection: $transfers.selection) {
+                    ForEach(transfers.transfers) { transfer in
+                        TransferRow(transfer: transfer)
+                    }
+                }
+                .scrollContentBackground(.hidden)
+                .frame(minHeight: 300)
+            }
+            .frame(minWidth: 400)
+            .background(.thinMaterial)
+        }
+    }
+
+}
+
 @MainActor
 struct BrowserView: View {
 
+    @Environment(ApplicationModel.self) var applicationModel
+    
     @State var model: BrowserModel
 
     init(fileServer: FileServer) {
@@ -31,82 +90,10 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar(model: model)
         } detail: {
-            VStack {
-                Table(model.files, selection: $model.fileSelection) {
-                    TableColumn("") { file in
-                        if file.attributes.contains(.directory) {
-                            Image("Folder16")
-                        } else {
-                            Image("FileUnknown16")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 16.0)
-                        }
-                    }
-                    .width(16.0)
-                    TableColumn("Name", value: \.name)
-                    TableColumn("Date Modified") { file in
-                        Text(file.modificationDate.formatted(date: .long, time: .shortened))
-                            .foregroundStyle(.secondary)
-                    }
-                    TableColumn("Size") { file in
-                        if file.attributes.contains(.directory) {
-                            Text("--")
-                                .foregroundStyle(.secondary)
-                        } else {
-                            Text(file.size.formatted(.byteCount(style: .file)))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
-                    Button("Open") {
-                        model.navigate(to: items.first!)
-                    }
-                    .disabled(items.count != 1 || !(items.first?.isDirectory ?? false))
-
-                    Divider()
-
-                    Button("Download") {
-                        for item in items {
-                            // TODO: Directories?
-                            model.download(path: item)
-                        }
-                    }
-
-                    Divider()
-
-                    Button("Delete") {
-                        for item in items {
-                            model.delete(path: item)
-                        }
-                    }
-                } primaryAction: { items in
-                    guard
-                        items.count == 1,
-                        let item = items.first,
-                        item.isDirectory
-                    else {
-                        return
-                    }
-                    model.navigate(to: item)
-                }
-                .contextMenu {
-                    Button("New Folder") {
-                        model.newFolder()
-                    }
-                }
-            }
-            .onDrop(of: [.fileURL], isTargeted: Binding.constant(false)) { providers in
-                for provider in providers {
-                    _ = provider.loadObject(ofClass: URL.self) { url, _ in
-                        guard let url = url else {
-                            return
-                        }
-                        model.upload(url: url)
-                    }
-                }
-                return true
+            if applicationModel.isConnected {
+                BrowserDetailView(model: model)
+            } else {
+                ContentUnavailableView("Not Connected", systemImage: "star")
             }
         }
         .toolbar(id: "main") {
@@ -155,6 +142,10 @@ struct BrowserView: View {
                 } label: {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
+            }
+
+            ToolbarItem(id: "transfers") {
+                TransfersButton(transfers: model.transfers)
             }
 
             ToolbarItem(id: "action") {

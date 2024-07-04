@@ -44,6 +44,8 @@ extension ReconnectError: LocalizedError {
 
 }
 
+// TODO: Figure out how to take advantage of the existing errors.
+
 extension rfsv.errs {
 
     var localizedDescription: String {
