@@ -18,8 +18,7 @@
 
 import SwiftUI
 
-// TODO: Main Actor?
-@Observable
+@MainActor @Observable
 class Transfer: Identifiable {
 
     enum Status: Equatable {

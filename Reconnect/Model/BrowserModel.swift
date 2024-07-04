@@ -186,7 +186,6 @@ class BrowserModel {
                     return .continue
                 }
                 transfer.setStatus(.complete)
-                print("Done.")
             }
 
             do {
@@ -212,7 +211,6 @@ class BrowserModel {
                     }
                     transfer.setStatus(.complete)
                     self.update()
-                    print("Done.")
                 }
             } catch {
                 print("Failed to upload file with error \(error).")

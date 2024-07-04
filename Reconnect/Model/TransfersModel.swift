@@ -18,8 +18,7 @@
 
 import SwiftUI
 
-// TODO: MainActor?
-@Observable
+@MainActor @Observable
 class TransfersModel {
 
     var transfers: [Transfer] = []
