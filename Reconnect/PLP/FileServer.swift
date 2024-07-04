@@ -169,6 +169,18 @@ class FileServer {
         }
     }
 
+    func syncQueue_copyFile(fromLocalPath localSourcePath: String, toRemotePath remoteDestinationPath: String) throws {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
+        let result = client.copyToPsion(localSourcePath, remoteDestinationPath, nil) { context, status in
+            print("progress = \(status)")
+            return 1  // 0 is cancel
+        }
+        guard result.rawValue == 0 else {
+            throw ReconnectError.rfsvError(result)
+        }
+    }
+
     func syncQueue_mkdir(path: String) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
@@ -242,6 +254,12 @@ class FileServer {
     func copyFile(fromRemotePath remoteSourcePath: String, toLocalPath localDestinationPath: String) async throws {
         try await perform {
             try self.syncQueue_copyFile(fromRemotePath: remoteSourcePath, toLocalPath: localDestinationPath)
+        }
+    }
+
+    func copyFile(fromLocalPath localSourcePath: String, toRemotePath remoteDestinationPath: String) async throws {
+        try await perform {
+            try self.syncQueue_copyFile(fromLocalPath: localSourcePath, toRemotePath: remoteDestinationPath)
         }
     }
 
