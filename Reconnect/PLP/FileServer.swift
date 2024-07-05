@@ -87,6 +87,10 @@ class FileServer {
         let attributes: FileAttributes
         let modificationDate: Date
 
+        let uid1: UInt32
+        let uid2: UInt32
+        let uid3: UInt32
+
         func hash(into hasher: inout Hasher) {
             hasher.combine(path)
         }
@@ -106,6 +110,9 @@ class FileServer {
             self.size = entry.getSize()
             self.attributes = attributes
             self.modificationDate = modificationDate
+            self.uid1 = entry.getUID(0)
+            self.uid2 = entry.getUID(1)
+            self.uid3 = entry.getUID(2)
         }
 
     }
