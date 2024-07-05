@@ -27,5 +27,6 @@ extension UInt32 {
     static let data: Self = 0x10000086
     static let agenda: Self = 0x10000084
     static let sketch: Self = 0x1000007D
+    static let jotter: Self = 0x10000CEA
 
 }

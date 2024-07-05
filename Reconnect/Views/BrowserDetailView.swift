@@ -47,6 +47,8 @@ struct BrowserDetailView: View {
                             Image("Agenda16")
                         case .sketch:
                             Image("Sketch16")
+                        case .jotter:
+                            Image("Jotter16")
                         default:
                             Image("FileUnknown16")
                         }
