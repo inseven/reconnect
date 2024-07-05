@@ -32,10 +32,24 @@ struct BrowserDetailView: View {
                     if file.attributes.contains(.directory) {
                         Image("Folder16")
                     } else {
-                        Image("FileUnknown16")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 16.0)
+                        switch file.uid3 {
+                        case .word:
+                            Image("Word16")
+                        case .sheet:
+                            Image("Sheet16")
+                        case .record:
+                            Image("Record16")
+                        case .opl:
+                            Image("OPL16")
+                        case .data:
+                            Image("Data16")
+                        case .agenda:
+                            Image("Agenda16")
+                        case .sketch:
+                            Image("Sketch16")
+                        default:
+                            Image("FileUnknown16")
+                        }
                     }
                 }
                 .width(16.0)
