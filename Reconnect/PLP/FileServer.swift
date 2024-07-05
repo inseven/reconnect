@@ -81,6 +81,10 @@ class FileServer {
             return path
         }
 
+        var isDirectory: Bool {
+            return attributes.contains(.directory)
+        }
+
         let path: String
         let name: String
         let size: UInt32
@@ -175,6 +179,20 @@ class FileServer {
             entries.append(DirectoryEntry(directoryPath: path, entry: details[i]))
         }
         return entries
+    }
+
+    // Consolidate with syncQueue_dir
+    private func syncQueue_dirRecursive(path: String) throws -> [DirectoryEntry] {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        var result: [DirectoryEntry] = []
+        let entries = try syncQueue_dir(path: path)
+        for entry in entries {
+            result.append(entry)
+            if entry.isDirectory {
+                result.append(contentsOf: try syncQueue_dirRecursive(path: entry.path))
+            }
+        }
+        return result
     }
 
     func syncQueue_getExtendedAttributes(path: String) throws -> DirectoryEntry {
@@ -274,9 +292,13 @@ class FileServer {
                          name: String(cString: name))
     }
 
-    func dir(path: String) async throws -> [DirectoryEntry] {
+    func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
         return try await perform {
-            return try self.syncQueue_dir(path: path)
+            if recursive {
+                return try self.syncQueue_dirRecursive(path: path)
+            } else {
+                return try self.syncQueue_dir(path: path)
+            }
         }
     }
 

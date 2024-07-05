@@ -66,7 +66,7 @@ class BrowserModel {
         if path.isRoot, let drive = drives.first(where: { path.hasPrefix($0.drive) }) {
             return drive.displayName
         }
-        return path.windowsLastPathComponent
+        return path.lastWindowsPathComponent
     }
 
     func image(for path: String) -> String {
@@ -171,27 +171,19 @@ class BrowserModel {
         }
     }
 
-    func download(path: String) {
+    func download(from path: String, to destinationURL: URL? = nil) {
         Task {
             let fileManager = FileManager.default
-            let downloadsUrl = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-
-            let filename = path.windowsLastPathComponent
-            let destinationURL = downloadsUrl.appendingPathComponent(filename)
-
-            print("Downloading file at path '\(path)' to destination path '\(destinationURL.path)'...")
+            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]  // TODO: LAZY?
+            let filename = path.lastWindowsPathComponent
+            let downloadURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
+            print("Downloading file at path '\(path)' to destination path '\(downloadURL.path)'...")
             transfersModel.add(filename) { transfer in
-                try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: destinationURL.path) { progress, size in
+                try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: downloadURL.path) { progress, size in
                     transfer.setStatus(.active(Float(progress) / Float(size)))
                     return .continue
                 }
                 transfer.setStatus(.complete)
-            }
-
-            do {
-                if let directoryUrls = try? FileManager.default.contentsOfDirectory(at: downloadsUrl, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants) {
-                    print(directoryUrls)
-                }
             }
         }
     }
@@ -216,6 +208,52 @@ class BrowserModel {
                 print("Failed to upload file with error \(error).")
                 lastError = error
             }
+        }
+    }
+
+    func run(task: @escaping () async throws -> Void) {
+        Task {
+            do {
+                try await task()
+            } catch {
+                await MainActor.run {
+                    lastError = error
+                }
+            }
+        }
+    }
+
+    func list(path: String) {
+        run {
+            let fileManager = FileManager.default
+            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+            let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
+
+            // Here we know we're downloading a directory, so we make sure the destination exists.
+            try fileManager.createDirectory(at: downloadsURL.appendingPathComponent(path.lastWindowsPathComponent),
+                                            withIntermediateDirectories: true)
+
+            // Iterate over the recursive directory listing creating directories where necessary and downloading files.
+            let files = try await self.fileServer.dir(path: path, recursive: true)
+            for file in files {
+                let relativePath = String(file.path.dropFirst(parentPath.count))
+                let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents)
+                if file.isDirectory {
+                    try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+                } else {
+                    self.download(from: file.path, to: destinationURL)
+                }
+            }
+        }
+    }
+
+}
+
+extension URL {
+
+    func appendingPathComponents(_ pathComponents: [String]) -> URL {
+        return pathComponents.reduce(self) { url, pathComponent in
+            return url.appendingPathComponent(pathComponent)
         }
     }
 
