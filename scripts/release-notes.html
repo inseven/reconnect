@@ -1,6 +1,7 @@
 {% for release in releases -%}
+    <h1>{{ release.version }}</h1>
     {% for section in release.sections %}
-        <strong>{{ section.title }}</strong>
+        <h2>{{ section.title }}</h2>
         <ul>
             {% for change in section.changes | reverse -%}
                 <li>{{ change.description }}{% if change.scope %}{{ change.scope }}{% endif %}</li>
