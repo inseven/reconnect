@@ -47,7 +47,7 @@ struct ReconnectApp: App {
             }
         }
 
-        Window("browser", id: "My Psion") {
+        WindowGroup("My Psion") {
             ContentView(applicationModel: applicationModel)
         }
         .environment(applicationModel)
