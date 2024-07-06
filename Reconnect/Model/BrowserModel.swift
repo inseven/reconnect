@@ -173,7 +173,15 @@ class BrowserModel {
         }
     }
 
-    func download(from path: String, to destinationURL: URL? = nil) {
+    func download(from path: String) {
+        if path.isWindowsDirectory {
+            downloadDirectory(path: path)
+        } else {
+            downloadFile(from: path)
+        }
+    }
+
+    private func downloadFile(from path: String, to destinationURL: URL? = nil) {
         Task {
             let fileManager = FileManager.default
             let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
@@ -190,7 +198,7 @@ class BrowserModel {
         }
     }
 
-    func downloadDirectory(path: String) {
+    private func downloadDirectory(path: String) {
         runAsync {
             let fileManager = FileManager.default
             let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
@@ -208,7 +216,7 @@ class BrowserModel {
                 if file.isDirectory {
                     try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
                 } else {
-                    self.download(from: file.path, to: destinationURL)
+                    self.downloadFile(from: file.path, to: destinationURL)
                 }
             }
         }
