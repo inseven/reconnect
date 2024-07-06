@@ -22,12 +22,12 @@ struct BrowserDetailView: View {
 
     @State var isTargeted = false
 
-    var model: BrowserModel
+    var browserModel: BrowserModel
 
     var body: some View {
-        @Bindable var model = model
+        @Bindable var browserModel = browserModel
         ZStack {
-            Table(model.files, selection: $model.fileSelection) {
+            Table(browserModel.files, selection: $browserModel.fileSelection) {
                 TableColumn("") { file in
                     if file.isDirectory {
                         Image("Folder16")
@@ -73,20 +73,20 @@ struct BrowserDetailView: View {
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
 
                 Button("Open") {
-                    model.navigate(to: items.first!)
+                    browserModel.navigate(to: items.first!)
                 }
                 .disabled(items.count != 1 || !(items.first?.isWindowsDirectory ?? false))
 
                 Divider()
 
                 Button("Download") {
-                    model.download(items)
+                    browserModel.download(items)
                 }
 
                 Divider()
 
                 Button("Delete") {
-                    model.delete(items)
+                    browserModel.delete(items)
                 }
 
             } primaryAction: { items in
@@ -97,14 +97,14 @@ struct BrowserDetailView: View {
                 else {
                     return
                 }
-                model.navigate(to: item)
+                browserModel.navigate(to: item)
             }
             .onDeleteCommand {
-                model.delete()
+                browserModel.delete()
             }
             .contextMenu {
                 Button("New Folder") {
-                    model.newFolder()
+                    browserModel.newFolder()
                 }
             }
             if isTargeted {
@@ -118,7 +118,7 @@ struct BrowserDetailView: View {
                     guard let url = url else {
                         return
                     }
-                    model.upload(url: url)
+                    browserModel.upload(url: url)
                 }
             }
             return true
