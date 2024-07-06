@@ -106,6 +106,19 @@ class BrowserModel {
         }
     }
 
+    private func runAsync(task: @escaping () async throws -> Void) {
+        Task {
+            do {
+                try await task()
+            } catch {
+                await MainActor.run {
+                    lastError = error
+                }
+            }
+        }
+    }
+
+
     var path: String? {
         return navigationStack.path
     }
@@ -137,44 +150,34 @@ class BrowserModel {
     }
 
     func newFolder() {
-        guard let path = navigationStack.path else {
-            return
-        }
-        Task {
-            do {
-                let folderPath = path + "untitled folder"
-                try await fileServer.mkdir(path: folderPath)
-                let files = try await fileServer.dir(path: path)
-                    .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-                self.files = files
-                fileSelection = Set([folderPath + "\\"])
-            } catch {
-                print("Failed to create new folder with error \(error).")
-                lastError = error
+        runAsync {
+            guard let path = self.path else {
+                throw ReconnectError.invalidFilePath
             }
+            let folderPath = path + "untitled folder"
+            try await self.fileServer.mkdir(path: folderPath)
+            let files = try await self.fileServer.dir(path: path)
+                .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+            self.files = files
+            self.fileSelection = Set([folderPath + "\\"])
         }
     }
 
     func delete(path: String) {
-        Task {
-            do {
-                if path.isWindowsDirectory {
-                    try await fileServer.rmdir(path: path)
-                } else {
-                    try await fileServer.remove(path: path)
-                }
-                update()
-            } catch {
-                print("Failed to delete item at path '\(path)' with error \(error).")
-                lastError = error
+        runAsync {
+            if path.isWindowsDirectory {
+                try await self.fileServer.rmdir(path: path)
+            } else {
+                try await self.fileServer.remove(path: path)
             }
+            self.files.removeAll { $0.path == path }
         }
     }
 
     func download(from path: String, to destinationURL: URL? = nil) {
         Task {
             let fileManager = FileManager.default
-            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]  // TODO: LAZY?
+            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
             let filename = path.lastWindowsPathComponent
             let downloadURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
             print("Downloading file at path '\(path)' to destination path '\(downloadURL.path)'...")
@@ -189,42 +192,25 @@ class BrowserModel {
     }
 
     func upload(url: URL) {
-        Task {
-            do {
-                guard let path else {
-                    throw ReconnectError.invalidFilePath
-                }
-                let destinationPath = path + url.lastPathComponent
-                print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
-                transfersModel.add(url.lastPathComponent) { transfer in
-                    try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
-                        transfer.setStatus(.active(Float(progress) / Float(size)))
-                        return .continue
-                    }
-                    transfer.setStatus(.complete)
-                    self.update()
-                }
-            } catch {
-                print("Failed to upload file with error \(error).")
-                lastError = error
+        runAsync {
+            guard let path = self.path else {
+                throw ReconnectError.invalidFilePath
             }
-        }
-    }
-
-    func run(task: @escaping () async throws -> Void) {
-        Task {
-            do {
-                try await task()
-            } catch {
-                await MainActor.run {
-                    lastError = error
+            let destinationPath = path + url.lastPathComponent
+            print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
+            self.transfersModel.add(url.lastPathComponent) { transfer in
+                try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
+                    transfer.setStatus(.active(Float(progress) / Float(size)))
+                    return .continue
                 }
+                transfer.setStatus(.complete)
+                self.update()
             }
         }
     }
 
     func list(path: String) {
-        run {
+        runAsync {
             let fileManager = FileManager.default
             let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
             let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
@@ -244,16 +230,6 @@ class BrowserModel {
                     self.download(from: file.path, to: destinationURL)
                 }
             }
-        }
-    }
-
-}
-
-extension URL {
-
-    func appendingPathComponents(_ pathComponents: [String]) -> URL {
-        return pathComponents.reduce(self) { url, pathComponent in
-            return url.appendingPathComponent(pathComponent)
         }
     }
 
