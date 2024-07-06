@@ -36,7 +36,7 @@ struct BrowserView: View {
             if applicationModel.isConnected {
                 BrowserDetailView(model: model)
             } else {
-                ContentUnavailableView("Not Connected", systemImage: "star")
+                ContentUnavailableView("Disconnected", image: "Disconnected")
             }
         }
         .toolbar(id: "main") {
