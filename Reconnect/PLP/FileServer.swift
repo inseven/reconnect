@@ -81,6 +81,10 @@ class FileServer {
             return path
         }
 
+        var isDirectory: Bool {
+            return attributes.contains(.directory)
+        }
+
         let path: String
         let name: String
         let size: UInt32
@@ -164,7 +168,7 @@ class FileServer {
         }
     }
 
-    private func syncQueue_dir(path: String) throws -> [DirectoryEntry] {
+    private func syncQueue_dir(path: String, recursive: Bool) throws -> [DirectoryEntry] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
         var details = PlpDir()
@@ -174,7 +178,18 @@ class FileServer {
         for i in 0..<details.count {
             entries.append(DirectoryEntry(directoryPath: path, entry: details[i]))
         }
-        return entries
+        guard recursive else {
+            return entries
+        }
+
+        var result: [DirectoryEntry] = []
+        for entry in entries {
+            result.append(entry)
+            if entry.isDirectory {
+                result.append(contentsOf: try syncQueue_dir(path: entry.path, recursive: true))
+            }
+        }
+        return result
     }
 
     func syncQueue_getExtendedAttributes(path: String) throws -> DirectoryEntry {
@@ -274,9 +289,9 @@ class FileServer {
                          name: String(cString: name))
     }
 
-    func dir(path: String) async throws -> [DirectoryEntry] {
+    func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
         return try await perform {
-            return try self.syncQueue_dir(path: path)
+            return try self.syncQueue_dir(path: path, recursive: recursive)
         }
     }
 

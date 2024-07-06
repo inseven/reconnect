@@ -36,7 +36,7 @@ extension String {
         return hasSuffix(.windowsPathSeparator)
     }
 
-    var windowsLastPathComponent: String {
+    var lastWindowsPathComponent: String {
         return windowsPathComponents.last ?? ""
     }
 

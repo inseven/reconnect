@@ -29,7 +29,7 @@ struct BrowserDetailView: View {
         ZStack {
             Table(model.files, selection: $model.fileSelection) {
                 TableColumn("") { file in
-                    if file.attributes.contains(.directory) {
+                    if file.isDirectory {
                         Image("Folder16")
                     } else {
                         switch file.uid3 {
@@ -61,7 +61,7 @@ struct BrowserDetailView: View {
                         .foregroundStyle(.secondary)
                 }
                 TableColumn("Size") { file in
-                    if file.attributes.contains(.directory) {
+                    if file.isDirectory {
                         Text("--")
                             .foregroundStyle(.secondary)
                     } else {
@@ -80,7 +80,7 @@ struct BrowserDetailView: View {
 
                 Button("Download") {
                     for item in items {
-                        model.download(path: item)
+                        model.download(from: item)
                     }
                 }
 

@@ -28,6 +28,18 @@ class BrowserModel {
         return name(for: path)
     }
 
+    var nextItems: [NavigationStack.Item] {
+        return navigationStack.nextItems
+    }
+
+    var path: String? {
+        return navigationStack.path
+    }
+
+    var previousItems: [NavigationStack.Item] {
+        return navigationStack.previousItems.reversed()
+    }
+
     var transfersModel = TransfersModel()
 
     let fileServer: FileServer
@@ -66,7 +78,7 @@ class BrowserModel {
         if path.isRoot, let drive = drives.first(where: { path.hasPrefix($0.drive) }) {
             return drive.displayName
         }
-        return path.windowsLastPathComponent
+        return path.lastWindowsPathComponent
     }
 
     func image(for path: String) -> String {
@@ -106,16 +118,16 @@ class BrowserModel {
         }
     }
 
-    var path: String? {
-        return navigationStack.path
-    }
-
-    var previousItems: [NavigationStack.Item] {
-        return navigationStack.previousItems.reversed()
-    }
-
-    var nextItems: [NavigationStack.Item] {
-        return navigationStack.nextItems
+    private func runAsync(task: @escaping () async throws -> Void) {
+        Task {
+            do {
+                try await task()
+            } catch {
+                await MainActor.run {
+                    lastError = error
+                }
+            }
+        }
     }
 
     func canGoBack() -> Bool {
@@ -137,84 +149,93 @@ class BrowserModel {
     }
 
     func newFolder() {
-        guard let path = navigationStack.path else {
-            return
-        }
-        Task {
-            do {
-                let folderPath = path + "untitled folder"
-                try await fileServer.mkdir(path: folderPath)
-                let files = try await fileServer.dir(path: path)
-                    .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-                self.files = files
-                fileSelection = Set([folderPath + "\\"])
-            } catch {
-                print("Failed to create new folder with error \(error).")
-                lastError = error
+        runAsync {
+            guard let path = self.path else {
+                throw ReconnectError.invalidFilePath
             }
+            let folderPath = path + "untitled folder"
+            try await self.fileServer.mkdir(path: folderPath)
+            let files = try await self.fileServer.dir(path: path)
+                .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+            self.files = files
+            self.fileSelection = Set([folderPath + "\\"])
         }
     }
 
     func delete(path: String) {
-        Task {
-            do {
-                if path.isWindowsDirectory {
-                    try await fileServer.rmdir(path: path)
-                } else {
-                    try await fileServer.remove(path: path)
-                }
-                update()
-            } catch {
-                print("Failed to delete item at path '\(path)' with error \(error).")
-                lastError = error
+        runAsync {
+            if path.isWindowsDirectory {
+                try await self.fileServer.rmdir(path: path)
+            } else {
+                try await self.fileServer.remove(path: path)
             }
+            self.files.removeAll { $0.path == path }
         }
     }
 
-    func download(path: String) {
+    func download(from path: String) {
+        if path.isWindowsDirectory {
+            downloadDirectory(path: path)
+        } else {
+            downloadFile(from: path)
+        }
+    }
+
+    private func downloadFile(from path: String, to destinationURL: URL? = nil) {
         Task {
             let fileManager = FileManager.default
-            let downloadsUrl = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-
-            let filename = path.windowsLastPathComponent
-            let destinationURL = downloadsUrl.appendingPathComponent(filename)
-
-            print("Downloading file at path '\(path)' to destination path '\(destinationURL.path)'...")
+            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+            let filename = path.lastWindowsPathComponent
+            let downloadURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
+            print("Downloading file at path '\(path)' to destination path '\(downloadURL.path)'...")
             transfersModel.add(filename) { transfer in
-                try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: destinationURL.path) { progress, size in
+                try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: downloadURL.path) { progress, size in
                     transfer.setStatus(.active(Float(progress) / Float(size)))
                     return .continue
                 }
                 transfer.setStatus(.complete)
             }
+        }
+    }
 
-            do {
-                if let directoryUrls = try? FileManager.default.contentsOfDirectory(at: downloadsUrl, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions.skipsSubdirectoryDescendants) {
-                    print(directoryUrls)
+    private func downloadDirectory(path: String) {
+        runAsync {
+            let fileManager = FileManager.default
+            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+            let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
+
+            // Here we know we're downloading a directory, so we make sure the destination exists.
+            try fileManager.createDirectory(at: downloadsURL.appendingPathComponent(path.lastWindowsPathComponent),
+                                            withIntermediateDirectories: true)
+
+            // Iterate over the recursive directory listing creating directories where necessary and downloading files.
+            let files = try await self.fileServer.dir(path: path, recursive: true)
+            for file in files {
+                let relativePath = String(file.path.dropFirst(parentPath.count))
+                let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents)
+                if file.isDirectory {
+                    try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+                } else {
+                    self.downloadFile(from: file.path, to: destinationURL)
                 }
             }
         }
     }
 
     func upload(url: URL) {
-        Task {
-            do {
-                guard let path else {
-                    throw ReconnectError.invalidFilePath
+        runAsync {
+            guard let path = self.path else {
+                throw ReconnectError.invalidFilePath
+            }
+            let destinationPath = path + url.lastPathComponent
+            print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
+            self.transfersModel.add(url.lastPathComponent) { transfer in
+                try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
+                    transfer.setStatus(.active(Float(progress) / Float(size)))
+                    return .continue
                 }
-                let destinationPath = path + url.lastPathComponent
-                print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
-                transfersModel.add(url.lastPathComponent) { transfer in
-                    try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
-                        transfer.setStatus(.active(Float(progress) / Float(size)))
-                        return .continue
-                    }
-                    transfer.setStatus(.complete)
-                    self.update()
-                }
-            } catch {
-                print("Failed to upload file with error \(error).")
-                lastError = error
+                transfer.setStatus(.complete)
+                self.update()
             }
         }
     }
