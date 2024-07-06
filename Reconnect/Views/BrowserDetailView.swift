@@ -71,6 +71,7 @@ struct BrowserDetailView: View {
                 }
             }
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
+
                 Button("Open") {
                     model.navigate(to: items.first!)
                 }
@@ -79,18 +80,15 @@ struct BrowserDetailView: View {
                 Divider()
 
                 Button("Download") {
-                    for item in items {
-                        model.download(from: item)
-                    }
+                    model.download(items)
                 }
 
                 Divider()
 
                 Button("Delete") {
-                    for item in items {
-                        model.delete(path: item)
-                    }
+                    model.delete(items)
                 }
+
             } primaryAction: { items in
                 guard
                     items.count == 1,
@@ -100,6 +98,9 @@ struct BrowserDetailView: View {
                     return
                 }
                 model.navigate(to: item)
+            }
+            .onDeleteCommand {
+                model.delete()
             }
             .contextMenu {
                 Button("New Folder") {
