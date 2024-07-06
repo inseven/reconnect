@@ -80,9 +80,8 @@ struct BrowserDetailView: View {
 
                 Button("Download") {
                     for item in items {
-                        // TODO: Push this down.
                         if item.isWindowsDirectory {
-                            model.list(path: item)
+                            model.downloadDirectory(path: item)
                         } else {
                             model.download(from: item)
                         }

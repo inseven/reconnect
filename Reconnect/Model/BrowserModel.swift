@@ -28,6 +28,18 @@ class BrowserModel {
         return name(for: path)
     }
 
+    var nextItems: [NavigationStack.Item] {
+        return navigationStack.nextItems
+    }
+
+    var path: String? {
+        return navigationStack.path
+    }
+
+    var previousItems: [NavigationStack.Item] {
+        return navigationStack.previousItems.reversed()
+    }
+
     var transfersModel = TransfersModel()
 
     let fileServer: FileServer
@@ -118,19 +130,6 @@ class BrowserModel {
         }
     }
 
-
-    var path: String? {
-        return navigationStack.path
-    }
-
-    var previousItems: [NavigationStack.Item] {
-        return navigationStack.previousItems.reversed()
-    }
-
-    var nextItems: [NavigationStack.Item] {
-        return navigationStack.nextItems
-    }
-
     func canGoBack() -> Bool {
         return navigationStack.canGoBack()
     }
@@ -191,25 +190,7 @@ class BrowserModel {
         }
     }
 
-    func upload(url: URL) {
-        runAsync {
-            guard let path = self.path else {
-                throw ReconnectError.invalidFilePath
-            }
-            let destinationPath = path + url.lastPathComponent
-            print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
-            self.transfersModel.add(url.lastPathComponent) { transfer in
-                try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
-                    transfer.setStatus(.active(Float(progress) / Float(size)))
-                    return .continue
-                }
-                transfer.setStatus(.complete)
-                self.update()
-            }
-        }
-    }
-
-    func list(path: String) {
+    func downloadDirectory(path: String) {
         runAsync {
             let fileManager = FileManager.default
             let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
@@ -229,6 +210,24 @@ class BrowserModel {
                 } else {
                     self.download(from: file.path, to: destinationURL)
                 }
+            }
+        }
+    }
+
+    func upload(url: URL) {
+        runAsync {
+            guard let path = self.path else {
+                throw ReconnectError.invalidFilePath
+            }
+            let destinationPath = path + url.lastPathComponent
+            print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
+            self.transfersModel.add(url.lastPathComponent) { transfer in
+                try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
+                    transfer.setStatus(.active(Float(progress) / Float(size)))
+                    return .continue
+                }
+                transfer.setStatus(.complete)
+                self.update()
             }
         }
     }
