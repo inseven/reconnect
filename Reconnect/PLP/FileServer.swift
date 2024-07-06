@@ -168,7 +168,7 @@ class FileServer {
         }
     }
 
-    private func syncQueue_dir(path: String) throws -> [DirectoryEntry] {
+    private func syncQueue_dir(path: String, recursive: Bool) throws -> [DirectoryEntry] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
         var details = PlpDir()
@@ -178,18 +178,15 @@ class FileServer {
         for i in 0..<details.count {
             entries.append(DirectoryEntry(directoryPath: path, entry: details[i]))
         }
-        return entries
-    }
+        guard recursive else {
+            return entries
+        }
 
-    // Consolidate with syncQueue_dir
-    private func syncQueue_dirRecursive(path: String) throws -> [DirectoryEntry] {
-        dispatchPrecondition(condition: .onQueue(workQueue))
         var result: [DirectoryEntry] = []
-        let entries = try syncQueue_dir(path: path)
         for entry in entries {
             result.append(entry)
             if entry.isDirectory {
-                result.append(contentsOf: try syncQueue_dirRecursive(path: entry.path))
+                result.append(contentsOf: try syncQueue_dir(path: entry.path, recursive: true))
             }
         }
         return result
@@ -294,11 +291,7 @@ class FileServer {
 
     func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
         return try await perform {
-            if recursive {
-                return try self.syncQueue_dirRecursive(path: path)
-            } else {
-                return try self.syncQueue_dir(path: path)
-            }
+            return try self.syncQueue_dir(path: path, recursive: recursive)
         }
     }
 
