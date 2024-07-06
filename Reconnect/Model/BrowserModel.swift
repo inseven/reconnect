@@ -21,6 +21,10 @@ import SwiftUI
 @MainActor @Observable
 class BrowserModel {
 
+    var canDelete: Bool {
+        return !fileSelection.isEmpty
+    }
+
     var navigationTitle: String? {
         guard let path else {
             return nil
@@ -158,26 +162,37 @@ class BrowserModel {
             let files = try await self.fileServer.dir(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
             self.files = files
-            self.fileSelection = Set([folderPath + "\\"])
-        }
-    }
-
-    func delete(path: String) {
-        runAsync {
-            if path.isWindowsDirectory {
-                try await self.fileServer.rmdir(path: path)
-            } else {
-                try await self.fileServer.remove(path: path)
+            await MainActor.run {
+                self.fileSelection = Set([folderPath + "\\"])
             }
-            self.files.removeAll { $0.path == path }
         }
     }
 
-    func download(from path: String) {
-        if path.isWindowsDirectory {
-            downloadDirectory(path: path)
-        } else {
-            downloadFile(from: path)
+    func delete(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil) {
+        let selection = selection ?? fileSelection
+        runAsync {
+            for path in selection {
+                if path.isWindowsDirectory {
+                    try await self.fileServer.rmdir(path: path)
+                } else {
+                    try await self.fileServer.remove(path: path)
+                }
+                await MainActor.run {
+                    self.files.removeAll { $0.path == path }
+                    self.fileSelection.remove(path)
+                }
+            }
+        }
+    }
+
+    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil) {
+        let selection = selection ?? fileSelection
+        for path in selection {
+            if path.isWindowsDirectory {
+                downloadDirectory(path: path)
+            } else {
+                downloadFile(from: path)
+            }
         }
     }
 

@@ -79,25 +79,60 @@ struct BrowserView: View {
                 .help("See folders you viewed previously")
             }
 
-            ToolbarItem(id: "refresh") {
+            ToolbarItem(id: "new-folder") {
                 Button {
-                    model.refresh()
+                    model.newFolder()
                 } label: {
-                    Label("Refresh", systemImage: "arrow.clockwise")
+                    Label("New Folder", systemImage: "folder.badge.plus")
                 }
+            }
+
+            ToolbarItem(id: "delete") {
+                Button {
+                    model.delete()
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+                .disabled(!model.canDelete)
+            }
+
+            ToolbarItem(id: "action") {
+                Menu {
+
+                    Button("New Folder") {
+                        model.newFolder()
+                    }
+
+                    Divider()
+
+                    Button("Download") {
+                        model.download()
+                    }
+
+                    Divider()
+
+                    Button("Delete") {
+                        model.delete()
+                    }
+
+                } label: {
+                    Label("Action", systemImage: "ellipsis.circle")
+                }
+            }
+
+            ToolbarItem(id: "spacer") {
+                Spacer()
             }
 
             ToolbarItem(id: "transfers") {
                 TransfersPopoverButton(transfers: model.transfersModel)
             }
 
-            ToolbarItem(id: "action") {
-                Menu {
-                    Button("New Folder") {
-                        model.newFolder()
-                    }
+            ToolbarItem(id: "refresh") {
+                Button {
+                    model.refresh()
                 } label: {
-                    Label("Action", systemImage: "ellipsis.circle")
+                    Label("Refresh", systemImage: "arrow.clockwise")
                 }
             }
 
