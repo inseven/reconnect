@@ -23,18 +23,18 @@ struct BrowserView: View {
 
     @Environment(ApplicationModel.self) var applicationModel
     
-    @State var model: BrowserModel
+    @State private var browserModel: BrowserModel
 
     init(fileServer: FileServer) {
-        _model = State(initialValue: BrowserModel(fileServer: fileServer))
+        _browserModel = State(initialValue: BrowserModel(fileServer: fileServer))
     }
 
     var body: some View {
         NavigationSplitView {
-            Sidebar(model: model)
+            Sidebar(model: browserModel)
         } detail: {
             if applicationModel.isConnected {
-                BrowserDetailView(model: model)
+                BrowserDetailView(browserModel: browserModel)
             } else {
                 ContentUnavailableView("Disconnected", image: "Disconnected")
             }
@@ -44,9 +44,9 @@ struct BrowserView: View {
                 HStack(spacing: 8) {
 
                     Menu {
-                        ForEach(model.previousItems) { item in
+                        ForEach(browserModel.previousItems) { item in
                             Button {
-                                model.navigate(to: item)
+                                browserModel.navigate(to: item)
                             } label: {
                                 HistoryItemView(item: item)
                             }
@@ -54,15 +54,15 @@ struct BrowserView: View {
                     } label: {
                         Label("Back", systemImage: "chevron.backward")
                     } primaryAction: {
-                        model.back()
+                        browserModel.back()
                     }
                     .menuIndicator(.hidden)
-                    .disabled(!model.canGoBack())
+                    .disabled(!browserModel.canGoBack())
 
                     Menu {
-                        ForEach(model.nextItems) { item in
+                        ForEach(browserModel.nextItems) { item in
                             Button {
-                                model.navigate(to: item)
+                                browserModel.navigate(to: item)
                             } label: {
                                 HistoryItemView(item: item)
                             }
@@ -70,10 +70,10 @@ struct BrowserView: View {
                     } label: {
                         Label("Forward", systemImage: "chevron.forward")
                     } primaryAction: {
-                        model.forward()
+                        browserModel.forward()
                     }
                     .menuIndicator(.hidden)
-                    .disabled(!model.canGoForward())
+                    .disabled(!browserModel.canGoForward())
 
                 }
                 .help("See folders you viewed previously")
@@ -81,7 +81,7 @@ struct BrowserView: View {
 
             ToolbarItem(id: "new-folder") {
                 Button {
-                    model.newFolder()
+                    browserModel.newFolder()
                 } label: {
                     Label("New Folder", systemImage: "folder.badge.plus")
                 }
@@ -89,30 +89,30 @@ struct BrowserView: View {
 
             ToolbarItem(id: "delete") {
                 Button {
-                    model.delete()
+                    browserModel.delete()
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
-                .disabled(!model.canDelete)
+                .disabled(!browserModel.canDelete)
             }
 
             ToolbarItem(id: "action") {
                 Menu {
 
                     Button("New Folder") {
-                        model.newFolder()
+                        browserModel.newFolder()
                     }
 
                     Divider()
 
                     Button("Download") {
-                        model.download()
+                        browserModel.download()
                     }
 
                     Divider()
 
                     Button("Delete") {
-                        model.delete()
+                        browserModel.delete()
                     }
 
                 } label: {
@@ -125,27 +125,27 @@ struct BrowserView: View {
             }
 
             ToolbarItem(id: "transfers") {
-                TransfersPopoverButton(transfers: model.transfersModel)
+                TransfersPopoverButton(transfers: browserModel.transfersModel)
             }
 
             ToolbarItem(id: "refresh") {
                 Button {
-                    model.refresh()
+                    browserModel.refresh()
                 } label: {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
             }
 
         }
-        .navigationTitle(model.navigationTitle ?? "My Psion")
-        .presents($model.lastError)
+        .navigationTitle(browserModel.navigationTitle ?? "My Psion")
+        .presents($browserModel.lastError)
         .onAppear {
-            model.navigate(to: "C:\\")
+            browserModel.navigate(to: "C:\\")
         }
         .task {
-            await model.start()
+            await browserModel.start()
         }
-        .environment(model)
+        .environment(browserModel)
     }
 
 }
