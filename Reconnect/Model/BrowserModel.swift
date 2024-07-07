@@ -111,13 +111,12 @@ class BrowserModel {
             return
         }
         self.files = []
-        Task {
-            do {
-                let files = try await fileServer.dir(path: path)
-                    .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+        self.runAsync {
+            let files = try await self.fileServer.dir(path: path)
+                .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+            await MainActor.run {
                 self.files = files
-            } catch {
-                lastError = error
+                self.fileSelection = self.fileSelection.intersection(files.map({ $0.id }))
             }
         }
     }
