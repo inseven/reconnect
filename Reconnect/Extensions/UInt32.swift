@@ -20,10 +20,14 @@ import SwiftUI
 
 extension UInt32 {
 
+    static let none: Self = 0x00000000
+
     // UID1
     static let directFileStore: Self = 0x10000037
+    static let permanentFileStoreLayout: Self = 0x10000050  // Database
 
     // UID2
+    static let appDllDoc: Self = 0x1000006D
     static let mbm: Self = 0x10000042
 
     // UID3

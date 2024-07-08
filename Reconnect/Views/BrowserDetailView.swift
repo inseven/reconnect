@@ -29,7 +29,7 @@ struct BrowserDetailView: View {
         ZStack {
             Table(browserModel.files, selection: $browserModel.fileSelection) {
                 TableColumn("") { file in
-                    Image(file.image)
+                    Image(file.fileType.image)
                 }
                 .width(16.0)
                 TableColumn("Name", value: \.name)
