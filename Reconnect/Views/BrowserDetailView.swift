@@ -69,6 +69,10 @@ struct BrowserDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+
+                TableColumn("Type") { file in
+                    FileTypePopover(file: file)
+                }
             }
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
 
