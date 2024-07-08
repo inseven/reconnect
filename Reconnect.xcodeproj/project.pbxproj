@@ -15,6 +15,7 @@
 		D83658B72C29596F00B45693 /* NavigationStackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B62C29596F00B45693 /* NavigationStackTests.swift */; };
 		D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B82C298C4F00B45693 /* NavigationStack.swift */; };
 		D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658BA2C29A09300B45693 /* HistoryItemView.swift */; };
+		D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83A78692C3C80C9000E8192 /* FileTypePopover.swift */; };
 		D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */; };
 		D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */; };
 		D84351502C2B636C009055C1 /* DriveInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843514F2C2B636C009055C1 /* DriveInfo.swift */; };
@@ -77,6 +78,7 @@
 		D83658B62C29596F00B45693 /* NavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
 		D83658B82C298C4F00B45693 /* NavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStack.swift; sourceTree = "<group>"; };
 		D83658BA2C29A09300B45693 /* HistoryItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryItemView.swift; sourceTree = "<group>"; };
+		D83A78692C3C80C9000E8192 /* FileTypePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypePopover.swift; sourceTree = "<group>"; };
 		D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesView.swift; sourceTree = "<group>"; };
 		D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesViewModel.swift; sourceTree = "<group>"; };
 		D843514F2C2B636C009055C1 /* DriveInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveInfo.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */,
 				D88FA14F2C2CE29900805DBD /* ContentView.swift */,
+				D83A78692C3C80C9000E8192 /* FileTypePopover.swift */,
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
 				D8D3E7A02C25410E003E696D /* MainMenu.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
@@ -445,6 +448,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D84351502C2B636C009055C1 /* DriveInfo.swift in Sources */,
+				D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */,
 				D8631DAF2C373A1600344DC3 /* TransferRow.swift in Sources */,
 				D8AD8B522C2378780063A613 /* Server.swift in Sources */,
 				D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */,
