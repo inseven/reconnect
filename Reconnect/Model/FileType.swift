@@ -63,4 +63,31 @@ extension FileType {
         }
     }
 
+    var image: String {
+        switch self {
+        case .unknown:
+            return "FileUnknown16"
+        case .directory:
+            return "Folder16"
+        case .word:
+            return "Word16"
+        case .sheet:
+            return "Sheet16"
+        case .record:
+            return "Record16"
+        case .opl:
+            return "OPL16"
+        case .data:
+            return "Data16"
+        case .agenda:
+            return "Agenda16"
+        case .sketch:
+            return "Sketch16"
+        case .jotter:
+            return "Jotter16"
+        case .mbm:
+            return "FileUnknown16"
+        }
+    }
+
 }

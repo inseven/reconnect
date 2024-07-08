@@ -24,55 +24,29 @@ extension FileServer.DirectoryEntry {
         if isDirectory {
             return .directory
         } else {
-            switch uid3 {
-            case .word:
+            switch (uid1, uid2, uid3) {
+            case (.directFileStore, .appDllDoc, .word):
                 return .word
-            case .sheet:
+            case (.directFileStore, .appDllDoc, .sheet):
                 return .sheet
-            case .record:
+            case (.directFileStore, .appDllDoc, .record):
                 return .record
-            case .opl:
+            case (.directFileStore, .appDllDoc, .opl):
                 return .opl
-            case .data:
+            case (.permanentFileStoreLayout, .appDllDoc, .data):
                 return .data
-            case .agenda:
+            case (.permanentFileStoreLayout, .appDllDoc, .agenda):
                 return .agenda
-            case .sketch:
+            case (.directFileStore, .appDllDoc, .sketch):
                 return .sketch
-            case .jotter:
+            case (.permanentFileStoreLayout, .appDllDoc, .jotter):
                 return .jotter
+            case (.directFileStore, .mbm, .none):
+                return .mbm
             default:
                 return .unknown
             }
         }
-    }
-
-    var image: String {
-        if isDirectory {
-            return "Folder16"
-        } else {
-            switch uid3 {
-            case .word:
-                return "Word16"
-            case .sheet:
-                return "Sheet16"
-            case .record:
-                return "Record16"
-            case .opl:
-                return "OPL16"
-            case .data:
-                return "Data16"
-            case .agenda:
-                return "Agenda16"
-            case .sketch:
-                return "Sketch16"
-            case .jotter:
-                return "Jotter16"
-            default:
-                return "FileUnknown16"
-            }
-        }
-
     }
 
 }
