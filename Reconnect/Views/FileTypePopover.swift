@@ -28,7 +28,7 @@ struct FileTypePopover: View {
         Button {
             isPresented = true
         } label: {
-            Image(systemName: "info.circle")
+            Text(file.fileType.name)
         }
         .popover(isPresented: $isPresented) {
             Grid {

@@ -29,30 +29,7 @@ struct BrowserDetailView: View {
         ZStack {
             Table(browserModel.files, selection: $browserModel.fileSelection) {
                 TableColumn("") { file in
-                    if file.isDirectory {
-                        Image("Folder16")
-                    } else {
-                        switch file.uid3 {
-                        case .word:
-                            Image("Word16")
-                        case .sheet:
-                            Image("Sheet16")
-                        case .record:
-                            Image("Record16")
-                        case .opl:
-                            Image("OPL16")
-                        case .data:
-                            Image("Data16")
-                        case .agenda:
-                            Image("Agenda16")
-                        case .sketch:
-                            Image("Sketch16")
-                        case .jotter:
-                            Image("Jotter16")
-                        default:
-                            Image("FileUnknown16")
-                        }
-                    }
+                    Image(file.image)
                 }
                 .width(16.0)
                 TableColumn("Name", value: \.name)
@@ -72,6 +49,7 @@ struct BrowserDetailView: View {
 
                 TableColumn("Type") { file in
                     FileTypePopover(file: file)
+                        .foregroundStyle(.secondary)
                 }
             }
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in

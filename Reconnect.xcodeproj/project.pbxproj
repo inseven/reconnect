@@ -16,6 +16,8 @@
 		D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B82C298C4F00B45693 /* NavigationStack.swift */; };
 		D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658BA2C29A09300B45693 /* HistoryItemView.swift */; };
 		D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83A78692C3C80C9000E8192 /* FileTypePopover.swift */; };
+		D83A786C2C3C85FE000E8192 /* DirectoryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83A786B2C3C85FE000E8192 /* DirectoryEntry.swift */; };
+		D83A786E2C3C87F5000E8192 /* FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83A786D2C3C87F5000E8192 /* FileType.swift */; };
 		D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */; };
 		D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */; };
 		D84351502C2B636C009055C1 /* DriveInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D843514F2C2B636C009055C1 /* DriveInfo.swift */; };
@@ -79,6 +81,8 @@
 		D83658B82C298C4F00B45693 /* NavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStack.swift; sourceTree = "<group>"; };
 		D83658BA2C29A09300B45693 /* HistoryItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryItemView.swift; sourceTree = "<group>"; };
 		D83A78692C3C80C9000E8192 /* FileTypePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypePopover.swift; sourceTree = "<group>"; };
+		D83A786B2C3C85FE000E8192 /* DirectoryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryEntry.swift; sourceTree = "<group>"; };
+		D83A786D2C3C87F5000E8192 /* FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileType.swift; sourceTree = "<group>"; };
 		D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesView.swift; sourceTree = "<group>"; };
 		D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesViewModel.swift; sourceTree = "<group>"; };
 		D843514F2C2B636C009055C1 /* DriveInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveInfo.swift; sourceTree = "<group>"; };
@@ -157,6 +161,7 @@
 				D8184C462C253C59008FA79B /* ApplicationModel.swift */,
 				D886DA752C29343900E84BDA /* BrowserModel.swift */,
 				D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */,
+				D83A786D2C3C87F5000E8192 /* FileType.swift */,
 				D8C080792C1D7D8D003128AB /* ReconnectError.swift */,
 				D8631DB02C374B0A00344DC3 /* Transfer.swift */,
 				D8631DB22C374B4400344DC3 /* TransfersModel.swift */,
@@ -271,6 +276,7 @@
 			isa = PBXGroup;
 			children = (
 				D8631DBA2C37657100344DC3 /* Array.swift */,
+				D83A786B2C3C85FE000E8192 /* DirectoryEntry.swift */,
 				D843514F2C2B636C009055C1 /* DriveInfo.swift */,
 				D8E31EB42C26E10900350082 /* Licensable.swift */,
 				D8631DB62C37573200344DC3 /* rfsv.errs.swift */,
@@ -458,6 +464,7 @@
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
 				D88FA1502C2CE29900805DBD /* ContentView.swift in Sources */,
+				D83A786E2C3C87F5000E8192 /* FileType.swift in Sources */,
 				D8631DBB2C37657100344DC3 /* Array.swift in Sources */,
 				D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
@@ -475,6 +482,7 @@
 				D8631DAD2C3739E600344DC3 /* TransfersPopoverButton.swift in Sources */,
 				D8631DB12C374B0A00344DC3 /* Transfer.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
+				D83A786C2C3C85FE000E8192 /* DirectoryEntry.swift in Sources */,
 				D8631DB72C37573200344DC3 /* rfsv.errs.swift in Sources */,
 				D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */,
 			);
