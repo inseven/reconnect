@@ -20,6 +20,13 @@ import SwiftUI
 
 extension UInt32 {
 
+    // UID1
+    static let directFileStore: Self = 0x10000037
+
+    // UID2
+    static let mbm: Self = 0x10000042
+
+    // UID3
     static let word: Self = 0x1000007F
     static let sheet: Self = 0x10000088
     static let record: Self = 0x1000007E
