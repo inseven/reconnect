@@ -25,6 +25,7 @@ extension UInt32 {
     // UID1
     static let directFileStore: Self = 0x10000037
     static let permanentFileStoreLayout: Self = 0x10000050  // Database
+    static let multiBitmapRomImage: Self = 0x10000041
 
     // UID2
     static let appDllDoc: Self = 0x1000006D

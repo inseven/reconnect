@@ -41,7 +41,7 @@ extension FileServer.DirectoryEntry {
                 return .sketch
             case (.permanentFileStoreLayout, .appDllDoc, .jotter):
                 return .jotter
-            case (.directFileStore, .mbm, .none):
+            case  (.directFileStore, .mbm, .none), (.multiBitmapRomImage, .none, .none):
                 return .mbm
             default:
                 return .unknown
