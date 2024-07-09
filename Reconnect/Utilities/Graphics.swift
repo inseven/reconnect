@@ -17,35 +17,18 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import Foundation
+import ImageIO
+import UniformTypeIdentifiers
 
-import plpftp
-
-enum ReconnectError: Error {
-    case unknown
-    case rfsvError(rfsv.errs)
-    case unknownMediaType
-    case invalidFilePath
-    case unknownFileSize
-    case imageSaveError
-}
-
-extension ReconnectError: LocalizedError {
-
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "Unknown error."
-        case .rfsvError(let error):
-            return error.localizedDescription
-        case .unknownMediaType:
-            return "Unknown media type."
-        case .invalidFilePath:
-            return "Invalid file path."
-        case .unknownFileSize:
-            return "Unknown file size."
-        case .imageSaveError:
-            return "Failed to save image."
-        }
+func CGImageWritePNG(_ image: CGImage, to destinationURL: URL) throws  {
+    guard let destination = CGImageDestinationCreateWithURL(destinationURL as CFURL,
+                                                            UTType.png.identifier as CFString,
+                                                            1,
+                                                            nil) else {
+        throw ReconnectError.imageSaveError
     }
-
+    CGImageDestinationAddImage(destination, image, nil)
+    guard CGImageDestinationFinalize(destination) else {
+        throw ReconnectError.imageSaveError
+    }
 }

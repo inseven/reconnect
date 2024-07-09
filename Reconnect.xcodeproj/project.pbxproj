@@ -46,9 +46,11 @@
 		D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */; };
 		D8AD8B522C2378780063A613 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AD8B512C2378780063A613 /* Server.swift */; };
 		D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080792C1D7D8D003128AB /* ReconnectError.swift */; };
+		D8C409CA2C3D0B7600C9E857 /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C409C92C3D0B7600C9E857 /* Graphics.swift */; };
 		D8D3E79D2C25407E003E696D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E79C2C25407E003E696D /* URL.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E7A02C25410E003E696D /* MainMenu.swift */; };
+		D8DF2C112C3CE8AC006E56BA /* OpoLua in Frameworks */ = {isa = PBXBuildFile; productRef = D8DF2C102C3CE8AC006E56BA /* OpoLua */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
 		D8E31EB72C26E13E00350082 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB62C26E13E00350082 /* String.swift */; };
@@ -116,6 +118,7 @@
 		D8AD8B512C2378780063A613 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8C080792C1D7D8D003128AB /* ReconnectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectError.swift; sourceTree = "<group>"; };
+		D8C409C92C3D0B7600C9E857 /* Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics.swift; sourceTree = "<group>"; };
 		D8D3E79C2C25407E003E696D /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
@@ -129,6 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8DF2C112C3CE8AC006E56BA /* OpoLua in Frameworks */,
 				D806342B2C27F87100DEA6DA /* plpftp in Frameworks */,
 				D81A0C162C27A90000EC2929 /* ncp in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
@@ -191,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				D86924C72C30964400A8492C /* DockIconManaager.swift */,
+				D8C409C92C3D0B7600C9E857 /* Graphics.swift */,
 				D83658B82C298C4F00B45693 /* NavigationStack.swift */,
 				D822EA122C2BA92E008A4BAA /* SerialDeviceMonitor.swift */,
 			);
@@ -328,6 +333,7 @@
 				D81A0C152C27A90000EC2929 /* ncp */,
 				D806342A2C27F87100DEA6DA /* plpftp */,
 				D88FA14D2C2CE0FA00805DBD /* Sparkle */,
+				D8DF2C102C3CE8AC006E56BA /* OpoLua */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -408,6 +414,7 @@
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
+				D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -478,6 +485,7 @@
 				D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */,
 				D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */,
 				D8E31EB72C26E13E00350082 /* String.swift in Sources */,
+				D8C409CA2C3D0B7600C9E857 /* Graphics.swift in Sources */,
 				D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */,
 				D8631DAD2C3739E600344DC3 /* TransfersPopoverButton.swift in Sources */,
 				D8631DB12C374B0A00344DC3 /* Transfer.swift in Sources */,
@@ -830,6 +838,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/interact;
 		};
+		D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = dependencies/opolua;
+		};
 		D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/diligence;
@@ -884,6 +896,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
 			productName = Interact;
+		};
+		D8DF2C102C3CE8AC006E56BA /* OpoLua */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OpoLua;
 		};
 		D8E31EB22C26E09500350082 /* Diligence */ = {
 			isa = XCSwiftPackageProductDependency;
