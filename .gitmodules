@@ -19,3 +19,6 @@
 [submodule "scripts/Sparkle"]
 	path = scripts/Sparkle
 	url = https://github.com/sparkle-project/Sparkle
+[submodule "dependencies/opolua"]
+	path = dependencies/opolua
+	url = https://github.com/inseven/opolua.git
