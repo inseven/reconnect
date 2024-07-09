@@ -27,7 +27,6 @@
 		D84964EC2C1BFCB700405656 /* ReconnectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964EB2C1BFCB700405656 /* ReconnectTests.swift */; };
 		D84964F62C1BFCB700405656 /* ReconnectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F52C1BFCB700405656 /* ReconnectUITests.swift */; };
 		D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */; };
-		D84965062C1BFF1F00405656 /* Socket in Frameworks */ = {isa = PBXBuildFile; productRef = D84965052C1BFF1F00405656 /* Socket */; };
 		D8631DAB2C36867400344DC3 /* BrowserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */; };
 		D8631DAD2C3739E600344DC3 /* TransfersPopoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAC2C3739E600344DC3 /* TransfersPopoverButton.swift */; };
 		D8631DAF2C373A1600344DC3 /* TransferRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAE2C373A1600344DC3 /* TransferRow.swift */; };
@@ -139,7 +138,6 @@
 				D81A0C162C27A90000EC2929 /* ncp in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
-				D84965062C1BFF1F00405656 /* Socket in Frameworks */,
 				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,7 +328,6 @@
 			);
 			name = Reconnect;
 			packageProductDependencies = (
-				D84965052C1BFF1F00405656 /* Socket */,
 				D8D3E79E2C2540D9003E696D /* Interact */,
 				D8E31EB22C26E09500350082 /* Diligence */,
 				D81A0C152C27A90000EC2929 /* ncp */,
@@ -412,7 +409,6 @@
 			);
 			mainGroup = D84964CD2C1BFCB600405656;
 			packageReferences = (
-				D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */,
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */,
@@ -857,14 +853,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Kitura/BlueSocket.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.4;
-			};
-		};
 		D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -885,11 +873,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */;
 			productName = ncp;
-		};
-		D84965052C1BFF1F00405656 /* Socket */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */;
-			productName = Socket;
 		};
 		D88FA14D2C2CE0FA00805DBD /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
