@@ -234,8 +234,8 @@ class BrowserModel {
                                 .appendingPathExtension("png")
                             let image = CGImage.from(bitmap: bitmap)
                             try CGImageWritePNG(image, to: conversionURL)
-                            try fileManager.removeItem(at: downloadURL)
                         }
+                        try fileManager.removeItem(at: downloadURL)
                     }
                 }
 
