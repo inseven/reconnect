@@ -50,6 +50,7 @@ struct MainMenu: View {
                 }
             }
             Divider()
+            Toggle("Convert Files", isOn: $applicationModel.convertFiles)
             Toggle("Open at Login", isOn: $application.openAtLogin)
         }
         Divider()
