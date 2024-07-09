@@ -8,7 +8,7 @@
 	path = dependencies/diligence
 	url = git@github.com:inseven/diligence.git
 [submodule "dependencies/plptools"]
-	path = dependencies/plptools
+	path = dependencies/plptools/plptools
 	url = git@github.com:jbmorley/plptools.git
 [submodule "dependencies/interact"]
 	path = dependencies/interact

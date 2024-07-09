@@ -406,7 +406,7 @@
 				D84965042C1BFF1F00405656 /* XCRemoteSwiftPackageReference "BlueSocket" */,
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
-				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */,
+				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
@@ -834,9 +834,9 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/diligence;
 		};
-		D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */ = {
+		D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies;
+			relativePath = dependencies/plptools;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -862,12 +862,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		D806342A2C27F87100DEA6DA /* plpftp */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */;
+			package = D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */;
 			productName = plpftp;
 		};
 		D81A0C152C27A90000EC2929 /* ncp */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */;
+			package = D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */;
 			productName = ncp;
 		};
 		D84965052C1BFF1F00405656 /* Socket */ = {
