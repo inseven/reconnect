@@ -26,21 +26,32 @@ fileprivate let plptoolsLicense = License(id: "https://github.com/rrthomas/plpto
                                           author: "plptools Authors",
                                           text: String(contentsOfResource: "plptools-license"),
                                           attributes: [
-                                            .url(URL(string: "https://github.com/rrthomas/plptools")!, title: "GitHub"),
+                                              .url(URL(string: "https://github.com/rrthomas/plptools")!, title: "GitHub"),
                                           ],
                                           licenses: [])
+
+fileprivate let sparkleLicense = License(id: "https://github.com/sparkle-project/Sparkle",
+                                         name: "Sparkle",
+                                         author: "Sparkle Project",
+                                         text: String(contentsOfResource: "sparkle-license"),
+                                         attributes: [
+                                            .url(URL(string: "https://github.com/sparkle-project/Sparkle")!, title: "GitHub"),
+                                            .url(URL(string: "https://sparkle-project.org")!, title: "Website"),
+                                         ],
+                                         licenses: [])
 
 fileprivate let reconnectLicense = License(id: "https://github.com/inseven/thoughts",
                                            name: "Reconnect",
                                            author: "Jason Morley",
                                            text: String(contentsOfResource: "reconnect-license"),
                                            attributes: [
-                                            .url(URL(string: "https://github.com/inseven/reconnect")!, title: "GitHub"),
+                                               .url(URL(string: "https://github.com/inseven/reconnect")!, title: "GitHub"),
                                            ],
                                            licenses: [
-                                            .interact,
-                                            .licensable,
-                                            plptoolsLicense,
+                                               .interact,
+                                               .licensable,
+                                               plptoolsLicense,
+                                               sparkleLicense,
                                            ])
 
 extension Licensable where Self == License {
