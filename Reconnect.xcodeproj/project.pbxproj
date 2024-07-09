@@ -41,7 +41,6 @@
 		D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87AAC892C27EB070091F442 /* FileServer.swift */; };
 		D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA732C28CDAD00E84BDA /* BrowserView.swift */; };
 		D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA752C29343900E84BDA /* BrowserModel.swift */; };
-		D887FD862C3CD1DE0094BE50 /* swift in Resources */ = {isa = PBXBuildFile; fileRef = D887FD852C3CD1DE0094BE50 /* swift */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D88FA1502C2CE29900805DBD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88FA14F2C2CE29900805DBD /* ContentView.swift */; };
 		D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */; };
@@ -50,12 +49,10 @@
 		D8D3E79D2C25407E003E696D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E79C2C25407E003E696D /* URL.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E7A02C25410E003E696D /* MainMenu.swift */; };
-		D8E2704B2C3CD2520037B7B4 /* src in Resources */ = {isa = PBXBuildFile; fileRef = D8E2704A2C3CD2520037B7B4 /* src */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
 		D8E31EB72C26E13E00350082 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB62C26E13E00350082 /* String.swift */; };
 		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
-		D8E8A79E2C3CD12100A32920 /* Lua in Frameworks */ = {isa = PBXBuildFile; productRef = D8E8A79D2C3CD12100A32920 /* Lua */; };
 		D8F0E8F62C3778E80047B1BC /* UInt32.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0E8F52C3778E80047B1BC /* UInt32.swift */; };
 /* End PBXBuildFile section */
 
@@ -114,7 +111,6 @@
 		D87AAC892C27EB070091F442 /* FileServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileServer.swift; sourceTree = "<group>"; };
 		D886DA732C28CDAD00E84BDA /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
 		D886DA752C29343900E84BDA /* BrowserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserModel.swift; sourceTree = "<group>"; };
-		D887FD852C3CD1DE0094BE50 /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = dependencies/opolua/swift; sourceTree = SOURCE_ROOT; };
 		D88FA14F2C2CE29900805DBD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		D8AD8B512C2378780063A613 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
@@ -122,7 +118,6 @@
 		D8C080792C1D7D8D003128AB /* ReconnectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectError.swift; sourceTree = "<group>"; };
 		D8D3E79C2C25407E003E696D /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
-		D8E2704A2C3CD2520037B7B4 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = dependencies/opolua/src; sourceTree = SOURCE_ROOT; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
 		D8E31EB62C26E13E00350082 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
@@ -140,7 +135,6 @@
 				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
 				D84965062C1BFF1F00405656 /* Socket in Frameworks */,
 				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
-				D8E8A79E2C3CD12100A32920 /* Lua in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,8 +221,6 @@
 		D84964D82C1BFCB600405656 /* Reconnect */ = {
 			isa = PBXGroup;
 			children = (
-				D8E2704A2C3CD2520037B7B4 /* src */,
-				D887FD852C3CD1DE0094BE50 /* swift */,
 				D84964E22C1BFCB700405656 /* Reconnect.entitlements */,
 				D8AD8B532C2379A10063A613 /* Info.plist */,
 				D84964D92C1BFCB600405656 /* ReconnectApp.swift */,
@@ -336,7 +328,6 @@
 				D81A0C152C27A90000EC2929 /* ncp */,
 				D806342A2C27F87100DEA6DA /* plpftp */,
 				D88FA14D2C2CE0FA00805DBD /* Sparkle */,
-				D8E8A79D2C3CD12100A32920 /* Lua */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -417,7 +408,6 @@
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
-				D8E8A79C2C3CD12100A32920 /* XCLocalSwiftPackageReference "dependencies/opolua/LuaSwift" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -436,9 +426,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */,
-				D887FD862C3CD1DE0094BE50 /* swift in Resources */,
 				D813FF152C26E869009CF0DC /* plptools-license in Resources */,
-				D8E2704B2C3CD2520037B7B4 /* src in Resources */,
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
 				D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */,
 			);
@@ -846,10 +834,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/diligence;
 		};
-		D8E8A79C2C3CD12100A32920 /* XCLocalSwiftPackageReference "dependencies/opolua/LuaSwift" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/opolua/LuaSwift;
-		};
 		D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies;
@@ -904,10 +888,6 @@
 		D8E31EB22C26E09500350082 /* Diligence */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Diligence;
-		};
-		D8E8A79D2C3CD12100A32920 /* Lua */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Lua;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

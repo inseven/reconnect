@@ -315,6 +315,12 @@ class FileServer {
         }
     }
 
+    func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
+        try await perform {
+            return try self.syncQueue_getExtendedAttributes(path: path)
+        }
+    }
+
     func mkdir(path: String) async throws {
         try await perform {
             try self.syncQueue_mkdir(path: path)

@@ -203,10 +203,24 @@ class BrowserModel {
             let downloadURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
             print("Downloading file at path '\(path)' to destination path '\(downloadURL.path)'...")
             transfersModel.add(filename) { transfer in
+
+                // Get the file information.
+                let directoryEntry = try await self.fileServer.getExtendedAttributes(path: path)
+
+                // Perform the file copy.
                 try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: downloadURL.path) { progress, size in
                     transfer.setStatus(.active(Float(progress) / Float(size)))
                     return .continue
                 }
+
+                // Convert known types.
+                // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
+                // reasonable point to hook an initial implementation.
+                if directoryEntry.fileType == .mbm {
+//                    let bitmaps = OpoInterpreter().getMbmBitmaps(path: downloadURL.path) ?? []
+
+                }
+
                 transfer.setStatus(.complete)
             }
         }
