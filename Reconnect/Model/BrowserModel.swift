@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import OpoLua
+
 @MainActor @Observable
 class BrowserModel {
 
@@ -217,10 +219,25 @@ class BrowserModel {
                 // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
                 // reasonable point to hook an initial implementation.
                 if directoryEntry.fileType == .mbm {
-//                    let bitmaps = OpoInterpreter().getMbmBitmaps(path: downloadURL.path) ?? []
-
+                    let directoryURL = (downloadURL as NSURL).deletingLastPathComponent!
+                    let basename = (downloadURL.lastPathComponent as NSString).deletingPathExtension
+                    let bitmaps = OpoInterpreter().getMbmBitmaps(path: downloadURL.path) ?? []
+                    for (index, bitmap) in bitmaps.enumerated() {
+                        let identifier = if index < 1 {
+                            basename
+                        } else {
+                            "\(basename) \(index)"
+                        }
+                        let conversionURL = directoryURL
+                            .appendingPathComponent(identifier)
+                            .appendingPathExtension("png")
+                        let image = CGImage.from(bitmap: bitmap)
+                        try CGImageWritePNG(image, to: conversionURL)
+                        try fileManager.removeItem(at: downloadURL)
+                    }
                 }
 
+                // Mark the transfer as complete.
                 transfer.setStatus(.complete)
             }
         }
