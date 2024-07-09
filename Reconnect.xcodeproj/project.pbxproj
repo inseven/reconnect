@@ -53,6 +53,7 @@
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
 		D8E31EB72C26E13E00350082 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB62C26E13E00350082 /* String.swift */; };
 		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
+		D8E8A79E2C3CD12100A32920 /* Lua in Frameworks */ = {isa = PBXBuildFile; productRef = D8E8A79D2C3CD12100A32920 /* Lua */; };
 		D8F0E8F62C3778E80047B1BC /* UInt32.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0E8F52C3778E80047B1BC /* UInt32.swift */; };
 /* End PBXBuildFile section */
 
@@ -135,6 +136,7 @@
 				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
 				D84965062C1BFF1F00405656 /* Socket in Frameworks */,
 				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
+				D8E8A79E2C3CD12100A32920 /* Lua in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +330,7 @@
 				D81A0C152C27A90000EC2929 /* ncp */,
 				D806342A2C27F87100DEA6DA /* plpftp */,
 				D88FA14D2C2CE0FA00805DBD /* Sparkle */,
+				D8E8A79D2C3CD12100A32920 /* Lua */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -408,6 +411,7 @@
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
+				D8E8A79C2C3CD12100A32920 /* XCLocalSwiftPackageReference "dependencies/opolua/LuaSwift" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -834,6 +838,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/diligence;
 		};
+		D8E8A79C2C3CD12100A32920 /* XCLocalSwiftPackageReference "dependencies/opolua/LuaSwift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = dependencies/opolua/LuaSwift;
+		};
 		D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies;
@@ -888,6 +896,10 @@
 		D8E31EB22C26E09500350082 /* Diligence */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Diligence;
+		};
+		D8E8A79D2C3CD12100A32920 /* Lua */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Lua;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
