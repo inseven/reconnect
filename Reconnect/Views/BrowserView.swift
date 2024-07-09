@@ -89,7 +89,7 @@ struct BrowserView: View {
 
             ToolbarItem(id: "download") {
                 Button {
-                    browserModel.download()
+                    browserModel.download(convertFiles: applicationModel.convertFiles)
                 } label: {
                     Label("New Folder", systemImage: "square.and.arrow.down")
                 }
@@ -115,7 +115,7 @@ struct BrowserView: View {
                     Divider()
 
                     Button("Download") {
-                        browserModel.download()
+                        browserModel.download(convertFiles: applicationModel.convertFiles)
                     }
                     .disabled(browserModel.isSelectionEmpty)
 

@@ -20,6 +20,8 @@ import SwiftUI
 
 struct BrowserDetailView: View {
 
+    @Environment(ApplicationModel.self) var applicationModel
+
     @State var isTargeted = false
 
     var browserModel: BrowserModel
@@ -62,7 +64,7 @@ struct BrowserDetailView: View {
                 Divider()
 
                 Button("Download") {
-                    browserModel.download(items)
+                    browserModel.download(items, convertFiles: applicationModel.convertFiles)
                 }
 
                 Divider()

@@ -186,18 +186,18 @@ class BrowserModel {
         }
     }
 
-    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil) {
+    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil, convertFiles: Bool) {
         let selection = selection ?? fileSelection
         for path in selection {
             if path.isWindowsDirectory {
-                downloadDirectory(path: path)
+                downloadDirectory(path: path, convertFiles: convertFiles)
             } else {
-                downloadFile(from: path)
+                downloadFile(from: path, convertFiles: convertFiles)
             }
         }
     }
 
-    private func downloadFile(from path: String, to destinationURL: URL? = nil) {
+    private func downloadFile(from path: String, to destinationURL: URL? = nil, convertFiles: Bool) {
         Task {
             let fileManager = FileManager.default
             let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
@@ -218,22 +218,24 @@ class BrowserModel {
                 // Convert known types.
                 // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
                 // reasonable point to hook an initial implementation.
-                if directoryEntry.fileType == .mbm {
-                    let directoryURL = (downloadURL as NSURL).deletingLastPathComponent!
-                    let basename = (downloadURL.lastPathComponent as NSString).deletingPathExtension
-                    let bitmaps = OpoInterpreter().getMbmBitmaps(path: downloadURL.path) ?? []
-                    for (index, bitmap) in bitmaps.enumerated() {
-                        let identifier = if index < 1 {
-                            basename
-                        } else {
-                            "\(basename) \(index)"
+                if convertFiles {
+                    if directoryEntry.fileType == .mbm {
+                        let directoryURL = (downloadURL as NSURL).deletingLastPathComponent!
+                        let basename = (downloadURL.lastPathComponent as NSString).deletingPathExtension
+                        let bitmaps = OpoInterpreter().getMbmBitmaps(path: downloadURL.path) ?? []
+                        for (index, bitmap) in bitmaps.enumerated() {
+                            let identifier = if index < 1 {
+                                basename
+                            } else {
+                                "\(basename) \(index)"
+                            }
+                            let conversionURL = directoryURL
+                                .appendingPathComponent(identifier)
+                                .appendingPathExtension("png")
+                            let image = CGImage.from(bitmap: bitmap)
+                            try CGImageWritePNG(image, to: conversionURL)
+                            try fileManager.removeItem(at: downloadURL)
                         }
-                        let conversionURL = directoryURL
-                            .appendingPathComponent(identifier)
-                            .appendingPathExtension("png")
-                        let image = CGImage.from(bitmap: bitmap)
-                        try CGImageWritePNG(image, to: conversionURL)
-                        try fileManager.removeItem(at: downloadURL)
                     }
                 }
 
@@ -243,7 +245,7 @@ class BrowserModel {
         }
     }
 
-    private func downloadDirectory(path: String) {
+    private func downloadDirectory(path: String, convertFiles: Bool) {
         runAsync {
             let fileManager = FileManager.default
             let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
@@ -261,7 +263,7 @@ class BrowserModel {
                 if file.isDirectory {
                     try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
                 } else {
-                    self.downloadFile(from: file.path, to: destinationURL)
+                    self.downloadFile(from: file.path, to: destinationURL, convertFiles: convertFiles)
                 }
             }
         }
