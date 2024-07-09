@@ -30,3 +30,4 @@ Reconnect is licensed under the GNU General Public License (GPL) version 2 (see 
 - [Interact](https://github.com/inseven/interact), MIT License
 - [Licensable](https://github.com/inseven/licensable), MIT License
 - [plptools](https://github.com/rrthomas/plptools/), GPL-2.0 license
+- [Sparkle](https://sparkle-project.org), MIT License
