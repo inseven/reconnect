@@ -87,13 +87,22 @@ struct BrowserView: View {
                 }
             }
 
+            ToolbarItem(id: "download") {
+                Button {
+                    browserModel.download()
+                } label: {
+                    Label("New Folder", systemImage: "square.and.arrow.down")
+                }
+                .disabled(browserModel.isSelectionEmpty)
+            }
+
             ToolbarItem(id: "delete") {
                 Button {
                     browserModel.delete()
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
-                .disabled(!browserModel.canDelete)
+                .disabled(browserModel.isSelectionEmpty)
             }
 
             ToolbarItem(id: "action") {
@@ -108,12 +117,14 @@ struct BrowserView: View {
                     Button("Download") {
                         browserModel.download()
                     }
+                    .disabled(browserModel.isSelectionEmpty)
 
                     Divider()
 
                     Button("Delete") {
                         browserModel.delete()
                     }
+                    .disabled(browserModel.isSelectionEmpty)
 
                 } label: {
                     Label("Action", systemImage: "ellipsis.circle")

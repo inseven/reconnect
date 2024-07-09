@@ -21,8 +21,8 @@ import SwiftUI
 @MainActor @Observable
 class BrowserModel {
 
-    var canDelete: Bool {
-        return !fileSelection.isEmpty
+    var isSelectionEmpty: Bool {
+        return fileSelection.isEmpty
     }
 
     var navigationTitle: String? {
