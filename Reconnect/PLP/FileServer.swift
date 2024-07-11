@@ -144,7 +144,7 @@ class FileServer {
 
     var client = RFSVClient()
 
-    init(host: String, port: Int32) {
+    init(host: String = "127.0.0.1", port: Int32 = 7501) {
         self.host = host
         self.port = port
     }
