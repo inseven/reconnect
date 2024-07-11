@@ -21,11 +21,10 @@ import SwiftUI
 struct ContentView: View {
 
     var applicationModel: ApplicationModel
-    let fileServer = FileServer(host: "127.0.0.1", port: 7501)
 
     var body: some View {
         VStack {
-            BrowserView(fileServer: fileServer)
+            BrowserView()
         }
         .showsDockIcon()
     }

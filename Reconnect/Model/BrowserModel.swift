@@ -48,7 +48,7 @@ class BrowserModel {
 
     var transfersModel = TransfersModel()
 
-    let fileServer: FileServer
+    let fileServer = FileServer()
 
     var drives: [FileServer.DriveInfo] = []
     var files: [FileServer.DirectoryEntry] = []
@@ -68,8 +68,7 @@ class BrowserModel {
 
     private var navigationStack = NavigationStack()
 
-    init(fileServer: FileServer) {
-        self.fileServer = fileServer
+    init() {
     }
 
     func start() async {
@@ -192,55 +191,7 @@ class BrowserModel {
             if path.isWindowsDirectory {
                 downloadDirectory(path: path, convertFiles: convertFiles)
             } else {
-                downloadFile(from: path, convertFiles: convertFiles)
-            }
-        }
-    }
-
-    private func downloadFile(from path: String, to destinationURL: URL? = nil, convertFiles: Bool) {
-        Task {
-            let fileManager = FileManager.default
-            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-            let filename = path.lastWindowsPathComponent
-            let downloadURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
-            print("Downloading file at path '\(path)' to destination path '\(downloadURL.path)'...")
-            transfersModel.add(filename) { transfer in
-
-                // Get the file information.
-                let directoryEntry = try await self.fileServer.getExtendedAttributes(path: path)
-
-                // Perform the file copy.
-                try await self.fileServer.copyFile(fromRemotePath: path, toLocalPath: downloadURL.path) { progress, size in
-                    transfer.setStatus(.active(Float(progress) / Float(size)))
-                    return .continue
-                }
-
-                // Convert known types.
-                // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
-                // reasonable point to hook an initial implementation.
-                if convertFiles {
-                    if directoryEntry.fileType == .mbm {
-                        let directoryURL = (downloadURL as NSURL).deletingLastPathComponent!
-                        let basename = (downloadURL.lastPathComponent as NSString).deletingPathExtension
-                        let bitmaps = OpoInterpreter().getMbmBitmaps(path: downloadURL.path) ?? []
-                        for (index, bitmap) in bitmaps.enumerated() {
-                            let identifier = if index < 1 {
-                                basename
-                            } else {
-                                "\(basename) \(index)"
-                            }
-                            let conversionURL = directoryURL
-                                .appendingPathComponent(identifier)
-                                .appendingPathExtension("png")
-                            let image = CGImage.from(bitmap: bitmap)
-                            try CGImageWritePNG(image, to: conversionURL)
-                        }
-                        try fileManager.removeItem(at: downloadURL)
-                    }
-                }
-
-                // Mark the transfer as complete.
-                transfer.setStatus(.complete)
+                transfersModel.download(from: path, convertFiles: convertFiles)
             }
         }
     }
@@ -263,7 +214,7 @@ class BrowserModel {
                 if file.isDirectory {
                     try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
                 } else {
-                    self.downloadFile(from: file.path, to: destinationURL, convertFiles: convertFiles)
+                    self.transfersModel.download(from: file.path, to: destinationURL, convertFiles: convertFiles)
                 }
             }
         }
@@ -274,16 +225,7 @@ class BrowserModel {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
             }
-            let destinationPath = path + url.lastPathComponent
-            print("Uploading file at path '\(url.path)' to destination path '\(destinationPath)'...")
-            self.transfersModel.add(url.lastPathComponent) { transfer in
-                try await self.fileServer.copyFile(fromLocalPath: url.path, toRemotePath: destinationPath) { progress, size in
-                    transfer.setStatus(.active(Float(progress) / Float(size)))
-                    return .continue
-                }
-                transfer.setStatus(.complete)
-                self.update()
-            }
+            self.transfersModel.upload(from: url, to: path + url.lastPathComponent)
         }
     }
 

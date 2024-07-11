@@ -22,11 +22,10 @@ import SwiftUI
 struct BrowserView: View {
 
     @Environment(ApplicationModel.self) var applicationModel
-    
-    @State private var browserModel: BrowserModel
 
-    init(fileServer: FileServer) {
-        _browserModel = State(initialValue: BrowserModel(fileServer: fileServer))
+    @State private var browserModel = BrowserModel()
+
+    init() {
     }
 
     var body: some View {
