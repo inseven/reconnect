@@ -56,11 +56,20 @@ class Transfer: Identifiable {
         case failed(Error)
     }
 
+    var isCancelled: Bool {
+        return lock.withLock {
+            return _isCancelled
+        }
+    }
+
     let id = UUID()
 
     var title: String
     var status: Status
-    var task: Task<Void, Never>? = nil
+
+    private var task: Task<Void, Never>? = nil
+    private var lock = NSLock()
+    private var _isCancelled: Bool = false
 
     var isActive: Bool {
         switch status {
@@ -88,6 +97,13 @@ class Transfer: Identifiable {
     func setStatus(_ status: Status) {
         DispatchQueue.main.async {
             self.status = status
+        }
+    }
+
+    func cancel() {
+        task?.cancel()
+        lock.withLock {
+            _isCancelled = true
         }
     }
 

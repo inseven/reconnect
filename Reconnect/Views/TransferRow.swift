@@ -30,7 +30,16 @@ struct TransferRow: View {
                 Text("Waiting...")
                     .foregroundStyle(.secondary)
             case .active(let progress):
-                ProgressView(value: progress)
+                HStack {
+                    ProgressView(value: progress)
+                    Button {
+                        transfer.cancel()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
             case .complete:
                 Text("Complete!")
                     .foregroundStyle(.secondary)
