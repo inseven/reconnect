@@ -61,7 +61,7 @@ class TransfersModel {
             // Perform the file copy.
             try await self.fileServer.copyFile(fromRemotePath: sourcePath, toLocalPath: downloadURL.path) { progress, size in
                 transfer.setStatus(.active(Float(progress) / Float(size)))
-                return .continue
+                return transfer.isCancelled ? .cancel : .continue
             }
 
             // Convert known types.
@@ -98,7 +98,7 @@ class TransfersModel {
         add(sourceURL.lastPathComponent) { transfer in
             try await self.fileServer.copyFile(fromLocalPath: sourceURL.path, toRemotePath: destinationPath) { progress, size in
                 transfer.setStatus(.active(Float(progress) / Float(size)))
-                return .continue
+                return transfer.isCancelled ? .cancel : .continue
             }
             transfer.setStatus(.complete)
         }
