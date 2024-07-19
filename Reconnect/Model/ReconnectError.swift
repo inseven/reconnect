@@ -20,7 +20,7 @@ import Foundation
 
 import plpftp
 
-enum ReconnectError: Error {
+public enum ReconnectError: Error {
     case unknown
     case rfsvError(rfsv.errs)
     case unknownMediaType

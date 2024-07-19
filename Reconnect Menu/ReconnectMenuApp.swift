@@ -18,45 +18,24 @@
 
 import SwiftUI
 
-fileprivate class DockIconManager {
+@main @MainActor
+struct ReconnectMenuApp: App {
 
-    static var shared: DockIconManager = {
-        return DockIconManager()
-    }()
+    @State var applicationModel = ApplicationModel()
 
-    @MainActor var activeRequests: Int = 0 {
-        didSet {
-            if activeRequests > 0 {
-                NSApp.setActivationPolicy(.regular)
+    var body: some Scene {
+
+        MenuBarExtra {
+            MainMenu()
+                .environment(applicationModel)
+        } label: {
+            if applicationModel.isConnected {
+                Image("StatusConnected")
             } else {
-                NSApp.setActivationPolicy(.accessory)
+                Image("StatusDisconnected")
             }
         }
+
+
     }
-
-    func requestDockIcon() async {
-        await MainActor.run {
-            activeRequests = activeRequests + 1
-        }
-        defer {
-            Task { @MainActor in
-                activeRequests = activeRequests - 1
-            }
-        }
-        while !Task.isCancelled {
-            try? await Task.sleep(for: .seconds(60*60*24))
-        }
-    }
-
-}
-
-extension View {
-
-    func showsDockIcon() -> some View {
-        self
-            .task {
-                await DockIconManager.shared.requestDockIcon()
-            }
-    }
-
 }

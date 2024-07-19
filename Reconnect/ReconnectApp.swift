@@ -29,7 +29,7 @@ struct ReconnectApp: App {
 
     static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
-    @State var server = Server()
+//    @State var server = Server()
     @State var transfersModel = TransfersModel()
     @State var applicationModel: ApplicationModel
 
@@ -39,18 +39,7 @@ struct ReconnectApp: App {
 
     var body: some Scene {
 
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            if applicationModel.isConnected {
-                Image("StatusConnected")
-            } else {
-                Image("StatusDisconnected")
-            }
-        }
-
-        WindowGroup("My Psion") {
+        Window("My Psion", id: "browser") {
             ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
         }
         .environment(applicationModel)

@@ -15,6 +15,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D8F1A59A2C4A4C9B00931C00"
+               BuildableName = "Reconnect Menu.app"
+               BlueprintName = "Reconnect Menu"
+               ReferencedContainer = "container:Reconnect.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "D84964D52C1BFCB600405656"
                BuildableName = "Reconnect.app"
                BlueprintName = "Reconnect"

@@ -32,7 +32,6 @@ struct ContentView: View {
         VStack {
             BrowserView(transfersModel: transfersModel)
         }
-        .showsDockIcon()
     }
 
 }

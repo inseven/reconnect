@@ -39,11 +39,6 @@ struct MainMenu: View {
         }
         .disabled(!applicationModel.isConnected)
         Divider()
-        Button {
-            openURL(.about)
-        } label: {
-            Text("About...")
-        }
         Menu("Settings") {
             ForEach(applicationModel.devices) { device in
                 Toggle(isOn: device.enabled) {
@@ -55,8 +50,8 @@ struct MainMenu: View {
             Toggle("Convert Files", isOn: $applicationModel.convertFiles)
             Toggle("Open at Login", isOn: $application.openAtLogin)
         }
-        Divider()
-        CheckForUpdatesView(updater: applicationModel.updaterController.updater)
+//        Divider()
+//        CheckForUpdatesView(updater: applicationModel.updaterController.updater)
         Divider()
         Button("Quit") {
             applicationModel.quit()

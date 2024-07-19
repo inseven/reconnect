@@ -17,9 +17,9 @@
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>SUPublicEDKey</key>
-	<string>3EjNyhaYtMraXwX9DnIazXbJe4worl2Bktkt8VrZXZk=</string>
 	<key>SUFeedURL</key>
 	<string>https://sparkle.jbmorley.co.uk/inseven/reconnect/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>3EjNyhaYtMraXwX9DnIazXbJe4worl2Bktkt8VrZXZk=</string>
 </dict>
 </plist>

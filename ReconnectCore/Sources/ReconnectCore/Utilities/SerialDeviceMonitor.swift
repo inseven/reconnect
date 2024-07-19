@@ -20,18 +20,22 @@ import Foundation
 import IOKit
 import IOKit.serial
 
-protocol SerialDeviceMonitorDelegate: NSObject {
+public protocol SerialDeviceMonitorDelegate: NSObject {
 
     func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String)
     func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String)
 
 }
 
-class SerialDeviceMonitor {
+public class SerialDeviceMonitor {
 
-    weak var delegate: SerialDeviceMonitorDelegate?
+    public weak var delegate: SerialDeviceMonitorDelegate?
 
-    func start() {
+    public init() {
+        
+    }
+
+    public func start() {
         let matchingDict = IOServiceMatching(kIOSerialBSDServiceValue)
         var notifyPort: IONotificationPortRef?
         var addedIterator: io_iterator_t = 0

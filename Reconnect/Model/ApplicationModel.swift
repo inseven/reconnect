@@ -40,45 +40,9 @@ class ApplicationModel: NSObject {
         case convertFiles
     }
 
-    var isConnected: Bool = false
-
-    var devices: [SerialDevice] {
-        return connectedDevices.union(selectedDevices)
-            .map { device in
-                let binding: Binding<Bool> = Binding {
-                    return self.selectedDevices.contains(device)
-                } set: { newValue in
-                    if newValue {
-                        self.selectedDevices.insert(device)
-                    } else {
-                        self.selectedDevices.remove(device)
-                    }
-                }
-                return SerialDevice(path: device,
-                                    available: connectedDevices.contains(device),
-                                    enabled: binding)
-            }
-            .sorted { device1, device2 in
-                return device1.path.localizedStandardCompare(device2.path) == .orderedAscending
-            }
-    }
-
     var convertFiles: Bool {
         didSet {
             keyedDefaults.set(convertFiles, forKey: .convertFiles)
-        }
-    }
-
-    private var selectedDevices: Set<String> {
-        didSet {
-            keyedDefaults.set(Array(selectedDevices), forKey: .selectedDevices)
-            update()
-        }
-    }
-
-    private var connectedDevices: Set<String> = [] {
-        didSet {
-            update()
         }
     }
 
@@ -87,51 +51,40 @@ class ApplicationModel: NSObject {
                                                          userDriverDelegate: nil)
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
-    private let server: Server = Server()
-    private let serialDeviceMonitor = SerialDeviceMonitor()
 
     override init() {
-        selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         super.init()
-        server.delegate = self
-        serialDeviceMonitor.delegate = self
-        start()
+        launchEmbeddedApp()
     }
 
-    func start() {
-        server.start()
-        serialDeviceMonitor.start()
-        updaterController.startUpdater()
-    }
-
-    @MainActor func quit() {
-        NSApplication.shared.terminate(nil)
-    }
-
-    func update() {
-        server.setDevices(selectedDevices.intersection(connectedDevices).sorted())
+    func launchEmbeddedApp() {
+        guard let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
+            return
+        }
+        let openConfiguraiton = NSWorkspace.OpenConfiguration()
+        NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguraiton)
     }
 
 }
 
-extension ApplicationModel: ServerDelegate {
-
-    func server(server: Server, didChangeConnectionState isConnected: Bool) {
-        self.isConnected = isConnected
-    }
-
-}
-
-extension ApplicationModel: SerialDeviceMonitorDelegate {
-
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
-        connectedDevices.insert(device)
-
-    }
-    
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
-        connectedDevices.remove(device)
-    }
-
-}
+//extension ApplicationModel: ServerDelegate {
+//
+//    func server(server: Server, didChangeConnectionState isConnected: Bool) {
+//        self.isConnected = isConnected
+//    }
+//
+//}
+//
+//extension ApplicationModel: SerialDeviceMonitorDelegate {
+//
+//    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
+//        connectedDevices.insert(device)
+//
+//    }
+//    
+//    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
+//        connectedDevices.remove(device)
+//    }
+//
+//}
