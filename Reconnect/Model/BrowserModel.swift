@@ -187,6 +187,7 @@ class BrowserModel {
     }
 
     func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil, convertFiles: Bool) {
+        NSWorkspace.shared.open(.transfers)
         let selection = selection ?? fileSelection
         for path in selection {
             if path.isWindowsDirectory {
@@ -222,6 +223,7 @@ class BrowserModel {
     }
 
     func upload(url: URL) {
+        NSWorkspace.shared.open(.transfers)
         runAsync {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath

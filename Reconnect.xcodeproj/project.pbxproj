@@ -28,7 +28,6 @@
 		D84964F62C1BFCB700405656 /* ReconnectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F52C1BFCB700405656 /* ReconnectUITests.swift */; };
 		D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */; };
 		D8631DAB2C36867400344DC3 /* BrowserDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */; };
-		D8631DAD2C3739E600344DC3 /* TransfersPopoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAC2C3739E600344DC3 /* TransfersPopoverButton.swift */; };
 		D8631DAF2C373A1600344DC3 /* TransferRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DAE2C373A1600344DC3 /* TransferRow.swift */; };
 		D8631DB12C374B0A00344DC3 /* Transfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB02C374B0A00344DC3 /* Transfer.swift */; };
 		D8631DB32C374B4400344DC3 /* TransfersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB22C374B4400344DC3 /* TransfersModel.swift */; };
@@ -56,6 +55,7 @@
 		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
 		D8F0E8F62C3778E80047B1BC /* UInt32.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F0E8F52C3778E80047B1BC /* UInt32.swift */; };
 		D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */ = {isa = PBXBuildFile; fileRef = D8FD72722C3D192F0038DB17 /* sparkle-license */; };
+		D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,7 +99,6 @@
 		D84964F52C1BFCB700405656 /* ReconnectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITests.swift; sourceTree = "<group>"; };
 		D84964F72C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserDetailView.swift; sourceTree = "<group>"; };
-		D8631DAC2C3739E600344DC3 /* TransfersPopoverButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersPopoverButton.swift; sourceTree = "<group>"; };
 		D8631DAE2C373A1600344DC3 /* TransferRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferRow.swift; sourceTree = "<group>"; };
 		D8631DB02C374B0A00344DC3 /* Transfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transfer.swift; sourceTree = "<group>"; };
 		D8631DB22C374B4400344DC3 /* TransfersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersModel.swift; sourceTree = "<group>"; };
@@ -126,6 +125,7 @@
 		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
 		D8F0E8F52C3778E80047B1BC /* UInt32.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt32.swift; sourceTree = "<group>"; };
 		D8FD72722C3D192F0038DB17 /* sparkle-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "sparkle-license"; sourceTree = "<group>"; };
+		D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,8 +185,8 @@
 				D8D3E7A02C25410E003E696D /* MainMenu.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
 				D8631DAE2C373A1600344DC3 /* TransferRow.swift */,
-				D8631DAC2C3739E600344DC3 /* TransfersPopoverButton.swift */,
 				D8631DB42C374F8700344DC3 /* TransfersView.swift */,
+				D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -474,6 +474,7 @@
 				D83A786E2C3C87F5000E8192 /* FileType.swift in Sources */,
 				D8631DBB2C37657100344DC3 /* Array.swift in Sources */,
 				D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */,
+				D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
 				D822EA132C2BA92E008A4BAA /* SerialDeviceMonitor.swift in Sources */,
 				D86924C82C30964400A8492C /* DockIconManaager.swift in Sources */,
@@ -487,7 +488,6 @@
 				D8E31EB72C26E13E00350082 /* String.swift in Sources */,
 				D8C409CA2C3D0B7600C9E857 /* Graphics.swift in Sources */,
 				D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */,
-				D8631DAD2C3739E600344DC3 /* TransfersPopoverButton.swift in Sources */,
 				D8631DB12C374B0A00344DC3 /* Transfer.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 				D83A786C2C3C85FE000E8192 /* DirectoryEntry.swift in Sources */,
