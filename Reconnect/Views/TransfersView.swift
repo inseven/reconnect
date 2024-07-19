@@ -23,10 +23,12 @@ struct TransfersView: View {
     private struct LayoutMetrics {
         static let width = 360.0
         static let minimumHeight = 300.0
-        static let titleBarPadding = 8.0
+        static let footerPadding = 8.0
     }
 
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
+
+    @Environment(ApplicationModel.self) private var applicationModel
 
     private let transfersModel: TransfersModel
 
@@ -35,6 +37,7 @@ struct TransfersView: View {
     }
 
     var body: some View {
+        @Bindable var applicationModel = applicationModel
         @Bindable var transfers = transfersModel
         List(selection: $transfers.selection) {
             ForEach(transfers.transfers) { transfer in
@@ -42,18 +45,18 @@ struct TransfersView: View {
             }
         }
         .scrollContentBackground(.hidden)
-        .frame(minHeight: LayoutMetrics.minimumHeight)
-        .frame(width: LayoutMetrics.width)
-        .toolbar {
-            ToolbarItem {
-                Button("Clear") {
-                    transfers.clear()
-                    if transfers.transfers.isEmpty {
-                        dismiss()
-                    }
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: 0) {
+                Divider()
+                HStack {
+                    Toggle("Convert Files", isOn: $applicationModel.convertFiles)
+                    Spacer()
                 }
+                .padding(LayoutMetrics.footerPadding)
             }
         }
+        .frame(minHeight: LayoutMetrics.minimumHeight)
+        .frame(width: LayoutMetrics.width)
     }
 
 }

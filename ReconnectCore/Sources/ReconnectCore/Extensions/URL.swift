@@ -24,6 +24,7 @@ extension URL {
     public static let browser = URL(string: "x-reconnect://browser")!
     public static let install = URL(string: "x-reconnect://install/")!
     public static let transfers = URL(string: "x-reconnect://transfers")!
+    public static let update = URL(string: "x-reconnect://update")!
 
     public func appendingPathComponents(_ pathComponents: [String]) -> URL {
         return pathComponents.reduce(self) { url, pathComponent in

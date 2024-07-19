@@ -41,11 +41,6 @@ class TransfersModel {
         transfers.append(Transfer(title: title, action: action))
     }
 
-    func clear() {
-        self.transfers
-            .removeAll { !$0.isActive }
-    }
-
     func download(from sourcePath: String, to destinationURL: URL? = nil, convertFiles: Bool) {
         let fileManager = FileManager.default
         let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]

@@ -29,7 +29,6 @@ struct ReconnectApp: App {
 
     static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
-    @State var server = Server()
     @State var transfersModel = TransfersModel()
     @State var applicationModel: ApplicationModel
 
@@ -39,24 +38,27 @@ struct ReconnectApp: App {
 
     var body: some Scene {
 
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            if applicationModel.isConnected {
-                Image("StatusConnected")
-            } else {
-                Image("StatusDisconnected")
+        Window("My Psion", id: "browser") {
+            ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
+                .onOpenURL { url in
+                    guard url == .update else {
+                        print("Unsupported URL \(url).")
+                        return
+                    }
+                    applicationModel.updaterController.updater.checkForUpdates()
+                }
+                .handlesExternalEvents(preferring: [.install], allowing: [])
+        }
+        .commands {
+            CommandGroup(before: .appSettings) {
+                CheckForUpdatesView(updater: applicationModel.updaterController.updater)
             }
         }
-
-        WindowGroup("My Psion") {
-            ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
-        }
         .environment(applicationModel)
-        .handlesExternalEvents(matching: [.browser])
+        .handlesExternalEvents(matching: [.browser, .update])
 
         TransfersWindow(transfersModel: transfersModel)
+            .environment(applicationModel)
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024 Jason Morley") {
             Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)
