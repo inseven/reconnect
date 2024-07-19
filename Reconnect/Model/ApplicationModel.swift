@@ -55,10 +55,10 @@ class ApplicationModel: NSObject {
     override init() {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         super.init()
-        launchEmbeddedApp()
+        openMenuApplication()
     }
 
-    func launchEmbeddedApp() {
+    func openMenuApplication() {
         guard let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
             return
         }
@@ -67,24 +67,3 @@ class ApplicationModel: NSObject {
     }
 
 }
-
-//extension ApplicationModel: ServerDelegate {
-//
-//    func server(server: Server, didChangeConnectionState isConnected: Bool) {
-//        self.isConnected = isConnected
-//    }
-//
-//}
-//
-//extension ApplicationModel: SerialDeviceMonitorDelegate {
-//
-//    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
-//        connectedDevices.insert(device)
-//
-//    }
-//    
-//    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
-//        connectedDevices.remove(device)
-//    }
-//
-//}

@@ -29,7 +29,6 @@ struct ReconnectApp: App {
 
     static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
-//    @State var server = Server()
     @State var transfersModel = TransfersModel()
     @State var applicationModel: ApplicationModel
 
@@ -41,6 +40,11 @@ struct ReconnectApp: App {
 
         Window("My Psion", id: "browser") {
             ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
+        }
+        .commands {
+            CommandGroup(before: .appSettings) {
+                CheckForUpdatesView(updater: applicationModel.updaterController.updater)
+            }
         }
         .environment(applicationModel)
         .handlesExternalEvents(matching: [.browser])
