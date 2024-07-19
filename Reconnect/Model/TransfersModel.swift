@@ -71,7 +71,7 @@ class TransfersModel {
                 if directoryEntry.fileType == .mbm {
                     let directoryURL = (downloadURL as NSURL).deletingLastPathComponent!
                     let basename = (downloadURL.lastPathComponent as NSString).deletingPathExtension
-                    let bitmaps = OpoInterpreter().getMbmBitmaps(path: downloadURL.path) ?? []
+                    let bitmaps = PsiLuaEnv().getMbmBitmaps(path: downloadURL.path) ?? []
                     for (index, bitmap) in bitmaps.enumerated() {
                         let identifier = if index < 1 {
                             basename
