@@ -23,9 +23,10 @@ struct BrowserView: View {
 
     @Environment(ApplicationModel.self) var applicationModel
 
-    @State private var browserModel = BrowserModel()
+    @State private var browserModel: BrowserModel
 
-    init() {
+    init(transfersModel: TransfersModel) {
+        _browserModel = State(initialValue: BrowserModel(transfersModel: transfersModel))
     }
 
     var body: some View {

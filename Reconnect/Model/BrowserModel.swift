@@ -46,9 +46,9 @@ class BrowserModel {
         return navigationStack.previousItems.reversed()
     }
 
-    var transfersModel = TransfersModel()
-
     let fileServer = FileServer()
+
+    let transfersModel: TransfersModel
 
     var drives: [FileServer.DriveInfo] = []
     var files: [FileServer.DirectoryEntry] = []
@@ -68,7 +68,8 @@ class BrowserModel {
 
     private var navigationStack = NavigationStack()
 
-    init() {
+    init(transfersModel: TransfersModel) {
+        self.transfersModel = transfersModel
     }
 
     func start() async {
