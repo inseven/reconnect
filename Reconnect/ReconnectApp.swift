@@ -57,6 +57,13 @@ struct ReconnectApp: App {
         .environment(applicationModel)
         .handlesExternalEvents(matching: [.browser, .update])
 
+        WindowGroup("Installer", for: URL.self) { url in
+            if let url = url.wrappedValue {
+                InstallerView(url: url)
+            }
+        }
+        .environment(applicationModel)
+
         TransfersWindow(transfersModel: transfersModel)
             .environment(applicationModel)
 

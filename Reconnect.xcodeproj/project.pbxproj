@@ -41,6 +41,8 @@
 		D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA752C29343900E84BDA /* BrowserModel.swift */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D88FA1502C2CE29900805DBD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88FA14F2C2CE29900805DBD /* ContentView.swift */; };
+		D89263BE2C40845300BA9F56 /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89263BD2C40845300BA9F56 /* InstallerModel.swift */; };
+		D89263C02C40860400BA9F56 /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89263BF2C40860400BA9F56 /* InstallerView.swift */; };
 		D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
@@ -136,6 +138,8 @@
 		D886DA732C28CDAD00E84BDA /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
 		D886DA752C29343900E84BDA /* BrowserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserModel.swift; sourceTree = "<group>"; };
 		D88FA14F2C2CE29900805DBD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D89263BD2C40845300BA9F56 /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
+		D89263BF2C40860400BA9F56 /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		D8AD8B512C2378780063A613 /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 				D809545E2C4A572D00752BBC /* ReconnectError.swift */,
 				D8631DB02C374B0A00344DC3 /* Transfer.swift */,
 				D8631DB22C374B4400344DC3 /* TransfersModel.swift */,
+				D89263BD2C40845300BA9F56 /* InstallerModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -235,6 +240,7 @@
 				D88FA14F2C2CE29900805DBD /* ContentView.swift */,
 				D83A78692C3C80C9000E8192 /* FileTypePopover.swift */,
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
+				D89263BF2C40860400BA9F56 /* InstallerView.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
 				D8631DAE2C373A1600344DC3 /* TransferRow.swift */,
 				D8631DB42C374F8700344DC3 /* TransfersView.swift */,
@@ -578,6 +584,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D84351502C2B636C009055C1 /* DriveInfo.swift in Sources */,
+				D89263C02C40860400BA9F56 /* InstallerView.swift in Sources */,
 				D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */,
 				D8631DAF2C373A1600344DC3 /* TransferRow.swift in Sources */,
 				D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */,
@@ -589,6 +596,7 @@
 				D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */,
 				D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
+				D89263BE2C40845300BA9F56 /* InstallerModel.swift in Sources */,
 				D87AAC8A2C27EB070091F442 /* FileServer.swift in Sources */,
 				D8631DAB2C36867400344DC3 /* BrowserDetailView.swift in Sources */,
 				D80954612C4A573700752BBC /* Graphics.swift in Sources */,
