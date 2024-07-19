@@ -20,6 +20,8 @@ import SwiftUI
 
 import OpoLua
 
+import ReconnectCore
+
 @MainActor @Observable
 class TransfersModel {
 

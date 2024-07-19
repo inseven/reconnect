@@ -22,7 +22,7 @@ import plptools
 
 extension rfsv.errs {
 
-    var localizedDescription: String {
+    public var localizedDescription: String {
         switch self.rawValue {
         case -33:
             return "File doesn't exist."
@@ -35,7 +35,7 @@ extension rfsv.errs {
         }
     }
 
-    func check() throws {
+    public func check() throws {
         if self.rawValue != 0 {
             throw ReconnectError.rfsvError(self)
         }

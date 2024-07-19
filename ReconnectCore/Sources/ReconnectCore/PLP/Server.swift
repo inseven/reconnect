@@ -20,17 +20,17 @@ import Foundation
 
 import ncp
 
-protocol ServerDelegate: NSObject {
+public protocol ServerDelegate: NSObject {
 
     func server(server: Server, didChangeConnectionState isConnected: Bool)
 
 }
 
-class Server {
+public class Server {
 
-    weak var delegate: ServerDelegate? = nil
+    public weak var delegate: ServerDelegate? = nil
 
-    var lock = NSLock()
+    private var lock = NSLock()
     var threadID: pthread_t? = nil  // Synchronized with lock.
     var devices: [String] = []  // Synchronized with lock.
 
@@ -81,11 +81,11 @@ class Server {
         }
     }
 
-    init() {
+    public init() {
         // Create a new thread and start it
     }
 
-    func start() {
+    public func start() {
         // TODO: ONLY DO THIS ONCE!
         let thread = Thread(block: threadEntryPoint)
         thread.start()
@@ -93,7 +93,7 @@ class Server {
         // TODO: This should probably block until we're ready??
     }
 
-    func setDevices(_ devices: [String]) {
+    public func setDevices(_ devices: [String]) {
         // SIGHUP?
         guard let threadID = lock.withLock({
             return self.threadID

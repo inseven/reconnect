@@ -18,7 +18,7 @@
 
 import Foundation
 
-enum FileType {
+public enum FileType {
 
     case unknown
     case directory
@@ -36,7 +36,7 @@ enum FileType {
 
 extension FileType {
 
-    var name: String {
+    public var name: String {
         switch self {
         case .unknown:
             return "Unknown"
@@ -63,7 +63,7 @@ extension FileType {
         }
     }
 
-    var image: String {
+    public var image: String {
         switch self {
         case .unknown:
             return "FileUnknown16"

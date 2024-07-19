@@ -20,7 +20,7 @@ import Foundation
 
 extension FileServer.DriveInfo {
 
-    var displayName: String {
+    public var displayName: String {
         if let name {
             return name
         } else {
@@ -28,7 +28,7 @@ extension FileServer.DriveInfo {
         }
     }
 
-    var image: String {
+    public var image: String {
         switch mediaType {
         case .notPresent:
             return "Drive16"

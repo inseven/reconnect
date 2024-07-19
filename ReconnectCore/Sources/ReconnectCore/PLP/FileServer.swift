@@ -21,9 +21,9 @@ import Foundation
 import ncp
 import plpftp
 
-class FileServer {
+public class FileServer {
 
-    enum MediaType: UInt32 {
+    public enum MediaType: UInt32 {
         case notPresent = 0
         case unknown = 1
         case floppy = 2
@@ -35,69 +35,69 @@ class FileServer {
         case remote = 8
     }
 
-    enum ProgressResponse: Int32 {
+    public enum ProgressResponse: Int32 {
         case cancel = 0
         case `continue` = 1
     }
 
-    struct FileAttributes: OptionSet {
+    public struct FileAttributes: OptionSet {
 
-        let rawValue: UInt32
-
-        static let readOnly = FileAttributes(rawValue: 0x0001)
-        static let hidden = FileAttributes(rawValue: 0x0002)
-        static let system = FileAttributes(rawValue: 0x0004)
-        static let directory = FileAttributes(rawValue: 0x0008)
-        static let archive = FileAttributes(rawValue: 0x0010)
-        static let volume = FileAttributes(rawValue: 0x0020)
+        public static let readOnly = FileAttributes(rawValue: 0x0001)
+        public static let hidden = FileAttributes(rawValue: 0x0002)
+        public static let system = FileAttributes(rawValue: 0x0004)
+        public static let directory = FileAttributes(rawValue: 0x0008)
+        public static let archive = FileAttributes(rawValue: 0x0010)
+        public static let volume = FileAttributes(rawValue: 0x0020)
 
         // EPOC
-        static let normal = FileAttributes(rawValue: 0x0040)
-        static let temporary = FileAttributes(rawValue: 0x0080)
-        static let compressed = FileAttributes(rawValue: 0x0100)
+        public static let normal = FileAttributes(rawValue: 0x0040)
+        public static let temporary = FileAttributes(rawValue: 0x0080)
+        public static let compressed = FileAttributes(rawValue: 0x0100)
 
         // SIBO
-        static let read = FileAttributes(rawValue: 0x0200)
-        static let exec = FileAttributes(rawValue: 0x0400)
-        static let stream = FileAttributes(rawValue: 0x0800)
-        static let text = FileAttributes(rawValue: 0x1000)
+        public static let read = FileAttributes(rawValue: 0x0200)
+        public static let exec = FileAttributes(rawValue: 0x0400)
+        public static let stream = FileAttributes(rawValue: 0x0800)
+        public static let text = FileAttributes(rawValue: 0x1000)
+
+        public let rawValue: UInt32
+
+        public init(rawValue: UInt32) {
+            self.rawValue = rawValue
+        }
 
     }
 
-    struct DriveInfo: Identifiable {
+    public struct DriveInfo: Identifiable {
 
-        var id: String {
+        public var id: String {
             return drive
         }
 
-        let drive: String
-        let mediaType: MediaType
-        let name: String?
+        public let drive: String
+        public let mediaType: MediaType
+        public let name: String?
     }
 
-    struct DirectoryEntry: Identifiable, Hashable {
+    public struct DirectoryEntry: Identifiable, Hashable {
 
-        var id: String {
+        public var id: String {
             return path
         }
 
-        var isDirectory: Bool {
+        public var isDirectory: Bool {
             return attributes.contains(.directory)
         }
 
-        let path: String
-        let name: String
-        let size: UInt32
-        let attributes: FileAttributes
-        let modificationDate: Date
+        public let path: String
+        public let name: String
+        public let size: UInt32
+        public let attributes: FileAttributes
+        public let modificationDate: Date
 
-        let uid1: UInt32
-        let uid2: UInt32
-        let uid3: UInt32
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(path)
-        }
+        public let uid1: UInt32
+        public let uid2: UInt32
+        public let uid3: UInt32
 
         init(directoryPath: String, entry: PlpDirent) {
             var entry = entry
@@ -117,6 +117,10 @@ class FileServer {
             self.uid1 = entry.getUID(0)
             self.uid2 = entry.getUID(1)
             self.uid3 = entry.getUID(2)
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(path)
         }
 
     }
@@ -144,7 +148,7 @@ class FileServer {
 
     var client = RFSVClient()
 
-    init(host: String = "127.0.0.1", port: Int32 = 7501) {
+    public init(host: String = "127.0.0.1", port: Int32 = 7501) {
         self.host = host
         self.port = port
     }
@@ -289,15 +293,15 @@ class FileServer {
                          name: String(cString: name))
     }
 
-    func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
+    public func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
         return try await perform {
             return try self.syncQueue_dir(path: path, recursive: recursive)
         }
     }
 
-    func copyFile(fromRemotePath remoteSourcePath: String,
-                  toLocalPath localDestinationPath: String,
-                  callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
+    public func copyFile(fromRemotePath remoteSourcePath: String,
+                         toLocalPath localDestinationPath: String,
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
         try await perform {
             try self.syncQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
@@ -305,9 +309,9 @@ class FileServer {
         }
     }
 
-    func copyFile(fromLocalPath localSourcePath: String,
-                  toRemotePath remoteDestinationPath: String,
-                  callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
+    public func copyFile(fromLocalPath localSourcePath: String,
+                         toRemotePath remoteDestinationPath: String,
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
         try await perform {
             try self.syncQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
@@ -315,31 +319,31 @@ class FileServer {
         }
     }
 
-    func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
+    public func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
         try await perform {
             return try self.syncQueue_getExtendedAttributes(path: path)
         }
     }
 
-    func mkdir(path: String) async throws {
+    public func mkdir(path: String) async throws {
         try await perform {
             try self.syncQueue_mkdir(path: path)
         }
     }
 
-    func rmdir(path: String) async throws {
+    public func rmdir(path: String) async throws {
         try await perform {
             try self.syncQueue_rmdir(path: path)
         }
     }
 
-    func remove(path: String) async throws {
+    public func remove(path: String) async throws {
         try await perform {
             try self.syncQueue_remove(path: path)
         }
     }
 
-    func drives() async throws -> [DriveInfo] {
+    public func drives() async throws -> [DriveInfo] {
         try await perform {
             var result: [DriveInfo] = []
             for drive in try self.syncQueue_devlist() {
