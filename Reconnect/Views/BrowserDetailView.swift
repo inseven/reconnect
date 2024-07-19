@@ -26,6 +26,14 @@ struct BrowserDetailView: View {
 
     var browserModel: BrowserModel
 
+    func name(for entry: FileServer.DirectoryEntry) -> Binding<String> {
+        return Binding {
+            entry.name
+        } set: { name in
+            print(name)
+        }
+    }
+
     var body: some View {
         @Bindable var browserModel = browserModel
         ZStack {
@@ -34,7 +42,9 @@ struct BrowserDetailView: View {
                     Image(file.fileType.image)
                 }
                 .width(16.0)
-                TableColumn("Name", value: \.name)
+                TableColumn("Name") { file in
+                    TextField("", text: name(for: file))
+                }
                 TableColumn("Date Modified") { file in
                     Text(file.modificationDate.formatted(date: .long, time: .shortened))
                         .foregroundStyle(.secondary)
