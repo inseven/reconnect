@@ -56,6 +56,7 @@ class ApplicationModel: NSObject {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         super.init()
         openMenuApplication()
+        updaterController.startUpdater()
     }
 
     func openMenuApplication() {

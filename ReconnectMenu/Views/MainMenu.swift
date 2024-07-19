@@ -54,8 +54,10 @@ struct MainMenu: View {
             Divider()
             Toggle("Open at Login", isOn: $application.openAtLogin)
         }
-//        Divider()
-//        CheckForUpdatesView(updater: applicationModel.updaterController.updater)
+        Divider()
+        Button("Check for Updates...") {
+            openURL(.update)
+        }
         Divider()
         Button("Quit") {
             applicationModel.quit()

@@ -40,6 +40,14 @@ struct ReconnectApp: App {
 
         Window("My Psion", id: "browser") {
             ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
+                .onOpenURL { url in
+                    guard url == .update else {
+                        print("Unsupported URL \(url).")
+                        return
+                    }
+                    applicationModel.updaterController.updater.checkForUpdates()
+                }
+                .handlesExternalEvents(preferring: [.install], allowing: [])
         }
         .commands {
             CommandGroup(before: .appSettings) {
@@ -47,7 +55,7 @@ struct ReconnectApp: App {
             }
         }
         .environment(applicationModel)
-        .handlesExternalEvents(matching: [.browser])
+        .handlesExternalEvents(matching: [.browser, .update])
 
         TransfersWindow(transfersModel: transfersModel)
             .environment(applicationModel)
