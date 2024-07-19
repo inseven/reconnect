@@ -21,10 +21,16 @@ import SwiftUI
 struct ContentView: View {
 
     var applicationModel: ApplicationModel
+    var transfersModel: TransfersModel
+
+    init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
+        self.applicationModel = applicationModel
+        self.transfersModel = transfersModel
+    }
 
     var body: some View {
         VStack {
-            BrowserView()
+            BrowserView(transfersModel: transfersModel)
         }
         .showsDockIcon()
     }
