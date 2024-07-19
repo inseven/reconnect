@@ -15,3 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+import Foundation
+
+extension URL {
+
+    public static let about = URL(string: "x-reconnect://about")!
+    public static let browser = URL(string: "x-reconnect://browser")!
+    public static let install = URL(string: "x-reconnect://install/")!
+    public static let transfers = URL(string: "x-reconnect://transfers")!
+
+    public func appendingPathComponents(_ pathComponents: [String]) -> URL {
+        return pathComponents.reduce(self) { url, pathComponent in
+            return url.appendingPathComponent(pathComponent)
+        }
+    }
+
+}

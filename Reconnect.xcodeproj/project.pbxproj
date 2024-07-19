@@ -46,7 +46,6 @@
 		D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C080792C1D7D8D003128AB /* ReconnectError.swift */; };
 		D8C409CA2C3D0B7600C9E857 /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C409C92C3D0B7600C9E857 /* Graphics.swift */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
-		D8D3E79D2C25407E003E696D /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E79C2C25407E003E696D /* URL.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8D3E7A12C25410E003E696D /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E7A02C25410E003E696D /* MainMenu.swift */; };
 		D8DF2C112C3CE8AC006E56BA /* OpoLua in Frameworks */ = {isa = PBXBuildFile; productRef = D8DF2C102C3CE8AC006E56BA /* OpoLua */; };
@@ -120,7 +119,6 @@
 		D8C080792C1D7D8D003128AB /* ReconnectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectError.swift; sourceTree = "<group>"; };
 		D8C409C92C3D0B7600C9E857 /* Graphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graphics.swift; sourceTree = "<group>"; };
 		D8CBAC632C4A022C0035FC3D /* ReconnectCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReconnectCore; sourceTree = "<group>"; };
-		D8D3E79C2C25407E003E696D /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
 		D8E31EB62C26E13E00350082 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -291,7 +289,6 @@
 				D8631DB62C37573200344DC3 /* rfsv.errs.swift */,
 				D8E31EB62C26E13E00350082 /* String.swift */,
 				D8F0E8F52C3778E80047B1BC /* UInt32.swift */,
-				D8D3E79C2C25407E003E696D /* URL.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -471,7 +468,6 @@
 				D8AD8B522C2378780063A613 /* Server.swift in Sources */,
 				D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */,
 				D8F0E8F62C3778E80047B1BC /* UInt32.swift in Sources */,
-				D8D3E79D2C25407E003E696D /* URL.swift in Sources */,
 				D8C0807A2C1D7D8D003128AB /* ReconnectError.swift in Sources */,
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,

@@ -22,6 +22,8 @@ import Diligence
 import Interact
 import Sparkle
 
+import ReconnectCore
+
 @main @MainActor
 struct ReconnectApp: App {
 
