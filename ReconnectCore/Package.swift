@@ -15,7 +15,7 @@ let package = Package(
             targets: ["ReconnectCore"]),
     ],
     dependencies: [
-        .package(path: "dependencies/plptools"),
+        .package(path: "../dependencies/plptools"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

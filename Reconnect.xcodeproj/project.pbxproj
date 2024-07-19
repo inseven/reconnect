@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
 		D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
@@ -44,7 +45,6 @@
 		D8F1A5A52C4A4C9C00931C00 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8F1A5A42C4A4C9C00931C00 /* Preview Assets.xcassets */; };
 		D8F1A5AD2C4A4E6E00931C00 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3E7A02C25410E003E696D /* MainMenu.swift */; };
 		D8F1A5B02C4A4EBC00931C00 /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F1A5AF2C4A4EBC00931C00 /* ApplicationModel.swift */; };
-		D8F1A5B62C4A4F6E00931C00 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8F1A5B52C4A4F6E00931C00 /* ReconnectCore */; };
 		D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8F1A5B72C4A4F8000931C00 /* Interact */; };
 		D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */ = {isa = PBXBuildFile; fileRef = D8FD72722C3D192F0038DB17 /* sparkle-license */; };
 		D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */; };
@@ -88,6 +88,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D8068F6D2C4AFCE4004177F6 /* ReconnectCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReconnectCore; sourceTree = "<group>"; };
 		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D83658B62C29596F00B45693 /* NavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
@@ -119,7 +120,6 @@
 		D88FA14F2C2CE29900805DBD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D8CBAC632C4A022C0035FC3D /* ReconnectCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReconnectCore; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
 		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
@@ -164,8 +164,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8F1A5B62C4A4F6E00931C00 /* ReconnectCore in Frameworks */,
 				D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */,
+				D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,7 +227,7 @@
 		D84964CD2C1BFCB600405656 = {
 			isa = PBXGroup;
 			children = (
-				D8CBAC632C4A022C0035FC3D /* ReconnectCore */,
+				D8068F6D2C4AFCE4004177F6 /* ReconnectCore */,
 				D84964D82C1BFCB600405656 /* Reconnect */,
 				D84964EA2C1BFCB700405656 /* ReconnectTests */,
 				D84964F42C1BFCB700405656 /* ReconnectUITests */,
@@ -428,8 +428,8 @@
 			);
 			name = "Reconnect Menu";
 			packageProductDependencies = (
-				D8F1A5B52C4A4F6E00931C00 /* ReconnectCore */,
 				D8F1A5B72C4A4F8000931C00 /* Interact */,
+				D8068F6E2C4AFCF4004177F6 /* ReconnectCore */,
 			);
 			productName = "Reconnect Menu";
 			productReference = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */;
@@ -474,7 +474,6 @@
 			packageReferences = (
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
-				D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
 				D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */,
 			);
@@ -988,10 +987,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/diligence;
 		};
-		D8F967A72C27A1F000F129E0 /* XCLocalSwiftPackageReference "dependencies/plptools" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/plptools;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1006,6 +1001,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D8068F6E2C4AFCF4004177F6 /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
+		};
 		D88FA14D2C2CE0FA00805DBD /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */;
@@ -1027,10 +1026,6 @@
 		D8E31EB22C26E09500350082 /* Diligence */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Diligence;
-		};
-		D8F1A5B52C4A4F6E00931C00 /* ReconnectCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ReconnectCore;
 		};
 		D8F1A5B72C4A4F8000931C00 /* Interact */ = {
 			isa = XCSwiftPackageProductDependency;
