@@ -8,11 +8,11 @@
 	<string>developer-id</string>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>uk.co.jbmorley.reconnect.apps.apple</key>
-		<string>Reconnect Developer ID Profile</string>
+		<key>uk.co.jbmorley.reconnect.apps.apple.menu</key>
+		<string>Reconnect Menu Developer ID Profile</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>Developer ID Application</string>
+	<string>B5DB546F567DD468E35B78B004E1797C860474F1</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>teamID</key>
