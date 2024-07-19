@@ -169,8 +169,8 @@ class BrowserModel {
             var name = "untitled folder"
             var folderNumber = 1
             while names.contains(name) {
-                name = "untitled folder \(folderNumber)"
                 folderNumber += 1
+                name = "untitled folder \(folderNumber)"
             }
 
             // Create the folder.
