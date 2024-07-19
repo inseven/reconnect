@@ -36,6 +36,5 @@ struct ReconnectMenuApp: App {
             }
         }
 
-
     }
 }
