@@ -67,11 +67,12 @@ struct MainMenu: View {
                 }
             }
             Divider()
-            Toggle("Convert Files", isOn: $applicationModel.convertFiles)
             Toggle("Open at Login", isOn: $application.openAtLogin)
         }
         Divider()
-        CheckForUpdatesView(updater: applicationModel.updaterController.updater)
+        Button("Check for Updates...") {
+            openURL(.update)
+        }
         Divider()
         Button("Quit") {
             applicationModel.quit()

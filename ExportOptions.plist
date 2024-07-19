@@ -10,6 +10,8 @@
 	<dict>
 		<key>uk.co.jbmorley.reconnect.apps.apple</key>
 		<string>Reconnect Developer ID Profile</string>
+		<key>uk.co.jbmorley.reconnect.apps.apple.menu</key>
+		<string>Reconnect Menu Developer ID Profile</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Developer ID Application</string>
