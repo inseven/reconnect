@@ -38,7 +38,6 @@ class ApplicationModel: NSObject {
 
     enum SettingsKey: String {
         case selectedDevices
-        case convertFiles
     }
 
     var isConnected: Bool = false
@@ -64,12 +63,6 @@ class ApplicationModel: NSObject {
             }
     }
 
-    var convertFiles: Bool {
-        didSet {
-            keyedDefaults.set(convertFiles, forKey: .convertFiles)
-        }
-    }
-
     private var selectedDevices: Set<String> {
         didSet {
             keyedDefaults.set(Array(selectedDevices), forKey: .selectedDevices)
@@ -89,7 +82,6 @@ class ApplicationModel: NSObject {
 
     override init() {
         selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
-        convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         super.init()
         server.delegate = self
         serialDeviceMonitor.delegate = self

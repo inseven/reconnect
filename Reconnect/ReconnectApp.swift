@@ -50,6 +50,7 @@ struct ReconnectApp: App {
         .handlesExternalEvents(matching: [.browser])
 
         TransfersWindow(transfersModel: transfersModel)
+            .environment(applicationModel)
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024 Jason Morley") {
             Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)
