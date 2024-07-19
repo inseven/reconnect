@@ -20,6 +20,8 @@ import SwiftUI
 
 import Interact
 
+import ReconnectCore
+
 struct MainMenu: View {
 
     @Environment(\.openURL) private var openURL
