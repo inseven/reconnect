@@ -6,10 +6,10 @@
 	url = https://github.com/jbmorley/build-tools.git
 [submodule "dependencies/diligence"]
 	path = dependencies/diligence
-	url = git@github.com:inseven/diligence.git
+	url = https://github.com/inseven/diligence.git
 [submodule "dependencies/plptools"]
 	path = dependencies/plptools/plptools
-	url = git@github.com:jbmorley/plptools.git
+	url = https://github.com/jbmorley/plptools.git
 [submodule "dependencies/interact"]
 	path = dependencies/interact
 	url = https://github.com/inseven/interact.git
