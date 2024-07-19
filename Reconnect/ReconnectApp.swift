@@ -19,10 +19,6 @@
 import SwiftUI
 
 import Diligence
-import Interact
-import Sparkle
-
-import ReconnectCore
 
 @main @MainActor
 struct ReconnectApp: App {
@@ -30,35 +26,17 @@ struct ReconnectApp: App {
     static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
     @State var transfersModel = TransfersModel()
-    @State var applicationModel: ApplicationModel
-
-    init() {
-        self.applicationModel = ApplicationModel()
-    }
+    @State var applicationModel = ApplicationModel()
 
     var body: some Scene {
 
-        Window("My Psion", id: "browser") {
-            ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
-                .onOpenURL { url in
-                    guard url == .update else {
-                        print("Unsupported URL \(url).")
-                        return
-                    }
-                    applicationModel.updaterController.updater.checkForUpdates()
-                }
-                .handlesExternalEvents(preferring: [.install], allowing: [])
-        }
-        .commands {
-            CommandGroup(before: .appSettings) {
-                CheckForUpdatesView(updater: applicationModel.updaterController.updater)
-            }
-        }
-        .environment(applicationModel)
-        .handlesExternalEvents(matching: [.browser, .update])
-
-        TransfersWindow(transfersModel: transfersModel)
+        BrowserWindow()
             .environment(applicationModel)
+            .environment(transfersModel)
+
+        TransfersWindow()
+            .environment(applicationModel)
+            .environment(transfersModel)
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024 Jason Morley") {
             Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)

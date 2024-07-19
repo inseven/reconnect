@@ -18,34 +18,34 @@
 
 import SwiftUI
 
-import Diligence
 import Interact
-import Sparkle
 
-struct TransfersWindow: Scene {
+struct BrowserWindow: Scene {
 
-    static let id = "transfers"
+    static let id = "browser"
 
-    let transfersModel: TransfersModel
+    @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(TransfersModel.self) private var transfersModel
 
     var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
+        Window("My Psion", id: "browser") {
+            ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
                 .onOpenURL { url in
-                    guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                          let path = components.queryItems?.first(where: { $0.name == "path" })?.value,
-                          let installerURL = URL(string: path),
-                          installerURL.scheme == "file"
-                    else {
+                    guard url == .update else {
+                        print("Unsupported URL \(url).")
                         return
                     }
-                    let filename = installerURL.lastPathComponent
-                    transfersModel.upload(from: installerURL, to: "C:".appendingWindowsPathComponent(filename))
+                    applicationModel.updaterController.updater.checkForUpdates()
                 }
                 .handlesExternalEvents(preferring: [.install], allowing: [])
         }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.install, .transfers])
+        .commands {
+            CommandGroup(before: .appSettings) {
+                CheckForUpdatesView(updater: applicationModel.updaterController.updater)
+            }
+        }
+        .environment(applicationModel)
+        .handlesExternalEvents(matching: [.browser, .update])
     }
 
 }
