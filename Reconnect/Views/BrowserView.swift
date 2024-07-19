@@ -35,11 +35,7 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar(model: browserModel)
         } detail: {
-            if applicationModel.isConnected {
-                BrowserDetailView(browserModel: browserModel)
-            } else {
-                ContentUnavailableView("Disconnected", image: "Disconnected")
-            }
+            BrowserDetailView(browserModel: browserModel)
         }
         .toolbar(id: "main") {
             ToolbarItem(id: "navigation", placement: .navigation) {
@@ -135,23 +131,6 @@ struct BrowserView: View {
 
             ToolbarItem(id: "spacer") {
                 Spacer()
-            }
-
-            ToolbarItem(id: "transfers") {
-                Button {
-                    openWindow(id: TransfersWindow.id)
-                } label: {
-                    Label {
-                        Text("Transfers")
-                    } icon: {
-                        if browserModel.transfersModel.isActive {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .foregroundStyle(.tint)
-                        } else {
-                            Image(systemName: "arrow.up.arrow.down")
-                        }
-                    }
-                }
             }
 
             ToolbarItem(id: "refresh") {

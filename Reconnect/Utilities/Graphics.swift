@@ -20,7 +20,7 @@ import Foundation
 import ImageIO
 import UniformTypeIdentifiers
 
-func CGImageWritePNG(_ image: CGImage, to destinationURL: URL) throws  {
+public func CGImageWritePNG(_ image: CGImage, to destinationURL: URL) throws  {
     guard let destination = CGImageDestinationCreateWithURL(destinationURL as CFURL,
                                                             UTType.png.identifier as CFString,
                                                             1,

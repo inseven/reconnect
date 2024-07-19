@@ -32,7 +32,6 @@ struct TransfersWindow: Scene {
         Window("Transfers", id: Self.id) {
             TransfersView(transfersModel: transfersModel)
                 .onOpenURL { url in
-                    print(url)
                     guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                           let path = components.queryItems?.first(where: { $0.name == "path" })?.value,
                           let installerURL = URL(string: path),
