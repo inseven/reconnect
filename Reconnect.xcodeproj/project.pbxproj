@@ -10,7 +10,7 @@
 		D806342B2C27F87100DEA6DA /* plpftp in Frameworks */ = {isa = PBXBuildFile; productRef = D806342A2C27F87100DEA6DA /* plpftp */; };
 		D809545F2C4A572E00752BBC /* ReconnectError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D809545E2C4A572D00752BBC /* ReconnectError.swift */; };
 		D80954612C4A573700752BBC /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80954602C4A573700752BBC /* Graphics.swift */; };
-		D80954652C4A5BC100752BBC /* Reconnect Menu.app in Resources */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; };
+		D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
 		D81A0C162C27A90000EC2929 /* ncp in Frameworks */ = {isa = PBXBuildFile; productRef = D81A0C152C27A90000EC2929 /* ncp */; };
@@ -63,7 +63,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D80954662C4A5BC100752BBC /* PBXContainerItemProxy */ = {
+		D809546C2C4AAC7F00752BBC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
 			proxyType = 1;
@@ -85,6 +85,19 @@
 			remoteInfo = PsiMac;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D809546A2C4AAA4A00752BBC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		D809545E2C4A572D00752BBC /* ReconnectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectError.swift; sourceTree = "<group>"; };
@@ -386,12 +399,13 @@
 			buildPhases = (
 				D84964D22C1BFCB600405656 /* Sources */,
 				D84964D32C1BFCB600405656 /* Frameworks */,
+				D809546A2C4AAA4A00752BBC /* CopyFiles */,
 				D84964D42C1BFCB600405656 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D80954672C4A5BC100752BBC /* PBXTargetDependency */,
+				D809546D2C4AAC7F00752BBC /* PBXTargetDependency */,
 			);
 			name = Reconnect;
 			packageProductDependencies = (
@@ -526,7 +540,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */,
-				D80954652C4A5BC100752BBC /* Reconnect Menu.app in Resources */,
 				D813FF152C26E869009CF0DC /* plptools-license in Resources */,
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
 				D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */,
@@ -626,10 +639,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		D80954672C4A5BC100752BBC /* PBXTargetDependency */ = {
+		D809546D2C4AAC7F00752BBC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */;
-			targetProxy = D80954662C4A5BC100752BBC /* PBXContainerItemProxy */;
+			targetProxy = D809546C2C4AAC7F00752BBC /* PBXContainerItemProxy */;
 		};
 		D84964E92C1BFCB700405656 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -790,7 +803,6 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -827,7 +839,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Reconnect Developer ID Profile";
-				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -928,6 +939,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple.menu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -960,6 +972,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Reconnect Menu Developer ID Profile";
+				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
