@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
+		D8068F722C4AFF29004177F6 /* BrowserWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8068F712C4AFF29004177F6 /* BrowserWindow.swift */; };
 		D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
 		D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8184C462C253C59008FA79B /* ApplicationModel.swift */; };
@@ -89,6 +90,7 @@
 
 /* Begin PBXFileReference section */
 		D8068F6D2C4AFCE4004177F6 /* ReconnectCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReconnectCore; sourceTree = "<group>"; };
+		D8068F712C4AFF29004177F6 /* BrowserWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserWindow.swift; sourceTree = "<group>"; };
 		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
 		D8184C462C253C59008FA79B /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D83658B62C29596F00B45693 /* NavigationStackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStackTests.swift; sourceTree = "<group>"; };
@@ -172,6 +174,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D8068F702C4AFF05004177F6 /* Windows */ = {
+			isa = PBXGroup;
+			children = (
+				D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */,
+				D8068F712C4AFF29004177F6 /* BrowserWindow.swift */,
+			);
+			path = Windows;
+			sourceTree = "<group>";
+		};
 		D80954622C4A57AC00752BBC /* PLP */ = {
 			isa = PBXGroup;
 			children = (
@@ -211,7 +222,6 @@
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
 				D8631DAE2C373A1600344DC3 /* TransferRow.swift */,
 				D8631DB42C374F8700344DC3 /* TransfersView.swift */,
-				D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -261,6 +271,7 @@
 				D84964DF2C1BFCB700405656 /* Preview Content */,
 				D822EA0F2C2BA305008A4BAA /* Utilities */,
 				D8184C492C253D62008FA79B /* Views */,
+				D8068F702C4AFF05004177F6 /* Windows */,
 			);
 			path = Reconnect;
 			sourceTree = "<group>";
@@ -533,6 +544,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */,
+				D8068F722C4AFF29004177F6 /* BrowserWindow.swift in Sources */,
 				D8631DAF2C373A1600344DC3 /* TransferRow.swift in Sources */,
 				D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */,
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
