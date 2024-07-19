@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct BrowserDetailView: View {
 
     @Environment(ApplicationModel.self) var applicationModel

@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct FileTypePopover: View {
 
     @State var isPresented: Bool = false

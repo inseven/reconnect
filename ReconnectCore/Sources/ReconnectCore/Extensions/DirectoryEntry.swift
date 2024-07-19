@@ -20,7 +20,7 @@ import Foundation
 
 extension FileServer.DirectoryEntry {
 
-    var fileType: FileType {
+    public var fileType: FileType {
         if isDirectory {
             return .directory
         } else {
