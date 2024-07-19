@@ -259,7 +259,7 @@
 				D84964D82C1BFCB600405656 /* Reconnect */,
 				D84964EA2C1BFCB700405656 /* ReconnectTests */,
 				D84964F42C1BFCB700405656 /* ReconnectUITests */,
-				D8F1A59C2C4A4C9B00931C00 /* Reconnect Menu */,
+				D8F1A59C2C4A4C9B00931C00 /* ReconnectMenu */,
 				D84964D72C1BFCB600405656 /* Products */,
 				D84965332C1C30E500405656 /* Frameworks */,
 			);
@@ -360,7 +360,7 @@
 			path = Licenses;
 			sourceTree = "<group>";
 		};
-		D8F1A59C2C4A4C9B00931C00 /* Reconnect Menu */ = {
+		D8F1A59C2C4A4C9B00931C00 /* ReconnectMenu */ = {
 			isa = PBXGroup;
 			children = (
 				D8F1A5A62C4A4C9C00931C00 /* ReconnectMenu.entitlements */,
@@ -371,7 +371,7 @@
 				D8F1A5A32C4A4C9C00931C00 /* Preview Content */,
 				D80954632C4A57D400752BBC /* Views */,
 			);
-			path = "Reconnect Menu";
+			path = ReconnectMenu;
 			sourceTree = "<group>";
 		};
 		D8F1A5A32C4A4C9C00931C00 /* Preview Content */ = {
@@ -921,11 +921,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Reconnect Menu/ReconnectMenu.entitlements";
+				CODE_SIGN_ENTITLEMENTS = ReconnectMenu/ReconnectMenu.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Reconnect Menu/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ReconnectMenu/Preview Content\"";
 				DEVELOPMENT_TEAM = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -950,12 +950,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Reconnect Menu/ReconnectMenu.entitlements";
+				CODE_SIGN_ENTITLEMENTS = ReconnectMenu/ReconnectMenu.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Reconnect Menu/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"ReconnectMenu/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
