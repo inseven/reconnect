@@ -23,6 +23,7 @@ import Interact
 struct MainMenu: View {
 
     @Environment(\.openURL) private var openURL
+    @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) var applicationModel
 
@@ -30,18 +31,32 @@ struct MainMenu: View {
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
+
         Button {
             openURL(.browser)
         } label: {
             Text("My Psion...")
         }
         .disabled(!applicationModel.isConnected)
+
+        Button("Install...") {
+            let openPanel = NSOpenPanel()
+            openPanel.canChooseFiles = true
+            guard openPanel.runModal() ==  NSApplication.ModalResponse.OK,
+                  let url = openPanel.url else {
+                return
+            }
+            openWindow(value: url)
+        }
+
         Divider()
+
         Button {
             openURL(.about)
         } label: {
             Text("About...")
         }
+
         Menu("Settings") {
             ForEach(applicationModel.devices) { device in
                 Toggle(isOn: device.enabled) {
