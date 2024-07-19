@@ -50,22 +50,11 @@ struct ReconnectApp: App {
 
         WindowGroup("My Psion") {
             ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
-                .onOpenURL { url in
-                    print(url)
-                    guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                          let path = components.queryItems?.first(where: { $0.name == "path" })?.value,
-                          let installerURL = URL(string: path),
-                          installerURL.scheme == "file"
-                    else {
-                        return
-                    }
-                    let filename = installerURL.lastPathComponent
-                    transfersModel.upload(from: installerURL, to: "C:".appendingWindowsPathComponent(filename))
-                }
-                .handlesExternalEvents(preferring: [.install, .browser], allowing: [])
         }
         .environment(applicationModel)
-        .handlesExternalEvents(matching: [.browser, .install])
+        .handlesExternalEvents(matching: [.browser])
+
+        TransfersWindow(transfersModel: transfersModel)
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024 Jason Morley") {
             Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)

@@ -21,7 +21,9 @@ import SwiftUI
 @MainActor
 struct BrowserView: View {
 
-    @Environment(ApplicationModel.self) var applicationModel
+    @Environment(\.openWindow) private var openWindow
+
+    @Environment(ApplicationModel.self) private var applicationModel
 
     @State private var browserModel: BrowserModel
 
@@ -136,7 +138,20 @@ struct BrowserView: View {
             }
 
             ToolbarItem(id: "transfers") {
-                TransfersPopoverButton(transfers: browserModel.transfersModel)
+                Button {
+                    openWindow(id: TransfersWindow.id)
+                } label: {
+                    Label {
+                        Text("Transfers")
+                    } icon: {
+                        if browserModel.transfersModel.isActive {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .foregroundStyle(.tint)
+                        } else {
+                            Image(systemName: "arrow.up.arrow.down")
+                        }
+                    }
+                }
             }
 
             ToolbarItem(id: "refresh") {

@@ -30,36 +30,30 @@ struct TransfersView: View {
 
     private let transfersModel: TransfersModel
 
-    init(transfers: TransfersModel) {
-        self.transfersModel = transfers
+    init(transfersModel: TransfersModel) {
+        self.transfersModel = transfersModel
     }
 
     var body: some View {
         @Bindable var transfers = transfersModel
-        VStack(spacing: 0) {
-            ZStack {
-                Text("Transfers")
-                HStack {
-                    Spacer()
-                    Button("Clear") {
-                        transfers.clear()
-                        if transfers.transfers.isEmpty {
-                            dismiss()
-                        }
+        List(selection: $transfers.selection) {
+            ForEach(transfers.transfers) { transfer in
+                TransferRow(transfer: transfer)
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .frame(minHeight: LayoutMetrics.minimumHeight)
+        .frame(width: LayoutMetrics.width)
+        .toolbar {
+            ToolbarItem {
+                Button("Clear") {
+                    transfers.clear()
+                    if transfers.transfers.isEmpty {
+                        dismiss()
                     }
                 }
             }
-            .padding(LayoutMetrics.titleBarPadding)
-            List(selection: $transfers.selection) {
-                ForEach(transfers.transfers) { transfer in
-                    TransferRow(transfer: transfer)
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .frame(minHeight: LayoutMetrics.minimumHeight)
         }
-        .frame(width: LayoutMetrics.width)
-        .background(.thinMaterial)
     }
 
 }
