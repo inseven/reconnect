@@ -18,10 +18,17 @@
 
 import Foundation
 
-extension Array {
+extension URL {
 
-    func appending(_ element: Element) -> [Element] {
-        return self + [element]
+    public static let about = URL(string: "x-reconnect://about")!
+    public static let browser = URL(string: "x-reconnect://browser")!
+    public static let install = URL(string: "x-reconnect://install/")!
+    public static let transfers = URL(string: "x-reconnect://transfers")!
+
+    public func appendingPathComponents(_ pathComponents: [String]) -> URL {
+        return pathComponents.reduce(self) { url, pathComponent in
+            return url.appendingPathComponent(pathComponent)
+        }
     }
 
 }
