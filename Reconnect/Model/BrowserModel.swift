@@ -158,11 +158,35 @@ class BrowserModel {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
             }
-            let folderPath = path + "untitled folder"
+
+            // Get the names of the files and folders in the current path.
+            let names = try await self.fileServer
+                .dir(path: path)
+                .map { $0.name }
+                .reduce(into: Set()) { $0.insert($1) }
+
+            // Select the first name (up to 'untitled folder 99') that doesn't conflict.
+            var name = "untitled folder"
+            var folderNumber = 1
+            while names.contains(name) {
+                name = "untitled folder \(folderNumber)"
+                folderNumber += 1
+            }
+
+            // Create the folder.
+            let folderPath = path + name
             try await self.fileServer.mkdir(path: folderPath)
             let files = try await self.fileServer.dir(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-            self.files = files
+
+            // Update the model state.
+            await MainActor.run {
+                self.files = files
+            }
+
+            // Select the folder.
+            // There's something curious going on in SwiftUI here that means the selection doesn't get updated unless
+            // we perform it after (I presume) the tree has been evaluated with the new file list.
             await MainActor.run {
                 self.fileSelection = Set([folderPath + "\\"])
             }
