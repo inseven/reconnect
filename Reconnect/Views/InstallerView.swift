@@ -38,7 +38,6 @@ struct InstallerView: View {
             }
         }
         .presents($installerModel.error)
-        .showsDockIcon()
     }
 
 }
