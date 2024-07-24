@@ -66,22 +66,7 @@ class TransfersModel {
             // reasonable point to hook an initial implementation.
             if convertFiles {
                 if directoryEntry.fileType == .mbm {
-                    let directoryURL = (downloadURL as NSURL).deletingLastPathComponent!
-                    let basename = (downloadURL.lastPathComponent as NSString).deletingPathExtension
-                    let bitmaps = PsiLuaEnv().getMbmBitmaps(path: downloadURL.path) ?? []
-                    for (index, bitmap) in bitmaps.enumerated() {
-                        let identifier = if index < 1 {
-                            basename
-                        } else {
-                            "\(basename) \(index)"
-                        }
-                        let conversionURL = directoryURL
-                            .appendingPathComponent(identifier)
-                            .appendingPathExtension("png")
-                        let image = CGImage.from(bitmap: bitmap)
-                        try CGImageWritePNG(image, to: conversionURL)
-                    }
-                    try fileManager.removeItem(at: downloadURL)
+                    try PsiLuaEnv().convertMultiBitmap(at: downloadURL, removeSource: true)
                 }
             }
 
