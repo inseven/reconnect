@@ -141,12 +141,12 @@ public class FileServer {
         return Array(65..<91).map { String(UnicodeScalar($0)) }
     }()
 
-    let workQueue: DispatchQueue = DispatchQueue(label: "FileServer.workQueue")
+    private let host: String
+    private let port: Int32
 
-    let host: String
-    let port: Int32
+    private let workQueue = DispatchQueue(label: "FileServer.workQueue")
 
-    var client = RFSVClient()
+    private var client = RFSVClient()
 
     public init(host: String = "127.0.0.1", port: Int32 = 7501) {
         self.host = host
@@ -319,14 +319,44 @@ public class FileServer {
         }
     }
 
+    public func copyFileSync(fromLocalPath localSourcePath: String,
+                             toRemotePath remoteDestinationPath: String) throws {
+        dispatchPrecondition(condition: .notOnQueue(workQueue))
+        try workQueue.sync {
+            try self.syncQueue_copyFile(fromLocalPath: localSourcePath,
+                                        toRemotePath: remoteDestinationPath,
+                                        callback: { _, _ in return .continue })
+        }
+    }
+
+
     public func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
         try await perform {
             return try self.syncQueue_getExtendedAttributes(path: path)
         }
     }
 
+    public func fileExistsSync(path: String) throws -> Bool {
+        dispatchPrecondition(condition: .notOnQueue(workQueue))
+        return workQueue.sync {
+            do {
+                let _ = try self.syncQueue_getExtendedAttributes(path: path)
+                return true
+            } catch {
+                return false
+            }
+        }
+    }
+
     public func mkdir(path: String) async throws {
         try await perform {
+            try self.syncQueue_mkdir(path: path)
+        }
+    }
+
+    public func mkdirSync(path: String) throws {
+        dispatchPrecondition(condition: .notOnQueue(workQueue))
+        try workQueue.sync {
             try self.syncQueue_mkdir(path: path)
         }
     }
