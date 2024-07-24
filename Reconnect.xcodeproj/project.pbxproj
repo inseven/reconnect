@@ -30,10 +30,14 @@
 		D8631DB32C374B4400344DC3 /* TransfersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB22C374B4400344DC3 /* TransfersModel.swift */; };
 		D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB42C374F8700344DC3 /* TransfersView.swift */; };
 		D8631DB92C375F2400344DC3 /* WindowsPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB82C375F2400344DC3 /* WindowsPathTests.swift */; };
+		D86EB1DB2C4B0891003B1C44 /* OpoLua in Frameworks */ = {isa = PBXBuildFile; productRef = D86EB1DA2C4B0891003B1C44 /* OpoLua */; };
 		D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA732C28CDAD00E84BDA /* BrowserView.swift */; };
 		D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA752C29343900E84BDA /* BrowserModel.swift */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D88FA1502C2CE29900805DBD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88FA14F2C2CE29900805DBD /* ContentView.swift */; };
+		D890718B2C4B01FC00C11DE8 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = D890718A2C4B01FC00C11DE8 /* Command.swift */; };
+		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
+		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
 		D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
@@ -86,6 +90,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D89071862C4B01FC00C11DE8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -120,6 +133,8 @@
 		D886DA732C28CDAD00E84BDA /* BrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserView.swift; sourceTree = "<group>"; };
 		D886DA752C29343900E84BDA /* BrowserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserModel.swift; sourceTree = "<group>"; };
 		D88FA14F2C2CE29900805DBD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D89071882C4B01FC00C11DE8 /* screenshot-sis */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "screenshot-sis"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D890718A2C4B01FC00C11DE8 /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
 		D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
@@ -162,6 +177,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D89071852C4B01FC00C11DE8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */,
+				D86EB1DB2C4B0891003B1C44 /* OpoLua in Frameworks */,
+				D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D8F1A5982C4A4C9B00931C00 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -181,13 +206,6 @@
 				D8068F712C4AFF29004177F6 /* BrowserWindow.swift */,
 			);
 			path = Windows;
-			sourceTree = "<group>";
-		};
-		D80954622C4A57AC00752BBC /* PLP */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = PLP;
 			sourceTree = "<group>";
 		};
 		D80954632C4A57D400752BBC /* Views */ = {
@@ -242,6 +260,7 @@
 				D84964EA2C1BFCB700405656 /* ReconnectTests */,
 				D84964F42C1BFCB700405656 /* ReconnectUITests */,
 				D8F1A59C2C4A4C9B00931C00 /* ReconnectMenu */,
+				D89071892C4B01FC00C11DE8 /* ScreenshotSIS */,
 				D84964D72C1BFCB600405656 /* Products */,
 				D84965332C1C30E500405656 /* Frameworks */,
 			);
@@ -254,6 +273,7 @@
 				D84964E72C1BFCB700405656 /* ReconnectTests.xctest */,
 				D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */,
 				D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */,
+				D89071882C4B01FC00C11DE8 /* screenshot-sis */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -320,6 +340,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		D89071892C4B01FC00C11DE8 /* ScreenshotSIS */ = {
+			isa = PBXGroup;
+			children = (
+				D890718A2C4B01FC00C11DE8 /* Command.swift */,
+			);
+			path = ScreenshotSIS;
+			sourceTree = "<group>";
+		};
 		D8E31EB82C26E1CA00350082 /* Licenses */ = {
 			isa = PBXGroup;
 			children = (
@@ -337,7 +365,6 @@
 				D8F1A59D2C4A4C9B00931C00 /* ReconnectMenuApp.swift */,
 				D8F1A5A12C4A4C9C00931C00 /* Assets.xcassets */,
 				D8F1A5BD2C4A543300931C00 /* Model */,
-				D80954622C4A57AC00752BBC /* PLP */,
 				D8F1A5A32C4A4C9C00931C00 /* Preview Content */,
 				D80954632C4A57D400752BBC /* Views */,
 			);
@@ -425,6 +452,28 @@
 			productReference = D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		D89071872C4B01FC00C11DE8 /* screenshot-sis */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D890718E2C4B01FC00C11DE8 /* Build configuration list for PBXNativeTarget "screenshot-sis" */;
+			buildPhases = (
+				D89071842C4B01FC00C11DE8 /* Sources */,
+				D89071852C4B01FC00C11DE8 /* Frameworks */,
+				D89071862C4B01FC00C11DE8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "screenshot-sis";
+			packageProductDependencies = (
+				D89071902C4B025D00C11DE8 /* ArgumentParser */,
+				D89071922C4B02D900C11DE8 /* ReconnectCore */,
+				D86EB1DA2C4B0891003B1C44 /* OpoLua */,
+			);
+			productName = ScreenshotSIS;
+			productReference = D89071882C4B01FC00C11DE8 /* screenshot-sis */;
+			productType = "com.apple.product-type.tool";
+		};
 		D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8F1A5A92C4A4C9C00931C00 /* Build configuration list for PBXNativeTarget "Reconnect Menu" */;
@@ -468,6 +517,9 @@
 						CreatedOnToolsVersion = 15.4;
 						TestTargetID = D84964D52C1BFCB600405656;
 					};
+					D89071872C4B01FC00C11DE8 = {
+						CreatedOnToolsVersion = 15.4;
+					};
 					D8F1A59A2C4A4C9B00931C00 = {
 						CreatedOnToolsVersion = 15.4;
 					};
@@ -487,6 +539,7 @@
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
 				D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */,
+				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -496,6 +549,7 @@
 				D84964E62C1BFCB700405656 /* ReconnectTests */,
 				D84964F02C1BFCB700405656 /* ReconnectUITests */,
 				D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */,
+				D89071872C4B01FC00C11DE8 /* screenshot-sis */,
 			);
 		};
 /* End PBXProject section */
@@ -581,6 +635,14 @@
 			files = (
 				D84964F62C1BFCB700405656 /* ReconnectUITests.swift in Sources */,
 				D84964F82C1BFCB700405656 /* ReconnectUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D89071842C4B01FC00C11DE8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D890718B2C4B01FC00C11DE8 /* Command.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -874,6 +936,28 @@
 			};
 			name = Release;
 		};
+		D890718C2C4B01FC00C11DE8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D890718D2C4B01FC00C11DE8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		D8F1A5A72C4A4C9C00931C00 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -975,6 +1059,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		D890718E2C4B01FC00C11DE8 /* Build configuration list for PBXNativeTarget "screenshot-sis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D890718C2C4B01FC00C11DE8 /* Debug */,
+				D890718D2C4B01FC00C11DE8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D8F1A5A92C4A4C9C00931C00 /* Build configuration list for PBXNativeTarget "Reconnect Menu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1010,6 +1103,14 @@
 				minimumVersion = 2.6.3;
 			};
 		};
+		D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1017,10 +1118,24 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
 		};
+		D86EB1DA2C4B0891003B1C44 /* OpoLua */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */;
+			productName = OpoLua;
+		};
 		D88FA14D2C2CE0FA00805DBD /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */;
 			productName = Sparkle;
+		};
+		D89071902C4B025D00C11DE8 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		D89071922C4B02D900C11DE8 /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
 		};
 		D8CBAC642C4A02580035FC3D /* ReconnectCore */ = {
 			isa = XCSwiftPackageProductDependency;
