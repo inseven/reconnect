@@ -49,7 +49,7 @@ public class RemoteCommandServicesClient {
         }
     }
 
-    public func execProgram(program: String, args: String) throws {
+    public func execProgram(program: String, args: String = "") throws {
         return try withClient { client in
             try client.execProgram(program, args).check()
         }

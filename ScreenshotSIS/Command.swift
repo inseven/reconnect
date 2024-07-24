@@ -117,6 +117,7 @@ struct Command: AsyncParsableCommand {
         let client = RemoteCommandServicesClient()
         let url = URL(filePath: installer)
         let installer = Installer(fileServer: fileServer)
+        let services = PsionClient()
 
         // Install the SIS file.
         try await installer.install(url)
@@ -141,7 +142,7 @@ struct Command: AsyncParsableCommand {
 
             // Launch the app.
             print("Running app...")
-            try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + application)
+            try await services.runProgram(path: application)
 
             // Wait for the app to start.
             try await sleep(seconds: 30)
