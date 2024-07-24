@@ -131,7 +131,6 @@ struct Command: AsyncParsableCommand {
             print("Running app...")
             try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + application)
 
-
             // Wait for the app to start.
             print("Sleeping for 10 seconds...")
             try await Task.sleep(for: .seconds(10))
