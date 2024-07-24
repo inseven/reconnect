@@ -140,14 +140,14 @@ struct Command: AsyncParsableCommand {
             try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + application)
 
             // Wait for the app to start.
-            try await sleep(seconds: 15)
+            try await sleep(seconds: 30)
 
             // Take a screenshot.
             print("Taking screenshot...")
             try client.execProgram(program: "C:\\screenshot.exe", args: "")
 
             // Wait for the screenshot.
-            try await sleep(seconds: 10)
+            try await sleep(seconds: 5)
 
             // Copy the screenshot.
             let outputURL = URL(filePath: outputDirectory).appendingPathComponent("screenshot.mbm")
@@ -161,7 +161,7 @@ struct Command: AsyncParsableCommand {
         print("Stopping all programs...")
         try client.stopPrograms()
 
-        try await sleep(seconds: 5)
+        try await sleep(seconds: 10)
 
         // Delete the files.
         print("Cleaning up files...")

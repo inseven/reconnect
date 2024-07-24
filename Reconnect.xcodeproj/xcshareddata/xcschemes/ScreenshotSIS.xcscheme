@@ -53,7 +53,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Volumes/3LIBJUNE05/library/epocgames/blobs/Blobs.SIS"
+            argument = "/Volumes/3LIBJUNE05/library/epocgames/coffee/Coffee.sis"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
