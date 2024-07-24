@@ -16,15 +16,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import CoreGraphics
 import Foundation
 
 import OpoLua
 
-import ReconnectCore
-
 extension PsiLuaEnv {
 
-    func convertMultiBitmap(at url: URL, removeSource: Bool = false) throws {
+    public func convertMultiBitmap(at url: URL, removeSource: Bool = false) throws {
         let directoryURL = (url as NSURL).deletingLastPathComponent!
         let basename = (url.lastPathComponent as NSString).deletingPathExtension
         let bitmaps = PsiLuaEnv().getMbmBitmaps(path: url.path) ?? []

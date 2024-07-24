@@ -39,7 +39,6 @@
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
 		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
 		D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */; };
-		D8A37AE22C50CED600076AC1 /* PsiLuaEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A37AE12C50CED600076AC1 /* PsiLuaEnv.swift */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8DF2C112C3CE8AC006E56BA /* OpoLua in Frameworks */ = {isa = PBXBuildFile; productRef = D8DF2C102C3CE8AC006E56BA /* OpoLua */; };
@@ -137,7 +136,6 @@
 		D89071882C4B01FC00C11DE8 /* screenshot-sis */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "screenshot-sis"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D890718A2C4B01FC00C11DE8 /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
 		D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
-		D8A37AE12C50CED600076AC1 /* PsiLuaEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsiLuaEnv.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
@@ -338,7 +336,6 @@
 			isa = PBXGroup;
 			children = (
 				D8E31EB42C26E10900350082 /* Licensable.swift */,
-				D8A37AE12C50CED600076AC1 /* PsiLuaEnv.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -609,7 +606,6 @@
 				D88FA1502C2CE29900805DBD /* ContentView.swift in Sources */,
 				D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */,
 				D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */,
-				D8A37AE22C50CED600076AC1 /* PsiLuaEnv.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
 				D8631DAB2C36867400344DC3 /* BrowserDetailView.swift in Sources */,
 				D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */,
