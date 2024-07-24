@@ -16,30 +16,24 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-public extension UInt32 {
+public class PsionClient {
 
-    static let none: Self = 0x00000000
+    let fileServer = FileServer()
+    let remoteCommandServices = RemoteCommandServicesClient()
 
-    // UID1
-    static let directFileStore: Self = 0x10000037
-    static let permanentFileStoreLayout: Self = 0x10000050  // Database
-    static let multiBitmapRomImage: Self = 0x10000041
-    static let dynamicLibraryUid: Self = 0x10000079  // Native app
+    public init() {
+        
+    }
 
-    // UID2
-    static let appDllDoc: Self = 0x1000006D
-    static let mbm: Self = 0x10000042
-
-    // UID3
-    static let word: Self = 0x1000007F
-    static let sheet: Self = 0x10000088
-    static let record: Self = 0x1000007E
-    static let opl: Self = 0x10000085
-    static let data: Self = 0x10000086
-    static let agenda: Self = 0x10000084
-    static let sketch: Self = 0x1000007D
-    static let jotter: Self = 0x10000CEA
+    public func runProgram(path: String) async throws {
+        let attributes = try await fileServer.getExtendedAttributes(path: path)
+        if attributes.uid1 == .dynamicLibraryUid {
+            try remoteCommandServices.execProgram(program: path)
+        } else {
+            try remoteCommandServices.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + path)
+        }
+    }
 
 }
