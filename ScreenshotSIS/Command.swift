@@ -112,25 +112,43 @@ struct Command: AsyncParsableCommand {
         // Install the screenshot file.
         try await fileServer.copyFile(fromLocalPath: screenshot, toRemotePath: "C:\\screenshot.exe")
 
-        // Launch the app.
-        print("Running app...")
-        try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "AC:\\System\\Apps\\Adder\\Adder.app")
+        // Detect the apps.
+        let applications = installer.paths.compactMap { (path) -> String? in
+            switch path {
+            case .file(let path):
+                guard path.lowercased().hasSuffix(".app") else {
+                    return nil
+                }
+                return path
+            case .directory(_):
+                return nil
+            }
+        }
 
-        // Wait for the app to start.
-        print("Sleeping for 10 seconds...")
-        try await Task.sleep(for: .seconds(10))
+        if let application = applications.first {
 
-        // Take a screenshot.
-        print("Taking screenshot...")
-        try client.execProgram(program: "C:\\screenshot.exe", args: "")
+            // Launch the app.
+            print("Running app...")
+            try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + application)
 
-        // Wait for the screenshot.
-        print("Sleeping for 5 seconds...")
-        try await Task.sleep(for: .seconds(5))
 
-        // Copy the screenshot.
-        try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: "/Users/jbmorley/Desktop/screenshot.mbm")
-        try await fileServer.remove(path: "C:\\screenshot.mbm")
+            // Wait for the app to start.
+            print("Sleeping for 10 seconds...")
+            try await Task.sleep(for: .seconds(10))
+
+            // Take a screenshot.
+            print("Taking screenshot...")
+            try client.execProgram(program: "C:\\screenshot.exe", args: "")
+
+            // Wait for the screenshot.
+            print("Sleeping for 5 seconds...")
+            try await Task.sleep(for: .seconds(5))
+
+            // Copy the screenshot.
+            try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: "/Users/jbmorley/Desktop/screenshot.mbm")
+            try await fileServer.remove(path: "C:\\screenshot.mbm")
+
+        }
 
         // Close all the running programs.
         print("Stopping all programs...")
