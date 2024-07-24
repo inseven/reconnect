@@ -98,8 +98,8 @@ struct Command: AsyncParsableCommand {
     @Argument(help: "Path to screenshot utility (screenshot.exe).")
     var screenshot: String
 
-    @Argument(help: "Screenshot output path.")
-    var output: String
+    @Argument(help: "Screenshot output directory path.")
+    var outputDirectory: String
 
     mutating func run() async throws {
 
@@ -147,8 +147,10 @@ struct Command: AsyncParsableCommand {
             try await Task.sleep(for: .seconds(5))
 
             // Copy the screenshot.
-            try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: output)
+            let outputURL = URL(filePath: outputDirectory).appendingPathComponent("screenshot.mbm")
+            try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: outputURL.path)
             try await fileServer.remove(path: "C:\\screenshot.mbm")
+            try PsiLuaEnv().convertMultiBitmap(at: outputURL)
 
         }
 
