@@ -153,7 +153,7 @@ struct Command: AsyncParsableCommand {
             let outputURL = URL(filePath: outputDirectory).appendingPathComponent("screenshot.mbm")
             try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: outputURL.path)
             try await fileServer.remove(path: "C:\\screenshot.mbm")
-            try PsiLuaEnv().convertMultiBitmap(at: outputURL)
+            try PsiLuaEnv().convertMultiBitmap(at: outputURL, removeSource: true)
 
         }
 
