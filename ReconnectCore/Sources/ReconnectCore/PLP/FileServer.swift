@@ -320,12 +320,13 @@ public class FileServer {
     }
 
     public func copyFileSync(fromLocalPath localSourcePath: String,
-                             toRemotePath remoteDestinationPath: String) throws {
+                             toRemotePath remoteDestinationPath: String,
+                             callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         try workQueue.sync {
             try self.syncQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
-                                        callback: { _, _ in return .continue })
+                                        callback: callback)
         }
     }
 
