@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ReconnectCore",
     platforms: [
-        .macOS(.v12),
+        .macOS(.v13),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -15,6 +15,7 @@ let package = Package(
             targets: ["ReconnectCore"]),
     ],
     dependencies: [
+        .package(path: "../dependencies/opolua"),
         .package(path: "../dependencies/plptools"),
     ],
     targets: [
@@ -23,6 +24,7 @@ let package = Package(
         .target(
             name: "ReconnectCore",
             dependencies: [
+                .product(name: "OpoLua", package: "opolua"),
                 .product(name: "ncp", package: "plptools"),
                 .product(name: "plpftp", package: "plptools"),
             ],
