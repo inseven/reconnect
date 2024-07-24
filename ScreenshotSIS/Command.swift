@@ -112,23 +112,29 @@ struct Command: AsyncParsableCommand {
         try await fileServer.copyFile(fromLocalPath: screenshot, toRemotePath: "C:\\screenshot.exe")
 
         // Launch the app.
+        print("Running app...")
         let client = RemoteCommandServicesClient()
         try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "AC:\\System\\Apps\\Adder\\Adder.app")
 
         // Wait for the app to start.
+        print("Sleeping for 10 seconds...")
         try await Task.sleep(for: .seconds(10))
 
         // Take a screenshot.
+        print("Taking screenshot...")
         try client.execProgram(program: "C:\\screenshot.exe", args: "")
 
         // Wait for the screenshot.
+        print("Sleeping for 5 seconds...")
         try await Task.sleep(for: .seconds(5))
 
         // Copy the screenshot.
         try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: "/Users/jbmorley/Desktop/screenshot.mbm")
+        try await fileServer.remove(path: "C:\\screenshot.mbm")
 
         // Delete the files.
         print("Cleaning up files...")
+        try await fileServer.remove(path: "C:\\screenshot.exe")
         for path in installer.paths.reversed() {
             switch path {
             case .file(let path):
