@@ -62,7 +62,11 @@ extension Installer: SisInstallIoHandler {
                     paths.append(.directory(destinationDirectory))
                 }
                 print("Writing file '\(op.path)'...")
-                try fileServer.copyFileSync(fromLocalPath: fullURL.path, toRemotePath: op.path)
+                try fileServer.copyFileSync(fromLocalPath: fullURL.path, toRemotePath: op.path)  { progress, size in
+                    let percentage = Float(progress) / Float(size)
+                    print("\(percentage.formatted(.percent))")
+                    return .continue
+                }
             } catch {
                 print("Failed to write file '\(op.path)' with error '\(error)'.")
                 return .err(.notReady)
@@ -151,7 +155,10 @@ struct Command: AsyncParsableCommand {
 
             // Copy the screenshot.
             let outputURL = URL(filePath: outputDirectory).appendingPathComponent("screenshot.mbm")
-            try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: outputURL.path)
+            try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: outputURL.path) { progress, size in
+                print("\(progress) / \(size)")
+                return .continue
+            }
             try await fileServer.remove(path: "C:\\screenshot.mbm")
             try PsiLuaEnv().convertMultiBitmap(at: outputURL, removeSource: true)
 
