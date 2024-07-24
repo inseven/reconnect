@@ -101,6 +101,11 @@ struct Command: AsyncParsableCommand {
     @Argument(help: "Screenshot output directory path.")
     var outputDirectory: String
 
+    func sleep(seconds: Double) async throws {
+        print("Sleeping for \(seconds) seconds...")
+        try await Task.sleep(for: .seconds(seconds))
+    }
+
     mutating func run() async throws {
 
         print("Installing '\(installer)'...")
@@ -135,16 +140,14 @@ struct Command: AsyncParsableCommand {
             try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + application)
 
             // Wait for the app to start.
-            print("Sleeping for 10 seconds...")
-            try await Task.sleep(for: .seconds(10))
+            try await sleep(seconds: 15)
 
             // Take a screenshot.
             print("Taking screenshot...")
             try client.execProgram(program: "C:\\screenshot.exe", args: "")
 
             // Wait for the screenshot.
-            print("Sleeping for 5 seconds...")
-            try await Task.sleep(for: .seconds(5))
+            try await sleep(seconds: 10)
 
             // Copy the screenshot.
             let outputURL = URL(filePath: outputDirectory).appendingPathComponent("screenshot.mbm")
@@ -158,8 +161,7 @@ struct Command: AsyncParsableCommand {
         print("Stopping all programs...")
         try client.stopPrograms()
 
-        print("Sleeping for 5 seconds...")
-        try await Task.sleep(for: .seconds(5))
+        try await sleep(seconds: 5)
 
         // Delete the files.
         print("Cleaning up files...")
