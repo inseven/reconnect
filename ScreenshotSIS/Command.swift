@@ -98,6 +98,9 @@ struct Command: AsyncParsableCommand {
     @Argument(help: "Path to screenshot utility (screenshot.exe).")
     var screenshot: String
 
+    @Argument(help: "Screenshot output path.")
+    var output: String
+
     mutating func run() async throws {
 
         print("Installing '\(installer)'...")
@@ -144,7 +147,7 @@ struct Command: AsyncParsableCommand {
             try await Task.sleep(for: .seconds(5))
 
             // Copy the screenshot.
-            try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: "/Users/jbmorley/Desktop/screenshot.mbm")
+            try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: output)
             try await fileServer.remove(path: "C:\\screenshot.mbm")
 
         }

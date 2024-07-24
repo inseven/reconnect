@@ -53,11 +53,15 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Volumes/3LIBJUNE05/library/epocgames/adder/adder.SIS"
+            argument = "/Volumes/3LIBJUNE05/library/epocgames/jumpy!p5/JUMPY!.SIS"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/jbmorley/Projects/reconnect/utilities/screenshot.exe"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/jbmorley/Desktop/screenshot.mbm"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
