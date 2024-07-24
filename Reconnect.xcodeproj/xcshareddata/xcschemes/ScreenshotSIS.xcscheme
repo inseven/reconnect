@@ -57,7 +57,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/jbmorley/Projects/reconnect/utilites/screenshot.exe"
+            argument = "/Users/jbmorley/Projects/reconnect/utilities/screenshot.exe"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

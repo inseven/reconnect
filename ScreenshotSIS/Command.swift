@@ -102,6 +102,7 @@ struct Command: AsyncParsableCommand {
 
         print("Installing '\(installer)'...")
         let fileServer = FileServer()
+        let client = RemoteCommandServicesClient()
         let url = URL(filePath: installer)
         let installer = Installer(fileServer: fileServer)
 
@@ -113,7 +114,6 @@ struct Command: AsyncParsableCommand {
 
         // Launch the app.
         print("Running app...")
-        let client = RemoteCommandServicesClient()
         try client.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "AC:\\System\\Apps\\Adder\\Adder.app")
 
         // Wait for the app to start.
@@ -131,6 +131,13 @@ struct Command: AsyncParsableCommand {
         // Copy the screenshot.
         try await fileServer.copyFile(fromRemotePath: "C:\\screenshot.mbm", toLocalPath: "/Users/jbmorley/Desktop/screenshot.mbm")
         try await fileServer.remove(path: "C:\\screenshot.mbm")
+
+        // Close all the running programs.
+        print("Stopping all programs...")
+        try client.stopPrograms()
+
+        print("Sleeping for 5 seconds...")
+        try await Task.sleep(for: .seconds(5))
 
         // Delete the files.
         print("Cleaning up files...")

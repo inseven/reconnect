@@ -51,21 +51,13 @@ public class RemoteCommandServicesClient {
 
     public func execProgram(program: String, args: String) throws {
         return try withClient { client in
-            client.execProgram(program, args)
+            try client.execProgram(program, args).check()
         }
     }
 
-    public func queryPrograms() throws {
+    public func stopPrograms() throws {
         return try withClient { client in
-            var ret = processList()
-            client.queryPrograms(&ret)
-            print("Start")
-            for var i in ret {
-                print(i.getPID())
-                withUnsafeMutablePointer(to: &i) { pointer in
-                    print(String(cString: psiprocess_get_name(pointer)))
-                }
-            }
+            try client.stopPrograms().check()
         }
     }
 
