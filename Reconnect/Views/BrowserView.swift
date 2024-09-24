@@ -18,14 +18,26 @@
 
 import SwiftUI
 
+import PsionSoftwareIndex
+
 @MainActor
 struct BrowserView: View {
+
+    enum SheetType: Identifiable {
+
+        var id: Self {
+            return self
+        }
+
+        case install
+    }
 
     @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) private var applicationModel
 
     @State private var browserModel: BrowserModel
+    @State private var sheet: SheetType? = nil
 
     init(transfersModel: TransfersModel) {
         _browserModel = State(initialValue: BrowserModel(transfersModel: transfersModel))
@@ -141,8 +153,33 @@ struct BrowserView: View {
                 }
             }
 
+            ToolbarItem(id: "spacer") {
+                Spacer()
+            }
+
+            ToolbarItem(id: "add") {
+                Button {
+                    sheet = .install
+                } label: {
+                    Label("Add", systemImage: "plus")
+                }
+            }
+
         }
         .navigationTitle(browserModel.navigationTitle ?? "My Psion")
+        .sheet(item: $sheet) { sheet in
+            switch sheet {
+            case .install:
+                SoftwareIndexView { release in
+                    return release.kind == .installer && release.hasDownload /* && release.tags.contains("opl")*/
+                } completion: { url in
+                    guard let url else {
+                        return
+                    }
+                    browserModel.upload(url: url)
+                }
+            }
+        }
         .presents($browserModel.lastError)
         .onAppear {
             browserModel.navigate(to: "C:\\")

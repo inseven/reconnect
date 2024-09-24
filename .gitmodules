@@ -19,3 +19,6 @@
 [submodule "dependencies/opolua/opolua"]
 	path = dependencies/opolua/opolua
 	url = https://github.com/inseven/opolua.git
+[submodule "dependencies/PsionSoftwareIndexSwift"]
+	path = dependencies/PsionSoftwareIndexSwift
+	url = git@github.com:inseven/PsionSoftwareIndexSwift.git
