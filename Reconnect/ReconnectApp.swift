@@ -50,6 +50,7 @@ struct ReconnectApp: App {
                 Credit("George Wright")
                 Credit("Lukas Fittl")
                 Credit("Sarah Barbour")
+                Credit("Tom Sutcliffe")
             }
         } licenses: {
             (.reconnect)
