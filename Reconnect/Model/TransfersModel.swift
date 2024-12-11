@@ -86,5 +86,9 @@ class TransfersModel {
             transfer.setStatus(.complete(nil))
         }
     }
+    
+    func clear() {
+        transfers.removeAll { !$0.isActive }
+    }
 
 }

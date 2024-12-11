@@ -51,6 +51,9 @@ struct TransfersView: View {
                 HStack {
                     Toggle("Convert Files", isOn: $applicationModel.convertFiles)
                     Spacer()
+                    Button("Clear") {
+                        transfersModel.clear()
+                    }
                 }
                 .padding(LayoutMetrics.footerPadding)
             }
