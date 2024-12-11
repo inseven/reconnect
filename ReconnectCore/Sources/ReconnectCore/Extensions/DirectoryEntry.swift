@@ -48,5 +48,9 @@ extension FileServer.DirectoryEntry {
             }
         }
     }
+    
+    public var pathExtension: String {
+        return (self.name as NSString).pathExtension
+    }
 
 }
