@@ -54,6 +54,7 @@ struct TransfersView: View {
                 }
                 .padding(LayoutMetrics.footerPadding)
             }
+            .background(.regularMaterial)
         }
         .frame(minHeight: LayoutMetrics.minimumHeight)
         .frame(width: LayoutMetrics.width)

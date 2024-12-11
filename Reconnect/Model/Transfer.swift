@@ -20,7 +20,7 @@ import SwiftUI
 
 @MainActor @Observable
 class Transfer: Identifiable {
-
+    
     enum Status: Equatable {
 
         static func == (lhs: Transfer.Status, rhs: Transfer.Status) -> Bool {
@@ -51,7 +51,7 @@ class Transfer: Identifiable {
 
         case waiting
         case active(Float)
-        case complete
+        case complete(URL?)
         case cancelled
         case failed(Error)
     }
@@ -63,8 +63,8 @@ class Transfer: Identifiable {
     }
 
     let id = UUID()
-
-    var title: String
+    let title: String
+    
     var status: Status
 
     private var task: Task<Void, Never>? = nil

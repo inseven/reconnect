@@ -18,40 +18,76 @@
 
 import SwiftUI
 
+import Interact
+
 struct TransferRow: View {
 
     let transfer: Transfer
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(transfer.title)
-            switch transfer.status {
-            case .waiting:
-                Text("Waiting...")
-                    .foregroundStyle(.secondary)
-            case .active(let progress):
-                HStack {
+        HStack {
+            
+            VStack(alignment: .leading, spacing: 0) {
+                
+                Text(transfer.title)
+                
+                switch transfer.status {
+                case .waiting:
+                    ProgressView(value: 0)
+                        .controlSize(.small)
+                case .active(let progress):
                     ProgressView(value: progress)
-                    Button {
-                        transfer.cancel()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(.plain)
+                        .controlSize(.small)
+                    Text(progress.formatted())
+                        .foregroundStyle(.secondary)
+                        .font(.callout)
+                case .complete:
+                    Text("Complete")
+                        .foregroundStyle(.secondary)
+                        .font(.callout)
+                case .cancelled:
+                    Text("Cancelled")
+                case .failed(let error):
+                    Text(error.localizedDescription)
+                        .foregroundStyle(.secondary)
+                        .font(.callout)
                 }
-            case .complete:
-                Text("Complete!")
-                    .foregroundStyle(.secondary)
-            case .cancelled:
-                Text("Cancelled")
-            case .failed(let error):
-                Text(String(describing: error))
-                    .foregroundStyle(.secondary)
+                
             }
-
+            
+            Spacer()
+            
+            switch transfer.status {
+            case .waiting, .active:
+                Button {
+                    transfer.cancel()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            case .complete(let url):
+                if let url {
+                    Button {
+                        Application.reveal(url)
+                    } label: {
+                        Image(systemName: "magnifyingglass.circle.fill")
+                    }
+                    .foregroundColor(.secondary)
+                    .buttonStyle(.plain)
+                } else {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
+            case .cancelled, .failed:
+                Image(systemName: "exclamationmark.circle.fill")
+                    .foregroundStyle(.red)
+            }
+            
         }
         .padding()
     }
 
 }
+
+

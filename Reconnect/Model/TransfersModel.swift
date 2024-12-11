@@ -64,14 +64,15 @@ class TransfersModel {
             // Convert known types.
             // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
             // reasonable point to hook an initial implementation.
+            var urls: [URL] = [downloadURL]
             if convertFiles {
                 if directoryEntry.fileType == .mbm {
-                    try PsiLuaEnv().convertMultiBitmap(at: downloadURL, removeSource: true)
+                    urls = try PsiLuaEnv().convertMultiBitmap(at: downloadURL, removeSource: true)
                 }
             }
 
             // Mark the transfer as complete.
-            transfer.setStatus(.complete)
+            transfer.setStatus(.complete(urls.first))
         }
     }
 
@@ -82,7 +83,7 @@ class TransfersModel {
                 transfer.setStatus(.active(Float(progress) / Float(size)))
                 return transfer.isCancelled ? .cancel : .continue
             }
-            transfer.setStatus(.complete)
+            transfer.setStatus(.complete(nil))
         }
     }
 
