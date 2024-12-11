@@ -66,7 +66,7 @@ class TransfersModel {
             // reasonable point to hook an initial implementation.
             var urls: [URL] = [downloadURL]
             if convertFiles {
-                if directoryEntry.fileType == .mbm {
+                if directoryEntry.fileType == .mbm || directoryEntry.pathExtension.lowercased() == "mbm" {
                     urls = try PsiLuaEnv().convertMultiBitmap(at: downloadURL, removeSource: true)
                 }
             }
