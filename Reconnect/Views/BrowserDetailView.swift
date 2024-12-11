@@ -104,7 +104,9 @@ struct BrowserDetailView: View {
                     guard let url = url else {
                         return
                     }
-                    browserModel.upload(url: url)
+                    DispatchQueue.main.sync {
+                        browserModel.upload(url: url)
+                    }
                 }
             }
             return true
