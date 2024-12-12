@@ -50,7 +50,15 @@ struct TransfersView: View {
                 Divider()
                 HStack {
                     Toggle("Convert Files", isOn: $applicationModel.convertFiles)
+                    
                     Spacer()
+
+#if DEBUG
+                    Button("Add Demo Data") {
+                        transfersModel.addDemoData()
+                    }
+#endif
+
                     Button("Clear") {
                         transfersModel.clear()
                     }
