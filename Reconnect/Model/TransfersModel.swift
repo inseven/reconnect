@@ -39,24 +39,20 @@ class TransfersModel {
     init() {
     }
 
-    func add(_ title: String, action: @escaping (Transfer) async throws -> Void) {
-        transfers.append(Transfer(title: title, action: action))
-    }
-
-    func download(from sourcePath: String, to destinationURL: URL? = nil, convertFiles: Bool) {
+    func download(from source: FileServer.DirectoryEntry, to destinationURL: URL? = nil, convertFiles: Bool) {
         let fileManager = FileManager.default
         let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-        let filename = sourcePath.lastWindowsPathComponent
+        let filename = source.path.lastWindowsPathComponent
         let downloadURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
-        print("Downloading file at path '\(sourcePath)' to destination path '\(downloadURL.path)'...")
+        print("Downloading file at path '\(source.path)' to destination path '\(downloadURL.path)'...")
 
-        add(filename) { transfer in
+        transfers.append(Transfer(item: .remote(source)) { transfer in
 
             // Get the file information.
-            let directoryEntry = try await self.fileServer.getExtendedAttributes(path: sourcePath)
+            let directoryEntry = try await self.fileServer.getExtendedAttributes(path: source.path)
 
             // Perform the file copy.
-            try await self.fileServer.copyFile(fromRemotePath: sourcePath, toLocalPath: downloadURL.path) { progress, size in
+            try await self.fileServer.copyFile(fromRemotePath: source.path, toLocalPath: downloadURL.path) { progress, size in
                 transfer.setStatus(.active(Float(progress) / Float(size)))
                 return transfer.isCancelled ? .cancel : .continue
             }
@@ -73,22 +69,44 @@ class TransfersModel {
 
             // Mark the transfer as complete.
             transfer.setStatus(.complete(urls.first))
-        }
+        })
     }
 
     func upload(from sourceURL: URL, to destinationPath: String) {
         print("Uploading file at path '\(sourceURL.path)' to destination path '\(destinationPath)'...")
-        add(sourceURL.lastPathComponent) { transfer in
+            transfers.append(Transfer(item: .local(sourceURL)) { transfer in
             try await self.fileServer.copyFile(fromLocalPath: sourceURL.path, toRemotePath: destinationPath) { progress, size in
                 transfer.setStatus(.active(Float(progress) / Float(size)))
                 return transfer.isCancelled ? .cancel : .continue
             }
             transfer.setStatus(.complete(nil))
-        }
+        })
     }
     
     func clear() {
         transfers.removeAll { !$0.isActive }
     }
 
+}
+
+extension TransfersModel {
+    
+    func addDemoData() {
+        let remoteFile = FileServer.DirectoryEntry(path: "D:\\Screenshots\\Thoughts Splash Screen",
+                                                   name: "Thoughts Splash Screen",
+                                                   size: 203,
+                                                   attributes: .normal,
+                                                   modificationDate: .now,
+                                                   uid1: .directFileStore,
+                                                   uid2: .appDllDoc,
+                                                   uid3: .sketch)
+        let error = ReconnectError.rfsvError(.init(rawValue: -37))
+        transfers.append(Transfer(item: .remote(remoteFile),
+                                  status: .waiting))
+        transfers.append(Transfer(item: .remote(remoteFile),
+                                  status: .failed(error)))
+        transfers.append(Transfer(item: .local(URL(fileURLWithPath: "/Users/jbmorley/Thoughts Screenshot.png")),
+                                  status: .cancelled))
+    }
+    
 }

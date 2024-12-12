@@ -23,14 +23,50 @@ import Interact
 struct TransferRow: View {
 
     let transfer: Transfer
+    
+    var image: some View {
+        switch transfer.item {
+        case .local:
+            Image(.fileUnknown16)
+                .interpolation(.none)
+                .resizable()
+                .frame(width: 32, height: 32)
+        case .remote(let file):
+            Image(file.fileType.image)
+                .interpolation(.none)
+                .resizable()
+                .frame(width: 32, height: 32)
+        }
+    }
+    
+    var statusText: String {
+        switch transfer.status {
+        case .waiting:
+            return "Waiting to start…"
+        case .active(let progress):
+            return progress.formatted()
+        case .complete:
+            return "Complete"
+        case .cancelled:
+            return "Cancelled"
+        case .failed(let error):
+            return error.localizedDescription
+        }
+
+    }
 
     var body: some View {
-        HStack {
+        HStack(spacing: 16.0) {
+            
+            self.image
             
             VStack(alignment: .leading, spacing: 0) {
-                
-                Text(transfer.title)
-                
+
+                Text(transfer.item.name)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .horizontalSpace(.trailing)
+
                 switch transfer.status {
                 case .waiting:
                     ProgressView(value: 0)
@@ -38,25 +74,17 @@ struct TransferRow: View {
                 case .active(let progress):
                     ProgressView(value: progress)
                         .controlSize(.small)
-                    Text(progress.formatted())
-                        .foregroundStyle(.secondary)
-                        .font(.callout)
-                case .complete:
-                    Text("Complete")
-                        .foregroundStyle(.secondary)
-                        .font(.callout)
-                case .cancelled:
-                    Text("Cancelled")
-                case .failed(let error):
-                    Text(error.localizedDescription)
-                        .foregroundStyle(.secondary)
-                        .font(.callout)
+                case .complete, .cancelled, .failed:
+                    EmptyView()
                 }
-                
+
+                Text(statusText)
+                    .lineLimit(1)
+                    .foregroundStyle(.secondary)
+                    .font(.callout)
+
             }
-            
-            Spacer()
-            
+
             switch transfer.status {
             case .waiting, .active:
                 Button {
@@ -89,5 +117,3 @@ struct TransferRow: View {
     }
 
 }
-
-

@@ -63,7 +63,7 @@ class Transfer: Identifiable {
     }
 
     let id = UUID()
-    let title: String
+    let item: FileReference
     
     var status: Status
 
@@ -80,9 +80,9 @@ class Transfer: Identifiable {
         }
     }
 
-    init(title: String, action: @escaping (Transfer) async throws -> Void) {
-        self.title = title
-        self.status = .waiting
+    init(item: FileReference, status: Status = .waiting, action: @escaping ((Transfer) async throws -> Void) = { _ in }) {
+        self.item = item
+        self.status = status
         let task = Task {
             do {
                 try await action(self)

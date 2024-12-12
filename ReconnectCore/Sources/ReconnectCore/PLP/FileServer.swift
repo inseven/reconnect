@@ -98,6 +98,24 @@ public class FileServer {
         public let uid1: UInt32
         public let uid2: UInt32
         public let uid3: UInt32
+        
+        public init(path: String,
+             name: String,
+             size: UInt32,
+             attributes: FileAttributes,
+             modificationDate: Date,
+             uid1: UInt32,
+             uid2: UInt32,
+             uid3: UInt32) {
+            self.path = path
+            self.name = name
+            self.size = size
+            self.attributes = attributes
+            self.modificationDate = modificationDate
+            self.uid1 = uid1
+            self.uid2 = uid2
+            self.uid3 = uid3
+        }
 
         init(directoryPath: String, entry: PlpDirent) {
             var entry = entry

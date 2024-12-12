@@ -215,11 +215,12 @@ class BrowserModel {
     func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil, convertFiles: Bool) {
         NSWorkspace.shared.open(.transfers)
         let selection = selection ?? fileSelection
-        for path in selection {
-            if path.isWindowsDirectory {
-                downloadDirectory(path: path, convertFiles: convertFiles)
+        let files = files.filter { selection.contains($0.id) }
+        for file in files {
+            if file.path.isWindowsDirectory {
+                downloadDirectory(path: file.path, convertFiles: convertFiles)
             } else {
-                transfersModel.download(from: path, convertFiles: convertFiles)
+                transfersModel.download(from: file, convertFiles: convertFiles)
             }
         }
     }
@@ -242,7 +243,7 @@ class BrowserModel {
                 if file.isDirectory {
                     try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
                 } else {
-                    self.transfersModel.download(from: file.path, to: destinationURL, convertFiles: convertFiles)
+                    self.transfersModel.download(from: file, to: destinationURL, convertFiles: convertFiles)
                 }
             }
         }
