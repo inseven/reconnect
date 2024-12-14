@@ -38,7 +38,9 @@ struct TransfersWindow: Scene {
                         return
                     }
                     let filename = installerURL.lastPathComponent
-                    transfersModel.upload(from: installerURL, to: "C:".appendingWindowsPathComponent(filename))
+                    Task {
+                        try? await transfersModel.upload(from: installerURL, to: "C:".appendingWindowsPathComponent(filename))
+                    }
                 }
                 .handlesExternalEvents(preferring: [.install], allowing: [])
         }

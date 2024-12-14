@@ -73,7 +73,8 @@ class Transfer: Identifiable {
 
     let id = UUID()
     let item: FileReference
-    
+    let action: (Transfer) async throws -> Void
+
     var status: Status
 
     private var task: Task<Void, Never>? = nil
@@ -89,18 +90,24 @@ class Transfer: Identifiable {
         }
     }
 
-    init(item: FileReference, status: Status = .waiting, action: @escaping ((Transfer) async throws -> Void) = { _ in }) {
+    init(item: FileReference,
+         status: Status = .waiting,
+         action: @escaping ((Transfer) async throws -> Void) = { _ in }) {
         self.item = item
         self.status = status
-        let task = Task {
+        self.action = action
+    }
+
+    func run() async throws {
+        self.task = Task {
             do {
-                try await action(self)
+                return try await action(self)
             } catch {
                 print("Failed with error \(error).")
                 self.setStatus(.failed(error))
             }
         }
-        self.task = task
+        await task?.value
     }
 
     func setStatus(_ status: Status) {

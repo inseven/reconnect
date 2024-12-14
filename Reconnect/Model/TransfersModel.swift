@@ -39,20 +39,22 @@ class TransfersModel {
     init() {
     }
 
-    func download(from source: FileServer.DirectoryEntry, to destinationURL: URL? = nil, convertFiles: Bool) {
+    func download(from source: FileServer.DirectoryEntry,
+                  to destinationURL: URL? = nil,
+                  convertFiles: Bool) async throws {
         let fileManager = FileManager.default
         let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
         let filename = source.path.lastWindowsPathComponent
-        let downloadURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
-        print("Downloading file at path '\(source.path)' to destination path '\(downloadURL.path)'...")
+        let destinationURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
+        print("Downloading file at path '\(source.path)' to destination path '\(destinationURL.path)'...")
 
-        transfers.append(Transfer(item: .remote(source)) { transfer in
+        let download = Transfer(item: .remote(source)) { transfer in
 
             // Get the file information.
             let directoryEntry = try await self.fileServer.getExtendedAttributes(path: source.path)
 
             // Perform the file copy.
-            try await self.fileServer.copyFile(fromRemotePath: source.path, toLocalPath: downloadURL.path) { progress, size in
+            try await self.fileServer.copyFile(fromRemotePath: source.path, toLocalPath: destinationURL.path) { progress, size in
                 transfer.setStatus(.active(progress, size))
                 return transfer.isCancelled ? .cancel : .continue
             }
@@ -60,10 +62,10 @@ class TransfersModel {
             // Convert known types.
             // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
             // reasonable point to hook an initial implementation.
-            var urls: [URL] = [downloadURL]
+            var urls: [URL] = [destinationURL]
             if convertFiles {
                 if directoryEntry.fileType == .mbm || directoryEntry.pathExtension.lowercased() == "mbm" {
-                    urls = try PsiLuaEnv().convertMultiBitmap(at: downloadURL, removeSource: true)
+                    urls = try PsiLuaEnv().convertMultiBitmap(at: destinationURL, removeSource: true)
                 }
             }
 
@@ -75,18 +77,22 @@ class TransfersModel {
 
             // Mark the transfer as complete.
             transfer.setStatus(.complete(details.first))
-        })
+        }
+        transfers.append(download)
+        try await download.run()
     }
 
-    func upload(from sourceURL: URL, to destinationPath: String) {
+    func upload(from sourceURL: URL, to destinationPath: String) async throws {
         print("Uploading file at path '\(sourceURL.path)' to destination path '\(destinationPath)'...")
-            transfers.append(Transfer(item: .local(sourceURL)) { transfer in
+        let upload = Transfer(item: .local(sourceURL)) { transfer in
             try await self.fileServer.copyFile(fromLocalPath: sourceURL.path, toRemotePath: destinationPath) { progress, size in
                 transfer.setStatus(.active(progress, size))
                 return transfer.isCancelled ? .cancel : .continue
             }
             transfer.setStatus(.complete(nil))
-        })
+        }
+        transfers.append(upload)
+        try await upload.run()
     }
     
     func clear() {
