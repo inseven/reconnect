@@ -61,7 +61,11 @@ struct TransfersView: View {
 
                     Button("Clear") {
                         transfersModel.clear()
+                        if transfersModel.transfers.isEmpty {
+                            dismiss()
+                        }
                     }
+                    .disabled(transfersModel.transfers.isEmpty)
                 }
                 .padding(LayoutMetrics.footerPadding)
             }
