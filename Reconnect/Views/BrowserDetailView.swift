@@ -31,7 +31,7 @@ struct BrowserDetailView: View {
     var body: some View {
         @Bindable var browserModel = browserModel
         ZStack {
-            Table(browserModel.files, selection: $browserModel.fileSelection) {
+            Table(of: FileServer.DirectoryEntry.self, selection: $browserModel.fileSelection) {
                 TableColumn("") { file in
                     Image(file.fileType.image)
                 }
@@ -50,10 +50,13 @@ struct BrowserDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-
                 TableColumn("Type") { file in
                     FileTypePopover(file: file)
                         .foregroundStyle(.secondary)
+                }
+            } rows: {
+                ForEach(browserModel.files) { file in
+                    TableRow(file)
                 }
             }
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
