@@ -53,7 +53,7 @@ class TransfersModel {
 
             // Perform the file copy.
             try await self.fileServer.copyFile(fromRemotePath: source.path, toLocalPath: downloadURL.path) { progress, size in
-                transfer.setStatus(.active(Float(progress) / Float(size)))
+                transfer.setStatus(.active(progress, size))
                 return transfer.isCancelled ? .cancel : .continue
             }
 
@@ -67,8 +67,14 @@ class TransfersModel {
                 }
             }
 
+            // Get the file details.
+            let details = try urls.map { url in
+                let size = try FileManager.default.attributesOfItem(atPath: url.path)[.size] as! UInt64
+                return Transfer.FileDetails(url: url, size: size)
+            }
+
             // Mark the transfer as complete.
-            transfer.setStatus(.complete(urls.first))
+            transfer.setStatus(.complete(details.first))
         })
     }
 
@@ -76,7 +82,7 @@ class TransfersModel {
         print("Uploading file at path '\(sourceURL.path)' to destination path '\(destinationPath)'...")
             transfers.append(Transfer(item: .local(sourceURL)) { transfer in
             try await self.fileServer.copyFile(fromLocalPath: sourceURL.path, toRemotePath: destinationPath) { progress, size in
-                transfer.setStatus(.active(Float(progress) / Float(size)))
+                transfer.setStatus(.active(progress, size))
                 return transfer.isCancelled ? .cancel : .continue
             }
             transfer.setStatus(.complete(nil))
@@ -94,19 +100,28 @@ extension TransfersModel {
     func addDemoData() {
         let remoteFile = FileServer.DirectoryEntry(path: "D:\\Screenshots\\Thoughts Splash Screen",
                                                    name: "Thoughts Splash Screen",
-                                                   size: 203,
+                                                   size: 2938478,
                                                    attributes: .normal,
                                                    modificationDate: .now,
                                                    uid1: .directFileStore,
                                                    uid2: .appDllDoc,
                                                    uid3: .sketch)
+        let localFile = URL(fileURLWithPath: "/Users/jbmorley/Thoughts Screenshot.png")
         let error = ReconnectError.rfsvError(.init(rawValue: -37))
-        transfers.append(Transfer(item: .remote(remoteFile),
-                                  status: .waiting))
-        transfers.append(Transfer(item: .remote(remoteFile),
-                                  status: .failed(error)))
-        transfers.append(Transfer(item: .local(URL(fileURLWithPath: "/Users/jbmorley/Thoughts Screenshot.png")),
-                                  status: .cancelled))
+        transfers.append(Transfer(item: .remote(remoteFile), status: .waiting))
+        transfers.append(Transfer(item: .remote(remoteFile), status: .failed(error)))
+        transfers.append(Transfer(item: .local(localFile), status: .cancelled))
+
+        var min: UInt32 = 0
+        transfers.append(Transfer(item: .remote(remoteFile)) { transfer in
+            while min < remoteFile.size {
+                try await Task.sleep(for: .milliseconds(1))
+                min += 100
+                transfer.setStatus(.active(min, remoteFile.size))
+            }
+            transfer.setStatus(.complete(Transfer.FileDetails(url: localFile, size: UInt64(remoteFile.size))))
+        })
+
     }
     
 }

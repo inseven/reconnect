@@ -20,7 +20,12 @@ import SwiftUI
 
 @MainActor @Observable
 class Transfer: Identifiable {
-    
+
+    struct FileDetails: Equatable {
+        let url: URL
+        let size: UInt64
+    }
+
     enum Status: Equatable {
 
         static func == (lhs: Transfer.Status, rhs: Transfer.Status) -> Bool {
@@ -29,29 +34,33 @@ class Transfer: Identifiable {
                 if case .waiting = rhs {
                     return true
                 }
-            case .active(let lhsProgress):
-                if case let .active(rhsProgress) = rhs {
-                    return lhsProgress == rhsProgress
+                return false
+            case .active(let lhsProgress, let lhsSize):
+                if case let .active(rhsProgress, rhsSize) = rhs {
+                    return lhsProgress == rhsProgress && lhsSize == rhsSize
                 }
-            case .complete:
-                if case .complete = rhs {
-                    return true
+                return false
+            case .complete(let lhsDetails):
+                if case let .complete(rhsDetails) = rhs {
+                    return lhsDetails == rhsDetails
                 }
+                return false
             case .cancelled:
                 if case .complete = rhs {
                     return true
                 }
+                return false
             case .failed(_):
                 if case .failed = rhs {
                     return true
                 }
+                return false
             }
-            return false
         }
 
         case waiting
-        case active(Float)
-        case complete(URL?)
+        case active(UInt32, UInt32)
+        case complete(FileDetails?)
         case cancelled
         case failed(Error)
     }

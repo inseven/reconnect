@@ -43,10 +43,14 @@ struct TransferRow: View {
         switch transfer.status {
         case .waiting:
             return "Waiting to start…"
-        case .active(let progress):
-            return progress.formatted()
-        case .complete:
-            return "Complete"
+        case .active(let progress, let size):
+            return "\(progress.formatted(.byteCount(style: .memory))) of \(size.formatted(.byteCount(style: .memory)))"
+        case .complete(let details):
+            if let details {
+                return details.size.formatted(.byteCount(style: .file))
+            } else {
+                return "Complete"
+            }
         case .cancelled:
             return "Cancelled"
         case .failed(let error):
@@ -71,8 +75,8 @@ struct TransferRow: View {
                 case .waiting:
                     ProgressView(value: 0)
                         .controlSize(.small)
-                case .active(let progress):
-                    ProgressView(value: progress)
+                case .active(let progress, let size):
+                    ProgressView(value: Float(progress) / Float(size))
                         .controlSize(.small)
                 case .complete, .cancelled, .failed:
                     EmptyView()
@@ -94,10 +98,10 @@ struct TransferRow: View {
                         .foregroundColor(.secondary)
                 }
                 .buttonStyle(.plain)
-            case .complete(let url):
-                if let url {
+            case .complete(let details):
+                if let details {
                     Button {
-                        Application.reveal(url)
+                        Application.reveal(details.url)
                     } label: {
                         Image(systemName: "magnifyingglass.circle.fill")
                     }
