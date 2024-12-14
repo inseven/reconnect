@@ -22,21 +22,41 @@ import Interact
 
 struct TransferRow: View {
 
+    struct LayoutMetrics {
+        static let iconSize = 32.0
+        static let horizontalSpacing = 16.0
+    }
+
     let transfer: Transfer
     
     var image: some View {
-        switch transfer.item {
-        case .local:
-            Image(.fileUnknown16)
-                .interpolation(.none)
-                .resizable()
-                .frame(width: 32, height: 32)
-        case .remote(let file):
-            Image(file.fileType.image)
-                .interpolation(.none)
-                .resizable()
-                .frame(width: 32, height: 32)
+        // We differentiate between complete and incomplete transfers to allow us to show thumbnails that correspond
+        // with the final state of the tranfer---downloaded files will show their converted thumbnails where
+        // appropriate, etc.
+        VStack {
+            switch transfer.status {
+            case .complete(let details):
+                switch transfer.item {
+                case .local:
+                    PixelImage(.fileUnknown16)
+                case .remote(let file):
+                    if let details {
+                        ThumbnailView(url: details.url,
+                                      size: CGSize(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize))
+                    } else {
+                        PixelImage(file.fileType.image)
+                    }
+                }
+            default:
+                switch transfer.item {
+                case .local:
+                    PixelImage(.fileUnknown16)
+                case .remote(let file):
+                    PixelImage(file.fileType.image)
+                }
+            }
         }
+        .frame(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize)
     }
     
     var statusText: String {
@@ -60,8 +80,8 @@ struct TransferRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 16.0) {
-            
+        HStack(spacing: LayoutMetrics.horizontalSpacing) {
+
             self.image
             
             VStack(alignment: .leading, spacing: 0) {
