@@ -46,6 +46,7 @@ class TransfersModel {
         let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
         let filename = source.path.lastWindowsPathComponent
         let destinationURL = destinationURL ?? downloadsURL.appendingPathComponent(filename)
+        let temporaryURL = fileManager.temporaryDirectory.appendingPathComponent((UUID().uuidString))
         print("Downloading file at path '\(source.path)' to destination path '\(destinationURL.path)'...")
 
         let download = Transfer(item: .remote(source)) { transfer in
@@ -54,10 +55,13 @@ class TransfersModel {
             let directoryEntry = try await self.fileServer.getExtendedAttributes(path: source.path)
 
             // Perform the file copy.
-            try await self.fileServer.copyFile(fromRemotePath: source.path, toLocalPath: destinationURL.path) { progress, size in
+            try await self.fileServer.copyFile(fromRemotePath: source.path, toLocalPath: temporaryURL.path) { progress, size in
                 transfer.setStatus(.active(progress, size))
                 return transfer.isCancelled ? .cancel : .continue
             }
+
+            // Move the completed file to the destination.
+            try fileManager.moveItem(at: temporaryURL, to: destinationURL)
 
             // Convert known types.
             // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
