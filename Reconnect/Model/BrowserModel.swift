@@ -220,7 +220,9 @@ class BrowserModel {
             if file.path.isWindowsDirectory {
                 downloadDirectory(path: file.path, convertFiles: convertFiles)
             } else {
-                transfersModel.download(from: file, convertFiles: convertFiles)
+                Task {
+                    try? await transfersModel.download(from: file, convertFiles: convertFiles)
+                }
             }
         }
     }
@@ -243,7 +245,11 @@ class BrowserModel {
                 if file.isDirectory {
                     try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
                 } else {
-                    self.transfersModel.download(from: file, to: destinationURL, convertFiles: convertFiles)
+                    Task {
+                        try? await self.transfersModel.download(from: file,
+                                                                to: destinationURL,
+                                                                convertFiles: convertFiles)
+                    }
                 }
             }
         }
@@ -255,7 +261,8 @@ class BrowserModel {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
             }
-            self.transfersModel.upload(from: url, to: path + url.lastPathComponent)
+            try? await self.transfersModel.upload(from: url, to: path + url.lastPathComponent)
+            self.refresh()
         }
     }
 
