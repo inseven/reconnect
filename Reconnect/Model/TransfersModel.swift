@@ -66,21 +66,19 @@ class TransfersModel {
             // Convert known types.
             // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
             // reasonable point to hook an initial implementation.
-            var urls: [URL] = [destinationURL]
+            var url: URL = destinationURL
             if convertFiles {
                 if directoryEntry.fileType == .mbm || directoryEntry.pathExtension.lowercased() == "mbm" {
-                    urls = try PsiLuaEnv().convertMultiBitmap(at: destinationURL, removeSource: true)
+                    url = try PsiLuaEnv().convertMultiBitmap(at: destinationURL, removeSource: true)
                 }
             }
 
             // Get the file details.
-            let details = try urls.map { url in
-                let size = try FileManager.default.attributesOfItem(atPath: url.path)[.size] as! UInt64
-                return Transfer.FileDetails(url: url, size: size)
-            }
+            let size = try FileManager.default.attributesOfItem(atPath: url.path)[.size] as! UInt64
+            let details = Transfer.FileDetails(url: url, size: size)
 
             // Mark the transfer as complete.
-            transfer.setStatus(.complete(details.first))
+            transfer.setStatus(.complete(details))
         }
         transfers.append(download)
         try await download.run()
