@@ -23,27 +23,21 @@ import OpoLua
 
 extension PsiLuaEnv {
 
-    public func convertMultiBitmap(at url: URL, removeSource: Bool = false) throws -> [URL] {
+    public func convertMultiBitmap(at url: URL, removeSource: Bool = false) throws -> URL {
         let directoryURL = (url as NSURL).deletingLastPathComponent!
         let basename = (url.lastPathComponent as NSString).deletingPathExtension
         let bitmaps = PsiLuaEnv().getMbmBitmaps(path: url.path) ?? []
-        let urls = try bitmaps.enumerated().map { index, bitmap in
-            let identifier = if index < 1 {
-                basename
-            } else {
-                "\(basename) \(index)"
-            }
-            let conversionURL = directoryURL
-                .appendingPathComponent(identifier)
-                .appendingPathExtension("png")
-            let image = CGImage.from(bitmap: bitmap)
-            try CGImageWritePNG(image, to: conversionURL)
-            return conversionURL
+        let images = bitmaps.map { bitmap in
+            return CGImage.from(bitmap: bitmap)
         }
+        let conversionURL = directoryURL
+            .appendingPathComponent(basename)
+            .appendingPathExtension("tiff")
+        try CGImageWriteTIFF(destinationURL: conversionURL, images: images)
         if removeSource {
             try FileManager.default.removeItem(at: url)
         }
-        return urls
+        return conversionURL
     }
 
 }

@@ -20,7 +20,7 @@ import Foundation
 
 import ReconnectCore
 
-enum FileReference {
+enum FileReference: Equatable {
 
     case local(URL)
     case remote(FileServer.DirectoryEntry)
