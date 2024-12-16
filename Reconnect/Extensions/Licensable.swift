@@ -20,6 +20,7 @@ import Foundation
 
 import Interact
 import Licensable
+import OpoLua
 
 fileprivate let plptoolsLicense = License(id: "https://github.com/rrthomas/plptools",
                                           name: "plptools",
@@ -50,6 +51,7 @@ fileprivate let reconnectLicense = License(id: "https://github.com/inseven/thoug
                                            licenses: [
                                                .interact,
                                                .licensable,
+                                               .opolua,
                                                plptoolsLicense,
                                                sparkleLicense,
                                            ])
