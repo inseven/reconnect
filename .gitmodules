@@ -17,7 +17,7 @@
 	path = scripts/Sparkle
 	url = https://github.com/sparkle-project/Sparkle
 [submodule "dependencies/opolua/opolua"]
-	path = dependencies/opolua/opolua
+	path = dependencies/opolua
 	url = https://github.com/inseven/opolua.git
 [submodule "dependencies/PsionSoftwareIndexSwift"]
 	path = dependencies/PsionSoftwareIndexSwift

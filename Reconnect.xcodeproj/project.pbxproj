@@ -30,7 +30,6 @@
 		D8631DB32C374B4400344DC3 /* TransfersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB22C374B4400344DC3 /* TransfersModel.swift */; };
 		D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB42C374F8700344DC3 /* TransfersView.swift */; };
 		D8631DB92C375F2400344DC3 /* WindowsPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB82C375F2400344DC3 /* WindowsPathTests.swift */; };
-		D86EB1DB2C4B0891003B1C44 /* OpoLua in Frameworks */ = {isa = PBXBuildFile; productRef = D86EB1DA2C4B0891003B1C44 /* OpoLua */; };
 		D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA732C28CDAD00E84BDA /* BrowserView.swift */; };
 		D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA752C29343900E84BDA /* BrowserModel.swift */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
@@ -45,7 +44,6 @@
 		D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */ = {isa = PBXBuildFile; productRef = D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
-		D8DF2C112C3CE8AC006E56BA /* OpoLua in Frameworks */ = {isa = PBXBuildFile; productRef = D8DF2C102C3CE8AC006E56BA /* OpoLua */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
 		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
@@ -162,7 +160,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8DF2C112C3CE8AC006E56BA /* OpoLua in Frameworks */,
 				D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
@@ -190,7 +187,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */,
-				D86EB1DB2C4B0891003B1C44 /* OpoLua in Frameworks */,
 				D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -420,7 +416,6 @@
 				D8D3E79E2C2540D9003E696D /* Interact */,
 				D8E31EB22C26E09500350082 /* Diligence */,
 				D88FA14D2C2CE0FA00805DBD /* Sparkle */,
-				D8DF2C102C3CE8AC006E56BA /* OpoLua */,
 				D8CBAC642C4A02580035FC3D /* ReconnectCore */,
 				D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */,
 			);
@@ -480,7 +475,6 @@
 			packageProductDependencies = (
 				D89071902C4B025D00C11DE8 /* ArgumentParser */,
 				D89071922C4B02D900C11DE8 /* ReconnectCore */,
-				D86EB1DA2C4B0891003B1C44 /* OpoLua */,
 			);
 			productName = ScreenshotSIS;
 			productReference = D89071882C4B01FC00C11DE8 /* screenshot-sis */;
@@ -550,7 +544,6 @@
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
-				D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */,
 				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				D8AE29A62CA25A9800116439 /* XCLocalSwiftPackageReference "dependencies/PsionSoftwareIndexSwift" */,
 			);
@@ -1112,10 +1105,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/interact;
 		};
-		D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/opolua;
-		};
 		D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/diligence;
@@ -1146,11 +1135,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
 		};
-		D86EB1DA2C4B0891003B1C44 /* OpoLua */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8DF2C0F2C3CE8AC006E56BA /* XCLocalSwiftPackageReference "dependencies/opolua" */;
-			productName = OpoLua;
-		};
 		D88FA14D2C2CE0FA00805DBD /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */;
@@ -1177,10 +1161,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
 			productName = Interact;
-		};
-		D8DF2C102C3CE8AC006E56BA /* OpoLua */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = OpoLua;
 		};
 		D8E31EB22C26E09500350082 /* Diligence */ = {
 			isa = XCSwiftPackageProductDependency;
