@@ -105,7 +105,7 @@ fi
 mkdir -p "$BUILD_DIRECTORY"
 
 if [ -d "$ARCHIVES_DIRECTORY" ] ; then
-    rm -r "$BUILD_DIRECTORY"
+    rm -r "$ARCHIVES_DIRECTORY"
 fi
 mkdir -p "$ARCHIVES_DIRECTORY"
 
