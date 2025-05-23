@@ -44,6 +44,7 @@
 		D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */ = {isa = PBXBuildFile; productRef = D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
+		D8E2325C2DE1117800879866 /* FileConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E2325B2DE1117400879866 /* FileConverter.swift */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
 		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
@@ -144,6 +145,7 @@
 		D8AC642D2D0D5B4A0085306B /* PixelImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelImage.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		D8E2325B2DE1117400879866 /* FileConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileConverter.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
 		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
 		D8E8B4FD2D1529E800405445 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = dependencies/opolua/src; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				D8184C462C253C59008FA79B /* ApplicationModel.swift */,
 				D886DA752C29343900E84BDA /* BrowserModel.swift */,
 				D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */,
+				D8E2325B2DE1117400879866 /* FileConverter.swift */,
 				D8AB7ED22D0AA1130076E19F /* FileReference.swift */,
 				D8631DB02C374B0A00344DC3 /* Transfer.swift */,
 				D8631DB22C374B4400344DC3 /* TransfersModel.swift */,
@@ -612,6 +615,7 @@
 				D8631DAF2C373A1600344DC3 /* TransferRow.swift in Sources */,
 				D83658BB2C29A09300B45693 /* HistoryItemView.swift in Sources */,
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
+				D8E2325C2DE1117800879866 /* FileConverter.swift in Sources */,
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
 				D8AB7ED32D0AA1140076E19F /* FileReference.swift in Sources */,
 				D88FA1502C2CE29900805DBD /* ContentView.swift in Sources */,

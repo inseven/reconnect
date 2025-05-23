@@ -18,51 +18,7 @@
 
 import SwiftUI
 
-import OpoLua
-
 import ReconnectCore
-
-// This is expected to grow into some kind of engine / model for managing file conversions and giving in the moment answers
-// about conversions based on the users choices and enabled conversions.
-// TODO: This could be a tuple of matching operations and conversion operations to make things a little easier to reason about.
-class FileConverter {
-
-    // TODO: Rename
-    struct Conversion {
-        let matches: (FileServer.DirectoryEntry) -> Bool
-        let filename: (FileServer.DirectoryEntry) -> String
-        let perform: (URL, URL) throws -> URL
-    }
-
-    static let converters: [Conversion] = [
-
-        // MBM
-        .init { directoryEntry in
-            return directoryEntry.fileType == .mbm || directoryEntry.pathExtension.lowercased() == "mbm"
-        } filename: { directoryEntry in
-            return directoryEntry.name
-                .deletingPathExtension
-                .appendingPathExtension("tiff")!
-        } perform: { sourceURL, destinationURL in
-            // TODO: Generate a temporary file? Should this be done in the outer?
-            try PsiLuaEnv().convertMultiBitmap(at: sourceURL, to: destinationURL)
-            try FileManager.default.removeItem(at: sourceURL)
-            return destinationURL  // TODO: this is uuuugly
-        }
-
-    ]
-
-    static func converter(for directoryEntry: FileServer.DirectoryEntry) -> Conversion? {
-        return converters.first {
-            $0.matches(directoryEntry)
-        }
-    }
-
-    static func targetFilename(for directoryEntry: FileServer.DirectoryEntry) -> String {
-        return converter(for: directoryEntry)?.filename(directoryEntry) ?? directoryEntry.name
-    }
-
-}
 
 @MainActor @Observable
 class TransfersModel {
