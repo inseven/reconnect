@@ -28,6 +28,28 @@ struct BrowserDetailView: View {
 
     var browserModel: BrowserModel
 
+    func itemProvider(for file: FileServer.DirectoryEntry) -> NSItemProvider? {
+        if file.isDirectory {
+            return nil
+        } else {
+            let provider = NSItemProvider()
+            provider.suggestedName = FileConverter.targetFilename(for: file)
+            provider.registerFileRepresentation(for: .data) { completion in
+                Task {
+                    do {
+                        let url = try await self.browserModel.download(file.id, convertFiles: true)
+                        completion(url, false, nil)
+                    } catch {
+                        print("Failed to download dragged file with error \(error).")
+                        completion(nil, false, error)
+                    }
+                }
+                return nil
+            }
+            return provider
+        }
+    }
+
     var body: some View {
         @Bindable var browserModel = browserModel
         ZStack {
@@ -57,6 +79,9 @@ struct BrowserDetailView: View {
             } rows: {
                 ForEach(browserModel.files) { file in
                     TableRow(file)
+                        .itemProvider {
+                            itemProvider(for: file)
+                        }
                 }
             }
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
@@ -69,7 +94,9 @@ struct BrowserDetailView: View {
                 Divider()
 
                 Button("Download") {
-                    browserModel.download(items, convertFiles: applicationModel.convertFiles)
+                    browserModel.download(items,
+                                          to: FileManager.default.downloadsDirectory,
+                                          convertFiles: applicationModel.convertFiles)
                 }
 
                 Divider()

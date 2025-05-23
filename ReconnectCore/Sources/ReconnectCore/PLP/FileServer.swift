@@ -317,6 +317,7 @@ public class FileServer {
         }
     }
 
+    // TODO: Consider dropping the default callback?
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {

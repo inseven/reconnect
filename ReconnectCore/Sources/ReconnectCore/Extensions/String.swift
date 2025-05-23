@@ -49,6 +49,10 @@ public extension String {
         try! self.init(contentsOf: url)
     }
 
+    func appendingPathExtension(_ pathExtension: String) -> String? {
+        return (self as NSString).appendingPathExtension(pathExtension)
+    }
+
     func appendingWindowsPathComponent(_ component: String, isDirectory: Bool = false) -> String {
         return windowsPathComponents
             .appending(component)

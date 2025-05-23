@@ -22,7 +22,7 @@ import SwiftUI
 class Transfer: Identifiable {
 
     struct FileDetails: Equatable {
-        let url: URL
+        let reference: FileReference
         let size: UInt64
     }
 
@@ -73,11 +73,11 @@ class Transfer: Identifiable {
 
     let id = UUID()
     let item: FileReference
-    let action: (Transfer) async throws -> Void
+    let action: (Transfer) async throws -> FileReference
 
     var status: Status
 
-    private var task: Task<Void, Never>? = nil
+    private var task: Task<FileReference, Error>? = nil
     private var lock = NSLock()
     private var _isCancelled: Bool = false
 
@@ -92,22 +92,24 @@ class Transfer: Identifiable {
 
     init(item: FileReference,
          status: Status = .waiting,
-         action: @escaping ((Transfer) async throws -> Void) = { _ in }) {
+         action: @escaping ((Transfer) async throws -> FileReference)) {
         self.item = item
         self.status = status
         self.action = action
     }
 
-    func run() async throws {
-        self.task = Task {
+    func run() async throws -> FileReference {
+        let task = Task {
             do {
                 return try await action(self)
             } catch {
                 print("Failed with error \(error).")
                 self.setStatus(.failed(error))
+                throw error
             }
         }
-        await task?.value
+        self.task = task
+        return try await task.value
     }
 
     func setStatus(_ status: Status) {
