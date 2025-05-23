@@ -1,6 +1,6 @@
 // Reconnect -- Psion connectivity for macOS
 //
-// Copyright (C) 2024 Jason Morley
+// Copyright (C) 2024-2025 Jason Morley
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ struct ReconnectApp: App {
             .environment(applicationModel)
             .environment(transfersModel)
 
-        About(repository: "inseven/reconnect", copyright: "Copyright © 2024 Jason Morley") {
+        About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)
         } acknowledgements: {
             Acknowledgements("Developers") {
