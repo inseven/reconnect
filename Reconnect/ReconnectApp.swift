@@ -39,7 +39,8 @@ struct ReconnectApp: App {
             .environment(transfersModel)
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
-            Action("GitHub", url: URL(string: "https://github.com/inseven/reconnect")!)
+            Action("GitHub", url: .gitHub)
+            Action("Support", url: .support)
         } acknowledgements: {
             Acknowledgements("Developers") {
                 Credit("Jason Morley", url: URL(string: "https://jbmorley.co.uk"))

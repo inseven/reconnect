@@ -18,6 +18,8 @@
 
 import Foundation
 
+import Diligence
+
 extension URL {
 
     public static let about = URL(string: "x-reconnect://about")!
@@ -25,6 +27,15 @@ extension URL {
     public static let install = URL(string: "x-reconnect://install/")!
     public static let transfers = URL(string: "x-reconnect://transfers")!
     public static let update = URL(string: "x-reconnect://update")!
+
+    public static let donate = URL(string: "https://jbmorley.co.uk/support")!
+    public static let gitHub = URL(string: "https://github.com/inseven/reconnect")!
+    public static let software = URL(string: "https://jbmorley.co.uk/software")!
+
+    public static var support: URL = {
+        let subject = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
+        return URL(address: "support@jbmorley.co.uk", subject: subject)!
+    }()
 
     public func appendingPathComponents(_ pathComponents: [String]) -> URL {
         return pathComponents.reduce(self) { url, pathComponent in
