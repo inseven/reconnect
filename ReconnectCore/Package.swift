@@ -15,6 +15,7 @@ let package = Package(
             targets: ["ReconnectCore"]),
     ],
     dependencies: [
+        .package(path: "../dependencies/diligence"),
         .package(path: "../dependencies/opolua"),
         .package(path: "../dependencies/plptools"),
     ],
@@ -24,6 +25,7 @@ let package = Package(
         .target(
             name: "ReconnectCore",
             dependencies: [
+                .product(name: "Diligence", package: "diligence"),
                 .product(name: "OpoLua", package: "opolua"),
                 .product(name: "ncp", package: "plptools"),
                 .product(name: "plpftp", package: "plptools"),

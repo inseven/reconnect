@@ -43,6 +43,7 @@ struct BrowserWindow: Scene {
             CommandGroup(before: .appSettings) {
                 CheckForUpdatesView(updater: applicationModel.updaterController.updater)
             }
+            HelpCommands()
         }
         .environment(applicationModel)
         .handlesExternalEvents(matching: [.browser, .update])
