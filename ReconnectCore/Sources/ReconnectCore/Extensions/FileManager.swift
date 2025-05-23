@@ -16,20 +16,22 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import CoreGraphics
 import Foundation
 
-import OpoLua
+extension FileManager {
 
-extension PsiLuaEnv {
+    public var downloadsDirectory: URL {
+        return urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+    }
 
-    // TODO: Rename source and destination
-    public func convertMultiBitmap(at url: URL, to: URL) throws {
-        let bitmaps = PsiLuaEnv().getMbmBitmaps(path: url.path) ?? []
-        let images = bitmaps.map { bitmap in
-            return CGImage.from(bitmap: bitmap)
-        }
-        try CGImageWriteTIFF(destinationURL: to, images: images)
+    public func temporaryURL() -> URL {
+        return temporaryDirectory.appendingPathComponent((UUID().uuidString))
+    }
+
+    public func createTemporaryDirectory() throws -> URL {
+        let temporaryURL = temporaryURL()
+        try createDirectory(at: temporaryURL, withIntermediateDirectories: true)
+        return temporaryURL
     }
 
 }

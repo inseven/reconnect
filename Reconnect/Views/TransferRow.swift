@@ -41,8 +41,13 @@ struct TransferRow: View {
                     PixelImage(.fileUnknown16)
                 case .remote(let file):
                     if let details {
-                        ThumbnailView(url: details.url,
-                                      size: CGSize(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize))
+                        switch details.reference {
+                        case .local(let url):
+                            ThumbnailView(url: url,
+                                          size: CGSize(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize))
+                        case .remote(let directoryEntry):
+                            PixelImage(directoryEntry.fileType.image)
+                        }
                     } else {
                         PixelImage(file.fileType.image)
                     }
@@ -106,6 +111,7 @@ struct TransferRow: View {
                     .lineLimit(1)
                     .foregroundStyle(.secondary)
                     .font(.callout)
+                    .help(statusText)
 
             }
 
@@ -121,7 +127,12 @@ struct TransferRow: View {
             case .complete(let details):
                 if let details {
                     Button {
-                        Application.reveal(details.url)
+                        switch details.reference {
+                        case .local(let url):
+                            Application.reveal(url)
+                        case .remote(let directoryEntry):
+                            print("Revealing remote files is not currently supported!")
+                        }
                     } label: {
                         Image(systemName: "magnifyingglass.circle.fill")
                     }

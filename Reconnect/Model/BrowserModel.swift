@@ -212,7 +212,17 @@ class BrowserModel {
         }
     }
 
-    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil, convertFiles: Bool) {
+    // TODO: Should I even be using this?
+    func download(_ selection: FileServer.DirectoryEntry.ID, convertFiles: Bool) async throws -> URL {
+        NSWorkspace.shared.open(.transfers)
+        guard let file = files.first(where: { $0.id == selection }) else {
+            throw ReconnectError.unknown  // TODO: UGGGGGLY
+        }
+        return try await transfersModel.download(from: file, convertFiles: convertFiles)
+    }
+
+    // TODO: Better naming.
+    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil, to: URL? = nil, convertFiles: Bool) {
         NSWorkspace.shared.open(.transfers)
         let selection = selection ?? fileSelection
         let files = files.filter { selection.contains($0.id) }
@@ -221,7 +231,7 @@ class BrowserModel {
                 downloadDirectory(path: file.path, convertFiles: convertFiles)
             } else {
                 Task {
-                    try? await transfersModel.download(from: file, convertFiles: convertFiles)
+                    try? await transfersModel.download(from: file, to: to, convertFiles: convertFiles)
                 }
             }
         }
