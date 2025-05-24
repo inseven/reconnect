@@ -89,16 +89,16 @@ public class FileServer {
             return attributes.contains(.directory)
         }
 
-        public let path: String
-        public let name: String
-        public let size: UInt32
-        public let attributes: FileAttributes
-        public let modificationDate: Date
+        public var path: String
+        public var name: String
+        public var size: UInt32
+        public var attributes: FileAttributes
+        public var modificationDate: Date
 
-        public let uid1: UInt32
-        public let uid2: UInt32
-        public let uid3: UInt32
-        
+        public var uid1: UInt32
+        public var uid2: UInt32
+        public var uid3: UInt32
+
         public init(path: String,
              name: String,
              size: UInt32,
@@ -280,6 +280,12 @@ public class FileServer {
         try client.remove(path).check()
     }
 
+    func syncQueue_rename(from fromPath: String, to toPath: String) throws {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try syncQueue_connect()
+        try client.rename(fromPath, toPath).check()
+    }
+
     func syncQueue_devlist() throws -> [String] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try syncQueue_connect()
@@ -390,6 +396,12 @@ public class FileServer {
     public func remove(path: String) async throws {
         try await perform {
             try self.syncQueue_remove(path: path)
+        }
+    }
+
+    public func rename(from fromPath: String, to toPath: String) async throws {
+        try await perform {
+            try self.syncQueue_rename(from: fromPath, to: toPath)
         }
     }
 

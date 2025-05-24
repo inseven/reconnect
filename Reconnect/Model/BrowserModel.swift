@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+import Algorithms
 import OpoLua
 
 import ReconnectCore
@@ -196,6 +197,7 @@ class BrowserModel {
     }
 
     func delete(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil) {
+        dispatchPrecondition(condition: .onQueue(.main))
         let selection = selection ?? fileSelection
         runAsync {
             for path in selection {
@@ -207,6 +209,37 @@ class BrowserModel {
                 await MainActor.run {
                     self.files.removeAll { $0.path == path }
                     self.fileSelection.remove(path)
+                }
+            }
+        }
+    }
+
+    func rename(file: FileServer.DirectoryEntry, to newName: String) {
+        runAsync {
+            let newPath = file.path
+                .deletingLastWindowsPathComponent
+                .appendingWindowsPathComponent(newName, isDirectory: file.isDirectory)
+            do {
+                try await self.fileServer.rename(from: file.path, to: newPath)
+            } catch {
+                self.refresh()
+                throw error
+            }
+            await MainActor.run {
+                var newFile = file
+                newFile.path = newPath
+                newFile.name = newName
+                var updatedFiles = self.files
+                updatedFiles.removeAll { $0.path == file.path }
+                let index = updatedFiles.partitioningIndex {
+                    return newFile.name.localizedStandardCompare($0.name) == .orderedAscending
+                }
+                updatedFiles.insert(newFile, at: index)
+                self.files = updatedFiles
+                if self.fileSelection.contains(file.id) {
+                    self.fileSelection = self.fileSelection
+                        .subtracting([file.id])
+                        .union([newFile.id])
                 }
             }
         }

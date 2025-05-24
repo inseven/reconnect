@@ -39,6 +39,10 @@
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
 		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
 		D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */; };
+		D8A8A8082DE19312007A657B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = D8A8A8072DE19312007A657B /* Algorithms */; };
+		D8A8A80A2DE1A095007A657B /* EditableText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A8A8092DE1A093007A657B /* EditableText.swift */; };
+		D8A8A80C2DE1A0B6007A657B /* EditableTextModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A8A80B2DE1A0B4007A657B /* EditableTextModel.swift */; };
+		D8A8A80E2DE1A7A0007A657B /* apache-2.0-license in Resources */ = {isa = PBXBuildFile; fileRef = D8A8A80D2DE1A799007A657B /* apache-2.0-license */; };
 		D8AB7ED32D0AA1140076E19F /* FileReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AB7ED22D0AA1130076E19F /* FileReference.swift */; };
 		D8AC642C2D0D58970085306B /* ThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AC642B2D0D58910085306B /* ThumbnailView.swift */; };
 		D8AC642E2D0D5B4D0085306B /* PixelImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AC642D2D0D5B4A0085306B /* PixelImage.swift */; };
@@ -142,6 +146,9 @@
 		D89071882C4B01FC00C11DE8 /* screenshot-sis */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "screenshot-sis"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D890718A2C4B01FC00C11DE8 /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
 		D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
+		D8A8A8092DE1A093007A657B /* EditableText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableText.swift; sourceTree = "<group>"; };
+		D8A8A80B2DE1A0B4007A657B /* EditableTextModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableTextModel.swift; sourceTree = "<group>"; };
+		D8A8A80D2DE1A799007A657B /* apache-2.0-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "apache-2.0-license"; sourceTree = "<group>"; };
 		D8AB7ED22D0AA1130076E19F /* FileReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileReference.swift; sourceTree = "<group>"; };
 		D8AC642B2D0D58910085306B /* ThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailView.swift; sourceTree = "<group>"; };
 		D8AC642D2D0D5B4A0085306B /* PixelImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelImage.swift; sourceTree = "<group>"; };
@@ -166,6 +173,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8A8A8082DE19312007A657B /* Algorithms in Frameworks */,
 				D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
@@ -232,6 +240,7 @@
 				D8184C462C253C59008FA79B /* ApplicationModel.swift */,
 				D886DA752C29343900E84BDA /* BrowserModel.swift */,
 				D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */,
+				D8A8A80B2DE1A0B4007A657B /* EditableTextModel.swift */,
 				D8E2325B2DE1117400879866 /* FileConverter.swift */,
 				D8AB7ED22D0AA1130076E19F /* FileReference.swift */,
 				D8631DB02C374B0A00344DC3 /* Transfer.swift */,
@@ -247,6 +256,7 @@
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */,
 				D88FA14F2C2CE29900805DBD /* ContentView.swift */,
+				D8A8A8092DE1A093007A657B /* EditableText.swift */,
 				D83A78692C3C80C9000E8192 /* FileTypePopover.swift */,
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
 				D8AC642D2D0D5B4A0085306B /* PixelImage.swift */,
@@ -375,6 +385,7 @@
 		D8E31EB82C26E1CA00350082 /* Licenses */ = {
 			isa = PBXGroup;
 			children = (
+				D8A8A80D2DE1A799007A657B /* apache-2.0-license */,
 				D813FF142C26E869009CF0DC /* plptools-license */,
 				D8E31EB92C26E1E400350082 /* reconnect-license */,
 				D8FD72722C3D192F0038DB17 /* sparkle-license */,
@@ -435,6 +446,7 @@
 				D88FA14D2C2CE0FA00805DBD /* Sparkle */,
 				D8CBAC642C4A02580035FC3D /* ReconnectCore */,
 				D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */,
+				D8A8A8072DE19312007A657B /* Algorithms */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -563,6 +575,7 @@
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
 				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				D8AE29A62CA25A9800116439 /* XCLocalSwiftPackageReference "dependencies/PsionSoftwareIndexSwift" */,
+				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -588,6 +601,7 @@
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
 				D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */,
 				D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */,
+				D8A8A80E2DE1A7A0007A657B /* apache-2.0-license in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -631,7 +645,9 @@
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
 				D8AB7ED32D0AA1140076E19F /* FileReference.swift in Sources */,
 				D88FA1502C2CE29900805DBD /* ContentView.swift in Sources */,
+				D8A8A80A2DE1A095007A657B /* EditableText.swift in Sources */,
 				D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */,
+				D8A8A80C2DE1A0B6007A657B /* EditableTextModel.swift in Sources */,
 				D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */,
 				D8AC642E2D0D5B4D0085306B /* PixelImage.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
@@ -1148,6 +1164,14 @@
 				minimumVersion = 1.5.0;
 			};
 		};
+		D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1168,6 +1192,11 @@
 		D89071922C4B02D900C11DE8 /* ReconnectCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
+		};
+		D8A8A8072DE19312007A657B /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
 		};
 		D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */ = {
 			isa = XCSwiftPackageProductDependency;
