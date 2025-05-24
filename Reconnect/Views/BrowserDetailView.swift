@@ -58,7 +58,11 @@ struct BrowserDetailView: View {
                     Image(file.fileType.image)
                 }
                 .width(16.0)
-                TableColumn("Name", value: \.name)
+                TableColumn("Name") { file in
+                    EditableText(initialValue: file.name) { text in
+                        browserModel.rename(file: file, to: text)
+                    }
+                }
                 TableColumn("Date Modified") { file in
                     Text(file.modificationDate.formatted(date: .long, time: .shortened))
                         .foregroundStyle(.secondary)

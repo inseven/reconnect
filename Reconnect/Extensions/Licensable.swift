@@ -27,9 +27,8 @@ fileprivate let plptoolsLicense = License(id: "https://github.com/rrthomas/plpto
                                           author: "plptools Authors",
                                           text: String(contentsOfResource: "plptools-license"),
                                           attributes: [
-                                              .url(URL(string: "https://github.com/rrthomas/plptools")!, title: "GitHub"),
-                                          ],
-                                          licenses: [])
+                                            .url(URL(string: "https://github.com/rrthomas/plptools")!, title: "GitHub"),
+                                          ])
 
 fileprivate let sparkleLicense = License(id: "https://github.com/sparkle-project/Sparkle",
                                          name: "Sparkle",
@@ -38,10 +37,46 @@ fileprivate let sparkleLicense = License(id: "https://github.com/sparkle-project
                                          attributes: [
                                             .url(URL(string: "https://github.com/sparkle-project/Sparkle")!, title: "GitHub"),
                                             .url(URL(string: "https://sparkle-project.org")!, title: "Website"),
-                                         ],
-                                         licenses: [])
+                                         ])
 
-fileprivate let reconnectLicense = License(id: "https://github.com/inseven/thoughts",
+fileprivate let swiftAlgorithmsLicense = License(id: "https://github.com/apple/swift-algorithms",
+                                                 name: "Swift Algorithms",
+                                                 author: "Apple Inc. and the Swift Project Authors",
+                                                 text: String(contentsOfResource: "apache-2.0-license"),
+                                                 attributes: [
+                                                    .url(URL(string: "https://github.com/apple/swift-algorithms")!, title: "GitHub"),
+                                                 ],
+                                                 licenses: [
+                                                    swiftNumericsLicense,
+                                                 ])
+
+fileprivate let swiftArgumentParserLicense = License(id: "https://github.com/apple/swift-argument-parser",
+                                                     name: "Swift Argument Parser",
+                                                     author: "Apple Inc. and the Swift Project Authors",
+                                                     text: String(contentsOfResource: "apache-2.0-license"),
+                                                     attributes: [
+                                                        .url(URL(string: "https://github.com/apple/swift-argument-parser")!, title: "GitHub"),
+                                                     ])
+
+fileprivate let swiftNumericsLicense = License(id: "https://github.com/apple/swift-numerics",
+                                               name: "Swift Numerics",
+                                               author: "Apple Inc. and the Swift Numerics Project Authors",
+                                               text: String(contentsOfResource: "apache-2.0-license"),
+                                               attributes: [
+                                                .url(URL(string: "https://github.com/apple/swift-numerics")!, title: "GitHub"),
+                                               ])
+
+extension Licensable where Self == License {
+
+    fileprivate static var plptools: License { plptoolsLicense }
+    fileprivate static var sparkle: License { sparkleLicense }
+    fileprivate static var swiftAlgorithms: License { swiftAlgorithmsLicense }
+    fileprivate static var swiftArgumentParser: License { swiftArgumentParserLicense }
+    fileprivate static var swiftNumerics: License { swiftNumericsLicense }
+
+}
+
+fileprivate let reconnectLicense = License(id: "https://github.com/inseven/reconnect",
                                            name: "Reconnect",
                                            author: "Jason Morley",
                                            text: String(contentsOfResource: "reconnect-license"),
@@ -52,8 +87,10 @@ fileprivate let reconnectLicense = License(id: "https://github.com/inseven/thoug
                                                .interact,
                                                .licensable,
                                                .opolua,
-                                               plptoolsLicense,
-                                               sparkleLicense,
+                                               .plptools,
+                                               .sparkle,
+                                               .swiftAlgorithms,
+                                               .swiftArgumentParser,
                                            ])
 
 extension Licensable where Self == License {
