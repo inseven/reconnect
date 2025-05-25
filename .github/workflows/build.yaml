@@ -51,7 +51,7 @@ jobs:
 
   website-build:
 
-    needs: [macos-build, linux-build]
+    needs: [macos-build]
 
     runs-on: ubuntu-latest
 
