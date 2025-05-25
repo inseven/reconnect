@@ -57,6 +57,10 @@ p {
     margin: var(--vertical-spacing) 0 var(--vertical-spacing) 0;
 }
 
+p.center {
+    text-align: center;
+}
+
 ul {
     margin-bottom: calc(2 * var(--vertical-spacing));
 }
