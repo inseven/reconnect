@@ -115,8 +115,8 @@ ul.navigation > li {
 .button, .button:hover {
     color: white;
     background-color: var(--primary-action-background-color);
-    border-radius: 0.5rem;
-    padding: 1rem;
+    border-radius: 100vh;
+    padding: 1rem 1.6rem;
     text-decoration: none;
     display: inline-block;
 }
