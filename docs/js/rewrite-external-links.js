@@ -20,6 +20,7 @@ observe((root) => {
         var element = elements.snapshotItem(i);
         if (element.hasAttribute("href") &&
             element.getAttribute("href").startsWith("http") &&
+            !element.classList.contains("no-rewrite") &&
             element.target != "_blank") {
             element.target="_blank";
         }

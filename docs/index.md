@@ -9,7 +9,7 @@
     <div class="appname">Reconnect</div>
     <div class="tagline">{{ site.description }}</div>
     <div class="actions">
-        <a class="button" href="{{ site.env.DOWNLOAD_URL }}">Download</a>
+        <a class="button no-rewrite" href="{{ site.env.DOWNLOAD_URL }}">Download</a>
     </div>
 </p>
 
