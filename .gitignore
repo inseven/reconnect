@@ -1,5 +1,7 @@
 .build
 .swiftpm
+/_site
+/.local
 /archives
 /build
 /docs/_site
