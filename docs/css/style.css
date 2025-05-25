@@ -44,8 +44,21 @@ h1, h2, h3 {
     margin: var(--vertical-spacing) 0 calc(2 * var(--vertical-spacing)) 0;
 }
 
+h1 {
+    text-align: center;
+    font-size: 3em;
+}
+
+h1 a, h2 a, h3 a {
+    text-decoration: none;
+}
+
 p {
     margin: var(--vertical-spacing) 0 var(--vertical-spacing) 0;
+}
+
+ul {
+    margin-bottom: calc(2 * var(--vertical-spacing));
 }
 
 ul.navigation {
@@ -136,11 +149,6 @@ footer nav ul {
 footer nav ul li {
     display: inline;
     margin-right: 0.4em;
-}
-
-h1 {
-    text-align: center;
-    font-size: 3em;
 }
 
 img.hero {
