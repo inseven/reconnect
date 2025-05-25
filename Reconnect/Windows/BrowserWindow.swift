@@ -24,12 +24,20 @@ struct BrowserWindow: Scene {
 
     static let id = "browser"
 
-    @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(TransfersModel.self) private var transfersModel
+    @State private var browserModel: BrowserModel
+
+    private let applicationModel: ApplicationModel
+    private let transfersModel: TransfersModel
+
+    init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
+        self.applicationModel = applicationModel
+        self.transfersModel = transfersModel
+        _browserModel = State(initialValue: BrowserModel(transfersModel: transfersModel))
+    }
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            ContentView(applicationModel: applicationModel, transfersModel: transfersModel)
+            BrowserView(browserModel: browserModel)
                 .onOpenURL { url in
                     guard url == .update else {
                         print("Unsupported URL \(url).")
@@ -40,12 +48,15 @@ struct BrowserWindow: Scene {
                 .handlesExternalEvents(preferring: [.install], allowing: [])
         }
         .commands {
-            CommandGroup(before: .appSettings) {
-                CheckForUpdatesView(updater: applicationModel.updaterController.updater)
-            }
+            SparkleCommands(applicationModel: applicationModel)
             HelpCommands()
+            BrowserCommands(browserModel: browserModel)
+            SidebarCommands()
+            ToolbarCommands()
         }
         .environment(applicationModel)
+        .environment(transfersModel)
+        .environment(browserModel)
         .handlesExternalEvents(matching: [.browser, .update])
     }
 

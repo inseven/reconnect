@@ -18,20 +18,19 @@
 
 import SwiftUI
 
-struct ContentView: View {
+public struct BrowserCommands: Commands {
 
-    var applicationModel: ApplicationModel
-    var transfersModel: TransfersModel
+    let browserModel: BrowserModel
 
-    init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
-        self.applicationModel = applicationModel
-        self.transfersModel = transfersModel
-    }
+    public var body: some Commands {
 
-    var body: some View {
-        VStack {
-            BrowserView(transfersModel: transfersModel)
+        CommandGroup(before: .newItem) {
+            Button("Refresh") {
+                browserModel.refresh()
+            }
+            .keyboardShortcut("R")
         }
+
     }
 
 }

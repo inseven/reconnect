@@ -36,14 +36,18 @@ struct BrowserView: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
 
-    @State private var browserModel: BrowserModel
     @State private var sheet: SheetType? = nil
 
-    init(transfersModel: TransfersModel) {
-        _browserModel = State(initialValue: BrowserModel(transfersModel: transfersModel))
+    private var browserModel: BrowserModel
+
+    init(browserModel: BrowserModel) {
+        self.browserModel = browserModel
     }
 
     var body: some View {
+
+        @Bindable var browserModel = browserModel
+
         NavigationSplitView {
             Sidebar(model: browserModel)
         } detail: {
@@ -188,7 +192,6 @@ struct BrowserView: View {
         .task {
             await browserModel.start()
         }
-        .environment(browserModel)
     }
 
 }
