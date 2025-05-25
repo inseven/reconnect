@@ -1,0 +1,16 @@
+title: Reconnect
+email: support@jbmorley.co.uk
+description: Psion connectivity for macOS
+baseurl: ""
+url: "https://reconnect.jbmorley.co.uk"
+
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-environment-variables
+destination: ../_site
+
+defaults:
+  - values:
+      layout: "default"

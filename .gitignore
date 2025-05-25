@@ -1,4 +1,9 @@
 .build
 .swiftpm
+/_site
+/.local
 /archives
 /build
+/docs/_site
+/docs/.jekyll-cache
+/docs/release-notes

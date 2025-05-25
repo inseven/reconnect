@@ -24,16 +24,15 @@ set -x
 set -u
 
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 ROOT_DIRECTORY="$SCRIPTS_DIRECTORY/.."
-CHANGES_DIRECTORY="$SCRIPTS_DIRECTORY/changes"
-BUILD_TOOLS_DIRECTORY="$SCRIPTS_DIRECTORY/build-tools"
+RELEASE_NOTES_TEMPLATE_PATH="$SCRIPTS_DIRECTORY/release-notes.md"
+RELEASE_NOTES_DIRECTORY="$ROOT_DIRECTORY/docs/release-notes"
+RELEASE_NOTES_PATH="$RELEASE_NOTES_DIRECTORY/index.md"
 
 source "$SCRIPTS_DIRECTORY/environment.sh"
 
-if [ -d "$LOCAL_TOOLS_PATH" ] ; then
-    rm -r "$LOCAL_TOOLS_PATH"
-fi
+cd "$ROOT_DIRECTORY"
 
-python -m pip install --target "$PYTHONUSERBASE" --upgrade pipenv wheel
-PIPENV_PIPFILE="$CHANGES_DIRECTORY/Pipfile" pipenv install
-PIPENV_PIPFILE="$BUILD_TOOLS_DIRECTORY/Pipfile" pipenv install
+mkdir -p "$RELEASE_NOTES_DIRECTORY"
+changes notes --all --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"

@@ -49,6 +49,58 @@ jobs:
         path: build/build-*.zip
         if-no-files-found: error
 
+  website-build:
+
+    needs: [macos-build]
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Checkout required submodules
+      run: |
+        git submodule update --init --depth 1 scripts/build-tools
+        git submodule update --init --depth 1 scripts/changes
+
+    - name: Install the tool dependencies
+      uses: jdx/mise-action@v2
+
+    - name: Install dependencies
+      run: scripts/install-dependencies.sh
+
+    - name: Build website
+      run: |
+        scripts/build-website.sh
+        chmod -v -R +rX "_site/"
+
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+
+  website-deploy:
+
+    needs: website-build
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
   sparkle-update:
     needs: macos-build
     if: ${{ github.ref == 'refs/heads/main' }}

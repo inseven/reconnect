@@ -1,0 +1,148 @@
+:root {
+    --tint-color: #ff9502;
+    --brand-color: #ff9502;
+    --primary-foreground-color: #000000;
+    --secondary-foreground-color: gray;
+    --background-color: #ffffff;
+    --navigation-background: rgba(255, 255, 255, 0.7);
+    --primary-action-background-color: #007aff;
+    --content-width: 900px;
+    --vertical-spacing: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    :root {
+        --primary-foreground-color: #ffffff;
+        --secondary-foreground-color: gray;
+        --background-color: #181818;
+        --navigation-background: rgba(24, 24, 24, 0.7);
+        --primary-action-background-color: #0a84ff;
+    }
+
+}
+
+body {
+    font-family: Helvetica, sans-serif;
+    font-weight: 200;
+    font-size: 17px;
+    margin: 0;
+    background-color: var(--background-color);
+    color: var(--primary-foreground-color);
+}
+
+a {
+    text-decoration: underline;
+    color: var(--primary-foreground-color);
+}
+
+a:hover {
+    color: var(--brand-color);
+}
+
+h1, h2, h3 {
+    margin: var(--vertical-spacing) 0 calc(2 * var(--vertical-spacing)) 0;
+}
+
+p {
+    margin: var(--vertical-spacing) 0 var(--vertical-spacing) 0;
+}
+
+ul.navigation {
+    list-style: none;
+    margin: 0;
+    padding: 1em;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-sizing: border-box;
+    font-weight: 400;
+    text-align: center;
+    background: var(--navigation-background);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+ul.navigation a {
+    text-decoration: none;
+}
+
+ul.navigation > li {
+    display: inline-block;
+    padding: 0.4em;
+}
+
+.header {
+    text-align: center;
+}
+
+.appname {
+    font-weight: 800;
+    text-align: center;
+    font-size: 3em;
+    margin-bottom: var(--vertical-spacing);
+}
+
+.tagline {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: var(--vertical-spacing);
+}
+
+.actions {
+    text-align: center;
+}
+
+.button, .button:hover {
+    color: white;
+    background-color: var(--primary-action-background-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.content {
+    max-width: var(--content-width);
+    margin: auto;
+    padding: 0 2em;
+}
+
+footer {
+    max-width: var(--content-width);
+    margin: auto;
+    padding: 2em;
+    text-align: center;
+    color: var(--secondary-foreground-color);
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: var(--secondary-foreground-color);
+}
+
+footer p {
+    margin: var(--vertical-spacing) 0 calc(var(--vertical-spacing) / 2) 0;
+}
+
+footer nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+footer nav ul li {
+    display: inline;
+    margin-right: 0.4em;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3em;
+}
+
+img.hero {
+    max-width: 100%;
+}
