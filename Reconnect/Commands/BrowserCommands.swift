@@ -24,11 +24,19 @@ public struct BrowserCommands: Commands {
 
     public var body: some Commands {
 
+        CommandGroup(replacing: .newItem) {
+            Button("New Folder") {
+                browserModel.newFolder()
+            }
+            .keyboardShortcut("N", modifiers: [.command, .shift])
+        }
+
         CommandGroup(before: .newItem) {
             Button("Refresh") {
                 browserModel.refresh()
             }
             .keyboardShortcut("R")
+            Divider()
         }
 
     }
