@@ -1,5 +1,4 @@
 ---
-title: About
 ---
 
 <p class="header">
@@ -7,8 +6,8 @@ title: About
          srcset="/images/icon_128x128.png, /images/icon_128x128@2x.png 2x"
          width="128"
          height="128" />
-    <div class="appname">Folders</div>
-    <div class="tagline">Offline library management for your files</div>
+    <div class="appname">Reconnect</div>
+    <div class="tagline">{{ site.description }}</div>
     <div class="actions">
         <a class="button" href="{{ site.env.DOWNLOAD_URL }}">Download</a>
     </div>
@@ -16,5 +15,5 @@ title: About
 
 <picture class="hero">
     <source srcset="/images/screenshot-default-dark@2x.png" media="(prefers-color-scheme: dark)">
-    <img class="hero" src="/images/screenshot-default@2x.png" width="872" />
+    <img class="hero" src="/images/screenshot-default@2x.png" width="1230" />
 </picture>
