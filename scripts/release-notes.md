@@ -1,8 +1,8 @@
 ---
-title: Release Notes
+title: Releases
 ---
 
-# Release Notes
+# Releases
 
 {% for release in releases -%}
 ## {% if release.is_released %}<a href="https://github.com/inseven/reconnect/releases/tag/{{ release.version }}">{{ release.version }}</a>{% else %}{{ release.version }} (Unreleased){% endif %}
