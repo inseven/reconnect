@@ -24,29 +24,27 @@ import UniformTypeIdentifiers
 import os
 
 final class InstallerDocument: ReferenceFileDocument {
+    
     struct Storage {
         var contents: Data
     }
-
-
+    
     static let readableContentTypes: [UTType] = [.sis]
     let storage: OSAllocatedUnfairLock<Storage>
-
-
+    
     required init(configuration: ReadConfiguration) throws {
         guard let data = configuration.file.regularFileContents else {
             throw CocoaError(.fileReadCorruptFile)
         }
         self.storage = .init(initialState: .init(contents: data))
     }
-
-
+    
     func snapshot(contentType: UTType) throws -> Data {
         storage.withLock { $0.contents }
     }
-
-
+    
     func fileWrapper(snapshot: Data, configuration: WriteConfiguration) throws -> FileWrapper {
         return FileWrapper(regularFileWithContents: snapshot)
     }
+    
 }
