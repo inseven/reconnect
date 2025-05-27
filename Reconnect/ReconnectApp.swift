@@ -36,6 +36,10 @@ struct ReconnectApp: App {
             .environment(applicationModel)
             .environment(transfersModel)
 
+        InstallerWindowGroup()
+            .environment(applicationModel)
+            .environment(transfersModel)
+
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("GitHub", url: .gitHub)
             Action("Support", url: .support)

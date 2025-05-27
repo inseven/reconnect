@@ -50,6 +50,10 @@
 		D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */ = {isa = PBXBuildFile; productRef = D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
+		D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF452DE62874004DE55C /* InstallerView.swift */; };
+		D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF472DE6288C004DE55C /* InstallerModel.swift */; };
+		D8DECF552DE651A4004DE55C /* InstallerDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF542DE651A0004DE55C /* InstallerDocument.swift */; };
+		D8DECF572DE653C0004DE55C /* InstallerWindowGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */; };
 		D8E2325C2DE1117800879866 /* FileConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E2325B2DE1117400879866 /* FileConverter.swift */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
@@ -156,6 +160,10 @@
 		D8AC642D2D0D5B4A0085306B /* PixelImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelImage.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		D8DECF452DE62874004DE55C /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
+		D8DECF472DE6288C004DE55C /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
+		D8DECF542DE651A0004DE55C /* InstallerDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerDocument.swift; sourceTree = "<group>"; };
+		D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerWindowGroup.swift; sourceTree = "<group>"; };
 		D8E2325B2DE1117400879866 /* FileConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileConverter.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
 		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
@@ -222,8 +230,9 @@
 		D8068F702C4AFF05004177F6 /* Windows */ = {
 			isa = PBXGroup;
 			children = (
-				D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */,
 				D8068F712C4AFF29004177F6 /* BrowserWindow.swift */,
+				D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */,
+				D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */,
 			);
 			path = Windows;
 			sourceTree = "<group>";
@@ -245,6 +254,8 @@
 				D8A8A80B2DE1A0B4007A657B /* EditableTextModel.swift */,
 				D8E2325B2DE1117400879866 /* FileConverter.swift */,
 				D8AB7ED22D0AA1130076E19F /* FileReference.swift */,
+				D8DECF542DE651A0004DE55C /* InstallerDocument.swift */,
+				D8DECF472DE6288C004DE55C /* InstallerModel.swift */,
 				D8631DB02C374B0A00344DC3 /* Transfer.swift */,
 				D8631DB22C374B4400344DC3 /* TransfersModel.swift */,
 			);
@@ -254,6 +265,7 @@
 		D8184C492C253D62008FA79B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D8DECF452DE62874004DE55C /* InstallerView.swift */,
 				D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */,
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */,
@@ -638,6 +650,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8DECF572DE653C0004DE55C /* InstallerWindowGroup.swift in Sources */,
 				D820123F2DE1170700854FE9 /* HelpCommands.swift in Sources */,
 				D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */,
 				D8068F722C4AFF29004177F6 /* BrowserWindow.swift in Sources */,
@@ -653,10 +666,13 @@
 				D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */,
 				D8AC642E2D0D5B4D0085306B /* PixelImage.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationStack.swift in Sources */,
+				D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */,
 				D8631DAB2C36867400344DC3 /* BrowserDetailView.swift in Sources */,
 				D8184C472C253C59008FA79B /* ApplicationModel.swift in Sources */,
 				D8631DB32C374B4400344DC3 /* TransfersModel.swift in Sources */,
 				D8981E422DE3B03F003CBCF0 /* BrowserCommands.swift in Sources */,
+				D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */,
+				D8DECF552DE651A4004DE55C /* InstallerDocument.swift in Sources */,
 				D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */,
 				D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */,
 				D8981E442DE3B14F003CBCF0 /* SparkleCommands.swift in Sources */,
@@ -866,6 +882,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Reconnect/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -901,6 +918,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Reconnect/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
