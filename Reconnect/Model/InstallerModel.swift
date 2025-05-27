@@ -64,7 +64,7 @@ class InstallerModel {
 
     func run() {
         do {
-            try interpreter.installSisFileData(data: installer.snapshot(contentType: .data), handler: self)
+            try interpreter.installSisFile(data: installer.snapshot(contentType: .data), handler: self)
             DispatchQueue.main.async {
                 self.page = .complete
             }
