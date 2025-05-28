@@ -102,11 +102,10 @@ extension InstallerModel: SisInstallIoHandler {
         return result
     }
 
-    // TODO: Extension on the file server?
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
-            print("\(operation.type) '\(operation.path)'")
+            
             switch operation.type {
             case .delete:
                 return .err(.notReady)
@@ -134,102 +133,30 @@ extension InstallerModel: SisInstallIoHandler {
                     }
                     return .continue
                 }
-                // TODO: Move into `FileServer`. Is this even necessary? Does it make a difference?
-                DispatchQueue.main.sync {
-                    self.page = .copy(operation.path, 1.0)
-                }
                 return .err(.none)
-            case .read:
-                return .err(.notReady)
-            case .dir:
-                return .err(.notReady)
-            case .rename(_):
-                return .err(.notReady)
             case .stat:
                 print("stat '\(operation.path)'")
                 let attributes = try fileServer.getExtendedAttributesSync(path: operation.path)
                 return .stat(Fs.Stat(size: UInt64(attributes.size), lastModified: Date.now, isDirectory: false))
-            case .disks:
+            default:
+                print("Unsupported operation '\(operation.type)' '\(operation.path)'")
                 return .err(.notReady)
             }
 
-            // TODO: Map these to Fs.Operation errors
-//            switch error {
-//            case .general:
-//            case .badArgument:
-//            case .osError:
-//            case .notSupported:
-//            case .underflow:
-//            case .overflow:
-//            case .outOfRange:
-//            case .divideByZero:
-//            case .inUse:
-//            case .outOfMemory:
-//            case .outOfSegments:
-//            case .outOfSemaphores:
-//            case .outOfProcesses:
-//            case .alreadyOpen:
-//            case .notOpen:
-//            case .badImage:
-//            case .receiveError:
-//            case .deviceError:
-//            case .noFilesystem:
-//            case .notReady:
-//            case .noFont:
-//            case .tooWide:
-//            case .tooMany:
-//            case .fileAlreadyExists:
-//            case .noSuchFile:
-//            case .writeError:
-//            case .readError:
-//            case .endOfFile:
-//            case .readBufferFull:
-//            case .invalidFileName:
-//            case .accessDenied:
-//            case .resourceLocked:
-//            case .noSuchDevice:
-//            case .noSuchDirectory:
-//            case .noSuchRecord:
-//            case .fileIsReadOnly:
-//            case .invalidIOOperation:
-//            case .ioPending:
-//            case .invalidVolumeName:
-//            case .cancelled:
-//            case .noMemoryForControlBlock:
-//            case .unitDisconnected:
-//            case .alreadyConnected:
-//            case .retransmissionThresholdExceeded:
-//            case .physicalLinkFailure:
-//            case .inactivityTimerExpired:
-//            case .serialParityError:
-//            case .serialFramingError:
-//            case .serialOverrunError:
-//            case .modemCannotConnectToRemoteModem:
-//            case .remoteModemBusy:
-//            case .remoteModemDidNotAnswer:
-//            case .numberBlacklistedByTheModem:
-//            case .driveNotReady:
-//            case .unknownMedia:
-//            case .directoryFull:
-//            case .writeProtected:
-//            case .mediaCorrupt:
-//            case .abortedOperation:
-//            case .failedToEraseFlashMedia:
-//            case .invalidFileForDBFSystem:
-//            case .powerFailure:
-//            case .tooBig:
-//            case .badDescriptor:
-//            case .badEntryPoint:
-//            case .couldNotDisconnect:
-//            case .badDriver:
-//            case .operationNotCompleted:
-//            case .serverBusy:
-//            case .terminated:
-//            case .died:
-//            case .badHandle:
-//            }
+        } catch FileServerError.inUse {
+            return .err(.inUse)
+        } catch FileServerError.noSuchFile,
+                FileServerError.noSuchDevice,
+                FileServerError.noSuchRecord,
+                FileServerError.noSuchDirectory {
+            return .err(.notFound)
+        } catch FileServerError.fileAlreadyExists {
+            return .err(.alreadyExists)
+        } catch FileServerError.notReady {
+            return .err(.notReady)
         } catch {
-            return .err(.notFound)  // TODO: Map errors. General error or unknown would be nice!
+            // TODO: Introduce a general error that accepts a string.
+            return .err(.notReady)
         }
     }
 
