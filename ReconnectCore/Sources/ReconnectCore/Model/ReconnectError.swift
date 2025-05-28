@@ -22,7 +22,7 @@ import plpftp
 
 public enum ReconnectError: Error {
     case unknown
-    case rfsvError(rfsv.errs)
+//    case rfsvError(rfsv.errs)
     case unknownMediaType
     case invalidFilePath
     case unknownFileSize
@@ -35,8 +35,8 @@ extension ReconnectError: LocalizedError {
         switch self {
         case .unknown:
             return "Unknown error."
-        case .rfsvError(let error):
-            return error.localizedDescription
+//        case .rfsvError(let error):
+//            return error.localizedDescription
         case .unknownMediaType:
             return "Unknown media type."
         case .invalidFilePath:

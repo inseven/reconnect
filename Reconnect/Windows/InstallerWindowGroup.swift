@@ -33,6 +33,7 @@ struct InstallerWindowGroup: Scene {
             if #available(macOS 15.0, *) {
                 InstallerView(installer: reference.document)
                     .toolbar(removing: .title)
+                    .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
             } else {
                 InstallerView(installer: reference.document)
             }

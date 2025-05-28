@@ -356,8 +356,15 @@ public class FileServer {
     }
 
 
+    // TODO: Separate the sync and async implementations into different layers?
     public func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
         try await perform {
+            return try self.syncQueue_getExtendedAttributes(path: path)
+        }
+    }
+
+    public func getExtendedAttributesSync(path: String) throws -> DirectoryEntry {
+        return try workQueue.sync {
             return try self.syncQueue_getExtendedAttributes(path: path)
         }
     }
@@ -411,10 +418,8 @@ public class FileServer {
             for drive in try self.syncQueue_devlist() {
                 do {
                     result.append(try self.syncQueue_devinfo(drive: drive))
-                } catch ReconnectError.rfsvError(let error) {
-                    if error.rawValue == -62 {
-                        continue
-                    }
+                } catch FileServerError.driveNotReady {
+                    continue
                 }
             }
             return result
