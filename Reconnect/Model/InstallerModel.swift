@@ -25,9 +25,23 @@ import ReconnectCore
 @Observable
 class InstallerModel {
 
-    struct Query {
+    struct LanguageQuery {
 
-        let id = UUID()
+        let languages: [String]
+        private let completion: (String) -> Void
+
+        init(languages: [String], completion: @escaping (String) -> Void) {
+            self.languages = languages
+            self.completion = completion
+        }
+
+        func `continue`(_ selection: String) {
+            completion(selection)
+        }
+    }
+
+    struct TextQuery {
+
         let text: String
         let type: InstallerQueryType
         private let completion: (Bool) -> Void
@@ -46,7 +60,8 @@ class InstallerModel {
 
     enum PageType {
         case initial
-        case query(Query)
+        case languageQuery(LanguageQuery)
+        case query(TextQuery)
         case copy(String, Float)
         case error(Error)
         case complete
@@ -84,7 +99,18 @@ class InstallerModel {
 extension InstallerModel: SisInstallIoHandler {
 
     func sisInstallGetLanguage(_ languages: [String]) -> String? {
-        return languages[0]
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        let sem = DispatchSemaphore(value: 0)
+        var language = languages[0]
+        DispatchQueue.main.sync {
+            let query = LanguageQuery(languages: languages) { selection in
+                language = selection
+                sem.signal()
+            }
+            self.page = .languageQuery(query)
+        }
+        sem.wait()
+        return language
     }
 
     func sisInstallQuery(text: String, type: OpoLua.InstallerQueryType) -> Bool {
@@ -92,7 +118,7 @@ extension InstallerModel: SisInstallIoHandler {
         let sem = DispatchSemaphore(value: 0)
         var result: Bool = false
         DispatchQueue.main.sync {
-            let query = Query(text: text, type: type) { response in
+            let query = TextQuery(text: text, type: type) { response in
                 result = response
                 sem.signal()
             }
@@ -105,7 +131,7 @@ extension InstallerModel: SisInstallIoHandler {
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
-            
+
             switch operation.type {
             case .delete:
                 return .err(.notReady)

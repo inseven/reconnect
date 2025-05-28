@@ -20,39 +20,12 @@ import SwiftUI
 
 import Interact
 
-struct InstallerPage<Content: View, Actions: View>: View {
-
-    let content: Content
-    let actions: Actions
-
-    init(@ViewBuilder content: () -> Content, @ViewBuilder actions: () -> Actions) {
-        self.content = content()
-        self.actions = actions()
-    }
-
-    var body: some View {
-        ScrollView {
-            content
-        }
-        .textSelection(.enabled)
-        .padding()
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 0) {
-                Divider()
-                HStack {
-                    Spacer()
-                    actions
-                }
-                .padding()
-            }
-        }
-    }
-
-
-}
-
 @MainActor
 struct InstallerView: View {
+
+    struct LayoutMetrics {
+        static let symbolSize: CGFloat = 128.0
+    }
 
     @Environment(\.closeWindow) private var closeWindow
 
@@ -66,62 +39,88 @@ struct InstallerView: View {
         switch installerModel.page {
         case .initial:
             InstallerPage {
-                Text("Intaller")
+                VStack {
+                    Text("Intaller")
+                        .padding()
+                }
             } actions: {
-                Button("Install") {
+                Button("Continue") {
                     installerModel.run()
                 }
+                .keyboardShortcut(.defaultAction)
             }
+        case .languageQuery(let query):
+            LanguageInstallerPage(query: query)
         case .query(let query):
             InstallerPage {
-                Text(query.text)
+                ScrollView {
+                    Text(query.text)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                }
+                .background(Color(nsColor: .textBackgroundColor))
             } actions: {
                 switch query.type {
                 case .Continue:
                     Button("Continue") {
                         query.continue(true)
                     }
+                    .keyboardShortcut(.defaultAction)
                 case .Skip, .Abort:
-                    Button("Yes") {
-                        query.continue(true)
-                    }
                     Button("No") {
                         query.continue(false)
                     }
+                    Button("Yes") {
+                        query.continue(true)
+                    }
+                    .keyboardShortcut(.defaultAction)
                 case .Exit:
                     Button("Exit") {
                         query.continue(true)
                     }
+                    .keyboardShortcut(.defaultAction)
                 }
             }
         case .copy(let path, let progress):
             InstallerPage {
-                Text("Writing '\(path)'...")
-                ProgressView(value: progress)
+                VStack {
+                    Text(path)
+                    ProgressView(value: progress)
+                }
+                .padding()
             } actions: {
                 Button("Cancel") {
-
+                    
                 }
                 .disabled(true)
             }
         case .complete:
             InstallerPage {
-                Text("Success")
-                Image(systemName: "checkmark.circle")
-                    .foregroundStyle(.green)
+                VStack {
+                    Image(systemName: "checkmark.circle")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: LayoutMetrics.symbolSize)
+                        .foregroundStyle(.green)
+                }
+                .padding()
             } actions: {
                 Button("Done") {
                     closeWindow()
                 }
+                .keyboardShortcut(.defaultAction)
             }
         case .error(let error):
-            Text("Error")
-            Text(error.localizedDescription)
-            Divider()
-            HStack {
+            InstallerPage {
+                ScrollView {
+                    Text("Error")
+                    Text(error.localizedDescription)
+                }
+            } actions: {
                 Button("Done") {
                     closeWindow()
                 }
+                .keyboardShortcut(.defaultAction)
             }
         }
     }

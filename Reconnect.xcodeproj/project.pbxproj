@@ -49,6 +49,9 @@
 		D8AC642E2D0D5B4D0085306B /* PixelImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AC642D2D0D5B4A0085306B /* PixelImage.swift */; };
 		D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */ = {isa = PBXBuildFile; productRef = D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
+		D8D362992DE79CB000DDDD19 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8D362972DE79CB000DDDD19 /* Localizable.strings */; };
+		D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */; };
+		D8D3629D2DE7A25000DDDD19 /* LanguageInstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629C2DE7A24D00DDDD19 /* LanguageInstallerPage.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF452DE62874004DE55C /* InstallerView.swift */; };
 		D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF472DE6288C004DE55C /* InstallerModel.swift */; };
@@ -159,6 +162,9 @@
 		D8AC642B2D0D58910085306B /* ThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailView.swift; sourceTree = "<group>"; };
 		D8AC642D2D0D5B4A0085306B /* PixelImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelImage.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D8D362982DE79CB000DDDD19 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerPage.swift; sourceTree = "<group>"; };
+		D8D3629C2DE7A24D00DDDD19 /* LanguageInstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageInstallerPage.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8DECF452DE62874004DE55C /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		D8DECF472DE6288C004DE55C /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
@@ -265,13 +271,15 @@
 		D8184C492C253D62008FA79B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D8DECF452DE62874004DE55C /* InstallerView.swift */,
 				D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */,
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */,
 				D8A8A8092DE1A093007A657B /* EditableText.swift */,
 				D83A78692C3C80C9000E8192 /* FileTypePopover.swift */,
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
+				D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */,
+				D8DECF452DE62874004DE55C /* InstallerView.swift */,
+				D8D3629C2DE7A24D00DDDD19 /* LanguageInstallerPage.swift */,
 				D8AC642D2D0D5B4A0085306B /* PixelImage.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
 				D8AC642B2D0D58910085306B /* ThumbnailView.swift */,
@@ -329,15 +337,16 @@
 		D84964D82C1BFCB600405656 /* Reconnect */ = {
 			isa = PBXGroup;
 			children = (
+				D84964E22C1BFCB700405656 /* Reconnect.entitlements */,
+				D8AD8B532C2379A10063A613 /* Info.plist */,
+				D84964D92C1BFCB600405656 /* ReconnectApp.swift */,
 				D84964DD2C1BFCB700405656 /* Assets.xcassets */,
 				D820123D2DE116EF00854FE9 /* Commands */,
 				D849653D2C1D07AD00405656 /* Extensions */,
-				D8AD8B532C2379A10063A613 /* Info.plist */,
 				D8E31EB82C26E1CA00350082 /* Licenses */,
+				D8D362972DE79CB000DDDD19 /* Localizable.strings */,
 				D8184C482C253C6F008FA79B /* Model */,
 				D84964DF2C1BFCB700405656 /* Preview Content */,
-				D84964E22C1BFCB700405656 /* Reconnect.entitlements */,
-				D84964D92C1BFCB600405656 /* ReconnectApp.swift */,
 				D822EA0F2C2BA305008A4BAA /* Utilities */,
 				D8184C492C253D62008FA79B /* Views */,
 				D8068F702C4AFF05004177F6 /* Windows */,
@@ -615,6 +624,7 @@
 				D813FF152C26E869009CF0DC /* plptools-license in Resources */,
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
 				D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */,
+				D8D362992DE79CB000DDDD19 /* Localizable.strings in Resources */,
 				D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */,
 				D8A8A80E2DE1A7A0007A657B /* apache-2.0-license in Resources */,
 			);
@@ -675,10 +685,12 @@
 				D8DECF552DE651A4004DE55C /* InstallerDocument.swift in Sources */,
 				D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */,
 				D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */,
+				D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */,
 				D8981E442DE3B14F003CBCF0 /* SparkleCommands.swift in Sources */,
 				D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */,
 				D8631DB12C374B0A00344DC3 /* Transfer.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
+				D8D3629D2DE7A25000DDDD19 /* LanguageInstallerPage.swift in Sources */,
 				D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */,
 				D8AC642C2D0D58970085306B /* ThumbnailView.swift in Sources */,
 			);
@@ -740,6 +752,17 @@
 			targetProxy = D84964F22C1BFCB700405656 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D8D362972DE79CB000DDDD19 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D8D362982DE79CB000DDDD19 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		D84964F92C1BFCB700405656 /* Debug */ = {
