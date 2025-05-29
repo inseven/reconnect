@@ -37,6 +37,9 @@ public struct HelpCommands: Commands {
             Button("GitHub") {
                 openURL(.gitHub)
             }
+            Button("Discord") {
+                openURL(.discord)
+            }
             Button("Support") {
                 openURL(.support)
             }

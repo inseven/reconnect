@@ -28,6 +28,7 @@ extension URL {
     public static let transfers = URL(string: "x-reconnect://transfers")!
     public static let update = URL(string: "x-reconnect://update")!
 
+    public static let discord = URL(string: "https://discord.gg/ZUQDhkZjkK")!
     public static let donate = URL(string: "https://jbmorley.co.uk/support")!
     public static let gitHub = URL(string: "https://github.com/inseven/reconnect")!
     public static let software = URL(string: "https://jbmorley.co.uk/software")!
