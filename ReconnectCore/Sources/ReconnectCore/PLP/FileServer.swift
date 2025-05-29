@@ -418,7 +418,7 @@ public class FileServer {
             for drive in try self.syncQueue_devlist() {
                 do {
                     result.append(try self.syncQueue_devinfo(drive: drive))
-                } catch FileServerError.driveNotReady {
+                } catch PLPToolsError.driveNotReady {
                     continue
                 }
             }

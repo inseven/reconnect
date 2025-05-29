@@ -202,16 +202,16 @@ extension InstallerModel: SisInstallIoHandler {
                 return .err(.notReady)
             }
 
-        } catch FileServerError.inUse {
+        } catch PLPToolsError.inUse {
             return .err(.inUse)
-        } catch FileServerError.noSuchFile,
-                FileServerError.noSuchDevice,
-                FileServerError.noSuchRecord,
-                FileServerError.noSuchDirectory {
+        } catch PLPToolsError.noSuchFile,
+                PLPToolsError.noSuchDevice,
+                PLPToolsError.noSuchRecord,
+                PLPToolsError.noSuchDirectory {
             return .err(.notFound)
-        } catch FileServerError.fileAlreadyExists {
+        } catch PLPToolsError.fileAlreadyExists {
             return .err(.alreadyExists)
-        } catch FileServerError.notReady {
+        } catch PLPToolsError.notReady {
             return .err(.notReady)
         } catch {
             // TODO: Introduce a general error that accepts a string.
