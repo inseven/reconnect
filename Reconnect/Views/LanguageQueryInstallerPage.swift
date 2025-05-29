@@ -19,9 +19,7 @@
 import SwiftUI
 
 @MainActor
-struct LanguageInstallerPage: View {
-
-    @Environment(\.closeWindow) private var closeWindow
+struct LanguageQueryInstallerPage: View {
 
     @State var selection: String
 
@@ -40,8 +38,8 @@ struct LanguageInstallerPage: View {
                 }
             }
         } actions: {
-            Button("Cancel") {
-                closeWindow()
+            Button("Cancel", role: .destructive) {
+                query.continue(nil)
             }
             Button("Continue") {
                 query.continue(selection)

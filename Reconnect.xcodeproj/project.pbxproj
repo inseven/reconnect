@@ -55,7 +55,7 @@
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D362992DE79CB000DDDD19 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8D362972DE79CB000DDDD19 /* Localizable.strings */; };
 		D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */; };
-		D8D3629D2DE7A25000DDDD19 /* LanguageInstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629C2DE7A24D00DDDD19 /* LanguageInstallerPage.swift */; };
+		D8D3629D2DE7A25000DDDD19 /* LanguageQueryInstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629C2DE7A24D00DDDD19 /* LanguageQueryInstallerPage.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF452DE62874004DE55C /* InstallerView.swift */; };
 		D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF472DE6288C004DE55C /* InstallerModel.swift */; };
@@ -168,7 +168,7 @@
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8D362982DE79CB000DDDD19 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerPage.swift; sourceTree = "<group>"; };
-		D8D3629C2DE7A24D00DDDD19 /* LanguageInstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageInstallerPage.swift; sourceTree = "<group>"; };
+		D8D3629C2DE7A24D00DDDD19 /* LanguageQueryInstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageQueryInstallerPage.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8DECF452DE62874004DE55C /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		D8DECF472DE6288C004DE55C /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
@@ -287,7 +287,7 @@
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
 				D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */,
 				D8DECF452DE62874004DE55C /* InstallerView.swift */,
-				D8D3629C2DE7A24D00DDDD19 /* LanguageInstallerPage.swift */,
+				D8D3629C2DE7A24D00DDDD19 /* LanguageQueryInstallerPage.swift */,
 				D8AC642D2D0D5B4A0085306B /* PixelImage.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
 				D8AC642B2D0D58910085306B /* ThumbnailView.swift */,
@@ -706,7 +706,7 @@
 				D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */,
 				D8631DB12C374B0A00344DC3 /* Transfer.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
-				D8D3629D2DE7A25000DDDD19 /* LanguageInstallerPage.swift in Sources */,
+				D8D3629D2DE7A25000DDDD19 /* LanguageQueryInstallerPage.swift in Sources */,
 				D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */,
 				D8AC642C2D0D58970085306B /* ThumbnailView.swift in Sources */,
 			);

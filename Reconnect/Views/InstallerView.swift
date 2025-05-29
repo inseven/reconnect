@@ -58,6 +58,12 @@ struct InstallerView: View {
                 InstallerPage {
                     VStack {
                         Image("Installer")
+                        if let details = installerModel.details {
+                            Text(details.name)
+                                .font(.headline)
+                            Text(details.version)
+                                .font(.subheadline)
+                        }
                     }
                 } actions: {
                     Button("Continue") {
@@ -66,7 +72,7 @@ struct InstallerView: View {
                     .keyboardShortcut(.defaultAction)
                 }
             case .languageQuery(let query):
-                LanguageInstallerPage(query: query)
+                LanguageQueryInstallerPage(query: query)
             case .query(let query):
                 InstallerPage {
                     ScrollView {
@@ -108,7 +114,7 @@ struct InstallerView: View {
                     }
                     .padding()
                 } actions: {
-                    Button("Cancel") {
+                    Button("Cancel", role: .destructive) {
 
                     }
                     .disabled(true)

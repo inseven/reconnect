@@ -34,14 +34,14 @@ class InstallerModel: Runnable {
     struct LanguageQuery {
 
         let languages: [String]
-        private let completion: (String) -> Void
+        private let completion: (String?) -> Void
 
-        init(languages: [String], completion: @escaping (String) -> Void) {
+        init(languages: [String], completion: @escaping (String?) -> Void) {
             self.languages = languages
             self.completion = completion
         }
 
-        func `continue`(_ selection: String) {
+        func `continue`(_ selection: String?) {
             completion(selection)
         }
     }
@@ -94,7 +94,6 @@ class InstallerModel: Runnable {
                     return
                 }
                 let name = try Locale.localize(sis.name)
-                print(name)
                 DispatchQueue.main.async {
                     self.details = Details(name: name.text, version: sis.version)
                     self.page = .ready
@@ -135,7 +134,7 @@ extension InstallerModel: SisInstallIoHandler {
     func sisInstallGetLanguage(_ languages: [String]) -> String? {
         dispatchPrecondition(condition: .notOnQueue(.main))
         let sem = DispatchSemaphore(value: 0)
-        var language = languages[0]
+        var language: String? = languages[0]
         DispatchQueue.main.sync {
             let query = LanguageQuery(languages: languages) { selection in
                 language = selection
