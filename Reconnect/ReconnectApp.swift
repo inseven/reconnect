@@ -20,39 +20,6 @@ import SwiftUI
 
 import Diligence
 
-class WindowProxy {
-    fileprivate var nsWindow: NSWindow?
-
-    var title: String {
-        get {
-            return nsWindow?.title ?? ""
-        }
-        set {
-            nsWindow?.title = newValue
-        }
-    }
-}
-
-extension EnvironmentValues {
-
-    @Entry var nsWindow = WindowProxy()
-
-}
-
-class NSInstallerWindow: NSWindow {
-
-    convenience init(installer: Data) {
-        let windowProxy = WindowProxy()
-        self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer).environment(\.nsWindow, windowProxy)))
-        windowProxy.nsWindow = self
-        self.title = "Install"
-        self.styleMask.remove([.miniaturizable, .resizable, .borderless, .fullSizeContentView])
-        self.isMovableByWindowBackground = true
-    }
-
-}
-
-
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
