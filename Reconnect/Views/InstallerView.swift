@@ -32,8 +32,7 @@ struct InstallerView: View {
     }
 
     @Environment(\.closeWindow) private var closeWindow
-
-    @Environment(\.nsWindow) private var nsWindow  // TODO: Expose this as a more directed callable instead? `setTitle`
+    @Environment(\.window) private var window
 
     @State var installerModel: InstallerModel
 
@@ -150,7 +149,7 @@ struct InstallerView: View {
             guard let newValue else {
                 return
             }
-            nsWindow.title = "\(newValue.name) - \(newValue.version)"
+            window.title = "\(newValue.name) - \(newValue.version)"
         }
         .runs(installerModel)
     }

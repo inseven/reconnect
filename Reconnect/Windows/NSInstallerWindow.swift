@@ -33,7 +33,7 @@ class WindowProxy {
 
 extension EnvironmentValues {
 
-    @Entry var nsWindow = WindowProxy()
+    @Entry var window = WindowProxy()
 
 }
 
@@ -41,7 +41,7 @@ class NSInstallerWindow: NSWindow {
 
     convenience init(installer: Data) {
         let windowProxy = WindowProxy()
-        self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer).environment(\.nsWindow, windowProxy)))
+        self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer).environment(\.window, windowProxy)))
         windowProxy.nsWindow = self
         self.title = "Install"
         self.styleMask.remove([.miniaturizable, .resizable, .borderless, .fullSizeContentView])
