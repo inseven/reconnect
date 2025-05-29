@@ -28,10 +28,12 @@ struct InstallerView: View {
         static let width: CGFloat = 800.0
         static let height: CGFloat = 600.0
 
-        static let symbolSize: CGFloat = 128.0
+        static let symbolSize: CGFloat = 64.0
     }
 
     @Environment(\.closeWindow) private var closeWindow
+
+    @Environment(\.nsWindow) private var nsWindow  // TODO: Expose this as a more directed callable instead? `setTitle`
 
     @State var installerModel: InstallerModel
 
@@ -41,17 +43,6 @@ struct InstallerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
-            HStack {
-                Text(installerModel.name ?? "--")
-                    .font(.headline)
-                Spacer()
-                Text(installerModel.version ?? "--")
-            }
-            .padding()
-
-            Divider()
-
             switch installerModel.page {
             case .loading:
                 InstallerPage {
@@ -64,14 +55,10 @@ struct InstallerView: View {
                     }
                     .disabled(true)
                 }
-            case .initial(let details):
+            case .ready:
                 InstallerPage {
                     VStack {
-                        AnimatedImage(named: "install")
-                        Text(details.name)
-                            .padding()
-                        Text(details.version)
-                            .padding()
+                        Image("Installer")
                     }
                 } actions: {
                     Button("Continue") {
@@ -114,8 +101,11 @@ struct InstallerView: View {
             case .copy(let path, let progress):
                 InstallerPage {
                     VStack {
-                        Text(path)
+                        Text("Copying '\(path)'...")
+                        AnimatedImage(named: "install")
+                            .frame(width: 240, height: 70)
                         ProgressView(value: progress)
+                            .frame(maxWidth: 320)
                     }
                     .padding()
                 } actions: {
@@ -132,6 +122,7 @@ struct InstallerView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: LayoutMetrics.symbolSize)
                             .foregroundStyle(.green)
+                        Text("Success")
                     }
                     .padding()
                 } actions: {
@@ -155,6 +146,12 @@ struct InstallerView: View {
             }
         }
         .frame(width: LayoutMetrics.width, height: LayoutMetrics.height)
+        .onChange(of: installerModel.details) { oldValue, newValue in
+            guard let newValue else {
+                return
+            }
+            nsWindow.title = "\(newValue.name) - \(newValue.version)"
+        }
         .runs(installerModel)
     }
 

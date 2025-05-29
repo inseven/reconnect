@@ -20,13 +20,32 @@ import SwiftUI
 
 import Diligence
 
+class WindowProxy {
+    fileprivate var nsWindow: NSWindow?
+
+    var title: String {
+        get {
+            return nsWindow?.title ?? ""
+        }
+        set {
+            nsWindow?.title = newValue
+        }
+    }
+}
+
+extension EnvironmentValues {
+
+    @Entry var nsWindow = WindowProxy()
+
+}
+
 class NSInstallerWindow: NSWindow {
 
     convenience init(installer: Data) {
-        self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer)))
+        let windowProxy = WindowProxy()
+        self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer).environment(\.nsWindow, windowProxy)))
+        windowProxy.nsWindow = self
         self.title = "Install"
-        self.titleVisibility = .hidden
-        self.titlebarAppearsTransparent = true
         self.styleMask.remove([.miniaturizable, .resizable, .borderless, .fullSizeContentView])
         self.isMovableByWindowBackground = true
     }

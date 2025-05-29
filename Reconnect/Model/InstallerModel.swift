@@ -26,7 +26,7 @@ import ReconnectCore
 @Observable
 class InstallerModel: Runnable {
 
-    struct Details {
+    struct Details: Equatable {
         let name: String
         let version: String
     }
@@ -66,7 +66,7 @@ class InstallerModel: Runnable {
 
     enum PageType {
         case loading
-        case initial(Details)
+        case ready
         case languageQuery(LanguageQuery)
         case query(TextQuery)
         case copy(String, Float)
@@ -78,8 +78,7 @@ class InstallerModel: Runnable {
 
     private let installer: Data
 
-    @MainActor var name: String?
-    @MainActor var version: String?
+    @MainActor var details: Details?
     @MainActor var page: PageType = .loading
 
     init(_ installer: Data) {
@@ -96,9 +95,8 @@ class InstallerModel: Runnable {
             let locale = Locale.current.identifier.replacingOccurrences(of: "-", with: "_")
             let name = sis.name[locale] ?? sis.name["fr_FR"] ?? sis.name.values.first ?? "Unknown"  // TODO: Require that we get a name?
             DispatchQueue.main.async {
-                self.name = name
-                self.version = sis.version
-                self.page = .initial(Details(name: name, version: sis.version))
+                self.details = Details(name: name, version: sis.version)
+                self.page = .ready
             }
         }
     }
