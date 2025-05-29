@@ -24,10 +24,6 @@ import Interact
 struct InstallerView: View {
 
     struct LayoutMetrics {
-
-        static let width: CGFloat = 800.0
-        static let height: CGFloat = 600.0
-
         static let symbolSize: CGFloat = 64.0
     }
 
@@ -150,7 +146,6 @@ struct InstallerView: View {
                 }
             }
         }
-        .frame(width: LayoutMetrics.width, height: LayoutMetrics.height)
         .onChange(of: installerModel.details) { oldValue, newValue in
             guard let newValue else {
                 return

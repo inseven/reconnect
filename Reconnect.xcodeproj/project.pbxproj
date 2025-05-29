@@ -23,6 +23,7 @@
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
 		D83BD9752DE8E2390075902D /* AnimagedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83BD9742DE8E2370075902D /* AnimagedImage.swift */; };
 		D83BD9772DE8F4B40075902D /* NSInstallerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83BD9762DE8F4B10075902D /* NSInstallerWindow.swift */; };
+		D83BD9792DE914B40075902D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83BD9782DE914B20075902D /* AppDelegate.swift */; };
 		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
 		D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964DD2C1BFCB700405656 /* Assets.xcassets */; };
 		D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964E02C1BFCB700405656 /* Preview Assets.xcassets */; };
@@ -134,6 +135,7 @@
 		D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesViewModel.swift; sourceTree = "<group>"; };
 		D83BD9742DE8E2370075902D /* AnimagedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimagedImage.swift; sourceTree = "<group>"; };
 		D83BD9762DE8F4B10075902D /* NSInstallerWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSInstallerWindow.swift; sourceTree = "<group>"; };
+		D83BD9782DE914B20075902D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964D92C1BFCB600405656 /* ReconnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectApp.swift; sourceTree = "<group>"; };
 		D84964DD2C1BFCB700405656 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 			children = (
 				D84964E22C1BFCB700405656 /* Reconnect.entitlements */,
 				D8AD8B532C2379A10063A613 /* Info.plist */,
+				D83BD9782DE914B20075902D /* AppDelegate.swift */,
 				D84964D92C1BFCB600405656 /* ReconnectApp.swift */,
 				D84964DD2C1BFCB700405656 /* Assets.xcassets */,
 				D820123D2DE116EF00854FE9 /* Commands */,
@@ -708,6 +711,7 @@
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 				D8D3629D2DE7A25000DDDD19 /* LanguageQueryInstallerPage.swift in Sources */,
 				D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */,
+				D83BD9792DE914B40075902D /* AppDelegate.swift in Sources */,
 				D8AC642C2D0D58970085306B /* ThumbnailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
