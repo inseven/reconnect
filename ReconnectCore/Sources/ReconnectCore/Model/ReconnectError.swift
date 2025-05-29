@@ -22,11 +22,11 @@ import plpftp
 
 public enum ReconnectError: Error {
     case unknown
-//    case rfsvError(rfsv.errs)
     case unknownMediaType
     case invalidFilePath
     case unknownFileSize
     case imageSaveError
+    case invalidLocalization
 }
 
 extension ReconnectError: LocalizedError {
@@ -45,6 +45,8 @@ extension ReconnectError: LocalizedError {
             return "Unknown file size."
         case .imageSaveError:
             return "Failed to save image."
+        case .invalidLocalization:
+            return "Badly formatted localized text."
         }
     }
 

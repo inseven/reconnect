@@ -87,16 +87,22 @@ class InstallerModel: Runnable {
 
     func start() {
         DispatchQueue.global(qos: .userInteractive).async {
-            let interpreter = PsiLuaEnv()
-            let info = interpreter.getFileInfo(data: self.installer)
-            guard case let .sis(sis) = info else {
-                return
-            }
-            let locale = Locale.current.identifier.replacingOccurrences(of: "-", with: "_")
-            let name = sis.name[locale] ?? sis.name["fr_FR"] ?? sis.name.values.first ?? "Unknown"  // TODO: Require that we get a name?
-            DispatchQueue.main.async {
-                self.details = Details(name: name, version: sis.version)
-                self.page = .ready
+            do {
+                let interpreter = PsiLuaEnv()
+                let info = interpreter.getFileInfo(data: self.installer)
+                guard case let .sis(sis) = info else {
+                    return
+                }
+                let name = try Locale.localize(sis.name)
+                print(name)
+                DispatchQueue.main.async {
+                    self.details = Details(name: name.text, version: sis.version)
+                    self.page = .ready
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.page = .error(error)
+                }
             }
         }
     }

@@ -29,7 +29,7 @@ struct LanguageInstallerPage: View {
 
     init(query: InstallerModel.LanguageQuery) {
         self.query = query
-        self.selection = query.languages[0]
+        self.selection = try! Locale.selectLanguage(query.languages)
     }
 
     var body: some View {
