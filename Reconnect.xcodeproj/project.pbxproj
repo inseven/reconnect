@@ -58,7 +58,6 @@
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF452DE62874004DE55C /* InstallerView.swift */; };
 		D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF472DE6288C004DE55C /* InstallerModel.swift */; };
-		D8DECF572DE653C0004DE55C /* InstallerWindowGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */; };
 		D8E2325C2DE1117800879866 /* FileConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E2325B2DE1117400879866 /* FileConverter.swift */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
@@ -171,7 +170,6 @@
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8DECF452DE62874004DE55C /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		D8DECF472DE6288C004DE55C /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
-		D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerWindowGroup.swift; sourceTree = "<group>"; };
 		D8E2325B2DE1117400879866 /* FileConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileConverter.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
 		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
@@ -245,7 +243,6 @@
 			isa = PBXGroup;
 			children = (
 				D8068F712C4AFF29004177F6 /* BrowserWindow.swift */,
-				D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */,
 				D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */,
 			);
 			path = Windows;
@@ -676,7 +673,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8DECF572DE653C0004DE55C /* InstallerWindowGroup.swift in Sources */,
 				D820123F2DE1170700854FE9 /* HelpCommands.swift in Sources */,
 				D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */,
 				D8068F722C4AFF29004177F6 /* BrowserWindow.swift in Sources */,
