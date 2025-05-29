@@ -40,6 +40,7 @@ struct ReconnectApp: App {
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("GitHub", url: .gitHub)
+            Action("Discord", url: .discord)
             Action("Support", url: .support)
         } acknowledgements: {
             Acknowledgements("Developers") {
