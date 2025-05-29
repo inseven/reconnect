@@ -36,92 +36,110 @@ struct InstallerView: View {
     }
 
     var body: some View {
-        switch installerModel.page {
-        case .initial:
-            InstallerPage {
-                VStack {
-                    Text("Intaller")
-                        .padding()
-                }
-            } actions: {
-                Button("Continue") {
-                    installerModel.run()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
-        case .languageQuery(let query):
-            LanguageInstallerPage(query: query)
-        case .query(let query):
-            InstallerPage {
-                ScrollView {
-                    Text(query.text)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                }
-                .background(Color(nsColor: .textBackgroundColor))
-            } actions: {
-                switch query.type {
-                case .Continue:
+        VStack {
+            switch installerModel.page {
+            case .loading:
+                InstallerPage {
+                    VStack {
+                        ProgressView()
+                    }
+                } actions: {
                     Button("Continue") {
-                        query.continue(true)
+
+                    }
+                    .disabled(true)
+                }
+            case .initial(let details):
+                InstallerPage {
+                    VStack {
+                        Text(details.name)
+                            .padding()
+                        Text(details.version)
+                            .padding()
+                    }
+                } actions: {
+                    Button("Continue") {
+                        installerModel.run()
                     }
                     .keyboardShortcut(.defaultAction)
-                case .Skip, .Abort:
-                    Button("No") {
-                        query.continue(false)
+                }
+            case .languageQuery(let query):
+                LanguageInstallerPage(query: query)
+            case .query(let query):
+                InstallerPage {
+                    ScrollView {
+                        Text(query.text)
+                            .frame(maxWidth: .infinity)
+                            .padding()
                     }
-                    Button("Yes") {
-                        query.continue(true)
+                    .background(Color(nsColor: .textBackgroundColor))
+                } actions: {
+                    switch query.type {
+                    case .Continue:
+                        Button("Continue") {
+                            query.continue(true)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    case .Skip, .Abort:
+                        Button("No") {
+                            query.continue(false)
+                        }
+                        Button("Yes") {
+                            query.continue(true)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    case .Exit:
+                        Button("Exit") {
+                            query.continue(true)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    }
+                }
+            case .copy(let path, let progress):
+                InstallerPage {
+                    VStack {
+                        Text(path)
+                        ProgressView(value: progress)
+                    }
+                    .padding()
+                } actions: {
+                    Button("Cancel") {
+
+                    }
+                    .disabled(true)
+                }
+            case .complete:
+                InstallerPage {
+                    VStack {
+                        Image(systemName: "checkmark.circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: LayoutMetrics.symbolSize)
+                            .foregroundStyle(.green)
+                    }
+                    .padding()
+                } actions: {
+                    Button("Done") {
+                        closeWindow()
                     }
                     .keyboardShortcut(.defaultAction)
-                case .Exit:
-                    Button("Exit") {
-                        query.continue(true)
+                }
+            case .error(let error):
+                InstallerPage {
+                    ScrollView {
+                        Text("Error")
+                        Text(error.localizedDescription)
+                    }
+                } actions: {
+                    Button("Done") {
+                        closeWindow()
                     }
                     .keyboardShortcut(.defaultAction)
                 }
             }
-        case .copy(let path, let progress):
-            InstallerPage {
-                VStack {
-                    Text(path)
-                    ProgressView(value: progress)
-                }
-                .padding()
-            } actions: {
-                Button("Cancel") {
-                    
-                }
-                .disabled(true)
-            }
-        case .complete:
-            InstallerPage {
-                VStack {
-                    Image(systemName: "checkmark.circle")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: LayoutMetrics.symbolSize)
-                        .foregroundStyle(.green)
-                }
-                .padding()
-            } actions: {
-                Button("Done") {
-                    closeWindow()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
-        case .error(let error):
-            InstallerPage {
-                ScrollView {
-                    Text("Error")
-                    Text(error.localizedDescription)
-                }
-            } actions: {
-                Button("Done") {
-                    closeWindow()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
+        }
+        .onAppear {
+            installerModel.load()
         }
     }
 

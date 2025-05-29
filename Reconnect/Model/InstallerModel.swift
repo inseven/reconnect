@@ -25,6 +25,11 @@ import ReconnectCore
 @Observable
 class InstallerModel {
 
+    struct Details {
+        let name: String
+        let version: String
+    }
+
     struct LanguageQuery {
 
         let languages: [String]
@@ -59,7 +64,8 @@ class InstallerModel {
     }
 
     enum PageType {
-        case initial
+        case loading
+        case initial(Details)
         case languageQuery(LanguageQuery)
         case query(TextQuery)
         case copy(String, Float)
@@ -72,12 +78,35 @@ class InstallerModel {
 
     private let installer: InstallerDocument
 
-    @MainActor var page: PageType = .initial
+    @MainActor var page: PageType = .loading
 
     init(_ installer: InstallerDocument) {
         self.installer = installer
     }
 
+    // TODO: Runnable?
+    func load() {
+        DispatchQueue.global(qos: .userInteractive).async {
+            do {
+                let info = try self.interpreter.getFileInfo(data: self.installer.snapshot(contentType: .data))
+                guard case let .sis(sis) = info else {
+                    return
+                }
+                let locale = Locale.current.identifier.replacingOccurrences(of: "-", with: "_")
+                let name = sis.name[locale] ?? sis.name["fr_FR"] ?? sis.name.values.first ?? "Unknown"  // TODO: Require that we get a name?
+                DispatchQueue.main.async {
+                    self.page = .initial(Details(name: name, version: sis.version))
+                }
+            } catch {
+                print("Failed to recognize SIS file with error \(error).")
+                DispatchQueue.main.async {
+                    self.page = .error(error)
+                }
+            }
+        }
+    }
+
+    // TODO: Rename to install.
     func run() {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
