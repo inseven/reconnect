@@ -18,12 +18,13 @@
 
 import SwiftUI
 
+import Interact
 import OpoLua
 
 import ReconnectCore
 
 @Observable
-class InstallerModel {
+class InstallerModel: Runnable {
 
     struct Details {
         let name: String
@@ -74,44 +75,43 @@ class InstallerModel {
     }
 
     private let fileServer = FileServer()
-    private let interpreter = PsiLuaEnv()
 
-//    private let installer: InstallerDocument
     private let installer: Data
 
+    @MainActor var name: String?
+    @MainActor var version: String?
     @MainActor var page: PageType = .loading
 
     init(_ installer: Data) {
         self.installer = installer
     }
 
-    // TODO: Runnable?
-    func load() {
+    func start() {
         DispatchQueue.global(qos: .userInteractive).async {
-//            do {
-                let info = self.interpreter.getFileInfo(data: self.installer)
-                guard case let .sis(sis) = info else {
-                    return
-                }
-                let locale = Locale.current.identifier.replacingOccurrences(of: "-", with: "_")
-                let name = sis.name[locale] ?? sis.name["fr_FR"] ?? sis.name.values.first ?? "Unknown"  // TODO: Require that we get a name?
-                DispatchQueue.main.async {
-                    self.page = .initial(Details(name: name, version: sis.version))
-                }
-//            } catch {
-//                print("Failed to recognize SIS file with error \(error).")
-//                DispatchQueue.main.async {
-//                    self.page = .error(error)
-//                }
-//            }
+            let interpreter = PsiLuaEnv()
+            let info = interpreter.getFileInfo(data: self.installer)
+            guard case let .sis(sis) = info else {
+                return
+            }
+            let locale = Locale.current.identifier.replacingOccurrences(of: "-", with: "_")
+            let name = sis.name[locale] ?? sis.name["fr_FR"] ?? sis.name.values.first ?? "Unknown"  // TODO: Require that we get a name?
+            DispatchQueue.main.async {
+                self.name = name
+                self.version = sis.version
+                self.page = .initial(Details(name: name, version: sis.version))
+            }
         }
     }
 
-    // TODO: Rename to install.
-    func run() {
+    func stop() {
+
+    }
+
+    func install() {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                try self.interpreter.installSisFile(data: self.installer, handler: self)
+                let interpreter = PsiLuaEnv()
+                try interpreter.installSisFile(data: self.installer, handler: self)
                 DispatchQueue.main.async {
                     self.page = .complete
                 }
@@ -191,7 +191,6 @@ extension InstallerModel: SisInstallIoHandler {
                 }
                 return .err(.none)
             case .stat:
-                print("stat '\(operation.path)'")
                 let attributes = try fileServer.getExtendedAttributesSync(path: operation.path)
                 return .stat(Fs.Stat(size: UInt64(attributes.size), lastModified: Date.now, isDirectory: false))
             default:

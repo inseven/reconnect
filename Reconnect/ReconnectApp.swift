@@ -27,7 +27,7 @@ class NSInstallerWindow: NSWindow {
         self.title = "Install"
         self.titleVisibility = .hidden
         self.titlebarAppearsTransparent = true
-        self.styleMask.remove([.miniaturizable, /*.closable, */.resizable, .borderless, .fullSizeContentView])
+        self.styleMask.remove([.miniaturizable, .resizable, .borderless, .fullSizeContentView])
         self.isMovableByWindowBackground = true
     }
 

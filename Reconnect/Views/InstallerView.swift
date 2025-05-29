@@ -40,7 +40,18 @@ struct InstallerView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
+
+            HStack {
+                Text(installerModel.name ?? "--")
+                    .font(.headline)
+                Spacer()
+                Text(installerModel.version ?? "--")
+            }
+            .padding()
+
+            Divider()
+
             switch installerModel.page {
             case .loading:
                 InstallerPage {
@@ -56,6 +67,7 @@ struct InstallerView: View {
             case .initial(let details):
                 InstallerPage {
                     VStack {
+                        AnimatedImage(named: "install")
                         Text(details.name)
                             .padding()
                         Text(details.version)
@@ -63,7 +75,7 @@ struct InstallerView: View {
                     }
                 } actions: {
                     Button("Continue") {
-                        installerModel.run()
+                        installerModel.install()
                     }
                     .keyboardShortcut(.defaultAction)
                 }
@@ -143,9 +155,7 @@ struct InstallerView: View {
             }
         }
         .frame(width: LayoutMetrics.width, height: LayoutMetrics.height)
-        .onAppear {
-            installerModel.load()
-        }
+        .runs(installerModel)
     }
 
 }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,6 +19,9 @@
 		D83A786A2C3C80C9000E8192 /* FileTypePopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83A78692C3C80C9000E8192 /* FileTypePopover.swift */; };
 		D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */; };
 		D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */; };
+		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
+		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
+		D83BD9752DE8E2390075902D /* AnimagedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83BD9742DE8E2370075902D /* AnimagedImage.swift */; };
 		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
 		D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964DD2C1BFCB700405656 /* Assets.xcassets */; };
 		D84964E12C1BFCB700405656 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964E02C1BFCB700405656 /* Preview Assets.xcassets */; };
@@ -55,7 +58,6 @@
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF452DE62874004DE55C /* InstallerView.swift */; };
 		D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF472DE6288C004DE55C /* InstallerModel.swift */; };
-		D8DECF552DE651A4004DE55C /* InstallerDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF542DE651A0004DE55C /* InstallerDocument.swift */; };
 		D8DECF572DE653C0004DE55C /* InstallerWindowGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */; };
 		D8E2325C2DE1117800879866 /* FileConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E2325B2DE1117400879866 /* FileConverter.swift */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
@@ -130,6 +132,7 @@
 		D83A78692C3C80C9000E8192 /* FileTypePopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypePopover.swift; sourceTree = "<group>"; };
 		D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesView.swift; sourceTree = "<group>"; };
 		D83B4DE02C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckForUpdatesViewModel.swift; sourceTree = "<group>"; };
+		D83BD9742DE8E2370075902D /* AnimagedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimagedImage.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964D92C1BFCB600405656 /* ReconnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectApp.swift; sourceTree = "<group>"; };
 		D84964DD2C1BFCB700405656 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -168,7 +171,6 @@
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8DECF452DE62874004DE55C /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		D8DECF472DE6288C004DE55C /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
-		D8DECF542DE651A0004DE55C /* InstallerDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerDocument.swift; sourceTree = "<group>"; };
 		D8DECF562DE653BD004DE55C /* InstallerWindowGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerWindowGroup.swift; sourceTree = "<group>"; };
 		D8E2325B2DE1117400879866 /* FileConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileConverter.swift; sourceTree = "<group>"; };
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
@@ -184,6 +186,10 @@
 		D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D83BD9672DE863220075902D /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		D84964D32C1BFCB600405656 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -191,6 +197,8 @@
 			files = (
 				D8A8A8082DE19312007A657B /* Algorithms in Frameworks */,
 				D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */,
+				D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */,
+				D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
 				D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */,
@@ -260,7 +268,6 @@
 				D8A8A80B2DE1A0B4007A657B /* EditableTextModel.swift */,
 				D8E2325B2DE1117400879866 /* FileConverter.swift */,
 				D8AB7ED22D0AA1130076E19F /* FileReference.swift */,
-				D8DECF542DE651A0004DE55C /* InstallerDocument.swift */,
 				D8DECF472DE6288C004DE55C /* InstallerModel.swift */,
 				D8631DB02C374B0A00344DC3 /* Transfer.swift */,
 				D8631DB22C374B4400344DC3 /* TransfersModel.swift */,
@@ -271,6 +278,7 @@
 		D8184C492C253D62008FA79B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D83BD9742DE8E2370075902D /* AnimagedImage.swift */,
 				D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */,
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */,
@@ -347,6 +355,7 @@
 				D8D362972DE79CB000DDDD19 /* Localizable.strings */,
 				D8184C482C253C6F008FA79B /* Model */,
 				D84964DF2C1BFCB700405656 /* Preview Content */,
+				D83BD9672DE863220075902D /* Resources */,
 				D822EA0F2C2BA305008A4BAA /* Utilities */,
 				D8184C492C253D62008FA79B /* Views */,
 				D8068F702C4AFF05004177F6 /* Windows */,
@@ -463,6 +472,9 @@
 			dependencies = (
 				D809546D2C4AAC7F00752BBC /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				D83BD9672DE863220075902D /* Resources */,
+			);
 			name = Reconnect;
 			packageProductDependencies = (
 				D8D3E79E2C2540D9003E696D /* Interact */,
@@ -471,6 +483,8 @@
 				D8CBAC642C4A02580035FC3D /* ReconnectCore */,
 				D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */,
 				D8A8A8072DE19312007A657B /* Algorithms */,
+				D83BD9652DE862AB0075902D /* SwiftyGif */,
+				D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -600,6 +614,8 @@
 				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				D8AE29A62CA25A9800116439 /* XCLocalSwiftPackageReference "dependencies/PsionSoftwareIndexSwift" */,
 				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */,
+				D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */,
 			);
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
 			projectDirPath = "";
@@ -682,7 +698,7 @@
 				D8631DB32C374B4400344DC3 /* TransfersModel.swift in Sources */,
 				D8981E422DE3B03F003CBCF0 /* BrowserCommands.swift in Sources */,
 				D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */,
-				D8DECF552DE651A4004DE55C /* InstallerDocument.swift in Sources */,
+				D83BD9752DE8E2390075902D /* AnimagedImage.swift in Sources */,
 				D89B5E8E2C2AA8680014A5B6 /* Sidebar.swift in Sources */,
 				D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */,
 				D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */,
@@ -1193,6 +1209,22 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alexiscreuzot/SwiftyGif.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.4.5;
+			};
+		};
+		D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimformSolutionsPvtLtd/SSSwiftUIGIFView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -1223,6 +1255,16 @@
 		D8068F6E2C4AFCF4004177F6 /* ReconnectCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
+		};
+		D83BD9652DE862AB0075902D /* SwiftyGif */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */;
+			productName = SwiftyGif;
+		};
+		D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */;
+			productName = SSSwiftUIGIFView;
 		};
 		D88FA14D2C2CE0FA00805DBD /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
