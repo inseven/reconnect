@@ -44,7 +44,7 @@ class NSInstallerWindow: NSWindow {
         self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer).environment(\.window, windowProxy)))
         windowProxy.nsWindow = self
         title = "Install"
-        styleMask.remove([.miniaturizable, .resizable, .borderless, .fullSizeContentView])
+        styleMask.remove([.resizable, .borderless, .fullSizeContentView])
         setContentSize(CGSize(width: 800, height: 600))
     }
 
