@@ -24,6 +24,10 @@ import Interact
 struct InstallerView: View {
 
     struct LayoutMetrics {
+
+        static let width: CGFloat = 800.0
+        static let height: CGFloat = 600.0
+
         static let symbolSize: CGFloat = 128.0
     }
 
@@ -31,7 +35,7 @@ struct InstallerView: View {
 
     @State var installerModel: InstallerModel
 
-    init(installer: InstallerDocument) {
+    init(installer: Data) {
         _installerModel = State(initialValue: InstallerModel(installer))
     }
 
@@ -138,6 +142,7 @@ struct InstallerView: View {
                 }
             }
         }
+        .frame(width: LayoutMetrics.width, height: LayoutMetrics.height)
         .onAppear {
             installerModel.load()
         }

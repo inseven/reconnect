@@ -46,6 +46,9 @@ struct BrowserWindow: Scene {
                     applicationModel.updaterController.updater.checkForUpdates()
                 }
                 .handlesExternalEvents(preferring: [.install], allowing: [])
+                .onOpenURL { url in
+                    print(url)
+                }
         }
         .commands {
             SparkleCommands(applicationModel: applicationModel)

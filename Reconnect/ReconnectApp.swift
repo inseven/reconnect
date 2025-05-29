@@ -20,8 +20,38 @@ import SwiftUI
 
 import Diligence
 
+class NSInstallerWindow: NSWindow {
+
+    convenience init(installer: Data) {
+        self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer)))
+        self.title = "Install"
+        self.titleVisibility = .hidden
+        self.titlebarAppearsTransparent = true
+        self.styleMask.remove([.miniaturizable, /*.closable, */.resizable, .borderless, .fullSizeContentView])
+        self.isMovableByWindowBackground = true
+    }
+
+}
+
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        // TODO: Handle all URLs!
+        print(urls)
+        let data = try! Data(contentsOf: urls.first!)
+        let window = NSInstallerWindow(installer: data)
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+    }
+
+}
+
+
 @main @MainActor
 struct ReconnectApp: App {
+
+    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
 
     static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
@@ -36,9 +66,9 @@ struct ReconnectApp: App {
             .environment(applicationModel)
             .environment(transfersModel)
 
-        InstallerWindowGroup()
-            .environment(applicationModel)
-            .environment(transfersModel)
+//        InstallerWindowGroup()
+//            .environment(applicationModel)
+//            .environment(transfersModel)
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("GitHub", url: .gitHub)

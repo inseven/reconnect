@@ -76,19 +76,20 @@ class InstallerModel {
     private let fileServer = FileServer()
     private let interpreter = PsiLuaEnv()
 
-    private let installer: InstallerDocument
+//    private let installer: InstallerDocument
+    private let installer: Data
 
     @MainActor var page: PageType = .loading
 
-    init(_ installer: InstallerDocument) {
+    init(_ installer: Data) {
         self.installer = installer
     }
 
     // TODO: Runnable?
     func load() {
         DispatchQueue.global(qos: .userInteractive).async {
-            do {
-                let info = try self.interpreter.getFileInfo(data: self.installer.snapshot(contentType: .data))
+//            do {
+                let info = self.interpreter.getFileInfo(data: self.installer)
                 guard case let .sis(sis) = info else {
                     return
                 }
@@ -97,12 +98,12 @@ class InstallerModel {
                 DispatchQueue.main.async {
                     self.page = .initial(Details(name: name, version: sis.version))
                 }
-            } catch {
-                print("Failed to recognize SIS file with error \(error).")
-                DispatchQueue.main.async {
-                    self.page = .error(error)
-                }
-            }
+//            } catch {
+//                print("Failed to recognize SIS file with error \(error).")
+//                DispatchQueue.main.async {
+//                    self.page = .error(error)
+//                }
+//            }
         }
     }
 
@@ -110,7 +111,7 @@ class InstallerModel {
     func run() {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                try self.interpreter.installSisFile(data: self.installer.snapshot(contentType: .data), handler: self)
+                try self.interpreter.installSisFile(data: self.installer, handler: self)
                 DispatchQueue.main.async {
                     self.page = .complete
                 }

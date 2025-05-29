@@ -30,6 +30,8 @@ final class InstallerDocument: ReferenceFileDocument {
     }
     
     static let readableContentTypes: [UTType] = [.sis]
+    static let writeableContentTypes: [UTType] = []
+    
     let storage: OSAllocatedUnfairLock<Storage>
     
     required init(configuration: ReadConfiguration) throws {
@@ -46,5 +48,5 @@ final class InstallerDocument: ReferenceFileDocument {
     func fileWrapper(snapshot: Data, configuration: WriteConfiguration) throws -> FileWrapper {
         return FileWrapper(regularFileWithContents: snapshot)
     }
-    
+
 }
