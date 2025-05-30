@@ -20,12 +20,30 @@ import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
+    func showInstallerWindow(url: URL) {
+
+        // Check to see if there's already an open window for the installer.
+        var window = NSApplication.shared.windows.first { window in
+            guard let window = window as? NSInstallerWindow else {
+                return false
+            }
+            return window.url == url
+        }
+
+        // Create a new window and center if one doesn't exist.
+        if window == nil {
+            print("Creating new installer window for '\(url)'...")
+            window = NSInstallerWindow(url: url)
+            window?.center()
+        }
+
+        // Foreground the window.
+        window?.makeKeyAndOrderFront(nil)
+    }
+
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
-            let data = try! Data(contentsOf: url)
-            let window = NSInstallerWindow(installer: data)
-            window.center()
-            window.makeKeyAndOrderFront(nil)
+            showInstallerWindow(url: url)
         }
     }
 

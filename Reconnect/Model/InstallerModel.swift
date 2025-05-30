@@ -76,20 +76,20 @@ class InstallerModel: Runnable {
 
     private let fileServer = FileServer()
 
-    private let installer: Data
+    private let url: URL
 
     @MainActor var details: Details?
     @MainActor var page: PageType = .loading
 
-    init(_ installer: Data) {
-        self.installer = installer
+    init(url: URL) {
+        self.url = url
     }
 
     func start() {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
                 let interpreter = PsiLuaEnv()
-                let info = interpreter.getFileInfo(data: self.installer)
+                let info = interpreter.getFileInfo(path: self.url.path)
                 guard case let .sis(sis) = info else {
                     return
                 }
@@ -114,7 +114,7 @@ class InstallerModel: Runnable {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
                 let interpreter = PsiLuaEnv()
-                try interpreter.installSisFile(data: self.installer, handler: self)
+                try interpreter.installSisFile(path: self.url.path, handler: self)
                 DispatchQueue.main.async {
                     self.page = .complete
                 }

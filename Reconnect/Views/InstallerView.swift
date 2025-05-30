@@ -32,8 +32,8 @@ struct InstallerView: View {
 
     @State var installerModel: InstallerModel
 
-    init(installer: Data) {
-        _installerModel = State(initialValue: InstallerModel(installer))
+    init(url: URL) {
+        _installerModel = State(initialValue: InstallerModel(url: url))
     }
 
     var body: some View {

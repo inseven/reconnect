@@ -39,9 +39,14 @@ extension EnvironmentValues {
 
 class NSInstallerWindow: NSWindow {
 
-    convenience init(installer: Data) {
+    var url: URL?
+
+    convenience init(url: URL) {
         let windowProxy = WindowProxy()
-        self.init(contentViewController: NSHostingController(rootView: InstallerView(installer: installer).environment(\.window, windowProxy)))
+        let rootView = InstallerView(url: url)
+            .environment(\.window, windowProxy)
+        self.init(contentViewController: NSHostingController(rootView: rootView))
+        self.url = url
         windowProxy.nsWindow = self
         title = "Install"
         styleMask.remove([.resizable, .borderless, .fullSizeContentView])
