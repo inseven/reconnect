@@ -19,4 +19,4 @@ Reconnect is licensed under the GNU General Public License (GPL) version 2 (see 
 - [Swift Argument Parser](https://github.com/apple/swift-argument-parser), Apache 2.0 License
 - [Swift Numerics](https://github.com/apple/swift-numerics), Apache 2.0 License
 
-Reconnect includes graphics from the original Psion PsiWin and PsiMac software. These remain copyright Psion PLC.
+Reconnect includes graphics (icons and animations) from the original Psion PsiWin and PsiMac software. These remain copyright Psion PLC.
