@@ -21,12 +21,12 @@ import SwiftUI
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        // TODO: Handle all URLs!
-        print(urls)
-        let data = try! Data(contentsOf: urls.first!)
-        let window = NSInstallerWindow(installer: data)
-        window.center()
-        window.makeKeyAndOrderFront(nil)
+        for url in urls {
+            let data = try! Data(contentsOf: url)
+            let window = NSInstallerWindow(installer: data)
+            window.center()
+            window.makeKeyAndOrderFront(nil)
+        }
     }
 
 }
