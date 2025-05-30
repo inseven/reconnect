@@ -213,8 +213,8 @@ extension InstallerModel: SisInstallIoHandler {
         } catch PLPToolsError.notReady {
             return .err(.notReady)
         } catch {
-            // TODO: Introduce a general error that accepts a string.
-            return .err(.notReady)
+            print("Encountered unmapped internal plptools error during install '\(error)'.")
+            return .err(.general)
         }
     }
 
