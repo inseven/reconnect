@@ -21,7 +21,7 @@ import UniformTypeIdentifiers
 extension UTType {
 
     public static var sis: Self {
-        return UTType(exportedAs: "org.opolua.sis", conformingTo: .data)
+        return UTType(exportedAs: "com.psion.sis", conformingTo: .data)
     }
 
 }

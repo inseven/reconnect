@@ -13,7 +13,7 @@
 			<string>Default</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>org.opolua.sis</string>
+				<string>com.psion.sis</string>
 			</array>
 			<key>NSDocumentClass</key>
 			<string></string>
@@ -32,8 +32,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>SUFeedURL</key>
 	<string>https://sparkle.jbmorley.co.uk/inseven/reconnect/appcast.xml</string>
 	<key>SUPublicEDKey</key>
@@ -50,7 +48,7 @@
 			<key>UTTypeIcons</key>
 			<dict/>
 			<key>UTTypeIdentifier</key>
-			<string>org.opolua.sis</string>
+			<string>com.psion.sis</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
