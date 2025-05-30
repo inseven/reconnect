@@ -23,6 +23,8 @@ import Diligence
 @main @MainActor
 struct ReconnectApp: App {
 
+    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
+
     static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
     @State var transfersModel = TransfersModel()

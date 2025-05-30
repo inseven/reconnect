@@ -1,6 +1,6 @@
 // Reconnect -- Psion connectivity for macOS
 //
-// Copyright (C) 2024-2025 Jason Morley
+// Copyright (C) 2024 Jason Morley
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,31 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import SwiftUI
 
-import plptools
+@MainActor
+struct InstallerPage<Content: View, Actions: View>: View {
 
-extension rfsv.errs {
+    let content: Content
+    let actions: Actions
 
-    public func check() throws(PLPToolsError) {
-        guard rawValue != 0 else {
-            return
+    init(@ViewBuilder content: () -> Content, @ViewBuilder actions: () -> Actions) {
+        self.content = content()
+        self.actions = actions()
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            content
+                .textSelection(.enabled)
+                .frame(maxHeight: .infinity)
+            Divider()
+            HStack {
+                Spacer()
+                actions
+            }
+            .padding()
         }
-        guard let error = PLPToolsError(rawValue: rawValue) else {
-            print("Encountered unknown plptools error code (\(rawValue).")
-            throw .unknown
-        }
-        throw error
     }
 
 }
