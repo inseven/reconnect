@@ -126,6 +126,7 @@ struct InstallerView: View {
                             .frame(width: LayoutMetrics.symbolSize)
                             .foregroundStyle(.green)
                         Text("Success")
+                            .font(.headline)
                     }
                     .padding()
                 } actions: {
@@ -136,10 +137,17 @@ struct InstallerView: View {
                 }
             case .error(let error):
                 InstallerPage {
-                    ScrollView {
+                    VStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: LayoutMetrics.symbolSize)
+                            .foregroundStyle(.red)
                         Text("Error")
+                            .font(.headline)
                         Text(error.localizedDescription)
                     }
+                    .padding()
                 } actions: {
                     Button("Done") {
                         closeWindow()

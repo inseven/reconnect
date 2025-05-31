@@ -49,10 +49,13 @@ class InstallerModel: Runnable {
     struct DriveQuery {
 
         let drives: [FileServer.DriveInfo]
+        let initialSelection: String
+
         private let completion: (String?) -> Void
 
-        init(drives: [FileServer.DriveInfo], completion: @escaping (String?) -> Void) {
+        init(drives: [FileServer.DriveInfo], initialSelection: String, completion: @escaping (String?) -> Void) {
             self.drives = drives
+            self.initialSelection = initialSelection
             self.completion = completion
         }
 
@@ -94,6 +97,7 @@ class InstallerModel: Runnable {
     private let fileServer = FileServer()
 
     private let url: URL
+    private var defaultDrive: String = "C"  // Accessed only from the PsiLuaEnv thread.
 
     @MainActor var details: Details?
     @MainActor var page: PageType = .loading
@@ -170,15 +174,19 @@ extension InstallerModel: SisInstallIoHandler {
                 driveInfo.mediaType != .rom
             }
             let sem = DispatchSemaphore(value: 0)
-            var drive: String? = "C"
+            let initialSelection = defaultDrive
+            var drive: String? = initialSelection
             DispatchQueue.main.sync {
-                let query = DriveQuery(drives: drives) { selection in
+                let query = DriveQuery(drives: drives, initialSelection: initialSelection) { selection in
                     drive = selection
                     sem.signal()
                 }
                 self.page = .driveQuery(query)
             }
             sem.wait()
+            if let drive {
+                defaultDrive = drive  // Remember the drive as a default for subsequent pickers.
+            }
             return drive
         } catch {
             return nil

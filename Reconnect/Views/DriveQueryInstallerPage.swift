@@ -21,12 +21,13 @@ import SwiftUI
 @MainActor
 struct DriveQueryInstallerPage: View {
 
-    @State var selection: String = "C"
+    @State var selection: String
 
     let query: InstallerModel.DriveQuery
 
     init(query: InstallerModel.DriveQuery) {
         self.query = query
+        self.selection = query.initialSelection
     }
 
     var body: some View {
