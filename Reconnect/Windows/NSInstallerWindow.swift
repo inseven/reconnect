@@ -19,7 +19,7 @@
 import SwiftUI
 
 class WindowProxy {
-    fileprivate var nsWindow: NSWindow?
+    fileprivate weak var nsWindow: NSWindow?
 
     var title: String {
         get {

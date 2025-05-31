@@ -69,6 +69,8 @@ struct InstallerView: View {
                 }
             case .languageQuery(let query):
                 LanguageQueryInstallerPage(query: query)
+            case .driveQuery(let query):
+                DriveQueryInstallerPage(query: query)
             case .query(let query):
                 InstallerPage {
                     ScrollView {

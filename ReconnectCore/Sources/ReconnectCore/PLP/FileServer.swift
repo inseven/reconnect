@@ -412,6 +412,21 @@ public class FileServer {
         }
     }
 
+    public func drivesSync() throws -> [DriveInfo] {
+        dispatchPrecondition(condition: .notOnQueue(workQueue))
+        return try workQueue.sync {
+            var result: [DriveInfo] = []
+            for drive in try self.syncQueue_devlist() {
+                do {
+                    result.append(try self.syncQueue_devinfo(drive: drive))
+                } catch PLPToolsError.driveNotReady {
+                    continue
+                }
+            }
+            return result
+        }
+    }
+
     public func drives() async throws -> [DriveInfo] {
         try await perform {
             var result: [DriveInfo] = []

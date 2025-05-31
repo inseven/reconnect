@@ -46,6 +46,22 @@ class InstallerModel: Runnable {
         }
     }
 
+    struct DriveQuery {
+
+        let drives: [FileServer.DriveInfo]
+        private let completion: (String?) -> Void
+
+        init(drives: [FileServer.DriveInfo], completion: @escaping (String?) -> Void) {
+            self.drives = drives
+            self.completion = completion
+        }
+
+        func `continue`(_ drive: String?) {
+            completion(drive)
+        }
+
+    }
+
     struct TextQuery {
 
         let text: String
@@ -68,6 +84,7 @@ class InstallerModel: Runnable {
         case loading
         case ready
         case languageQuery(LanguageQuery)
+        case driveQuery(DriveQuery)
         case query(TextQuery)
         case copy(String, Float)
         case error(Error)
@@ -144,6 +161,26 @@ extension InstallerModel: SisInstallIoHandler {
         }
         sem.wait()
         return language
+    }
+
+    func sisInstallGetDrive() -> String? {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        do {
+            let drives = try fileServer.drivesSync()
+            let sem = DispatchSemaphore(value: 0)
+            var drive: String? = "C"
+            DispatchQueue.main.sync {
+                let query = DriveQuery(drives: drives) { selection in
+                    drive = selection
+                    sem.signal()
+                }
+                self.page = .driveQuery(query)
+            }
+            sem.wait()
+            return drive
+        } catch {
+            return nil
+        }
     }
 
     func sisInstallQuery(text: String, type: OpoLua.InstallerQueryType) -> Bool {
