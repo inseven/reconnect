@@ -31,11 +31,18 @@ struct DriveQueryInstallerPage: View {
 
     var body: some View {
         InstallerPage {
-            List(selection: $selection) {
-                ForEach(query.drives, id: \.drive) { driveInfo in
-                    Text(driveInfo.drive)
+            Form {
+                LabeledContent("Drive") {
+                    Picker(selection: $selection) {
+                        ForEach(query.drives, id: \.drive) { driveInfo in
+                            Text(driveInfo.drive)
+                                .tag(driveInfo.drive)
+                        }
+                    }
                 }
             }
+            .padding()
+            .frame(maxWidth: 520)
         } actions: {
             Button("Cancel", role: .destructive) {
                 query.continue(nil)

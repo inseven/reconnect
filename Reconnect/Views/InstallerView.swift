@@ -108,9 +108,9 @@ struct InstallerView: View {
                         AnimatedImage(named: "install")
                             .frame(width: 240, height: 70)
                         ProgressView(value: progress)
-                            .frame(maxWidth: 320)
                     }
                     .padding()
+                    .frame(maxWidth: 520)
                 } actions: {
                     Button("Cancel", role: .destructive) {
 

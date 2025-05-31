@@ -166,7 +166,9 @@ extension InstallerModel: SisInstallIoHandler {
     func sisInstallGetDrive() -> String? {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
-            let drives = try fileServer.drivesSync()
+            let drives = try fileServer.drivesSync().filter { driveInfo in
+                driveInfo.mediaType != .rom
+            }
             let sem = DispatchSemaphore(value: 0)
             var drive: String? = "C"
             DispatchQueue.main.sync {
