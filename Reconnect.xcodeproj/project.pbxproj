@@ -282,11 +282,11 @@
 		D8184C492C253D62008FA79B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D8D5E3762DEB858100FEFBE1 /* DriveQueryInstallerPage.swift */,
 				D83BD9742DE8E2370075902D /* AnimagedImage.swift */,
 				D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */,
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */,
+				D8D5E3762DEB858100FEFBE1 /* DriveQueryInstallerPage.swift */,
 				D8A8A8092DE1A093007A657B /* EditableText.swift */,
 				D83A78692C3C80C9000E8192 /* FileTypePopover.swift */,
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
