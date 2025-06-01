@@ -99,12 +99,12 @@ struct InstallerView: View {
                     .background(Color(nsColor: .textBackgroundColor))
                 } actions: {
                     switch query.type {
-                    case .Continue:
+                    case .continue:
                         Button("Continue") {
                             query.continue(true)
                         }
                         .keyboardShortcut(.defaultAction)
-                    case .Skip, .Abort:
+                    case .skip, .abort:
                         Button("No") {
                             query.continue(false)
                         }
@@ -112,7 +112,7 @@ struct InstallerView: View {
                             query.continue(true)
                         }
                         .keyboardShortcut(.defaultAction)
-                    case .Exit:
+                    case .exit:
                         Button("Exit") {
                             query.continue(true)
                         }
