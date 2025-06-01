@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import OpoLua
+
 @MainActor
 struct DriveQueryInstallerPage: View {
 
@@ -46,10 +48,10 @@ struct DriveQueryInstallerPage: View {
             .frame(maxWidth: 520)
         } actions: {
             Button("Cancel", role: .destructive) {
-                query.continue(nil)
+                query.continue(.failure(SisInstallError.userCancelled))
             }
             Button("Continue") {
-                query.continue(selection)
+                query.continue(.success(selection))
             }
             .keyboardShortcut(.defaultAction)
         }

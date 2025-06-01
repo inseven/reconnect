@@ -34,15 +34,15 @@ class InstallerModel: Runnable {
     struct LanguageQuery {
 
         let languages: [String]
-        private let completion: (String?) -> Void
+        private let completion: (Result<String, SisInstallError>) -> Void
 
-        init(languages: [String], completion: @escaping (String?) -> Void) {
+        init(languages: [String], completion: @escaping (Result<String, SisInstallError>) -> Void) {
             self.languages = languages
             self.completion = completion
         }
 
-        func `continue`(_ selection: String?) {
-            completion(selection)
+        func `continue`(_ result: Result<String, SisInstallError>) {
+            completion(result)
         }
     }
 
@@ -51,20 +51,21 @@ class InstallerModel: Runnable {
         let drives: [FileServer.DriveInfo]
         let initialSelection: String
 
-        private let completion: (String?) -> Void
+        private let completion: (Result<String, Error>) -> Void
 
-        init(drives: [FileServer.DriveInfo], initialSelection: String, completion: @escaping (String?) -> Void) {
+        init(drives: [FileServer.DriveInfo], initialSelection: String, completion: @escaping (Result<String, Error>) -> Void) {
             self.drives = drives
             self.initialSelection = initialSelection
             self.completion = completion
         }
 
-        func `continue`(_ drive: String?) {
-            completion(drive)
+        func `continue`(_ result: Result<String, Error>) {
+            completion(result)
         }
 
     }
 
+    // TODO: Use a Result to make this consistent?
     struct TextQuery {
 
         let text: String
@@ -96,11 +97,12 @@ class InstallerModel: Runnable {
 
     private let fileServer = FileServer()
 
-    private let url: URL
+    let url: URL
     private var defaultDrive: String = "C"  // Accessed only from the PsiLuaEnv thread.
 
     @MainActor var details: Details?
     @MainActor var page: PageType = .loading
+    @MainActor var installers: [SisFile] = []
 
     init(url: URL) {
         self.url = url
@@ -152,48 +154,64 @@ class InstallerModel: Runnable {
 
 extension InstallerModel: SisInstallIoHandler {
 
-    func sisInstallGetLanguage(_ languages: [String]) -> String? {
+    func sisInstallBegin(info: SisFile) -> Bool {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        print("Installing '\(info.name)'...")
+        DispatchQueue.main.sync {
+            self.installers.append(info)
+        }
+        return true
+    }
+    
+    func sisInstallGetLanguage(_ languages: [String]) throws -> String {
         dispatchPrecondition(condition: .notOnQueue(.main))
         let sem = DispatchSemaphore(value: 0)
-        var language: String? = languages[0]
+        var result: Result<String, SisInstallError> = .success(languages[0])
         DispatchQueue.main.sync {
             let query = LanguageQuery(languages: languages) { selection in
-                language = selection
+                result = selection
                 sem.signal()
             }
             self.page = .languageQuery(query)
         }
         sem.wait()
-        return language
+        return try result.get()
+    }
+    
+    func sisInstallGetDrive() throws -> String {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        let drives = try fileServer.drivesSync().filter { driveInfo in
+            driveInfo.mediaType != .rom
+        }
+        let sem = DispatchSemaphore(value: 0)
+        let initialSelection = defaultDrive
+        var result: Result<String, Error> = .success(initialSelection)
+        DispatchQueue.main.sync {
+            let query = DriveQuery(drives: drives, initialSelection: initialSelection) { selection in
+                result = selection
+                sem.signal()
+            }
+            self.page = .driveQuery(query)
+        }
+        sem.wait()
+        defaultDrive = try result.get()
+        return defaultDrive
     }
 
-    func sisInstallGetDrive() -> String? {
+    func sisInstallRollback() -> Bool {
+        print("Rolling back...")
+        return true
+    }
+    
+    func sisInstallComplete() {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        do {
-            let drives = try fileServer.drivesSync().filter { driveInfo in
-                driveInfo.mediaType != .rom
-            }
-            let sem = DispatchSemaphore(value: 0)
-            let initialSelection = defaultDrive
-            var drive: String? = initialSelection
-            DispatchQueue.main.sync {
-                let query = DriveQuery(drives: drives, initialSelection: initialSelection) { selection in
-                    drive = selection
-                    sem.signal()
-                }
-                self.page = .driveQuery(query)
-            }
-            sem.wait()
-            if let drive {
-                defaultDrive = drive  // Remember the drive as a default for subsequent pickers.
-            }
-            return drive
-        } catch {
-            return nil
+        print("Install phase complete .")
+        DispatchQueue.main.sync {
+            _ = self.installers.removeLast()
         }
     }
 
-    func sisInstallQuery(text: String, type: OpoLua.InstallerQueryType) -> Bool {
+    func sisInstallQuery(text: String, type: InstallerQueryType) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(.main))
         let sem = DispatchSemaphore(value: 0)
         var result: Bool = false
@@ -211,13 +229,12 @@ extension InstallerModel: SisInstallIoHandler {
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
-
             switch operation.type {
             case .delete:
                 return .err(.notReady)
             case .mkdir:
                 try fileServer.mkdirSync(path: operation.path)
-                return .err(.none)
+                return .success
             case .rmdir:
                 return .err(.notReady)
             case .write(let data):
@@ -239,7 +256,7 @@ extension InstallerModel: SisInstallIoHandler {
                     }
                     return .continue
                 }
-                return .err(.none)
+                return .success
             case .stat:
                 let attributes = try fileServer.getExtendedAttributesSync(path: operation.path)
                 return .stat(Fs.Stat(size: UInt64(attributes.size), lastModified: Date.now, isDirectory: false))

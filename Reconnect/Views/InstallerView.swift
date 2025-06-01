@@ -38,6 +38,29 @@ struct InstallerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+
+            HStack {
+                if let installer = installerModel.installers.last,
+                   let name = try? Locale.localize(installer.name).text {
+                    Text("\(name) - \(installer.version)")
+                        .font(.headline)
+                        .padding()
+                } else {
+                    Text(installerModel.url.displayName)
+                        .font(.headline)
+                        .padding()
+                }
+                Spacer()
+            }
+
+            Divider()
+
+            // TODO: Conformance.
+//            ForEach(installerModel.installers, id: \.uid) { installer in
+//                Text((try? Locale.localize(installer.name).text) ?? "Dodgy Localization")
+//            }
+
+
             switch installerModel.page {
             case .loading:
                 InstallerPage {
@@ -54,12 +77,7 @@ struct InstallerView: View {
                 InstallerPage {
                     VStack {
                         Image("Installer")
-                        if let details = installerModel.details {
-                            Text(details.name)
-                                .font(.headline)
-                            Text(details.version)
-                                .font(.subheadline)
-                        }
+                        Text(installerModel.url.displayName)
                     }
                 } actions: {
                     Button("Continue") {
@@ -155,12 +173,6 @@ struct InstallerView: View {
                     .keyboardShortcut(.defaultAction)
                 }
             }
-        }
-        .onChange(of: installerModel.details) { oldValue, newValue in
-            guard let newValue else {
-                return
-            }
-            window.title = "\(newValue.name) - \(newValue.version)"
         }
         .runs(installerModel)
     }

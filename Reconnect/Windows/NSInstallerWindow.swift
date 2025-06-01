@@ -48,7 +48,7 @@ class NSInstallerWindow: NSWindow {
         self.init(contentViewController: NSHostingController(rootView: rootView))
         self.url = url
         windowProxy.nsWindow = self
-        title = "Install"
+        title = url.displayName
         styleMask.remove([.resizable, .borderless, .fullSizeContentView])
         setContentSize(CGSize(width: 800, height: 600))
     }
