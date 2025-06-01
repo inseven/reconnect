@@ -19,6 +19,42 @@
 import SwiftUI
 
 import Interact
+import OpoLua
+
+extension SisFile: @retroactive Identifiable, @retroactive Equatable {
+
+    public static func == (lhs: SisFile, rhs: SisFile) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    public var id: UInt32 { uid }
+
+    var localizedDisplayName: String {
+        return "\((try? Locale.localize(name).text) ?? "Unknown Installer") - \(version)"
+    }
+
+}
+
+@MainActor
+struct InstallerBreadcrums: View {
+
+    let installers: [SisFile]
+
+    var body: some View {
+        HStack {
+            ForEach(installers) { installer in
+                Text(installer.localizedDisplayName)
+                    .font(.headline)
+                if installer != installers.last {
+                    Image(systemName: "chevron.forward")
+                }
+            }
+            Spacer()
+        }
+        .padding()
+    }
+
+}
 
 @MainActor
 struct InstallerView: View {
@@ -39,19 +75,21 @@ struct InstallerView: View {
     var body: some View {
         VStack(spacing: 0) {
 
-            HStack {
-                if let installer = installerModel.installers.last,
-                   let name = try? Locale.localize(installer.name).text {
-                    Text("\(name) - \(installer.version)")
-                        .font(.headline)
-                        .padding()
-                } else {
-                    Text(installerModel.url.displayName)
-                        .font(.headline)
-                        .padding()
-                }
-                Spacer()
-            }
+//            HStack {
+//                if let installer = installerModel.installers.last,
+//                   let name = try? Locale.localize(installer.name).text {
+//                    Text("\(name) - \(installer.version)")
+//                        .font(.headline)
+//                        .padding()
+//                } else {
+//                    Text(installerModel.url.displayName)
+//                        .font(.headline)
+//                        .padding()
+//                }
+//                Spacer()
+//            }
+
+            InstallerBreadcrums(installers: installerModel.installers)
 
             Divider()
 
