@@ -36,27 +36,6 @@ extension SisFile: @retroactive Identifiable, @retroactive Equatable {
 }
 
 @MainActor
-struct InstallerBreadcrums: View {
-
-    let installers: [SisFile]
-
-    var body: some View {
-        HStack {
-            ForEach(installers) { installer in
-                Text(installer.localizedDisplayName)
-                    .font(.headline)
-                if installer != installers.last {
-                    Image(systemName: "chevron.forward")
-                }
-            }
-            Spacer()
-        }
-        .padding()
-    }
-
-}
-
-@MainActor
 struct InstallerView: View {
 
     struct LayoutMetrics {
@@ -74,31 +53,6 @@ struct InstallerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
-//            HStack {
-//                if let installer = installerModel.installers.last,
-//                   let name = try? Locale.localize(installer.name).text {
-//                    Text("\(name) - \(installer.version)")
-//                        .font(.headline)
-//                        .padding()
-//                } else {
-//                    Text(installerModel.url.displayName)
-//                        .font(.headline)
-//                        .padding()
-//                }
-//                Spacer()
-//            }
-
-            InstallerBreadcrums(installers: installerModel.installers)
-
-            Divider()
-
-            // TODO: Conformance.
-//            ForEach(installerModel.installers, id: \.uid) { installer in
-//                Text((try? Locale.localize(installer.name).text) ?? "Dodgy Localization")
-//            }
-
-
             switch installerModel.page {
             case .loading:
                 InstallerPage {
@@ -109,53 +63,19 @@ struct InstallerView: View {
                     Button("Continue") {
 
                     }
+                    .keyboardShortcut(.defaultAction)
                     .disabled(true)
                 }
             case .ready:
                 InstallerPage {
                     VStack {
                         Image("Installer")
-                        Text(installerModel.url.displayName)
                     }
                 } actions: {
                     Button("Continue") {
-                        installerModel.install()
                     }
                     .keyboardShortcut(.defaultAction)
-                }
-            case .languageQuery(let query):
-                LanguageQueryInstallerPage(query: query)
-            case .driveQuery(let query):
-                DriveQueryInstallerPage(query: query)
-            case .query(let query):
-                InstallerPage {
-                    ScrollView {
-                        Text(query.text)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                    .background(Color(nsColor: .textBackgroundColor))
-                } actions: {
-                    switch query.type {
-                    case .continue:
-                        Button("Continue") {
-                            query.continue(true)
-                        }
-                        .keyboardShortcut(.defaultAction)
-                    case .skip, .abort:
-                        Button("No") {
-                            query.continue(false)
-                        }
-                        Button("Yes") {
-                            query.continue(true)
-                        }
-                        .keyboardShortcut(.defaultAction)
-                    case .exit:
-                        Button("Exit") {
-                            query.continue(true)
-                        }
-                        .keyboardShortcut(.defaultAction)
-                    }
+                    .disabled(true)
                 }
             case .copy(let path, let progress):
                 InstallerPage {
@@ -211,6 +131,49 @@ struct InstallerView: View {
                     .keyboardShortcut(.defaultAction)
                 }
             }
+        }
+        .sheet(item: $installerModel.query) { query in
+            switch query {
+            case .drive(let driveQuery):
+                DriveQueryInstallerPage(query: driveQuery)
+            case .text(let textQuery):
+                // TODO: Separate page!
+                InstallerPage {
+                    ScrollView {
+                        Text(textQuery.text)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    }
+                    .background(Color(nsColor: .textBackgroundColor))
+                } actions: {
+                    switch textQuery.type {
+                    case .continue:
+                        Button("Continue") {
+                            textQuery.continue(true)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    case .skip, .abort:
+                        Button("No") {
+                            textQuery.continue(false)
+                        }
+                        Button("Yes") {
+                            textQuery.continue(true)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    case .exit:
+                        Button("Exit") {
+                            textQuery.continue(true)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    }
+                }
+            }
+        }
+        .onChange(of: installerModel.details) { oldValue, newValue in
+            guard let newValue else {
+                return
+            }
+            window.title = "\(newValue.name) - \(newValue.version)"
         }
         .runs(installerModel)
     }

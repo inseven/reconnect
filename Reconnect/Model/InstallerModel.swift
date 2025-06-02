@@ -41,33 +41,38 @@ class InstallerModel: Runnable {
             self.completion = completion
         }
 
-        func `continue`(_ result: Result<String, SisInstallError>) {
+        func resume(_ result: Result<String, SisInstallError>) {
             completion(result)
         }
     }
 
-    struct DriveQuery {
+    struct DriveQuery: Identifiable {
 
+        let id = UUID()
+        let installer: SisFile
         let drives: [FileServer.DriveInfo]
         let initialSelection: String
 
         private let completion: (Result<String, Error>) -> Void
 
-        init(drives: [FileServer.DriveInfo], initialSelection: String, completion: @escaping (Result<String, Error>) -> Void) {
+        init(installer: SisFile, drives: [FileServer.DriveInfo],
+             initialSelection: String,
+             completion: @escaping (Result<String, Error>) -> Void) {
+            self.installer = installer
             self.drives = drives
             self.initialSelection = initialSelection
             self.completion = completion
         }
 
-        func `continue`(_ result: Result<String, Error>) {
+        func resume(_ result: Result<String, Error>) {
             completion(result)
         }
 
     }
 
-    // TODO: Use a Result to make this consistent?
-    struct TextQuery {
+    struct TextQuery: Identifiable {
 
+        let id = UUID()
         let text: String
         let type: InstallerQueryType
         private let completion: (Bool) -> Void
@@ -87,12 +92,24 @@ class InstallerModel: Runnable {
     enum PageType {
         case loading
         case ready
-        case languageQuery(LanguageQuery)
-        case driveQuery(DriveQuery)
-        case query(TextQuery)
         case copy(String, Float)
         case error(Error)
         case complete
+    }
+
+    enum Query: Identifiable {
+
+        var id: UUID {
+            switch self {
+            case .drive(let driveQuery):
+                return driveQuery.id
+            case .text(let textQuery):
+                return textQuery.id
+            }
+        }
+
+        case drive(DriveQuery)
+        case text(TextQuery)
     }
 
     private let fileServer = FileServer()
@@ -102,6 +119,7 @@ class InstallerModel: Runnable {
 
     @MainActor var details: Details?
     @MainActor var page: PageType = .loading
+    @MainActor var query: Query?
     @MainActor var installers: [SisFile] = []
 
     init(url: URL) {
@@ -120,6 +138,7 @@ class InstallerModel: Runnable {
                 DispatchQueue.main.async {
                     self.details = Details(name: name.text, version: sis.version)
                     self.page = .ready
+                    self.install()
                 }
             } catch {
                 DispatchQueue.main.async {
@@ -154,6 +173,7 @@ class InstallerModel: Runnable {
 
 extension InstallerModel: SisInstallIoHandler {
 
+    // TODO: Roll this up with the language or drive picker?
     func sisInstallBegin(info: SisFile) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Installing '\(info.name)'...")
@@ -162,22 +182,16 @@ extension InstallerModel: SisInstallIoHandler {
         }
         return true
     }
-    
+
+    // TODO: See if we can move this into the first step?
     func sisInstallGetLanguage(_ languages: [String]) throws -> String {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        let sem = DispatchSemaphore(value: 0)
-        var result: Result<String, SisInstallError> = .success(languages[0])
-        DispatchQueue.main.sync {
-            let query = LanguageQuery(languages: languages) { selection in
-                result = selection
-                sem.signal()
-            }
-            self.page = .languageQuery(query)
-        }
-        sem.wait()
-        return try result.get()
+        return try! Locale.selectLanguage(languages)
     }
-    
+
+    // This is a should install? And it applies to the last sent SisInfo.
+    // TODO: Ensure this is always displayed and rename to `sisInstallConfirmation` or something? Ensure this is always first?
+    // Does a cancel here match a `false` from `sisInstallBegin`?
     func sisInstallGetDrive() throws -> String {
         dispatchPrecondition(condition: .notOnQueue(.main))
         let drives = try fileServer.drivesSync().filter { driveInfo in
@@ -187,28 +201,20 @@ extension InstallerModel: SisInstallIoHandler {
         let initialSelection = defaultDrive
         var result: Result<String, Error> = .success(initialSelection)
         DispatchQueue.main.sync {
-            let query = DriveQuery(drives: drives, initialSelection: initialSelection) { selection in
+            let query = DriveQuery(installer: installers.last!, drives: drives, initialSelection: initialSelection) { selection in
                 result = selection
                 sem.signal()
             }
-            self.page = .driveQuery(query)
+            self.query = .drive(query)
         }
         sem.wait()
+        defer {
+            DispatchQueue.main.sync {
+                self.query = nil
+            }
+        }
         defaultDrive = try result.get()
         return defaultDrive
-    }
-
-    func sisInstallRollback() -> Bool {
-        print("Rolling back...")
-        return true
-    }
-    
-    func sisInstallComplete() {
-        dispatchPrecondition(condition: .notOnQueue(.main))
-        print("Install phase complete .")
-        DispatchQueue.main.sync {
-            _ = self.installers.removeLast()
-        }
     }
 
     func sisInstallQuery(text: String, type: InstallerQueryType) -> Bool {
@@ -220,10 +226,28 @@ extension InstallerModel: SisInstallIoHandler {
                 result = response
                 sem.signal()
             }
-            self.page = .query(query)
+            self.query = .text(query)
         }
         sem.wait()
+        defer {
+            DispatchQueue.main.sync {
+                self.query = nil
+            }
+        }
         return result
+    }
+
+    func sisInstallRollback() -> Bool {
+        print("Rolling back...")
+        return true
+    }
+
+    func sisInstallComplete() {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        print("Install phase complete .")
+        DispatchQueue.main.sync {
+            _ = self.installers.removeLast()
+        }
     }
 
     func fsop(_ operation: Fs.Operation) -> Fs.Result {

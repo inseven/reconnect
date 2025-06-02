@@ -21,16 +21,27 @@ import SwiftUI
 @MainActor
 struct InstallerPage<Content: View, Actions: View>: View {
 
+    let title: LocalizedStringKey?
     let content: Content
     let actions: Actions
 
-    init(@ViewBuilder content: () -> Content, @ViewBuilder actions: () -> Actions) {
+    init(_ title: LocalizedStringKey? = nil, @ViewBuilder content: () -> Content, @ViewBuilder actions: () -> Actions) {
+        self.title = title
         self.content = content()
         self.actions = actions()
     }
 
     var body: some View {
         VStack(spacing: 0) {
+            if let title {
+                HStack {
+                    Text(title)
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding()
+                Divider()
+            }
             content
                 .textSelection(.enabled)
                 .frame(maxHeight: .infinity)

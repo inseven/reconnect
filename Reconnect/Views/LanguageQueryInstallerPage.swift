@@ -39,10 +39,10 @@ struct LanguageQueryInstallerPage: View {
             }
         } actions: {
             Button("Cancel", role: .destructive) {
-                query.continue(.failure(.userCancelled))
+                query.resume(.failure(.userCancelled))
             }
             Button("Continue") {
-                query.continue(.success(selection))
+                query.resume(.success(selection))
             }
             .keyboardShortcut(.defaultAction)
         }

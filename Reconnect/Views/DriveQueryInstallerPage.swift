@@ -33,27 +33,29 @@ struct DriveQueryInstallerPage: View {
     }
 
     var body: some View {
-        InstallerPage {
-            Form {
-                LabeledContent("Drive") {
-                    Picker(selection: $selection) {
-                        ForEach(query.drives, id: \.drive) { driveInfo in
-                            Text(driveInfo.drive)
-                                .tag(driveInfo.drive)
+        VStack(spacing: 0) {
+            InstallerPage("Install '\(query.installer.localizedDisplayName)'?") {
+                Form {
+                    LabeledContent("Drive") {
+                        Picker(selection: $selection) {
+                            ForEach(query.drives, id: \.drive) { driveInfo in
+                                Text(driveInfo.drive)
+                                    .tag(driveInfo.drive)
+                            }
                         }
                     }
                 }
+                .padding()
+                .frame(maxWidth: 520)
+            } actions: {
+                Button("Cancel", role: .destructive) {
+                    query.resume(.failure(SisInstallError.userCancelled))
+                }
+                Button("Continue") {
+                    query.resume(.success(selection))
+                }
+                .keyboardShortcut(.defaultAction)
             }
-            .padding()
-            .frame(maxWidth: 520)
-        } actions: {
-            Button("Cancel", role: .destructive) {
-                query.continue(.failure(SisInstallError.userCancelled))
-            }
-            Button("Continue") {
-                query.continue(.success(selection))
-            }
-            .keyboardShortcut(.defaultAction)
         }
     }
 
