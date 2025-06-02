@@ -344,10 +344,9 @@ public class FileServer {
         }
     }
 
-    // TODO: Consider dropping the default callback?
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) async throws {
         try await perform {
             try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
@@ -357,7 +356,7 @@ public class FileServer {
 
     public func copyFile(fromLocalPath localSourcePath: String,
                          toRemotePath remoteDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) async throws {
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) async throws {
         try await perform {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
@@ -367,7 +366,7 @@ public class FileServer {
 
     public func copyFileSync(fromLocalPath localSourcePath: String,
                              toRemotePath remoteDestinationPath: String,
-                             callback: @escaping (UInt32, UInt32) -> ProgressResponse = { _, _ in return .continue }) throws {
+                             callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         try workQueue.sync {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
