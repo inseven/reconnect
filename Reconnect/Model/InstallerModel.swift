@@ -31,8 +31,7 @@ class InstallerModel: Runnable {
         let version: String
     }
 
-    // ContinueQuery / InstallQuery / BeginQuery? InstallPhaseQuery?
-    struct DriveQuery: Identifiable {
+    struct ConfigurationQuery: Identifiable {
 
         let id = UUID()
         let installer: SisFile
@@ -97,7 +96,7 @@ class InstallerModel: Runnable {
             }
         }
 
-        case drive(DriveQuery)
+        case drive(ConfigurationQuery)
         case text(TextQuery)
     }
 
@@ -172,7 +171,7 @@ extension InstallerModel: SisInstallIoHandler {
             let defaultLanguage = try! Locale.selectLanguage(sis.languages)
             var result: SisInstallBeginResult = .userCancelled
             DispatchQueue.main.sync {
-                let query = DriveQuery(installer: sis, drives: drives, defaultLanguage: defaultLanguage) { selection in
+                let query = ConfigurationQuery(installer: sis, drives: drives, defaultLanguage: defaultLanguage) { selection in
                     result = selection
                     sem.signal()
                 }

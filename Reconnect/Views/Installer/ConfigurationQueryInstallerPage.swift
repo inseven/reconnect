@@ -21,15 +21,15 @@ import SwiftUI
 import OpoLua
 
 @MainActor
-struct DriveQueryInstallerPage: View {
+struct ConfigurationQueryInstallerPage: View {
 
     @State var driveSelection: String = "C"
     @State var languageSelection: String
 
-    let query: InstallerModel.DriveQuery
+    let query: InstallerModel.ConfigurationQuery
     let languages: [String]
 
-    init(query: InstallerModel.DriveQuery) {
+    init(query: InstallerModel.ConfigurationQuery) {
         self.query = query
         self.languages = query.installer.languages
         self.languageSelection = query.defaultLanguage

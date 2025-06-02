@@ -59,7 +59,7 @@
 		D8D362992DE79CB000DDDD19 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8D362972DE79CB000DDDD19 /* Localizable.strings */; };
 		D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
-		D8D5E3772DEB858500FEFBE1 /* DriveQueryInstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D5E3762DEB858100FEFBE1 /* DriveQueryInstallerPage.swift */; };
+		D8D5E3772DEB858500FEFBE1 /* ConfigurationQueryInstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D5E3762DEB858100FEFBE1 /* ConfigurationQueryInstallerPage.swift */; };
 		D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF452DE62874004DE55C /* InstallerView.swift */; };
 		D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF472DE6288C004DE55C /* InstallerModel.swift */; };
 		D8E2325C2DE1117800879866 /* FileConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E2325B2DE1117400879866 /* FileConverter.swift */; };
@@ -175,7 +175,7 @@
 		D8D362982DE79CB000DDDD19 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerPage.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
-		D8D5E3762DEB858100FEFBE1 /* DriveQueryInstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveQueryInstallerPage.swift; sourceTree = "<group>"; };
+		D8D5E3762DEB858100FEFBE1 /* ConfigurationQueryInstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationQueryInstallerPage.swift; sourceTree = "<group>"; };
 		D8DECF452DE62874004DE55C /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		D8DECF472DE6288C004DE55C /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
 		D8E2325B2DE1117400879866 /* FileConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileConverter.swift; sourceTree = "<group>"; };
@@ -424,7 +424,7 @@
 		D8AB9C352DEE3A5C0087F13E /* Installer */ = {
 			isa = PBXGroup;
 			children = (
-				D8D5E3762DEB858100FEFBE1 /* DriveQueryInstallerPage.swift */,
+				D8D5E3762DEB858100FEFBE1 /* ConfigurationQueryInstallerPage.swift */,
 				D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */,
 				D8DECF452DE62874004DE55C /* InstallerView.swift */,
 				D8AB9C332DEE3A1E0087F13E /* TextQueryInstallerPage.swift */,
@@ -711,7 +711,7 @@
 				D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */,
 				D8AB7ED32D0AA1140076E19F /* FileReference.swift in Sources */,
 				D8A8A80A2DE1A095007A657B /* EditableText.swift in Sources */,
-				D8D5E3772DEB858500FEFBE1 /* DriveQueryInstallerPage.swift in Sources */,
+				D8D5E3772DEB858500FEFBE1 /* ConfigurationQueryInstallerPage.swift in Sources */,
 				D83B4DE12C2F99C3003C3DC1 /* CheckForUpdatesViewModel.swift in Sources */,
 				D8A8A80C2DE1A0B6007A657B /* EditableTextModel.swift in Sources */,
 				D8AB9C342DEE3A230087F13E /* TextQueryInstallerPage.swift in Sources */,
