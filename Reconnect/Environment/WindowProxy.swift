@@ -18,20 +18,22 @@
 
 import SwiftUI
 
-class NSInstallerWindow: NSWindow {
+class WindowProxy {
 
-    var url: URL?
+    weak var nsWindow: NSWindow?
 
-    convenience init(url: URL) {
-        let windowProxy = WindowProxy()
-        let rootView = InstallerView(url: url)
-            .environment(\.window, windowProxy)
-        self.init(contentViewController: NSHostingController(rootView: rootView))
-        self.url = url
-        windowProxy.nsWindow = self
-        title = url.displayName
-        styleMask.remove([.resizable, .borderless, .fullSizeContentView])
-        setContentSize(CGSize(width: 800, height: 600))
+    var title: String {
+        get {
+            return nsWindow?.title ?? ""
+        }
+        set {
+            nsWindow?.title = newValue
+        }
     }
+}
+
+extension EnvironmentValues {
+
+    @Entry var window = WindowProxy()
 
 }

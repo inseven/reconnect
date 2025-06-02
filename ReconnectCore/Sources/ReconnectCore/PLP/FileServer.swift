@@ -337,7 +337,6 @@ public class FileServer {
         return result
     }
 
-
     public func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
         return try await perform {
             return try self.workQueue_dir(path: path, recursive: recursive)
