@@ -423,9 +423,21 @@ public class FileServer {
         }
     }
 
+    public func removeSync(path: String) throws(PLPToolsError) {
+        try performSync { () throws(PLPToolsError) in
+            try self.workQueue_remove(path: path)
+        }
+    }
+
     public func rename(from fromPath: String, to toPath: String) async throws {
         try await perform {
             try self.workQueue_rename(from: fromPath, to: toPath)
+        }
+    }
+
+    public func drives() async throws -> [DriveInfo] {
+        try await perform {
+            return try self.workQueue_drives()
         }
     }
 
@@ -435,10 +447,5 @@ public class FileServer {
         }
     }
 
-    public func drives() async throws -> [DriveInfo] {
-        try await perform {
-            return try self.workQueue_drives()
-        }
-    }
 
 }

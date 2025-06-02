@@ -81,6 +81,7 @@ class InstallerModel: Runnable {
         case loading
         case ready
         case copy(String, Float)
+        case delete(String)
         case error(Error)
         case complete
     }
@@ -224,7 +225,12 @@ extension InstallerModel: SisInstallIoHandler {
         do {
             switch operation.type {
             case .delete:
-                return .err(.notReady)
+                print("Delete '\(operation.path)'...")
+                DispatchQueue.main.sync {
+                    self.page = .delete(operation.path)
+                }
+                try fileServer.removeSync(path: operation.path)
+                return .success
             case .mkdir:
                 try fileServer.mkdirSync(path: operation.path)
                 return .success

@@ -21,6 +21,18 @@ import SwiftUI
 import Interact
 import OpoLua
 
+extension Error {
+
+    var isCancel: Bool {
+        if let error = self as? SisInstallError,
+           case .userCancelled = error {
+            return true
+        }
+        return false
+    }
+
+}
+
 @MainActor
 struct InstallerView: View {
 
@@ -72,11 +84,21 @@ struct InstallerView: View {
                     .padding()
                     .frame(maxWidth: LayoutMetrics.maximumContentWidth)
                 } actions: {
-                    Button("Cancel", role: .destructive) {
-
-                    }
-                    .disabled(true)
+                    Button("Cancel", role: .destructive) {}
+                        .disabled(true)
                 }
+            case .delete(let path):
+                InstallerPage {
+                    VStack {
+                        Text("Deleting '\(path)'...")
+                    }
+                    .padding()
+                    .frame(maxWidth: LayoutMetrics.maximumContentWidth)
+                } actions: {
+                    Button("Cancel", role: .destructive) {}
+                        .disabled(true)
+                }
+
             case .complete:
                 InstallerPage {
                     VStack {
@@ -98,14 +120,19 @@ struct InstallerView: View {
             case .error(let error):
                 InstallerPage {
                     VStack {
-                        Image(systemName: "exclamationmark.triangle")
+                        Image(systemName: "xmark.circle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: LayoutMetrics.symbolSize)
                             .foregroundStyle(.red)
-                        Text("Error")
-                            .font(.headline)
-                        Text(error.localizedDescription)
+                        if error.isCancel {
+                            Text("Cancelled")
+                                .font(.headline)
+                        } else {
+                            Text("Error")
+                                .font(.headline)
+                            Text(error.localizedDescription)
+                        }
                     }
                     .padding()
                 } actions: {
