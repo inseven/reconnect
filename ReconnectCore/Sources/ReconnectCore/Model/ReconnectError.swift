@@ -22,7 +22,6 @@ import plpftp
 
 public enum ReconnectError: Error {
     case unknown
-    case unknownMediaType
     case invalidFilePath
     case unknownFileSize
     case imageSaveError
@@ -35,8 +34,6 @@ extension ReconnectError: LocalizedError {
         switch self {
         case .unknown:
             return "Unknown error."
-        case .unknownMediaType:
-            return "Unknown media type."
         case .invalidFilePath:
             return "Invalid file path."
         case .unknownFileSize:

@@ -31,40 +31,27 @@ class InstallerModel: Runnable {
         let version: String
     }
 
-    struct LanguageQuery {
-
-        let languages: [String]
-        private let completion: (Result<String, SisInstallError>) -> Void
-
-        init(languages: [String], completion: @escaping (Result<String, SisInstallError>) -> Void) {
-            self.languages = languages
-            self.completion = completion
-        }
-
-        func resume(_ result: Result<String, SisInstallError>) {
-            completion(result)
-        }
-    }
-
+    // ContinueQuery / InstallQuery / BeginQuery? InstallPhaseQuery?
     struct DriveQuery: Identifiable {
 
         let id = UUID()
         let installer: SisFile
+        let defaultLanguage: String
         let drives: [FileServer.DriveInfo]
-        let initialSelection: String
 
-        private let completion: (Result<String, Error>) -> Void
+        private let completion: (SisInstallBeginResult) -> Void
 
-        init(installer: SisFile, drives: [FileServer.DriveInfo],
-             initialSelection: String,
-             completion: @escaping (Result<String, Error>) -> Void) {
+        init(installer: SisFile,
+             drives: [FileServer.DriveInfo],
+             defaultLanguage: String,
+             completion: @escaping (SisInstallBeginResult) -> Void) {
             self.installer = installer
             self.drives = drives
-            self.initialSelection = initialSelection
+            self.defaultLanguage = defaultLanguage
             self.completion = completion
         }
 
-        func resume(_ result: Result<String, Error>) {
+        func resume(_ result: SisInstallBeginResult) {
             completion(result)
         }
 
@@ -73,11 +60,13 @@ class InstallerModel: Runnable {
     struct TextQuery: Identifiable {
 
         let id = UUID()
+        let installer: SisFile
         let text: String
         let type: InstallerQueryType
         private let completion: (Bool) -> Void
 
-        init(text: String, type: InstallerQueryType, completion: @escaping (Bool) -> Void) {
+        init(installer: SisFile, text: String, type: InstallerQueryType, completion: @escaping (Bool) -> Void) {
+            self.installer = installer
             self.text = text
             self.type = type
             self.completion = completion
@@ -89,7 +78,7 @@ class InstallerModel: Runnable {
 
     }
 
-    enum PageType {
+    enum Page {
         case loading
         case ready
         case copy(String, Float)
@@ -115,10 +104,9 @@ class InstallerModel: Runnable {
     private let fileServer = FileServer()
 
     let url: URL
-    private var defaultDrive: String = "C"  // Accessed only from the PsiLuaEnv thread.
 
     @MainActor var details: Details?
-    @MainActor var page: PageType = .loading
+    @MainActor var page: Page = .loading
     @MainActor var query: Query?
     @MainActor var installers: [SisFile] = []
 
@@ -173,48 +161,39 @@ class InstallerModel: Runnable {
 
 extension InstallerModel: SisInstallIoHandler {
 
-    // TODO: Roll this up with the language or drive picker?
-    func sisInstallBegin(info: SisFile) -> Bool {
+    func sisInstallBegin(info: SisFile, driveRequired: Bool) -> OpoLua.SisInstallBeginResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Installing '\(info.name)'...")
         DispatchQueue.main.sync {
-            self.installers.append(info)
+            self.installers.append(info)  // TODO: Do I need to track the installers?
         }
-        return true
-    }
 
-    // TODO: See if we can move this into the first step?
-    func sisInstallGetLanguage(_ languages: [String]) throws -> String {
-        dispatchPrecondition(condition: .notOnQueue(.main))
-        return try! Locale.selectLanguage(languages)
-    }
-
-    // This is a should install? And it applies to the last sent SisInfo.
-    // TODO: Ensure this is always displayed and rename to `sisInstallConfirmation` or something? Ensure this is always first?
-    // Does a cancel here match a `false` from `sisInstallBegin`?
-    func sisInstallGetDrive() throws -> String {
-        dispatchPrecondition(condition: .notOnQueue(.main))
-        let drives = try fileServer.drivesSync().filter { driveInfo in
-            driveInfo.mediaType != .rom
-        }
-        let sem = DispatchSemaphore(value: 0)
-        let initialSelection = defaultDrive
-        var result: Result<String, Error> = .success(initialSelection)
-        DispatchQueue.main.sync {
-            let query = DriveQuery(installer: installers.last!, drives: drives, initialSelection: initialSelection) { selection in
-                result = selection
-                sem.signal()
+        do {
+            let drives = try fileServer.drivesSync().filter { driveInfo in
+                driveInfo.mediaType != .rom
             }
-            self.query = .drive(query)
-        }
-        sem.wait()
-        defer {
+            let sem = DispatchSemaphore(value: 0)
+            let defaultLanguage = try! Locale.selectLanguage(info.languages)
+            var result: SisInstallBeginResult = .userCancelled
             DispatchQueue.main.sync {
-                self.query = nil
+                let query = DriveQuery(installer: installers.last!,
+                                       drives: drives,
+                                       defaultLanguage: defaultLanguage) { selection in
+                    result = selection
+                    sem.signal()
+                }
+                self.query = .drive(query)
             }
+            sem.wait()
+            defer {
+                DispatchQueue.main.sync {
+                    self.query = nil
+                }
+            }
+            return result
+        } catch {
+            return .epocError(Int(error.rawValue))
         }
-        defaultDrive = try result.get()
-        return defaultDrive
     }
 
     func sisInstallQuery(text: String, type: InstallerQueryType) -> Bool {
@@ -222,7 +201,7 @@ extension InstallerModel: SisInstallIoHandler {
         let sem = DispatchSemaphore(value: 0)
         var result: Bool = false
         DispatchQueue.main.sync {
-            let query = TextQuery(text: text, type: type) { response in
+            let query = TextQuery(installer: installers.last!, text: text, type: type) { response in
                 result = response
                 sem.signal()
             }

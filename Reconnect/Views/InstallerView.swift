@@ -101,12 +101,12 @@ struct InstallerView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: LayoutMetrics.symbolSize)
                             .foregroundStyle(.green)
-                        Text("Success")
+                        Text("Installation Complete")
                             .font(.headline)
                     }
                     .padding()
                 } actions: {
-                    Button("Done") {
+                    Button("Close") {
                         closeWindow()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -125,7 +125,7 @@ struct InstallerView: View {
                     }
                     .padding()
                 } actions: {
-                    Button("Done") {
+                    Button("Close") {
                         closeWindow()
                     }
                     .keyboardShortcut(.defaultAction)
@@ -137,36 +137,7 @@ struct InstallerView: View {
             case .drive(let driveQuery):
                 DriveQueryInstallerPage(query: driveQuery)
             case .text(let textQuery):
-                // TODO: Separate page!
-                InstallerPage {
-                    ScrollView {
-                        Text(textQuery.text)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                    .background(Color(nsColor: .textBackgroundColor))
-                } actions: {
-                    switch textQuery.type {
-                    case .continue:
-                        Button("Continue") {
-                            textQuery.continue(true)
-                        }
-                        .keyboardShortcut(.defaultAction)
-                    case .skip, .abort:
-                        Button("No") {
-                            textQuery.continue(false)
-                        }
-                        Button("Yes") {
-                            textQuery.continue(true)
-                        }
-                        .keyboardShortcut(.defaultAction)
-                    case .exit:
-                        Button("Exit") {
-                            textQuery.continue(true)
-                        }
-                        .keyboardShortcut(.defaultAction)
-                    }
-                }
+                TextQueryInstallerPage(query: textQuery)
             }
         }
         .onChange(of: installerModel.details) { oldValue, newValue in
@@ -176,6 +147,45 @@ struct InstallerView: View {
             window.title = "\(newValue.name) - \(newValue.version)"
         }
         .runs(installerModel)
+    }
+
+}
+
+@MainActor
+struct TextQueryInstallerPage: View {
+
+    let query: InstallerModel.TextQuery
+
+    var body: some View {
+        InstallerPage(query.installer.localizedDisplayName) {
+            ScrollView {
+                Text(query.text)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+            }
+            .background(Color(nsColor: .textBackgroundColor))
+        } actions: {
+            switch query.type {
+            case .continue:
+                Button("Continue") {
+                    query.continue(true)
+                }
+                .keyboardShortcut(.defaultAction)
+            case .skip, .abort:
+                Button("No") {
+                    query.continue(false)
+                }
+                Button("Yes") {
+                    query.continue(true)
+                }
+                .keyboardShortcut(.defaultAction)
+            case .exit:
+                Button("Exit") {
+                    query.continue(true)
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+        }
     }
 
 }

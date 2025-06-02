@@ -23,21 +23,34 @@ import OpoLua
 @MainActor
 struct DriveQueryInstallerPage: View {
 
-    @State var selection: String
+    @State var driveSelection: String = "C"
+    @State var languageSelection: String
 
     let query: InstallerModel.DriveQuery
+    let languages: [String]
 
     init(query: InstallerModel.DriveQuery) {
         self.query = query
-        self.selection = query.initialSelection
+        self.languages = query.installer.languages
+        self.languageSelection = query.defaultLanguage
     }
 
     var body: some View {
         VStack(spacing: 0) {
             InstallerPage("Install '\(query.installer.localizedDisplayName)'?") {
                 Form {
+                    if languages.count > 1 {
+                        LabeledContent("Language") {
+                            Picker(selection: $languageSelection) {
+                                ForEach(languages, id: \.self) { language in
+                                    Text(NSLocalizedString(language, comment: language))
+                                        .tag(language)
+                                }
+                            }
+                        }
+                    }
                     LabeledContent("Drive") {
-                        Picker(selection: $selection) {
+                        Picker(selection: $driveSelection) {
                             ForEach(query.drives, id: \.drive) { driveInfo in
                                 Text(driveInfo.drive)
                                     .tag(driveInfo.drive)
@@ -49,10 +62,10 @@ struct DriveQueryInstallerPage: View {
                 .frame(maxWidth: 520)
             } actions: {
                 Button("Cancel", role: .destructive) {
-                    query.resume(.failure(SisInstallError.userCancelled))
+                    query.resume(.skipInstall)
                 }
                 Button("Continue") {
-                    query.resume(.success(selection))
+                    query.resume(.install(languageSelection, driveSelection))
                 }
                 .keyboardShortcut(.defaultAction)
             }

@@ -21,12 +21,27 @@ import SwiftUI
 @MainActor
 struct InstallerPage<Content: View, Actions: View>: View {
 
-    let title: LocalizedStringKey?
+    let title: Text?
     let content: Content
     let actions: Actions
 
     init(_ title: LocalizedStringKey? = nil, @ViewBuilder content: () -> Content, @ViewBuilder actions: () -> Actions) {
-        self.title = title
+        if let title {
+            self.title = Text(title)
+        } else {
+            self.title = nil
+        }
+        self.content = content()
+        self.actions = actions()
+    }
+
+    @_disfavoredOverload
+    init(_ title: String? = nil, @ViewBuilder content: () -> Content, @ViewBuilder actions: () -> Actions) {
+        if let title {
+            self.title = Text(title)
+        } else {
+            self.title = nil
+        }
         self.content = content()
         self.actions = actions()
     }
@@ -35,7 +50,7 @@ struct InstallerPage<Content: View, Actions: View>: View {
         VStack(spacing: 0) {
             if let title {
                 HStack {
-                    Text(title)
+                    title
                         .font(.headline)
                     Spacer()
                 }
