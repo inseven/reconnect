@@ -21,24 +21,11 @@ import SwiftUI
 import Interact
 import OpoLua
 
-extension SisFile: @retroactive Identifiable, @retroactive Equatable {
-
-    public static func == (lhs: SisFile, rhs: SisFile) -> Bool {
-        return lhs.id == rhs.id
-    }
-
-    public var id: UInt32 { uid }
-
-    var localizedDisplayName: String {
-        return "\((try? Locale.localize(name).text) ?? "Unknown Installer") - \(version)"
-    }
-
-}
-
 @MainActor
 struct InstallerView: View {
 
     struct LayoutMetrics {
+        static let maximumContentWidth: CGFloat = 520.0
         static let symbolSize: CGFloat = 64.0
     }
 
@@ -60,11 +47,9 @@ struct InstallerView: View {
                         ProgressView()
                     }
                 } actions: {
-                    Button("Continue") {
-
-                    }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(true)
+                    Button("Continue") {}
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(true)
                 }
             case .ready:
                 InstallerPage {
@@ -72,10 +57,9 @@ struct InstallerView: View {
                         Image("Installer")
                     }
                 } actions: {
-                    Button("Continue") {
-                    }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(true)
+                    Button("Continue") {}
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(true)
                 }
             case .copy(let path, let progress):
                 InstallerPage {
@@ -86,7 +70,7 @@ struct InstallerView: View {
                         ProgressView(value: progress)
                     }
                     .padding()
-                    .frame(maxWidth: 520)
+                    .frame(maxWidth: LayoutMetrics.maximumContentWidth)
                 } actions: {
                     Button("Cancel", role: .destructive) {
 

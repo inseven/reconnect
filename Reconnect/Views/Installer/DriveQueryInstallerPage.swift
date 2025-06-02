@@ -59,7 +59,7 @@ struct DriveQueryInstallerPage: View {
                     }
                 }
                 .padding()
-                .frame(maxWidth: 520)
+                .frame(maxWidth: InstallerView.LayoutMetrics.maximumContentWidth)
             } actions: {
                 Button("Cancel", role: .destructive) {
                     query.resume(.skipInstall)
