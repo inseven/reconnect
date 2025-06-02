@@ -282,22 +282,19 @@
 		D8184C492C253D62008FA79B /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D8AB9C332DEE3A1E0087F13E /* TextQueryInstallerPage.swift */,
 				D83BD9742DE8E2370075902D /* AnimagedImage.swift */,
 				D8631DAA2C36867300344DC3 /* BrowserDetailView.swift */,
 				D886DA732C28CDAD00E84BDA /* BrowserView.swift */,
 				D83B4DDE2C2F9995003C3DC1 /* CheckForUpdatesView.swift */,
-				D8D5E3762DEB858100FEFBE1 /* DriveQueryInstallerPage.swift */,
 				D8A8A8092DE1A093007A657B /* EditableText.swift */,
 				D83A78692C3C80C9000E8192 /* FileTypePopover.swift */,
 				D83658BA2C29A09300B45693 /* HistoryItemView.swift */,
-				D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */,
-				D8DECF452DE62874004DE55C /* InstallerView.swift */,
 				D8AC642D2D0D5B4A0085306B /* PixelImage.swift */,
 				D89B5E8D2C2AA8680014A5B6 /* Sidebar.swift */,
 				D8AC642B2D0D58910085306B /* ThumbnailView.swift */,
 				D8631DAE2C373A1600344DC3 /* TransferRow.swift */,
 				D8631DB42C374F8700344DC3 /* TransfersView.swift */,
+				D8AB9C352DEE3A5C0087F13E /* Installer */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -419,6 +416,17 @@
 				D890718A2C4B01FC00C11DE8 /* Command.swift */,
 			);
 			path = ScreenshotSIS;
+			sourceTree = "<group>";
+		};
+		D8AB9C352DEE3A5C0087F13E /* Installer */ = {
+			isa = PBXGroup;
+			children = (
+				D8D5E3762DEB858100FEFBE1 /* DriveQueryInstallerPage.swift */,
+				D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */,
+				D8DECF452DE62874004DE55C /* InstallerView.swift */,
+				D8AB9C332DEE3A1E0087F13E /* TextQueryInstallerPage.swift */,
+			);
+			path = Installer;
 			sourceTree = "<group>";
 		};
 		D8E31EB82C26E1CA00350082 /* Licenses */ = {
