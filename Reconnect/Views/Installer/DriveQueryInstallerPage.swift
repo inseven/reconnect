@@ -62,7 +62,7 @@ struct DriveQueryInstallerPage: View {
                 .frame(maxWidth: InstallerView.LayoutMetrics.maximumContentWidth)
             } actions: {
                 Button("Cancel", role: .destructive) {
-                    query.resume(.skipInstall)
+                    query.resume(.userCancelled)
                 }
                 Button("Continue") {
                     query.resume(.install(languageSelection, driveSelection))

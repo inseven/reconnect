@@ -108,7 +108,6 @@ class InstallerModel: Runnable {
     @MainActor var details: Details?
     @MainActor var page: Page = .loading
     @MainActor var query: Query?
-    @MainActor var installers: [SisFile] = []
 
     init(url: URL) {
         self.url = url
@@ -161,24 +160,19 @@ class InstallerModel: Runnable {
 
 extension InstallerModel: SisInstallIoHandler {
 
-    func sisInstallBegin(info: SisFile, driveRequired: Bool) -> OpoLua.SisInstallBeginResult {
+    func sisInstallBegin(sis: SisFile, driveRequired: Bool) -> OpoLua.SisInstallBeginResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        print("Installing '\(info.name)'...")
-        DispatchQueue.main.sync {
-            self.installers.append(info)  // TODO: Do I need to track the installers?
-        }
+        print("Installing '\(sis.name)'...")
 
         do {
             let drives = try fileServer.drivesSync().filter { driveInfo in
                 driveInfo.mediaType != .rom
             }
             let sem = DispatchSemaphore(value: 0)
-            let defaultLanguage = try! Locale.selectLanguage(info.languages)
+            let defaultLanguage = try! Locale.selectLanguage(sis.languages)
             var result: SisInstallBeginResult = .userCancelled
             DispatchQueue.main.sync {
-                let query = DriveQuery(installer: installers.last!,
-                                       drives: drives,
-                                       defaultLanguage: defaultLanguage) { selection in
+                let query = DriveQuery(installer: sis, drives: drives, defaultLanguage: defaultLanguage) { selection in
                     result = selection
                     sem.signal()
                 }
@@ -196,12 +190,12 @@ extension InstallerModel: SisInstallIoHandler {
         }
     }
 
-    func sisInstallQuery(text: String, type: InstallerQueryType) -> Bool {
+    func sisInstallQuery(sis: SisFile, text: String, type: InstallerQueryType) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(.main))
         let sem = DispatchSemaphore(value: 0)
         var result: Bool = false
         DispatchQueue.main.sync {
-            let query = TextQuery(installer: installers.last!, text: text, type: type) { response in
+            let query = TextQuery(installer: sis, text: text, type: type) { response in
                 result = response
                 sem.signal()
             }
@@ -216,17 +210,14 @@ extension InstallerModel: SisInstallIoHandler {
         return result
     }
 
-    func sisInstallRollback() -> Bool {
+    func sisInstallRollback(sis: SisFile) -> Bool {
         print("Rolling back...")
         return true
     }
 
-    func sisInstallComplete() {
+    func sisInstallComplete(sis: SisFile) {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Install phase complete .")
-        DispatchQueue.main.sync {
-            _ = self.installers.removeLast()
-        }
     }
 
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
