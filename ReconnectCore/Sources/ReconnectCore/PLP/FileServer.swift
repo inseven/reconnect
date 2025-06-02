@@ -198,7 +198,7 @@ public class FileServer {
         }
     }
 
-    private func workQueue_dir(path: String, recursive: Bool) throws -> [DirectoryEntry] {
+    private func workQueue_dir(path: String, recursive: Bool) throws(PLPToolsError) -> [DirectoryEntry] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var details = PlpDir()
@@ -222,7 +222,7 @@ public class FileServer {
         return result
     }
 
-    func workQueue_getExtendedAttributes(path: String) throws -> DirectoryEntry {
+    func workQueue_getExtendedAttributes(path: String) throws(PLPToolsError) -> DirectoryEntry {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var entry = PlpDirent()
@@ -232,7 +232,7 @@ public class FileServer {
 
     func workQueue_copyFile(fromRemotePath remoteSourcePath: String,
                             toLocalPath localDestinationPath: String,
-                            callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+                            callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(PLPToolsError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
 
@@ -270,25 +270,25 @@ public class FileServer {
         try result.check()
     }
 
-    func workQueue_mkdir(path: String) throws {
+    func workQueue_mkdir(path: String) throws(PLPToolsError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         try client.mkdir(path).check()
     }
 
-    func workQueue_rmdir(path: String) throws {
+    func workQueue_rmdir(path: String) throws(PLPToolsError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         try client.rmdir(path).check()
     }
 
-    func workQueue_remove(path: String) throws {
+    func workQueue_remove(path: String) throws(PLPToolsError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         try client.remove(path).check()
     }
 
-    func workQueue_rename(from fromPath: String, to toPath: String) throws {
+    func workQueue_rename(from fromPath: String, to toPath: String) throws(PLPToolsError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         try client.rename(fromPath, toPath).check()
@@ -324,6 +324,19 @@ public class FileServer {
                          mediaType: mediaType,
                          name: String(cString: name))
     }
+
+    func workQueue_drives() throws(PLPToolsError) -> [DriveInfo] {
+        var result: [DriveInfo] = []
+        for drive in try self.workQueue_devlist() {
+            do {
+                result.append(try self.workQueue_devinfo(drive: drive))
+            } catch PLPToolsError.driveNotReady {
+                continue
+            }
+        }
+        return result
+    }
+
 
     public func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
         return try await perform {
@@ -363,8 +376,6 @@ public class FileServer {
         }
     }
 
-
-    // TODO: Separate the sync and async implementations into different layers?
     public func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
         try await perform {
             return try self.workQueue_getExtendedAttributes(path: path)
@@ -418,18 +429,6 @@ public class FileServer {
         try await perform {
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
-    }
-
-    func workQueue_drives() throws(PLPToolsError) -> [DriveInfo] {
-        var result: [DriveInfo] = []
-        for drive in try self.workQueue_devlist() {
-            do {
-                result.append(try self.workQueue_devinfo(drive: drive))
-            } catch PLPToolsError.driveNotReady {
-                continue
-            }
-        }
-        return result
     }
 
     public func drivesSync() throws(PLPToolsError) -> [DriveInfo] {
