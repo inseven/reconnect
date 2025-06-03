@@ -35,20 +35,20 @@ struct TextQueryInstallerPage: View {
             switch query.type {
             case .continue:
                 Button("Continue") {
-                    query.continue(true)
+                    query.resume(true)
                 }
                 .keyboardShortcut(.defaultAction)
             case .skip, .abort:
                 Button("No") {
-                    query.continue(false)
+                    query.resume(false)
                 }
                 Button("Yes") {
-                    query.continue(true)
+                    query.resume(true)
                 }
                 .keyboardShortcut(.defaultAction)
             case .exit:
                 Button("Exit") {
-                    query.continue(true)
+                    query.resume(true)
                 }
                 .keyboardShortcut(.defaultAction)
             }

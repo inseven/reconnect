@@ -26,11 +26,6 @@ import ReconnectCore
 @Observable
 class InstallerModel: Runnable {
 
-    struct Details: Equatable {
-        let name: String
-        let version: String
-    }
-
     struct ConfigurationQuery: Identifiable {
 
         let id = UUID()
@@ -71,7 +66,7 @@ class InstallerModel: Runnable {
             self.completion = completion
         }
 
-        func `continue`(_ continue: Bool) {
+        func resume(_ continue: Bool) {
             completion(`continue`)
         }
 
@@ -105,7 +100,7 @@ class InstallerModel: Runnable {
 
     let url: URL
 
-    @MainActor var details: Details?
+    @MainActor var sis: SisFile?
     @MainActor var page: Page = .loading
     @MainActor var query: Query?
 
@@ -119,11 +114,10 @@ class InstallerModel: Runnable {
                 let interpreter = PsiLuaEnv()
                 let info = interpreter.getFileInfo(path: self.url.path)
                 guard case let .sis(sis) = info else {
-                    return
+                    throw ReconnectError.invalidSisFile
                 }
-                let name = try Locale.localize(sis.name)
                 DispatchQueue.main.async {
-                    self.details = Details(name: name.text, version: sis.version)
+                    self.sis = sis
                     self.page = .ready
                     self.install()
                 }
@@ -263,7 +257,6 @@ extension InstallerModel: SisInstallIoHandler {
                 print("Unsupported operation '\(operation.type)' '\(operation.path)'")
                 return .err(.notReady)
             }
-
         } catch PLPToolsError.inUse {
             return .err(.inUse)
         } catch PLPToolsError.noSuchFile,
@@ -276,8 +269,12 @@ extension InstallerModel: SisInstallIoHandler {
         } catch PLPToolsError.notReady {
             return .err(.notReady)
         } catch {
-            print("Encountered unmapped internal plptools error during install '\(error)'.")
-            return .err(.general)
+            if let error = error as? PLPToolsError {
+                return .epocerr(Int(error.rawValue))
+            } else {
+                print("Encountered unmapped internal plptools error during install '\(error)'.")
+                return .err(.general)
+            }
         }
     }
 

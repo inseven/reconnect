@@ -151,11 +151,11 @@ struct InstallerView: View {
                 TextQueryInstallerPage(query: textQuery)
             }
         }
-        .onChange(of: installerModel.details) { oldValue, newValue in
+        .onChange(of: installerModel.sis) { oldValue, newValue in
             guard let newValue else {
                 return
             }
-            window.title = "\(newValue.name) - \(newValue.version)"
+            window.title = newValue.localizedDisplayName
         }
         .runs(installerModel)
     }
