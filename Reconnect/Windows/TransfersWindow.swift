@@ -19,6 +19,30 @@
 import SwiftUI
 
 import Interact
+import PsionSoftwareIndex
+
+struct PsionSoftwareIndexWindow: Scene {
+
+    static let id = "psion-software-index"
+
+    @Environment(ApplicationModel.self) private var applicationModel
+
+    var body: some Scene {
+        Window("Psion Software Index", id: Self.id) {
+            SoftwareIndexView { release in
+                return release.kind == .installer && release.hasDownload /* && release.tags.contains("opl")*/
+            } completion: { url in
+                guard let url else {
+                    return
+                }
+                applicationModel.showInstallerWindow(url: url)
+            }
+        }
+        .windowResizability(.contentSize)
+        .handlesExternalEvents(matching: [.psionSoftwareIndex])
+    }
+
+}
 
 struct TransfersWindow: Scene {
 
@@ -29,23 +53,9 @@ struct TransfersWindow: Scene {
     var body: some Scene {
         Window("Transfers", id: Self.id) {
             TransfersView(transfersModel: transfersModel)
-                .onOpenURL { url in
-                    guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-                          let path = components.queryItems?.first(where: { $0.name == "path" })?.value,
-                          let installerURL = URL(string: path),
-                          installerURL.scheme == "file"
-                    else {
-                        return
-                    }
-                    let filename = installerURL.lastPathComponent
-                    Task {
-                        try? await transfersModel.upload(from: installerURL, to: "C:".appendingWindowsPathComponent(filename))
-                    }
-                }
-                .handlesExternalEvents(preferring: [.install], allowing: [])
         }
         .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.install, .transfers])
+        .handlesExternalEvents(matching: [.transfers])
     }
 
 }

@@ -18,6 +18,7 @@
 
 import Foundation
 
+// TOOD: This shadows a SwiftUI structure.
 struct NavigationStack {
 
     struct Item: Identifiable, Equatable {

@@ -163,8 +163,16 @@ struct BrowserView: View {
             }
 
             ToolbarItem(id: "add") {
-                Button {
-                    sheet = .install
+                Menu {
+                    Button("Install...") {
+
+                    }
+                    Divider()
+                    Button {
+                        openWindow(id: PsionSoftwareIndexWindow.id)
+                    } label: {
+                        Label("Psion Software Index", systemImage: "plus")
+                    }
                 } label: {
                     Label("Add", systemImage: "plus")
                 }
@@ -181,7 +189,7 @@ struct BrowserView: View {
                     guard let url else {
                         return
                     }
-                    browserModel.upload(url: url)
+                    applicationModel.showInstallerWindow(url: url)
                 }
             }
         }
