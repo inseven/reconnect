@@ -28,8 +28,7 @@ extension SisInstallError: @retroactive LocalizedError {
          case .userCancelled:
              return "User cancelled"
          case .epocError(let code, _):
-             return (PLPToolsError(rawValue: Int32(code)) ?? .unknown)
-                 .errorDescription
+             return LocalizedEpoc32ErrorCode(code)
          case .internalError(let message):
              return message
          }

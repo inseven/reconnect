@@ -186,7 +186,7 @@ extension InstallerModel: SisInstallIoHandler {
             }
             return result
         } catch {
-            return .epocError(Int(error.rawValue))
+            return .epocError(error.rawValue)
         }
     }
 
