@@ -29,17 +29,17 @@ class InstallerModel: Runnable {
     struct ConfigurationQuery: Identifiable {
 
         let id = UUID()
-        let installer: SisFile
+        let sis: SisFile
         let defaultLanguage: String
         let drives: [FileServer.DriveInfo]
 
         private let completion: (SisInstallBeginResult) -> Void
 
-        init(installer: SisFile,
+        init(sis: SisFile,
              drives: [FileServer.DriveInfo],
              defaultLanguage: String,
              completion: @escaping (SisInstallBeginResult) -> Void) {
-            self.installer = installer
+            self.sis = sis
             self.drives = drives
             self.defaultLanguage = defaultLanguage
             self.completion = completion
@@ -54,13 +54,13 @@ class InstallerModel: Runnable {
     struct TextQuery: Identifiable {
 
         let id = UUID()
-        let installer: SisFile
+        let sis: SisFile
         let text: String
         let type: InstallerQueryType
         private let completion: (Bool) -> Void
 
-        init(installer: SisFile, text: String, type: InstallerQueryType, completion: @escaping (Bool) -> Void) {
-            self.installer = installer
+        init(sis: SisFile, text: String, type: InstallerQueryType, completion: @escaping (Bool) -> Void) {
+            self.sis = sis
             self.text = text
             self.type = type
             self.completion = completion
@@ -166,7 +166,9 @@ extension InstallerModel: SisInstallIoHandler {
             let defaultLanguage = try! Locale.selectLanguage(sis.languages)
             var result: SisInstallBeginResult = .userCancelled
             DispatchQueue.main.sync {
-                let query = ConfigurationQuery(installer: sis, drives: drives, defaultLanguage: defaultLanguage) { selection in
+                let query = ConfigurationQuery(sis: sis,
+                                               drives: drives,
+                                               defaultLanguage: defaultLanguage) { selection in
                     result = selection
                     sem.signal()
                 }
@@ -189,7 +191,7 @@ extension InstallerModel: SisInstallIoHandler {
         let sem = DispatchSemaphore(value: 0)
         var result: Bool = false
         DispatchQueue.main.sync {
-            let query = TextQuery(installer: sis, text: text, type: type) { response in
+            let query = TextQuery(sis: sis, text: text, type: type) { response in
                 result = response
                 sem.signal()
             }

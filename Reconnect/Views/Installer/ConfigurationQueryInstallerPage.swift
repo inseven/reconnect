@@ -31,13 +31,13 @@ struct ConfigurationQueryInstallerPage: View {
 
     init(query: InstallerModel.ConfigurationQuery) {
         self.query = query
-        self.languages = query.installer.languages
+        self.languages = query.sis.languages
         self.languageSelection = query.defaultLanguage
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            InstallerPage("Install '\(query.installer.localizedDisplayName)'?") {
+            InstallerPage("Install '\(query.sis.localizedDisplayName)'?") {
                 Form {
                     if languages.count > 1 {
                         LabeledContent("Language") {
