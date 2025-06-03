@@ -343,10 +343,26 @@ public class FileServer {
         }
     }
 
+    public func dirSync(path: String, recursive: Bool = false) throws(PLPToolsError) -> [DirectoryEntry] {
+        return try performSync { () throws(PLPToolsError) -> [DirectoryEntry] in
+            return try self.workQueue_dir(path: path, recursive: recursive)
+        }
+    }
+
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse) async throws {
         try await perform {
+            try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
+                                        toLocalPath: localDestinationPath,
+                                        callback: callback)
+        }
+    }
+
+    public func copyFileSync(fromRemotePath remoteSourcePath: String,
+                         toLocalPath localDestinationPath: String,
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+        return try performSync { () throws(PLPToolsError) in
             try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
                                         callback: callback)

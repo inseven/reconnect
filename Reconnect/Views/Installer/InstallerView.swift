@@ -63,6 +63,18 @@ struct InstallerView: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
+            case .checkingInstalledPackages(let progress):
+                InstallerPage {
+                    VStack {
+                        Text("Checking installed packages...")
+                        ProgressView(value: progress)
+                    }
+                    .padding()
+                    .frame(maxWidth: LayoutMetrics.maximumContentWidth)
+                } actions: {
+                    Button("Cancel", role: .destructive) {}
+                        .disabled(true)
+                }
             case .ready:
                 InstallerPage {
                     VStack {

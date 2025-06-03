@@ -74,6 +74,7 @@ class InstallerModel: Runnable {
 
     enum Page {
         case loading
+        case checkingInstalledPackages(Float)
         case ready
         case copy(String, Float)
         case delete(String)
@@ -97,30 +98,57 @@ class InstallerModel: Runnable {
     }
 
     private let fileServer = FileServer()
+    private let url: URL
 
-    let url: URL
-
-    @MainActor var sis: SisFile?
-    @MainActor var page: Page = .loading
-    @MainActor var query: Query?
+    var sis: SisFile?
+    var page: Page = .loading
+    var query: Query?
 
     init(url: URL) {
         self.url = url
     }
 
     func start() {
+        let fileServer = self.fileServer
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                let interpreter = PsiLuaEnv()
-                let info = interpreter.getFileInfo(path: self.url.path)
-                guard case let .sis(sis) = info else {
-                    throw ReconnectError.invalidSisFile
-                }
-                DispatchQueue.main.async {
+                let env = PsiLuaEnv()
+
+                // Load the installer.
+                let sis = try env.loadSisFile(url: self.url)
+                DispatchQueue.main.sync {
                     self.sis = sis
+                    self.page = .checkingInstalledPackages(0.0)
+                }
+
+                // Load the existing installer stubs.
+                let fileManager = FileManager.default
+                let installerStubs = try fileServer.dirSync(path: "C:\\System\\Install\\")
+                    .filter { $0.pathExtension.lowercased() == "sis" }
+                var installedPackages: [UInt32: SisFile] = [:]
+                for (index, file) in installerStubs.enumerated() {
+                    let temporaryURL = fileManager.temporaryURL()
+                    defer {
+                        try? fileManager.removeItem(at: temporaryURL)
+                    }
+                    try fileServer.copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
+                        return .continue
+                    }
+                    let sis = try env.loadSisFile(url: temporaryURL)
+                    DispatchQueue.main.sync {
+                        self.page = .checkingInstalledPackages(Float(index + 1) / Float(installerStubs.count))
+                    }
+                    installedPackages[sis.uid] = sis
+                }
+
+                print(installedPackages)
+
+                // Indicate that we're ready and kick off the install process.
+                DispatchQueue.main.sync {
                     self.page = .ready
                     self.install()
                 }
+
             } catch {
                 DispatchQueue.main.async {
                     self.page = .error(error)
