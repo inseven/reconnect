@@ -185,11 +185,11 @@ struct BrowserView: View {
             case .install:
                 SoftwareIndexView { release in
                     return release.kind == .installer && release.hasDownload /* && release.tags.contains("opl")*/
-                } completion: { url in
-                    guard let url else {
+                } completion: { item in
+                    guard let item else {
                         return
                     }
-                    applicationModel.showInstallerWindow(url: url)
+                    applicationModel.showInstallerWindow(url: item.url)
                 }
             }
         }
