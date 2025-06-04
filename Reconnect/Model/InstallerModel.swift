@@ -29,23 +29,45 @@ class InstallerModel: Runnable {
     struct ConfigurationQuery: Identifiable {
 
         let id = UUID()
-        let sis: SisFile
+        let sis: Sis.File
         let defaultLanguage: String
         let drives: [FileServer.DriveInfo]
 
-        private let completion: (SisInstallBeginResult) -> Void
+        private let completion: (Sis.BeginResult) -> Void
 
-        init(sis: SisFile,
+        init(sis: Sis.File,
              drives: [FileServer.DriveInfo],
              defaultLanguage: String,
-             completion: @escaping (SisInstallBeginResult) -> Void) {
+             completion: @escaping (Sis.BeginResult) -> Void) {
             self.sis = sis
             self.drives = drives
             self.defaultLanguage = defaultLanguage
             self.completion = completion
         }
 
-        func resume(_ result: SisInstallBeginResult) {
+        func resume(_ result: Sis.BeginResult) {
+            completion(result)
+        }
+
+    }
+
+    struct ReplaceQuery: Identifiable {
+
+        let id = UUID()
+
+        let sis: Sis.File
+        let replacing: Sis.File
+        private let completion: (Bool) -> Void
+
+        init(sis: Sis.File,
+             replacing: Sis.File,
+             completion: @escaping (Bool) -> Void) {
+            self.sis = sis
+            self.replacing = replacing
+            self.completion = completion
+        }
+
+        func resume(_ result: Bool) {
             completion(result)
         }
 
@@ -54,12 +76,12 @@ class InstallerModel: Runnable {
     struct TextQuery: Identifiable {
 
         let id = UUID()
-        let sis: SisFile
+        let sis: Sis.File
         let text: String
-        let type: InstallerQueryType
+        let type: Sis.QueryType
         private let completion: (Bool) -> Void
 
-        init(sis: SisFile, text: String, type: InstallerQueryType, completion: @escaping (Bool) -> Void) {
+        init(sis: Sis.File, text: String, type: Sis.QueryType, completion: @escaping (Bool) -> Void) {
             self.sis = sis
             self.text = text
             self.type = type
@@ -74,8 +96,8 @@ class InstallerModel: Runnable {
 
     enum Page {
         case loading
-        case checkingInstalledPackages(Float)
         case ready
+        case checkingInstalledPackages(Float)
         case copy(String, Float)
         case delete(String)
         case error(Error)
@@ -86,21 +108,24 @@ class InstallerModel: Runnable {
 
         var id: UUID {
             switch self {
-            case .drive(let driveQuery):
-                return driveQuery.id
+            case .drive(let configurationQuery):
+                return configurationQuery.id
+            case .replace(let replaceQuery):
+                return replaceQuery.id
             case .text(let textQuery):
                 return textQuery.id
             }
         }
 
-        case drive(ConfigurationQuery)
+        case drive(ConfigurationQuery)  // TODO: Rename to configuration
+        case replace(ReplaceQuery)
         case text(TextQuery)
     }
 
     private let fileServer = FileServer()
     private let url: URL
 
-    var sis: SisFile?
+    var sis: Sis.File?
     var page: Page = .loading
     var query: Query?
 
@@ -109,46 +134,19 @@ class InstallerModel: Runnable {
     }
 
     func start() {
-        let fileServer = self.fileServer
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                let env = PsiLuaEnv()
-
-                // Load the installer.
-                let sis = try env.loadSisFile(url: self.url)
+                // Load the installer details.
+                let sis = try PsiLuaEnv().loadSisFile(url: self.url)
                 DispatchQueue.main.sync {
                     self.sis = sis
                     self.page = .checkingInstalledPackages(0.0)
                 }
-
-                // Load the existing installer stubs.
-                let fileManager = FileManager.default
-                let installerStubs = try fileServer.dirSync(path: "C:\\System\\Install\\")
-                    .filter { $0.pathExtension.lowercased() == "sis" }
-                var installedPackages: [UInt32: SisFile] = [:]
-                for (index, file) in installerStubs.enumerated() {
-                    let temporaryURL = fileManager.temporaryURL()
-                    defer {
-                        try? fileManager.removeItem(at: temporaryURL)
-                    }
-                    try fileServer.copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
-                        return .continue
-                    }
-                    let sis = try env.loadSisFile(url: temporaryURL)
-                    DispatchQueue.main.sync {
-                        self.page = .checkingInstalledPackages(Float(index + 1) / Float(installerStubs.count))
-                    }
-                    installedPackages[sis.uid] = sis
-                }
-
-                print(installedPackages)
-
                 // Indicate that we're ready and kick off the install process.
                 DispatchQueue.main.sync {
                     self.page = .ready
                     self.install()
                 }
-
             } catch {
                 DispatchQueue.main.async {
                     self.page = .error(error)
@@ -178,21 +176,15 @@ class InstallerModel: Runnable {
         }
     }
 
-}
-
-extension InstallerModel: SisInstallIoHandler {
-
-    func sisInstallBegin(sis: SisFile, driveRequired: Bool) -> OpoLua.SisInstallBeginResult {
+    private func getConfiguration(sis: Sis.File, driveRequired: Bool) -> Sis.BeginResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        print("Installing '\(sis.name)'...")
-
         do {
             let drives = try fileServer.drivesSync().filter { driveInfo in
                 driveInfo.mediaType != .rom
             }
             let sem = DispatchSemaphore(value: 0)
             let defaultLanguage = try! Locale.selectLanguage(sis.languages)
-            var result: SisInstallBeginResult = .userCancelled
+            var result: Sis.BeginResult = .userCancelled
             DispatchQueue.main.sync {
                 let query = ConfigurationQuery(sis: sis,
                                                drives: drives,
@@ -214,7 +206,108 @@ extension InstallerModel: SisInstallIoHandler {
         }
     }
 
-    func sisInstallQuery(sis: SisFile, text: String, type: InstallerQueryType) -> Bool {
+    private func getShouldInstallOrReplace(sis: Sis.File, replacing: Sis.File?, isNested: Bool) -> Bool {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+
+        // If there's nothing to relpace, we always install.
+        guard let replacing else {
+            return true
+        }
+
+        // If the installer is nested, we perform some automatic versioining to match the Psion implementation.
+        if isNested {
+
+            // If new version is the same as the old version, skip the install.
+            if sis.version == replacing.version {
+                return false
+            }
+
+            // If the new version is greater than the old version, install.
+            // TODO: OpoLua should parse the versions for us.
+            if let sisVersion = SisVersion(sis.version),
+               let replacingVersion = SisVersion(replacing.version),
+               sisVersion > replacingVersion {
+                return true
+            }
+
+        }
+
+        // If we're unsure, ask the user.
+        let sem = DispatchSemaphore(value: 0)
+        var result: Bool = false
+        DispatchQueue.main.sync {
+            let query = ReplaceQuery(sis: sis, replacing: replacing) { selection in
+                result = selection
+                sem.signal()
+            }
+            self.query = .replace(query)
+        }
+        defer {
+            DispatchQueue.main.sync {
+                self.query = nil
+            }
+        }
+        sem.wait()
+        return result
+    }
+
+}
+
+extension InstallerModel: SisInstallIoHandler {
+
+    func sisGetStubs() -> Sis.GetStubsResult {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        do {
+            let fileManager = FileManager.default
+            let paths = try fileServer.dirSync(path: "C:\\System\\Install\\")
+                .filter { $0.pathExtension.lowercased() == "sis" }
+            var stubs: [Sis.Stub] = []
+            for (index, file) in paths.enumerated() {
+                let temporaryURL = fileManager.temporaryURL()
+                defer {
+                    try? fileManager.removeItem(at: temporaryURL)
+                }
+                try fileServer.copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
+                    return .continue
+                }
+                let contents = try Data(contentsOf: temporaryURL)
+                DispatchQueue.main.sync {
+                    self.page = .checkingInstalledPackages(Float(index + 1) / Float(paths.count))
+                }
+                stubs.append(Sis.Stub(path: file.path, contents: contents))
+            }
+            return .stubs(stubs)
+        } catch {
+            if let error = error as? PLPToolsError {
+                return .epocError(error.rawValue)
+            } else {
+                // TODO: It'd be great to be able to avoid this.
+                print("Encountered unmapped internal plptools error during install '\(error)'.")
+                return .epocError(PLPToolsError.unknown.rawValue)
+            }
+        }
+    }
+
+    func sisInstallBegin(sis: Sis.File, driveRequired: Bool, replacing: Sis.File?) -> Sis.BeginResult {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        print("Installing '\(sis.name)'...")
+
+        // Prompt the user for the initial installation details.
+        let result = getConfiguration(sis: sis, driveRequired: driveRequired)
+        guard case Sis.BeginResult.install = result else {
+            return result
+        }
+
+        // Work out if we should replace the existing install, prompting the user if necessary.
+        // TODO: Force the prompt for the top-level sis; might need a callback.
+        if !getShouldInstallOrReplace(sis: sis, replacing: replacing, isNested: false) {
+            return .skipInstall
+        }
+
+        return result
+    }
+
+    func sisInstallQuery(sis: Sis.File, text: String, type: Sis.QueryType) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(.main))
         let sem = DispatchSemaphore(value: 0)
         var result: Bool = false
@@ -225,21 +318,21 @@ extension InstallerModel: SisInstallIoHandler {
             }
             self.query = .text(query)
         }
-        sem.wait()
         defer {
             DispatchQueue.main.sync {
                 self.query = nil
             }
         }
+        sem.wait()
         return result
     }
 
-    func sisInstallRollback(sis: SisFile) -> Bool {
+    func sisInstallRollback(sis: Sis.File) -> Bool {
         print("Rolling back...")
         return true
     }
 
-    func sisInstallComplete(sis: SisFile) {
+    func sisInstallComplete(sis: Sis.File) {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Install phase complete .")
     }
@@ -300,7 +393,7 @@ extension InstallerModel: SisInstallIoHandler {
             return .err(.notReady)
         } catch {
             if let error = error as? PLPToolsError {
-                return .epocerr(Int(error.rawValue))
+                return .epocError(error.rawValue)
             } else {
                 print("Encountered unmapped internal plptools error during install '\(error)'.")
                 return .err(.general)

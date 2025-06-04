@@ -20,13 +20,13 @@ import Foundation
 
 import OpoLua
 
-extension SisFile: @retroactive Identifiable, @retroactive Equatable {
+extension Sis.File: @retroactive Identifiable, @retroactive Equatable {
 
-    public static func == (lhs: SisFile, rhs: SisFile) -> Bool {
+    public static func == (lhs: Sis.File, rhs: Sis.File) -> Bool {
         return lhs.id == rhs.id
     }
 
-    public var id: UInt32 { uid }
+    public var id: String { "\(uid):\(version)" }
 
     public var localizedDisplayName: String {
         return "\((try? Locale.localize(name).text) ?? "Unknown Installer") - \(version)"

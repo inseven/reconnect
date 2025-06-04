@@ -24,7 +24,7 @@ import OpoLua
 extension Error {
 
     var isCancel: Bool {
-        if let error = self as? SisInstallError,
+        if let error = self as? Sis.InstallError,
            case .userCancelled = error {
             return true
         }
@@ -63,6 +63,16 @@ struct InstallerView: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
+            case .ready:
+                InstallerPage {
+                    VStack {
+                        Image("Installer")
+                    }
+                } actions: {
+                    Button("Continue") {}
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(true)
+                }
             case .checkingInstalledPackages(let progress):
                 InstallerPage {
                     VStack {
@@ -73,16 +83,6 @@ struct InstallerView: View {
                     .frame(maxWidth: LayoutMetrics.maximumContentWidth)
                 } actions: {
                     Button("Cancel", role: .destructive) {}
-                        .disabled(true)
-                }
-            case .ready:
-                InstallerPage {
-                    VStack {
-                        Image("Installer")
-                    }
-                } actions: {
-                    Button("Continue") {}
-                        .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
             case .copy(let path, let progress):
@@ -159,6 +159,8 @@ struct InstallerView: View {
             switch query {
             case .drive(let driveQuery):
                 ConfigurationQueryInstallerPage(query: driveQuery)
+            case .replace(let replaceQuery):
+                ReplaceQueryInstallerPage(query: replaceQuery)
             case .text(let textQuery):
                 TextQueryInstallerPage(query: textQuery)
             }

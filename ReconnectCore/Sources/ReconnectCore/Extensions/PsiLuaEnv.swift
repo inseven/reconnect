@@ -32,7 +32,7 @@ extension PsiLuaEnv {
         try CGImageWriteTIFF(destinationURL: to, images: images)
     }
 
-    public func loadSisFile(url: URL) throws -> SisFile {
+    public func loadSisFile(url: URL) throws -> Sis.File {
         let info = getFileInfo(path: url.path)
         guard case let .sis(sis) = info else {
             throw ReconnectError.invalidSisFile

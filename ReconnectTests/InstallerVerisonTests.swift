@@ -16,22 +16,18 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import XCTest
+@testable import Reconnect
 
-import ReconnectCore
-import OpoLua
+final class SisVersionTests: XCTestCase {
 
-extension Sis.InstallError: @retroactive LocalizedError {
+    func testComparison() {
+        XCTAssertLessThan(SisVersion(major: 1, minor: 1), SisVersion(major: 1, minor: 11))
+    }
 
-     public var errorDescription: String? {
-         switch self {
-         case .userCancelled:
-             return "User cancelled"
-         case .epocError(let code, _):
-             return LocalizedEpoc32ErrorCode(code)
-         case .internalError(let message):
-             return message
-         }
-     }
+    func testParsing() {
+        XCTAssertEqual(SisVersion("1.01"), SisVersion(major: 1, minor: 1))
+        XCTAssertEqual(SisVersion("1.11"), SisVersion(major: 1, minor: 11))
+    }
 
- }
+}

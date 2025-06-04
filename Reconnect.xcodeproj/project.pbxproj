@@ -36,6 +36,7 @@
 		D8631DB32C374B4400344DC3 /* TransfersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB22C374B4400344DC3 /* TransfersModel.swift */; };
 		D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB42C374F8700344DC3 /* TransfersView.swift */; };
 		D8631DB92C375F2400344DC3 /* WindowsPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8631DB82C375F2400344DC3 /* WindowsPathTests.swift */; };
+		D86BD0022DEFBE9A00A20841 /* InstallerVerisonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86BD0012DEFBE9500A20841 /* InstallerVerisonTests.swift */; };
 		D874B0CC2DEE4EB1008E938D /* SisInstallError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D874B0CB2DEE4EAE008E938D /* SisInstallError.swift */; };
 		D886DA742C28CDAD00E84BDA /* BrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA732C28CDAD00E84BDA /* BrowserView.swift */; };
 		D886DA762C29343900E84BDA /* BrowserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D886DA752C29343900E84BDA /* BrowserModel.swift */; };
@@ -61,6 +62,8 @@
 		D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8D5E3772DEB858500FEFBE1 /* ConfigurationQueryInstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D5E3762DEB858100FEFBE1 /* ConfigurationQueryInstallerPage.swift */; };
+		D8DE6DF72DF0D9A900E39CE2 /* SisVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DE6DF62DF0D9A500E39CE2 /* SisVersion.swift */; };
+		D8DE6DF92DF0DACF00E39CE2 /* ReplaceQueryInstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DE6DF82DF0DACE00E39CE2 /* ReplaceQueryInstallerPage.swift */; };
 		D8DECF462DE62876004DE55C /* InstallerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF452DE62874004DE55C /* InstallerView.swift */; };
 		D8DECF482DE62890004DE55C /* InstallerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DECF472DE6288C004DE55C /* InstallerModel.swift */; };
 		D8E2325C2DE1117800879866 /* FileConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E2325B2DE1117400879866 /* FileConverter.swift */; };
@@ -155,6 +158,7 @@
 		D8631DB22C374B4400344DC3 /* TransfersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersModel.swift; sourceTree = "<group>"; };
 		D8631DB42C374F8700344DC3 /* TransfersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersView.swift; sourceTree = "<group>"; };
 		D8631DB82C375F2400344DC3 /* WindowsPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowsPathTests.swift; sourceTree = "<group>"; };
+		D86BD0012DEFBE9500A20841 /* InstallerVerisonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerVerisonTests.swift; sourceTree = "<group>"; };
 		D874B0CB2DEE4EAE008E938D /* SisInstallError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SisInstallError.swift; sourceTree = "<group>"; };
 		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
 		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
@@ -178,6 +182,8 @@
 		D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerPage.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		D8D5E3762DEB858100FEFBE1 /* ConfigurationQueryInstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationQueryInstallerPage.swift; sourceTree = "<group>"; };
+		D8DE6DF62DF0D9A500E39CE2 /* SisVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SisVersion.swift; sourceTree = "<group>"; };
+		D8DE6DF82DF0DACE00E39CE2 /* ReplaceQueryInstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceQueryInstallerPage.swift; sourceTree = "<group>"; };
 		D8DECF452DE62874004DE55C /* InstallerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerView.swift; sourceTree = "<group>"; };
 		D8DECF472DE6288C004DE55C /* InstallerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerModel.swift; sourceTree = "<group>"; };
 		D8E2325B2DE1117400879866 /* FileConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileConverter.swift; sourceTree = "<group>"; };
@@ -277,6 +283,7 @@
 				D8E2325B2DE1117400879866 /* FileConverter.swift */,
 				D8AB7ED22D0AA1130076E19F /* FileReference.swift */,
 				D8DECF472DE6288C004DE55C /* InstallerModel.swift */,
+				D8DE6DF62DF0D9A500E39CE2 /* SisVersion.swift */,
 				D8631DB02C374B0A00344DC3 /* Transfer.swift */,
 				D8631DB22C374B4400344DC3 /* TransfersModel.swift */,
 			);
@@ -382,6 +389,7 @@
 		D84964EA2C1BFCB700405656 /* ReconnectTests */ = {
 			isa = PBXGroup;
 			children = (
+				D86BD0012DEFBE9500A20841 /* InstallerVerisonTests.swift */,
 				D83658B62C29596F00B45693 /* NavigationStackTests.swift */,
 				D84964EB2C1BFCB700405656 /* ReconnectTests.swift */,
 				D8631DB82C375F2400344DC3 /* WindowsPathTests.swift */,
@@ -427,6 +435,7 @@
 		D8AB9C352DEE3A5C0087F13E /* Installer */ = {
 			isa = PBXGroup;
 			children = (
+				D8DE6DF82DF0DACE00E39CE2 /* ReplaceQueryInstallerPage.swift */,
 				D8D5E3762DEB858100FEFBE1 /* ConfigurationQueryInstallerPage.swift */,
 				D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */,
 				D8DECF452DE62874004DE55C /* InstallerView.swift */,
@@ -735,10 +744,12 @@
 				D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */,
 				D8981E442DE3B14F003CBCF0 /* SparkleCommands.swift in Sources */,
 				D83B4DDF2C2F9995003C3DC1 /* CheckForUpdatesView.swift in Sources */,
+				D8DE6DF92DF0DACF00E39CE2 /* ReplaceQueryInstallerPage.swift in Sources */,
 				D8631DB12C374B0A00344DC3 /* Transfer.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 				D8631DB52C374F8700344DC3 /* TransfersView.swift in Sources */,
 				D83BD9792DE914B40075902D /* AppDelegate.swift in Sources */,
+				D8DE6DF72DF0D9A900E39CE2 /* SisVersion.swift in Sources */,
 				D8AB9C382DEE3EFE0087F13E /* WindowProxy.swift in Sources */,
 				D8AC642C2D0D58970085306B /* ThumbnailView.swift in Sources */,
 			);
@@ -749,6 +760,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8631DB92C375F2400344DC3 /* WindowsPathTests.swift in Sources */,
+				D86BD0022DEFBE9A00A20841 /* InstallerVerisonTests.swift in Sources */,
 				D83658B72C29596F00B45693 /* NavigationStackTests.swift in Sources */,
 				D84964EC2C1BFCB700405656 /* ReconnectTests.swift in Sources */,
 			);
