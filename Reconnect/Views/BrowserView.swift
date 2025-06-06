@@ -165,7 +165,7 @@ struct BrowserView: View {
             ToolbarItem(id: "add") {
                 Menu {
                     Button("Install...") {
-
+                        applicationModel.openInstaller()
                     }
                     Divider()
                     Button {
