@@ -282,7 +282,6 @@ extension InstallerModel: SisInstallIoHandler {
             if let error = error as? PLPToolsError {
                 return .epocError(error.rawValue)
             } else {
-                // TODO: It'd be great to be able to avoid this.
                 print("Encountered unmapped internal plptools error during install '\(error)'.")
                 return .epocError(PLPToolsError.unknown.rawValue)
             }
