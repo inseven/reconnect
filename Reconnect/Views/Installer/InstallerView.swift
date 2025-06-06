@@ -157,8 +157,8 @@ struct InstallerView: View {
         }
         .sheet(item: $installerModel.query) { query in
             switch query {
-            case .drive(let driveQuery):
-                ConfigurationQueryInstallerPage(query: driveQuery)
+            case .configuration(let configurationQuery):
+                ConfigurationQueryInstallerPage(query: configurationQuery)
             case .replace(let replaceQuery):
                 ReplaceQueryInstallerPage(query: replaceQuery)
             case .text(let textQuery):

@@ -109,7 +109,7 @@ class InstallerModel: Runnable {
 
         var id: UUID {
             switch self {
-            case .drive(let configurationQuery):
+            case .configuration(let configurationQuery):
                 return configurationQuery.id
             case .replace(let replaceQuery):
                 return replaceQuery.id
@@ -118,7 +118,7 @@ class InstallerModel: Runnable {
             }
         }
 
-        case drive(ConfigurationQuery)  // TODO: Rename to configuration
+        case configuration(ConfigurationQuery)
         case replace(ReplaceQuery)
         case text(TextQuery)
     }
@@ -193,7 +193,7 @@ class InstallerModel: Runnable {
                     result = selection
                     sem.signal()
                 }
-                self.query = .drive(query)
+                self.query = .configuration(query)
             }
             sem.wait()
             defer {
