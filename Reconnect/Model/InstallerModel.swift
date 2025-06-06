@@ -224,10 +224,7 @@ class InstallerModel: Runnable {
             }
 
             // If the new version is greater than the old version, install.
-            // TODO: OpoLua should parse the versions for us.
-            if let sisVersion = SisVersion(sis.version),
-               let replacingVersion = SisVersion(replacing.version),
-               sisVersion > replacingVersion {
+            if sis.version > replacing.version {
                 return true
             }
 
