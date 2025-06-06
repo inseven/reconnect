@@ -56,11 +56,12 @@ class InstallerModel: Runnable {
         let id = UUID()
 
         let sis: Sis.File
-        let replacing: Sis.File
+        let replacing: Sis.Installation
+
         private let completion: (Bool) -> Void
 
         init(sis: Sis.File,
-             replacing: Sis.File,
+             replacing: Sis.Installation,
              completion: @escaping (Bool) -> Void) {
             self.sis = sis
             self.replacing = replacing
@@ -206,7 +207,7 @@ class InstallerModel: Runnable {
         }
     }
 
-    private func getShouldInstallOrReplace(sis: Sis.File, replacing: Sis.File?, isNested: Bool) -> Bool {
+    private func getShouldInstallOrReplace(sis: Sis.File, replacing: Sis.Installation?, isRoot: Bool) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
         // If there's nothing to relpace, we always install.
@@ -215,7 +216,7 @@ class InstallerModel: Runnable {
         }
 
         // If the installer is nested, we perform some automatic versioining to match the Psion implementation.
-        if isNested {
+        if !isRoot {
 
             // If new version is the same as the old version, skip the install.
             if sis.version == replacing.version {
@@ -288,20 +289,23 @@ extension InstallerModel: SisInstallIoHandler {
         }
     }
 
-    func sisInstallBegin(sis: Sis.File, driveRequired: Bool, replacing: Sis.File?) -> Sis.BeginResult {
+    func sisInstallBegin(sis: OpoLua.Sis.File, context: Sis.BeginContext) -> Sis.BeginResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Installing '\(sis.name)'...")
 
         // Prompt the user for the initial installation details.
-        let result = getConfiguration(sis: sis, driveRequired: driveRequired)
+        let result = getConfiguration(sis: sis, driveRequired: context.driveRequired)
         guard case Sis.BeginResult.install = result else {
             return result
         }
 
         // Work out if we should replace the existing install, prompting the user if necessary.
-        // TODO: Force the prompt for the top-level sis; might need a callback.
-        if !getShouldInstallOrReplace(sis: sis, replacing: replacing, isNested: false) {
-            return .skipInstall
+        if !getShouldInstallOrReplace(sis: sis, replacing: context.replacing, isRoot: context.isRoot) {
+            if context.isRoot {
+                return .userCancelled
+            } else {
+                return .skipInstall
+            }
         }
 
         return result
