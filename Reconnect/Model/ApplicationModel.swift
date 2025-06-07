@@ -59,12 +59,53 @@ class ApplicationModel: NSObject {
         updaterController.startUpdater()
     }
 
+    func openInstaller() {
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = true
+        openPanel.canChooseDirectories = false
+        openPanel.canCreateDirectories = false
+        openPanel.allowsMultipleSelection = false
+        openPanel.allowedContentTypes = [.sis]
+        guard openPanel.runModal() ==  NSApplication.ModalResponse.OK else {
+            return
+        }
+        for url in openPanel.urls {
+            showInstallerWindow(url: url)
+        }
+    }
+
     func openMenuApplication() {
         guard let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
             return
         }
         let openConfiguraiton = NSWorkspace.OpenConfiguration()
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguraiton)
+    }
+
+    func showInstallerWindow(url: URL) {
+
+        // Ignore urls used for launching Reconnect from the menu bar.
+        guard url.isFileURL else {
+            return
+        }
+
+        // Check to see if there's already an open window for the installer.
+        var window = NSApplication.shared.windows.first { window in
+            guard let window = window as? NSInstallerWindow else {
+                return false
+            }
+            return window.url == url
+        }
+
+        // Create a new window and center if one doesn't exist.
+        if window == nil {
+            print("Creating new installer window for '\(url)'...")
+            window = NSInstallerWindow(url: url)
+            window?.center()
+        }
+
+        // Foreground the window.
+        window?.makeKeyAndOrderFront(nil)
     }
 
 }

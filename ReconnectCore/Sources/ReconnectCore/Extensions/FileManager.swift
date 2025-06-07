@@ -34,4 +34,28 @@ extension FileManager {
         return temporaryURL
     }
 
+    public func fileExists(at url: URL) -> Bool {
+        guard url.isFileURL else {
+            return false
+        }
+        return fileExists(atPath: url.path)
+    }
+
+    public func safelyMoveItem(at sourceURL: URL, toDirectory destinationDirectoryURL: URL) throws -> URL {
+        for index in 1... {
+            let filename = if index == 1 {
+                sourceURL.lastPathComponent
+            } else {
+                "\(sourceURL.lastPathComponent.deletingPathExtension) \(index).\(sourceURL.lastPathComponent.pathExtension)"
+            }
+            let destinationURL = destinationDirectoryURL.appendingPathComponent(filename)
+            guard !fileExists(at: destinationURL) else {
+                continue
+            }
+            try moveItem(at: sourceURL, to: destinationURL)
+            return destinationURL
+        }
+        throw POSIXError(.EEXIST)
+    }
+
 }

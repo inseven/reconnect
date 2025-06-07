@@ -18,34 +18,20 @@
 
 import Foundation
 
-import plpftp
+import ReconnectCore
+import OpoLua
 
-public enum ReconnectError: Error {
-    case unknown
-    case invalidFilePath
-    case unknownFileSize
-    case imageSaveError
-    case invalidLocalization
-    case invalidSisFile
-}
+extension Sis.InstallError: @retroactive LocalizedError {
 
-extension ReconnectError: LocalizedError {
+     public var errorDescription: String? {
+         switch self {
+         case .userCancelled:
+             return "User cancelled"
+         case .epocError(let code, _):
+             return LocalizedEpoc32ErrorCode(code)
+         case .internalError(let message):
+             return message
+         }
+     }
 
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "Unknown error."
-        case .invalidFilePath:
-            return "Invalid file path."
-        case .unknownFileSize:
-            return "Unknown file size."
-        case .imageSaveError:
-            return "Failed to save image."
-        case .invalidLocalization:
-            return "Badly formatted localized text."
-        case .invalidSisFile:
-            return "Invalid SIS file."
-        }
-    }
-
-}
+ }

@@ -16,35 +16,17 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import SwiftUI
 
-import plpftp
+@MainActor
+final class AppDelegate: NSObject, NSApplicationDelegate {
 
-public enum ReconnectError: Error {
-    case unknown
-    case invalidFilePath
-    case unknownFileSize
-    case imageSaveError
-    case invalidLocalization
-    case invalidSisFile
-}
+    let applicationModel = ApplicationModel()
+    let transfersModel = TransfersModel()
 
-extension ReconnectError: LocalizedError {
-
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "Unknown error."
-        case .invalidFilePath:
-            return "Invalid file path."
-        case .unknownFileSize:
-            return "Unknown file size."
-        case .imageSaveError:
-            return "Failed to save image."
-        case .invalidLocalization:
-            return "Badly formatted localized text."
-        case .invalidSisFile:
-            return "Invalid SIS file."
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            applicationModel.showInstallerWindow(url: url)
         }
     }
 

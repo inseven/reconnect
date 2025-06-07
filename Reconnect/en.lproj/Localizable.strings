@@ -1,0 +1,114 @@
+// Reconnect -- Psion connectivity for macOS
+//
+// Copyright (C) 2024 Jason Morley
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+"af_ZA" = "Afrikaans";
+"am_ET" = "Amharic";
+"ar" = "Arabic";
+"be_BY" = "Belarussian";
+"bg_BG" = "Bulgarian";
+"bn" = "Bengali";
+"bo" = "Tibetan";
+"ca_ES" = "Catalan";
+"cs_CZ" = "Czech";
+"cy_GB" = "Welsh";
+"da_DK" = "Danish";
+"de_AT" = "Austrian German";
+"de_CH" = "Swiss German";
+"de_DE" = "German";
+"el_CY" = "Cyprus Greek";
+"el_GR" = "Greek";
+"en_001" = "International English";
+"en_AU" = "Australian English";
+"en_CA" = "Canadian English";
+"en_GB" = "UK English";
+"en_NZ" = "New Zealand English";
+"en_US" = "American English";
+"en_ZA" = "South African English";
+"es_419" = "Latin American Spanish";
+"es_ES" = "Spanish";
+"es" = "International Spanish";
+"et_EE" = "Estonian";
+"fa_IR" = "Farsi";
+"fi_FI" = "Finnish";
+"fil_PH" = "Tagalog";
+"fr_BE" = "Belgian French";
+"fr_CA" = "Canadian French";
+"fr_CH" = "Swiss French";
+"fr_FR" = "French";
+"fr" = "International French";
+"ga_IE" = "Irish";
+"gd_GB" = "Scots Gaelic";
+"gu_IN" = "Gujarati";
+"he_IL" = "Hebrew";
+"hi_IN" = "Hindi";
+"hr_HR" = "Croatian";
+"hu_HU" = "Hungarian";
+"hy_AM" = "Armenian";
+"id_ID" = "Indonesian";
+"is_IS" = "Icelandic";
+"it_CH" = "Swiss Italian";
+"it_IT" = "Italian";
+"ja_JP" = "Japanese";
+"ka_GE" = "Georgian";
+"kk_KZ" = "Kazakh";
+"km_KH" = "Khmer";
+"kn_IN" = "Kannada";
+"ko_KR" = "Korean";
+"lo_LA" = "Laothian";
+"lt_LT" = "Lithuanian";
+"lv_LV" = "Latvian";
+"mk_MK" = "Macedonian";
+"ml_IN" = "Malayalam";
+"mn_MN" = "Mongolian";
+"mr_IN" = "Marathi";
+"ms_MY" = "Malay";
+"my_MM" = "Burmese";
+"nl_BE" = "Belgian Flemish";
+"nl_NL" = "Dutch";
+"nn_NO" = "Norwegian-Nynorsk";
+"no_NO" = "Norwegian";
+"pa" = "Punjabi";
+"pl_PL" = "Polish";
+"pt_BR" = "Brazilian Portuguese";
+"pt_PT" = "Portuguese";
+"ro_MD" = "Moldavian";
+"ro_RO" = "Romanian";
+"ru_RU" = "Russian";
+"si_LK" = "Sinhalese";
+"sk_SK" = "Slovak";
+"sl_SI" = "Slovenian";
+"so_SO" = "Somali";
+"sq_AL" = "Albanian";
+"sr" = "Serbian";
+"sv_FI" = "Finland Swedish";
+"sv_SE" = "Swedish";
+"sw" = "Swahili";
+"ta_LK" = "Tamil";
+"te_IN" = "Telugu";
+"th_TH" = "Thai";
+"ti" = "Tigrinya";
+"tk_TM" = "Turkmen";
+"tr_CY" = "Cyprus Turkish";
+"tr_TR" = "Turkish";
+"uk_UA" = "Ukrainian";
+"ur" = "Urdu";
+"vi_VN" = "Vietnamese";
+"zh_Hant_CN" = "PRC Chinese";
+"zh_Hant_HK" = "Hong Kong Chinese";
+"zh_Hant_TW" = "Taiwan Chinese";
+"zu_ZA" = "Zulu";

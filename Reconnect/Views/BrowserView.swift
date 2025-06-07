@@ -163,8 +163,16 @@ struct BrowserView: View {
             }
 
             ToolbarItem(id: "add") {
-                Button {
-                    sheet = .install
+                Menu {
+                    Button("Install...") {
+                        applicationModel.openInstaller()
+                    }
+                    Divider()
+                    Button {
+                        openWindow(id: PsionSoftwareIndexWindow.id)
+                    } label: {
+                        Label("Psion Software Index", systemImage: "plus")
+                    }
                 } label: {
                     Label("Add", systemImage: "plus")
                 }
@@ -177,11 +185,11 @@ struct BrowserView: View {
             case .install:
                 SoftwareIndexView { release in
                     return release.kind == .installer && release.hasDownload /* && release.tags.contains("opl")*/
-                } completion: { url in
-                    guard let url else {
+                } completion: { item in
+                    guard let item else {
                         return
                     }
-                    browserModel.upload(url: url)
+                    applicationModel.showInstallerWindow(url: item.url)
                 }
             }
         }

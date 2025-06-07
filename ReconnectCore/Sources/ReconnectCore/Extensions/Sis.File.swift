@@ -1,6 +1,6 @@
 // Reconnect -- Psion connectivity for macOS
 //
-// Copyright (C) 2024-2025 Jason Morley
+// Copyright (C) 2024 Jason Morley
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,34 +18,18 @@
 
 import Foundation
 
-import plpftp
+import OpoLua
 
-public enum ReconnectError: Error {
-    case unknown
-    case invalidFilePath
-    case unknownFileSize
-    case imageSaveError
-    case invalidLocalization
-    case invalidSisFile
-}
+extension Sis.File: @retroactive Identifiable, @retroactive Equatable {
 
-extension ReconnectError: LocalizedError {
+    public static func == (lhs: Sis.File, rhs: Sis.File) -> Bool {
+        return lhs.id == rhs.id
+    }
 
-    public var errorDescription: String? {
-        switch self {
-        case .unknown:
-            return "Unknown error."
-        case .invalidFilePath:
-            return "Invalid file path."
-        case .unknownFileSize:
-            return "Unknown file size."
-        case .imageSaveError:
-            return "Failed to save image."
-        case .invalidLocalization:
-            return "Badly formatted localized text."
-        case .invalidSisFile:
-            return "Invalid SIS file."
-        }
+    public var id: String { "\(uid):\(version)" }
+
+    public var localizedDisplayName: String {
+        return "\((try? Locale.localize(name).text) ?? "Unknown Installer") - \(version)"
     }
 
 }
