@@ -19,38 +19,6 @@
 import SwiftUI
 
 import Interact
-import PsionSoftwareIndex
-
-struct PsionSoftwareIndexWindow: Scene {
-
-    static let id = "psion-software-index"
-
-    @Environment(ApplicationModel.self) private var applicationModel
-
-    @State var error: Error? = nil
-
-    var body: some Scene {
-        Window("Psion Software Index", id: Self.id) {
-            SoftwareIndexView { release in
-                return release.kind == .installer && release.hasDownload
-            } completion: { item in
-                guard let item else {
-                    return
-                }
-                do {
-                    let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
-                    applicationModel.showInstallerWindow(url: url)
-                } catch {
-                    self.error = error
-                }
-            }
-            .presents($error)
-        }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.psionSoftwareIndex])
-    }
-
-}
 
 struct TransfersWindow: Scene {
 

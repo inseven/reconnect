@@ -130,7 +130,7 @@ struct TransferRow: View {
                         switch details.reference {
                         case .local(let url):
                             Application.reveal(url)
-                        case .remote(let directoryEntry):
+                        case .remote:
                             print("Revealing remote files is not currently supported!")
                         }
                     } label: {

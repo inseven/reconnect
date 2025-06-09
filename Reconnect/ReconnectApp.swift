@@ -19,6 +19,7 @@
 import SwiftUI
 
 import Diligence
+import PsionSoftwareIndex
 
 @main @MainActor
 struct ReconnectApp: App {
@@ -38,6 +39,15 @@ struct ReconnectApp: App {
         PsionSoftwareIndexWindow()
             .environment(appDelegate.applicationModel)
             .environment(appDelegate.transfersModel)
+            .handlesExternalEvents(matching: [.psionSoftwareIndex])
+            .onDownloadItem { item in
+                do {
+                    let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
+                    appDelegate.applicationModel.showInstallerWindow(url: url)
+                } catch {
+                    print("Failed to handle download with error \(error).")
+                }
+            }
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("GitHub", url: .gitHub)

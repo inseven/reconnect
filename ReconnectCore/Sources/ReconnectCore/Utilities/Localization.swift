@@ -105,7 +105,7 @@ public func LocalizedEpoc32ErrorCode(_ code: Int32) -> String {
     case -49:  // E_PSI_FILE_ALLOC
         return "No memory for control block"
     case -50:  // E_PSI_FILE_DISC
-        return "Unit disconnected"
+        return "Disconnected"
     case -51:  // E_PSI_FILE_CONNECT
         return "Already connected"
     case -52:  // E_PSI_FILE_RETRAN
