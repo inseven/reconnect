@@ -62,6 +62,7 @@ struct ReconnectApp: App {
                 Credit("Fabrice Cappaert")
                 Credit("George Wright")
                 Credit("Lukas Fittl")
+                Credit("Matt Sephton")
                 Credit("Sarah Barbour")
                 Credit("Tom Sutcliffe")
             }
