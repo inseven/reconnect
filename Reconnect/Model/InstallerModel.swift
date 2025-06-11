@@ -123,6 +123,8 @@ class InstallerModel: Runnable {
         case text(TextQuery)
     }
 
+    private static let installDirectory = "C:\\System\\Install\\"
+
     private let fileServer = FileServer()
     private let url: URL
 
@@ -257,7 +259,14 @@ extension InstallerModel: SisInstallIoHandler {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
             let fileManager = FileManager.default
-            let paths = try fileServer.dirSync(path: "C:\\System\\Install\\")
+
+            // Ensure the install directory exists on the Psion.
+            if !(try fileServer.fileExistsSync(path: Self.installDirectory)) {
+                try fileServer.mkdirSync(path: Self.installDirectory)
+            }
+
+            // Index the existing stubs.
+            let paths = try fileServer.dirSync(path: Self.installDirectory)
                 .filter { $0.pathExtension.lowercased() == "sis" }
             var stubs: [Sis.Stub] = []
             for (index, file) in paths.enumerated() {
