@@ -16,22 +16,12 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import UniformTypeIdentifiers
 
-import Interact
+extension UTType {
 
-struct TransfersWindow: Scene {
-
-    static let id = "transfers"
-
-    @Environment(TransfersModel.self) private var transfersModel
-
-    var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
-        }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.transfers])
+    public static var sis: Self {
+        return UTType(exportedAs: "com.psion.sis", conformingTo: .data)
     }
 
 }

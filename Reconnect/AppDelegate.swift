@@ -18,20 +18,16 @@
 
 import SwiftUI
 
-import Interact
+@MainActor
+final class AppDelegate: NSObject, NSApplicationDelegate {
 
-struct TransfersWindow: Scene {
+    let applicationModel = ApplicationModel()
+    let transfersModel = TransfersModel()
 
-    static let id = "transfers"
-
-    @Environment(TransfersModel.self) private var transfersModel
-
-    var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            applicationModel.showInstallerWindow(url: url)
         }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.transfers])
     }
 
 }

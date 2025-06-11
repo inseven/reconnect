@@ -23,20 +23,9 @@ import PsionSoftwareIndex
 @MainActor
 struct BrowserView: View {
 
-    enum SheetType: Identifiable {
-
-        var id: Self {
-            return self
-        }
-
-        case install
-    }
-
     @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) private var applicationModel
-
-    @State private var sheet: SheetType? = nil
 
     private var browserModel: BrowserModel
 
@@ -163,8 +152,12 @@ struct BrowserView: View {
             }
 
             ToolbarItem(id: "add") {
-                Button {
-                    sheet = .install
+                Menu {
+                    Button("Install...") {
+                        applicationModel.openInstaller()
+                    }
+                    Divider()
+                    PsionSoftwareIndexLink()
                 } label: {
                     Label("Add", systemImage: "plus")
                 }
@@ -172,19 +165,6 @@ struct BrowserView: View {
 
         }
         .navigationTitle(browserModel.navigationTitle ?? "My Psion")
-        .sheet(item: $sheet) { sheet in
-            switch sheet {
-            case .install:
-                SoftwareIndexView { release in
-                    return release.kind == .installer && release.hasDownload /* && release.tags.contains("opl")*/
-                } completion: { url in
-                    guard let url else {
-                        return
-                    }
-                    browserModel.upload(url: url)
-                }
-            }
-        }
         .presents($browserModel.lastError)
         .onAppear {
             browserModel.navigate(to: "C:\\")

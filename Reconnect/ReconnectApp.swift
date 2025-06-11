@@ -19,22 +19,35 @@
 import SwiftUI
 
 import Diligence
+import PsionSoftwareIndex
 
 @main @MainActor
 struct ReconnectApp: App {
 
-    static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
+    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
 
-    @State var transfersModel = TransfersModel()
-    @State var applicationModel = ApplicationModel()
+    static let title = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
 
     var body: some Scene {
 
-        BrowserWindow(applicationModel: applicationModel, transfersModel: transfersModel)
+        BrowserWindow(applicationModel: appDelegate.applicationModel, transfersModel: appDelegate.transfersModel)
 
         TransfersWindow()
-            .environment(applicationModel)
-            .environment(transfersModel)
+            .environment(appDelegate.applicationModel)
+            .environment(appDelegate.transfersModel)
+
+        PsionSoftwareIndexWindow()
+            .environment(appDelegate.applicationModel)
+            .environment(appDelegate.transfersModel)
+            .handlesExternalEvents(matching: [.psionSoftwareIndex])
+            .onDownloadItem { item in
+                do {
+                    let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
+                    appDelegate.applicationModel.showInstallerWindow(url: url)
+                } catch {
+                    print("Failed to handle download with error \(error).")
+                }
+            }
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("GitHub", url: .gitHub)

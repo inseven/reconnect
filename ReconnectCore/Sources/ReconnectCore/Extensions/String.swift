@@ -28,6 +28,10 @@ public extension String {
             .joined(separator: .windowsPathSeparator)
     }
 
+    var deletingPathExtension: String {
+        return (self as NSString).deletingPathExtension
+    }
+
     var isRoot: Bool {
         return windowsPathComponents.count == 1
     }
@@ -38,6 +42,10 @@ public extension String {
 
     var lastWindowsPathComponent: String {
         return windowsPathComponents.last ?? ""
+    }
+
+    var pathExtension: String {
+        return (self as NSString).pathExtension
     }
 
     var windowsPathComponents: [String] {

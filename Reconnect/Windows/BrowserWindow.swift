@@ -38,14 +38,6 @@ struct BrowserWindow: Scene {
     var body: some Scene {
         Window("My Psion", id: "browser") {
             BrowserView(browserModel: browserModel)
-                .onOpenURL { url in
-                    guard url == .update else {
-                        print("Unsupported URL \(url).")
-                        return
-                    }
-                    applicationModel.updaterController.updater.checkForUpdates()
-                }
-                .handlesExternalEvents(preferring: [.install], allowing: [])
         }
         .commands {
             SparkleCommands(applicationModel: applicationModel)

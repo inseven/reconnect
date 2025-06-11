@@ -18,20 +18,22 @@
 
 import SwiftUI
 
-import Interact
+class WindowProxy {
 
-struct TransfersWindow: Scene {
+    weak var nsWindow: NSWindow?
 
-    static let id = "transfers"
-
-    @Environment(TransfersModel.self) private var transfersModel
-
-    var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
+    var title: String {
+        get {
+            return nsWindow?.title ?? ""
         }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.transfers])
+        set {
+            nsWindow?.title = newValue
+        }
     }
+}
+
+extension EnvironmentValues {
+
+    @Entry var window = WindowProxy()
 
 }

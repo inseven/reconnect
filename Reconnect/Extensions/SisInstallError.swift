@@ -16,22 +16,22 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-import Interact
+import ReconnectCore
+import OpoLua
 
-struct TransfersWindow: Scene {
+extension Sis.InstallError: @retroactive LocalizedError {
 
-    static let id = "transfers"
+     public var errorDescription: String? {
+         switch self {
+         case .userCancelled:
+             return "User cancelled"
+         case .epocError(let code, _):
+             return LocalizedEpoc32ErrorCode(code)
+         case .internalError(let message):
+             return message
+         }
+     }
 
-    @Environment(TransfersModel.self) private var transfersModel
-
-    var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
-        }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.transfers])
-    }
-
-}
+ }

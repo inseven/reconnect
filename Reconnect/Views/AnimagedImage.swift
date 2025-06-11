@@ -1,6 +1,6 @@
 // Reconnect -- Psion connectivity for macOS
 //
-// Copyright (C) 2024-2025 Jason Morley
+// Copyright (C) 2024 Jason Morley
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,20 @@
 
 import SwiftUI
 
-import Interact
+struct AnimatedImage: NSViewRepresentable {
 
-struct TransfersWindow: Scene {
+    var name: String
 
-    static let id = "transfers"
+    init(named name: String) {
+        self.name = name
+    }
 
-    @Environment(TransfersModel.self) private var transfersModel
+    func makeNSView(context: Context) -> NSImageView {
+        let image = NSImage(named: name)!
+        return NSImageView(image: image)
+    }
 
-    var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
-        }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.transfers])
+    func updateNSView(_ uiView: NSImageView, context: Context) {
     }
 
 }

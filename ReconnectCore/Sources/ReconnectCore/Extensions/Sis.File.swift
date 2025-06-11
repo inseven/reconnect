@@ -1,6 +1,6 @@
 // Reconnect -- Psion connectivity for macOS
 //
-// Copyright (C) 2024-2025 Jason Morley
+// Copyright (C) 2024 Jason Morley
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,20 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-import Interact
+import OpoLua
 
-struct TransfersWindow: Scene {
+extension Sis.File: @retroactive Identifiable, @retroactive Equatable {
 
-    static let id = "transfers"
+    public static func == (lhs: Sis.File, rhs: Sis.File) -> Bool {
+        return lhs.id == rhs.id
+    }
 
-    @Environment(TransfersModel.self) private var transfersModel
+    public var id: String { "\(uid):\(version)" }
 
-    var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
-        }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.transfers])
+    public var localizedDisplayName: String {
+        return "\((try? Locale.localize(name).text) ?? "Unknown Installer") - \(version)"
     }
 
 }

@@ -18,20 +18,20 @@
 
 import SwiftUI
 
-import Interact
+class NSInstallerWindow: NSWindow {
 
-struct TransfersWindow: Scene {
+    var url: URL?
 
-    static let id = "transfers"
-
-    @Environment(TransfersModel.self) private var transfersModel
-
-    var body: some Scene {
-        Window("Transfers", id: Self.id) {
-            TransfersView(transfersModel: transfersModel)
-        }
-        .windowResizability(.contentSize)
-        .handlesExternalEvents(matching: [.transfers])
+    convenience init(url: URL) {
+        let windowProxy = WindowProxy()
+        let rootView = InstallerView(url: url)
+            .environment(\.window, windowProxy)
+        self.init(contentViewController: NSHostingController(rootView: rootView))
+        self.url = url
+        windowProxy.nsWindow = self
+        title = url.displayName
+        styleMask.remove([.resizable, .borderless, .fullSizeContentView])
+        setContentSize(CGSize(width: 800, height: 600))
     }
 
 }
