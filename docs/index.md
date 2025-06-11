@@ -17,3 +17,10 @@
     <source srcset="/images/screenshot-default-dark@2x.png" media="(prefers-color-scheme: dark)">
     <img class="hero" src="/images/screenshot-default@2x.png" width="1230" />
 </picture>
+
+## Features
+
+- Browse files on your Psion
+- Transfer files between your Mac and Psion
+- Install Psion programs from your Mac
+- Automatically convert image files
