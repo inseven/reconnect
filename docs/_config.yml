@@ -9,6 +9,7 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-environment-variables
+  - jekyll-toc
 destination: ../_site
 
 defaults:

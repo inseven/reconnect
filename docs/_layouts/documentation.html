@@ -1,0 +1,19 @@
+---
+layout: default
+---
+
+<header>
+    <h1>Documentation</h1>
+</header>
+
+<div class="content-sidebar">
+    <left-sidebar class="tree">
+        {% file_tree docs %}
+    </left-sidebar>
+    <main-content>
+        {{ content }}
+        <page-controls>
+            <a href="https://github.com/inseven/reconnect/edit/main/docs/{{ page.path }}">Edit</a>
+        </page-controls>
+    </main-content>
+</div>
