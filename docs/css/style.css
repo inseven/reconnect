@@ -51,8 +51,7 @@ h1, h2, h3 {
     margin: var(--vertical-spacing) 0 calc(2 * var(--vertical-spacing)) 0;
 }
 
-/* TODO: Put this in a header and change the weight of the secondaries. */
-h1 {
+header h1 {
     text-align: center;
     font-size: 3em;
 }
@@ -161,7 +160,6 @@ ul.navigation > li {
 
 .content-sidebar h1 {
     text-align: left;
-    font-size: 32px;
     border-bottom: var(--line-weight) solid var(--secondary-foreground-color);
     padding-bottom: 0.5rem;
 }
