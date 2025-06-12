@@ -56,10 +56,6 @@ header h1 {
     font-size: 3em;
 }
 
-h1 a, h2 a, h3 a {
-    text-decoration: none;
-}
-
 p {
     margin: var(--vertical-spacing) 0 var(--vertical-spacing) 0;
 }
