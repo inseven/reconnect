@@ -21,6 +21,10 @@ import Foundation
 import ncp
 import plpftp
 
+// Thread-safe FileServer implementation.
+// This intentionally provides a blocking API to make it easy to perform sequential operations without relying on the
+// new async/await concurrency model. This is driven by the need to support OpoLua blocking callbacks as Apple
+// documentation says you shouldn't be using traditional concurrency mechanisms to make async/await operations blocking.
 public class FileServer {
 
     public enum MediaType: UInt32 {
@@ -411,12 +415,6 @@ public class FileServer {
             } catch {
                 return false
             }
-        }
-    }
-
-    public func mkdir(path: String) async throws {
-        try await perform {
-            try self.workQueue_mkdir(path: path)
         }
     }
 
