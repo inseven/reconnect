@@ -138,6 +138,18 @@ class BrowserModel {
         }
     }
 
+    private func run(task: @escaping () throws -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            do {
+                try task()
+            } catch {
+                DispatchQueue.main.sync {
+                    self.lastError = error
+                }
+            }
+        }
+    }
+
     func canGoBack() -> Bool {
         return navigationStack.canGoBack()
     }
@@ -157,14 +169,14 @@ class BrowserModel {
     }
 
     func newFolder() {
-        runAsync {
+        run {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
             }
 
             // Get the names of the files and folders in the current path.
-            let names = try await self.fileServer
-                .dir(path: path)
+            let names = try self.fileServer
+                .dirSync(path: path)
                 .map { $0.name }
                 .reduce(into: Set()) { $0.insert($1) }
 
@@ -178,19 +190,19 @@ class BrowserModel {
 
             // Create the folder.
             let folderPath = path + name
-            try await self.fileServer.mkdir(path: folderPath)
-            let files = try await self.fileServer.dir(path: path)
+            try self.fileServer.mkdirSync(path: folderPath)
+            let files = try self.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
             // Update the model state.
-            await MainActor.run {
+            DispatchQueue.main.sync {
                 self.files = files
             }
 
             // Select the folder.
             // There's something curious going on in SwiftUI here that means the selection doesn't get updated unless
             // we perform it after (I presume) the tree has been evaluated with the new file list.
-            await MainActor.run {
+            DispatchQueue.main.sync {
                 self.fileSelection = Set([folderPath + "\\"])
             }
         }
