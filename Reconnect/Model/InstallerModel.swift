@@ -255,17 +255,6 @@ class InstallerModel: Runnable {
 
 extension InstallerModel: SisInstallIoHandler {
 
-    func sisInstallRun(sis: Sis.File, path: String, flags: Sis.RunFlags) {
-        dispatchPrecondition(condition: .notOnQueue(.main))
-        do {
-            let services = PsionClient()
-            try services.runProgram(path: path)
-        } catch {
-            print("Failed to run path '\(path)' with error '\(error)'.")
-        }
-    }
-    
-
     func sisGetStubs() -> Sis.GetStubsResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
@@ -345,6 +334,16 @@ extension InstallerModel: SisInstallIoHandler {
         }
         sem.wait()
         return result
+    }
+
+    func sisInstallRun(sis: Sis.File, path: String, flags: Sis.RunFlags) {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        do {
+            let services = PsionClient()
+            try services.runProgram(path: path)
+        } catch {
+            print("Failed to run path '\(path)' with error '\(error)'.")
+        }
     }
 
     func sisInstallRollback(sis: Sis.File) -> Bool {
