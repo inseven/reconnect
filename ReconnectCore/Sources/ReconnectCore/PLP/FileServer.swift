@@ -226,11 +226,33 @@ public class FileServer: @unchecked Sendable {
         return result
     }
 
-    func workQueue_getExtendedAttributes(path: String) throws(PLPToolsError) -> DirectoryEntry {
+    private func workQueue_exists(path: String) throws(PLPToolsError) -> Bool {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        if path.isRoot {
+            do {
+                // Check to see if we can get the drive info; if we can then it exists.
+                _ = try workQueue_devinfo(drive: String(path.prefix(1)))
+                return true
+            } catch {
+                // Drive not ready indicates the drive doesn't exist instead of a hard failure.
+                guard error.errorCode == .driveNotReady else {
+                    throw error
+                }
+                return false
+            }
+        } else {
+            var exists: Bool = false
+            try client.pathtest(path, &exists).check(context: "Path test '\(path)'")
+            return exists
+        }
+    }
+
+    private func workQueue_getExtendedAttributes(path: String) throws(PLPToolsError) -> DirectoryEntry {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var entry = PlpDirent()
-        try client.fgeteattr(path, &entry).check()
+        try client.fgeteattr(path, &entry).check(context: "Get extended attributes '\(path)'")
         return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
     }
 
@@ -406,15 +428,12 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func fileExistsSync(path: String) throws -> Bool {
+    public func exists(path: String) throws(PLPToolsError) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        return workQueue.sync {
-            do {
-                let _ = try self.workQueue_getExtendedAttributes(path: path)
-                return true
-            } catch {
-                return false
-            }
+        return try performSync { () throws(PLPToolsError) in
+            let result = try self.workQueue_exists(path: path)
+            print("'\(path)' exists = \(result)")
+            return result
         }
     }
 
