@@ -261,7 +261,7 @@ extension InstallerModel: SisInstallIoHandler {
             let fileManager = FileManager.default
 
             // Ensure the install directory exists on the Psion.
-            if !(try fileServer.fileExistsSync(path: Self.installDirectory)) {
+            if !(try fileServer.exists(path: Self.installDirectory)) {
                 try fileServer.mkdir(path: Self.installDirectory)
             }
 
@@ -393,8 +393,12 @@ extension InstallerModel: SisInstallIoHandler {
                 }
                 return .success
             case .stat:
-                let attributes = try fileServer.getExtendedAttributesSync(path: operation.path)
-                return .stat(Fs.Stat(size: UInt64(attributes.size), lastModified: Date.now, isDirectory: false))
+                // We know the installer doesn't care about anything other than knowing the file exists so we simply
+                // check to see that it exists and fake the other values to avoid doing unnecessary work.
+                guard try fileServer.exists(path: operation.path) else {
+                    return .err(.notFound)
+                }
+                return .stat(Fs.Stat(size: 0, lastModified: .now, isDirectory: operation.path.isWindowsDirectory))
             default:
                 print("Unsupported operation '\(operation.type)' '\(operation.path)'")
                 return .err(.notReady)
