@@ -236,14 +236,14 @@ public class FileServer: @unchecked Sendable {
                 return true
             } catch {
                 // Drive not ready indicates the drive doesn't exist instead of a hard failure.
-                guard error.errorCode == .driveNotReady else {
+                guard error == .driveNotReady else {
                     throw error
                 }
                 return false
             }
         } else {
             var exists: Bool = false
-            try client.pathtest(path, &exists).check(context: "Path test '\(path)'")
+            try client.pathtest(path, &exists).check()
             return exists
         }
     }
@@ -252,7 +252,7 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var entry = PlpDirent()
-        try client.fgeteattr(path, &entry).check(context: "Get extended attributes '\(path)'")
+        try client.fgeteattr(path, &entry).check()
         return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
     }
 
