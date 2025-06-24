@@ -262,7 +262,7 @@ extension InstallerModel: SisInstallIoHandler {
 
             // Ensure the install directory exists on the Psion.
             if !(try fileServer.fileExistsSync(path: Self.installDirectory)) {
-                try fileServer.mkdirSync(path: Self.installDirectory)
+                try fileServer.mkdir(path: Self.installDirectory)
             }
 
             // Index the existing stubs.

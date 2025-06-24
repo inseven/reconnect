@@ -190,7 +190,7 @@ class BrowserModel {
 
             // Create the folder.
             let folderPath = path + name
-            try self.fileServer.mkdirSync(path: folderPath)
+            try self.fileServer.mkdir(path: folderPath)
             let files = try self.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
