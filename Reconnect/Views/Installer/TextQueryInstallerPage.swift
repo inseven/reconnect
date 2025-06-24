@@ -27,7 +27,7 @@ struct TextQueryInstallerPage: View {
         InstallerPage(query.sis.localizedDisplayName) {
             ScrollView {
                 Text(query.text)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
             }
             .background(Color(nsColor: .textBackgroundColor))
