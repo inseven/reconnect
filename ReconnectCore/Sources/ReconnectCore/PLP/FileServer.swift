@@ -418,7 +418,7 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func mkdirSync(path: String) throws {
+    public func mkdir(path: String) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         try performSync { () throws(PLPToolsError) in
             try self.workQueue_mkdir(path: path)

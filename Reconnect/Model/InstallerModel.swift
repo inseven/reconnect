@@ -262,7 +262,7 @@ extension InstallerModel: SisInstallIoHandler {
 
             // Ensure the install directory exists on the Psion.
             if !(try fileServer.fileExistsSync(path: Self.installDirectory)) {
-                try fileServer.mkdirSync(path: Self.installDirectory)
+                try fileServer.mkdir(path: Self.installDirectory)
             }
 
             // Index the existing stubs.
@@ -368,7 +368,7 @@ extension InstallerModel: SisInstallIoHandler {
                 try fileServer.removeSync(path: operation.path)
                 return .success
             case .mkdir:
-                try fileServer.mkdirSync(path: operation.path)
+                try fileServer.mkdir(path: operation.path)
                 return .success
             case .rmdir:
                 return .err(.notReady)
