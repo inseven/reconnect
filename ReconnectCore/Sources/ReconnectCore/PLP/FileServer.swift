@@ -234,9 +234,9 @@ public class FileServer: @unchecked Sendable {
         return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
     }
 
-    func workQueue_copyFile(fromRemotePath remoteSourcePath: String,
-                            toLocalPath localDestinationPath: String,
-                            callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(PLPToolsError) {
+    private func workQueue_copyFile(fromRemotePath remoteSourcePath: String,
+                                    toLocalPath localDestinationPath: String,
+                                    callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(PLPToolsError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
 
@@ -253,9 +253,9 @@ public class FileServer: @unchecked Sendable {
         try result.check()
     }
 
-    func workQueue_copyFile(fromLocalPath localSourcePath: String,
-                            toRemotePath remoteDestinationPath: String,
-                            callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+    private func workQueue_copyFile(fromLocalPath localSourcePath: String,
+                                    toRemotePath remoteDestinationPath: String,
+                                    callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         let attributes = try FileManager.default.attributesOfItem(atPath: localSourcePath)
@@ -425,19 +425,13 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func rmdir(path: String) async throws {
-        try await perform {
+    public func rmdir(path: String) throws {
+        try performSync {
             try self.workQueue_rmdir(path: path)
         }
     }
 
-    public func remove(path: String) async throws {
-        try await perform {
-            try self.workQueue_remove(path: path)
-        }
-    }
-
-    public func removeSync(path: String) throws(PLPToolsError) {
+    public func remove(path: String) throws(PLPToolsError) {
         try performSync { () throws(PLPToolsError) in
             try self.workQueue_remove(path: path)
         }

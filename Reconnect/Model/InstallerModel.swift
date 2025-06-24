@@ -365,7 +365,7 @@ extension InstallerModel: SisInstallIoHandler {
                 DispatchQueue.main.sync {
                     self.page = .delete(operation.path)
                 }
-                try fileServer.removeSync(path: operation.path)
+                try fileServer.remove(path: operation.path)
                 return .success
             case .mkdir:
                 try fileServer.mkdir(path: operation.path)

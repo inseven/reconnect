@@ -211,14 +211,14 @@ class BrowserModel {
     func delete(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil) {
         dispatchPrecondition(condition: .onQueue(.main))
         let selection = selection ?? fileSelection
-        runAsync {
+        run {
             for path in selection {
                 if path.isWindowsDirectory {
-                    try await self.fileServer.rmdir(path: path)
+                    try self.fileServer.rmdir(path: path)
                 } else {
-                    try await self.fileServer.remove(path: path)
+                    try self.fileServer.remove(path: path)
                 }
-                await MainActor.run {
+                DispatchQueue.main.sync {
                     self.files.removeAll { $0.path == path }
                     self.fileSelection.remove(path)
                 }
