@@ -25,7 +25,7 @@ import plpftp
 // This intentionally provides a blocking API to make it easy to perform sequential operations without relying on the
 // new async/await concurrency model. This is driven by the need to support OpoLua blocking callbacks as Apple
 // documentation says you shouldn't be using traditional concurrency mechanisms to make async/await operations blocking.
-public class FileServer {
+public class FileServer: @unchecked Sendable {
 
     public enum MediaType: UInt32 {
         case notPresent = 0
@@ -188,9 +188,9 @@ public class FileServer {
         }
     }
 
-    private func performSync<T>(action: @escaping () throws(PLPToolsError) -> T) throws(PLPToolsError) -> T {
+    private func performSync<T, E: Error>(action: @escaping () throws(E) -> T) throws(E) -> T {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        let result: Result<T, PLPToolsError> = workQueue.sync {
+        let result: Result<T, E> = workQueue.sync {
             return Result(catching: action)
         }
         return try result.get()
@@ -387,7 +387,7 @@ public class FileServer {
                              toRemotePath remoteDestinationPath: String,
                              callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        try workQueue.sync {
+        try performSync {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
                                         callback: callback)
@@ -401,7 +401,7 @@ public class FileServer {
     }
 
     public func getExtendedAttributesSync(path: String) throws -> DirectoryEntry {
-        return try workQueue.sync {
+        return try performSync { () throws(PLPToolsError) in
             return try self.workQueue_getExtendedAttributes(path: path)
         }
     }
@@ -420,7 +420,7 @@ public class FileServer {
 
     public func mkdirSync(path: String) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        try workQueue.sync {
+        try performSync { () throws(PLPToolsError) in
             try self.workQueue_mkdir(path: path)
         }
     }
