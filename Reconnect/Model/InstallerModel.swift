@@ -368,7 +368,7 @@ extension InstallerModel: SisInstallIoHandler {
                 try fileServer.removeSync(path: operation.path)
                 return .success
             case .mkdir:
-                try fileServer.mkdirSync(path: operation.path)
+                try fileServer.mkdir(path: operation.path)
                 return .success
             case .rmdir:
                 return .err(.notReady)
