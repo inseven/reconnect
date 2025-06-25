@@ -54,7 +54,6 @@ let package = Package(
                 "lib/Makefile",
             ],
             sources: [
-                // "lib",
                 "lib/bufferarray.cc",
                 "lib/bufferstore.cc",
                 "lib/Enum.cc",
@@ -78,7 +77,9 @@ let package = Package(
             publicHeadersPath: "lib",
             cSettings: [
                 // .headerSearchPath("."),  // TODO: This lets us build without copying config.h around but not our dependencies.
+                .headerSearchPath("gnulib/lib"),
                 .unsafeFlags(["-Wno-int-conversion"]),
+                // -Wdeprecated-declarations?
             ],
         ),
         .target(
