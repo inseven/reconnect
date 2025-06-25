@@ -19,7 +19,6 @@
 import Foundation
 
 import ncp
-import plpftp
 
 public class RemoteCommandServicesClient {
 

@@ -19,7 +19,6 @@
 import Foundation
 
 import ncp
-import plpftp
 
 // Thread-safe FileServer implementation.
 // This intentionally provides a blocking API to make it easy to perform sequential operations without relying on the

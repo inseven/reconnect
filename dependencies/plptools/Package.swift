@@ -20,12 +20,6 @@ let package = Package(
                 "ncp"
             ]
         ),
-        .library(
-            name: "plpftp",
-            targets: [
-                "plpftp"
-            ]
-        )
     ],
     dependencies: [],
     targets: [
@@ -73,6 +67,8 @@ let package = Package(
                 "lib/rpcs32.cc",
                 "lib/rpcsfactory.cc",
                 "lib/wprt.cc",
+
+                "lib/libplp.cc",
             ],
             publicHeadersPath: "lib",
             cSettings: [
@@ -107,22 +103,5 @@ let package = Package(
             ]
             // swiftSettings: [.interoperabilityMode(.Cxx)]
         ),
-        .target(  // TODO: Why do I need this?
-            name: "plpftp",
-            dependencies: [
-                "core",
-            ],
-            path: "plptools",
-            sources: [
-                "plpftp/libplp.cc",
-            ],
-            publicHeadersPath: "plpftp",
-            cSettings: [
-                // .headerSearchPath("lib"),  // TODO: Put the config in an extra directory here?
-                // .headerSearchPath("gnulib/lib"),
-                .unsafeFlags(["-Wno-int-conversion"]),
-                // .unsafeFlags(["-include", "config.h"]),
-            ]
-        )
     ]
 )
