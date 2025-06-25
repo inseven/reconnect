@@ -8,12 +8,6 @@ let package = Package(
         .macOS(.v10_15),
     ],
     products: [
-        // .library(
-        //     name: "plptools",
-        //     targets: [
-        //         "plptools",
-        //     ]
-        // ),
         .library(
             name: "ncp",
             targets: [
@@ -74,8 +68,7 @@ let package = Package(
             cSettings: [
                 // .headerSearchPath("."),  // TODO: This lets us build without copying config.h around but not our dependencies.
                 .headerSearchPath("gnulib/lib"),
-                .unsafeFlags(["-Wno-int-conversion"]),
-                // -Wdeprecated-declarations?
+                .unsafeFlags(["-Wno-int-conversion", "-Wno-deprecated-declarations"]),  // TODO: Automatically add this to all targets.
             ],
         ),
         .target(
@@ -98,10 +91,9 @@ let package = Package(
             cSettings: [
                 .headerSearchPath("lib"),  // TODO: Put the config in an extra directory here?
                 .headerSearchPath("gnulib/lib"),
-                .unsafeFlags(["-Wno-int-conversion"]),
-                .unsafeFlags(["-include", "config.h"]),
+                .unsafeFlags(["-Wno-int-conversion", "-Wno-deprecated-declarations"]),
             ]
-            // swiftSettings: [.interoperabilityMode(.Cxx)]
+            // swiftSettings: [.interoperabilityMode(.Cxx)]  // TODO: Would this allow combining C and C++ code?
         ),
     ]
 )
