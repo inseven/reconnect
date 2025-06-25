@@ -22,7 +22,7 @@ struct HistoryItemView: View {
 
     @Environment(BrowserModel.self) var browserModel
     
-    let item: NavigationStack.Item
+    let item: NavigationHistory.Item
 
     var body: some View {
         HStack {
