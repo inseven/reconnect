@@ -28,7 +28,6 @@ let package = Package(
                 .product(name: "Diligence", package: "diligence"),
                 .product(name: "OpoLua", package: "opolua"),
                 .product(name: "ncp", package: "plptools"),
-                .product(name: "plpftp", package: "plptools"),
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)

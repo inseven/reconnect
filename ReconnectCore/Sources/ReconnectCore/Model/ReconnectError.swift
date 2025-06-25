@@ -18,7 +18,7 @@
 
 import Foundation
 
-import plpftp
+import ncp
 
 public enum ReconnectError: Error {
     case unknown
