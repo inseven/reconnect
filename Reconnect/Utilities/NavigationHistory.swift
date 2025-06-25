@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct NavigationStack {
+struct NavigationHistory {
 
     struct Item: Identifiable, Equatable {
         let id = UUID()

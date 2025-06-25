@@ -37,16 +37,16 @@ class BrowserModel {
         return name(for: path)
     }
 
-    var nextItems: [NavigationStack.Item] {
-        return navigationStack.nextItems
+    var nextItems: [NavigationHistory.Item] {
+        return navigationHistory.nextItems
     }
 
     var path: String? {
-        return navigationStack.path
+        return navigationHistory.path
     }
 
-    var previousItems: [NavigationStack.Item] {
-        return navigationStack.previousItems.reversed()
+    var previousItems: [NavigationHistory.Item] {
+        return navigationHistory.previousItems.reversed()
     }
 
     let fileServer = FileServer()
@@ -69,7 +69,7 @@ class BrowserModel {
 
     var lastError: Error? = nil
 
-    private var navigationStack = NavigationStack()
+    private var navigationHistory = NavigationHistory()
 
     init(transfersModel: TransfersModel) {
         self.transfersModel = transfersModel
@@ -98,12 +98,12 @@ class BrowserModel {
     }
 
     func navigate(to path: String) {
-        navigationStack.navigate(path)
+        navigationHistory.navigate(path)
         update()
     }
 
-    func navigate(to item: NavigationStack.Item) {
-        navigationStack.navigate(item)
+    func navigate(to item: NavigationHistory.Item) {
+        navigationHistory.navigate(item)
         update()
     }
 
@@ -112,7 +112,7 @@ class BrowserModel {
     }
 
     private func update() {
-        guard let path = navigationStack.path else {
+        guard let path = navigationHistory.path else {
             return
         }
         self.files = []
@@ -151,20 +151,20 @@ class BrowserModel {
     }
 
     func canGoBack() -> Bool {
-        return navigationStack.canGoBack()
+        return navigationHistory.canGoBack()
     }
 
     func back() {
-        navigationStack.back()
+        navigationHistory.back()
         update()
     }
 
     func canGoForward() -> Bool {
-        return navigationStack.canGoForward()
+        return navigationHistory.canGoForward()
     }
 
     func forward() {
-        navigationStack.forward()
+        navigationHistory.forward()
         update()
     }
 
