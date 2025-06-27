@@ -97,6 +97,30 @@ class BrowserModel {
         return "Folder16"
     }
 
+    private func runAsync(task: @escaping () async throws -> Void) {
+        Task {
+            do {
+                try await task()
+            } catch {
+                await MainActor.run {
+                    lastError = error
+                }
+            }
+        }
+    }
+
+    private func run(task: @escaping () throws -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async {
+            do {
+                try task()
+            } catch {
+                DispatchQueue.main.sync {
+                    self.lastError = error
+                }
+            }
+        }
+    }
+
     func navigate(to path: String) {
         navigationHistory.navigate(path)
         update()
@@ -126,32 +150,19 @@ class BrowserModel {
         }
     }
 
-    private func runAsync(task: @escaping () async throws -> Void) {
-        Task {
-            do {
-                try await task()
-            } catch {
-                await MainActor.run {
-                    lastError = error
-                }
-            }
-        }
-    }
-
-    private func run(task: @escaping () throws -> Void) {
-        DispatchQueue.global(qos: .userInteractive).async {
-            do {
-                try task()
-            } catch {
-                DispatchQueue.main.sync {
-                    self.lastError = error
-                }
-            }
-        }
-    }
-
-    func canGoBack() -> Bool {
+    var canGoBack: Bool {
         return navigationHistory.canGoBack()
+    }
+
+    var canGoForward: Bool {
+        return navigationHistory.canGoForward()
+    }
+
+    var canOpenEnclosingFolder: Bool {
+        guard let path else {
+            return false
+        }
+        return !path.isRoot
     }
 
     func back() {
@@ -159,13 +170,16 @@ class BrowserModel {
         update()
     }
 
-    func canGoForward() -> Bool {
-        return navigationHistory.canGoForward()
-    }
-
     func forward() {
         navigationHistory.forward()
         update()
+    }
+
+    func openEnclosingFolder() {
+        guard let path else {
+            return
+        }
+        self.navigate(to: path.deletingLastWindowsPathComponent)
     }
 
     func newFolder() {

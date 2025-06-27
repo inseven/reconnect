@@ -45,6 +45,7 @@ struct BrowserWindow: Scene {
             BrowserCommands(browserModel: browserModel)
             SidebarCommands()
             ToolbarCommands()
+            NavigationCommands(browserModel: browserModel)
         }
         .environment(applicationModel)
         .environment(transfersModel)
