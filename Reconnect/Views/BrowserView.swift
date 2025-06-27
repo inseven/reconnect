@@ -40,7 +40,15 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar(model: browserModel)
         } detail: {
-            BrowserDetailView(browserModel: browserModel)
+            ZStack {
+                Button {
+                    browserModel.openSelection()
+                } label: {
+                    EmptyView()
+                }
+                .keyboardShortcut(.downArrow, modifiers: [.command])
+                BrowserDetailView(browserModel: browserModel)
+            }
         }
         .toolbar(id: "main") {
 

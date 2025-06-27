@@ -165,6 +165,16 @@ class BrowserModel {
         return !path.isRoot
     }
 
+    var canOpenSelection: Bool {
+        guard
+            fileSelection.count == 1,
+            let file = fileSelection.first
+        else {
+            return false
+        }
+        return file.isWindowsDirectory
+    }
+
     func back() {
         navigationHistory.back()
         update()
@@ -180,6 +190,17 @@ class BrowserModel {
             return
         }
         self.navigate(to: path.deletingLastWindowsPathComponent)
+    }
+
+    func openSelection() {
+        guard
+            fileSelection.count == 1,
+            let file = fileSelection.first,
+            file.isWindowsDirectory
+        else {
+            return
+        }
+        navigate(to: file)
     }
 
     func newFolder() {
