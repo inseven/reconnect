@@ -43,43 +43,58 @@ struct BrowserView: View {
             BrowserDetailView(browserModel: browserModel)
         }
         .toolbar(id: "main") {
-            ToolbarItem(id: "navigation", placement: .navigation) {
-                HStack(spacing: 8) {
 
-                    Menu {
-                        ForEach(browserModel.previousItems) { item in
-                            Button {
-                                browserModel.navigate(to: item)
-                            } label: {
-                                HistoryItemView(item: item)
-                            }
-                        }
-                    } label: {
-                        Label("Back", systemImage: "chevron.backward")
-                    } primaryAction: {
-                        browserModel.back()
-                    }
-                    .menuIndicator(.hidden)
-                    .disabled(!browserModel.canGoBack())
-
-                    Menu {
-                        ForEach(browserModel.nextItems) { item in
-                            Button {
-                                browserModel.navigate(to: item)
-                            } label: {
-                                HistoryItemView(item: item)
-                            }
-                        }
-                    } label: {
-                        Label("Forward", systemImage: "chevron.forward")
-                    } primaryAction: {
-                        browserModel.forward()
-                    }
-                    .menuIndicator(.hidden)
-                    .disabled(!browserModel.canGoForward())
-
+            ToolbarItem(id: "open-enclosing-folder", placement: .navigation) {
+                Button {
+                    browserModel.openEnclosingFolder()
+                } label: {
+                    Label("Enclosing Folder", systemImage: "arrow.turn.left.up")
                 }
-                .help("See folders you viewed previously")
+                .disabled(!browserModel.canOpenEnclosingFolder)
+            }
+
+            ToolbarItem(id: "navigation", placement: .navigation) {
+                LabeledContent {
+                    HStack(spacing: 8) {
+
+                        Menu {
+                            ForEach(browserModel.previousItems) { item in
+                                Button {
+                                    browserModel.navigate(to: item)
+                                } label: {
+                                    HistoryItemView(item: item)
+                                }
+                            }
+                        } label: {
+                            Label("Back", systemImage: "chevron.backward")
+                        } primaryAction: {
+                            browserModel.back()
+                        }
+                        .menuIndicator(.hidden)
+                        .disabled(!browserModel.canGoBack)
+
+                        Menu {
+                            ForEach(browserModel.nextItems) { item in
+                                Button {
+                                    browserModel.navigate(to: item)
+                                } label: {
+                                    HistoryItemView(item: item)
+                                }
+                            }
+                        } label: {
+                            Label("Forward", systemImage: "chevron.forward")
+                        } primaryAction: {
+                            browserModel.forward()
+                        }
+                        .menuIndicator(.hidden)
+                        .disabled(!browserModel.canGoForward)
+
+                    }
+                    .help("See folders you viewed previously")
+
+                } label: {
+                    Text("Back/Forward")
+                }
             }
 
             ToolbarItem(id: "new-folder") {
