@@ -18,17 +18,25 @@
 
 import SwiftUI
 
-public struct BrowserCommands: Commands {
+public struct FileCommands: Commands {
 
     let browserModel: BrowserModel
 
     public var body: some Commands {
 
         CommandGroup(replacing: .newItem) {
+
             Button("New Folder") {
                 browserModel.newFolder()
             }
             .keyboardShortcut("N", modifiers: [.command, .shift])
+
+            Button("Open") {
+                browserModel.openSelection()
+            }
+            .keyboardShortcut("O", modifiers: [.command])
+            .disabled(!browserModel.canOpenSelection)
+            
         }
 
         CommandGroup(before: .newItem) {
