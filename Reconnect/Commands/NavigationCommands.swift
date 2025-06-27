@@ -25,6 +25,19 @@ public struct NavigationCommands: Commands {
     public var body: some Commands {
 
         CommandMenu("Go") {
+
+            Button("Back") {
+                browserModel.back()
+            }
+            .keyboardShortcut("[", modifiers: [.command])
+            .disabled(!browserModel.canGoBack)
+
+            Button("Forward") {
+                browserModel.forward()
+            }
+            .keyboardShortcut("]", modifiers: [.command])
+            .disabled(!browserModel.canGoForward)
+
             Button("Enclosing Folder") {
                 browserModel.openEnclosingFolder()
             }
