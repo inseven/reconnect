@@ -56,6 +56,15 @@
 		D8AC642C2D0D58970085306B /* ThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AC642B2D0D58910085306B /* ThumbnailView.swift */; };
 		D8AC642E2D0D5B4D0085306B /* PixelImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AC642D2D0D5B4A0085306B /* PixelImage.swift */; };
 		D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */ = {isa = PBXBuildFile; productRef = D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */; };
+		D8B1AC452E0F4C220084BFD5 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8B1AC442E0F4C220084BFD5 /* Quartz.framework */; };
+		D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */; };
+		D8B1AC5C2E0F6DAE0084BFD5 /* src in Resources */ = {isa = PBXBuildFile; fileRef = D8E8B4FD2D1529E800405445 /* src */; };
+		D8B1AC5D2E0F870D0084BFD5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8D362972DE79CB000DDDD19 /* Localizable.strings */; };
+		D8B1AC672E0F88380084BFD5 /* PreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D8B1AC632E0F88380084BFD5 /* PreviewViewController.xib */; };
+		D8B1AC682E0F88380084BFD5 /* InstallerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B1AC5F2E0F88380084BFD5 /* InstallerPreviewView.swift */; };
+		D8B1AC692E0F88380084BFD5 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B1AC602E0F88380084BFD5 /* PreviewProvider.swift */; };
+		D8B1AC6A2E0F88380084BFD5 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B1AC612E0F88380084BFD5 /* PreviewViewController.swift */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D362992DE79CB000DDDD19 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8D362972DE79CB000DDDD19 /* Localizable.strings */; };
 		D8D3629B2DE7A23900DDDD19 /* InstallerPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */; };
@@ -102,6 +111,13 @@
 			remoteGlobalIDString = D84964D52C1BFCB600405656;
 			remoteInfo = PsiMac;
 		};
+		D8B1AC502E0F4C220084BFD5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8B1AC422E0F4C220084BFD5;
+			remoteInfo = ReconnectPreviews;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -123,6 +139,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D8B1AC522E0F4C220084BFD5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -176,6 +203,14 @@
 		D8AC642B2D0D58910085306B /* ThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailView.swift; sourceTree = "<group>"; };
 		D8AC642D2D0D5B4A0085306B /* PixelImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelImage.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReconnectPreviews.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8B1AC442E0F4C220084BFD5 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		D8B1AC5E2E0F88380084BFD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D8B1AC5F2E0F88380084BFD5 /* InstallerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerPreviewView.swift; sourceTree = "<group>"; };
+		D8B1AC602E0F88380084BFD5 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		D8B1AC612E0F88380084BFD5 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		D8B1AC622E0F88380084BFD5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreviewViewController.xib; sourceTree = "<group>"; };
+		D8B1AC642E0F88380084BFD5 /* ReconnectPreviews.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReconnectPreviews.entitlements; sourceTree = "<group>"; };
 		D8D362982DE79CB000DDDD19 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D8D3629A2DE7A23700DDDD19 /* InstallerPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerPage.swift; sourceTree = "<group>"; };
 		D8D3E7A02C25410E003E696D /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
@@ -238,6 +273,15 @@
 			files = (
 				D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */,
 				D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B1AC402E0F4C220084BFD5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B1AC452E0F4C220084BFD5 /* Quartz.framework in Frameworks */,
+				D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,6 +380,7 @@
 				D84964F42C1BFCB700405656 /* ReconnectUITests */,
 				D8F1A59C2C4A4C9B00931C00 /* ReconnectMenu */,
 				D89071892C4B01FC00C11DE8 /* ScreenshotSIS */,
+				D8B1AC652E0F88380084BFD5 /* ReconnectPreviews */,
 				D84964D72C1BFCB600405656 /* Products */,
 				D84965332C1C30E500405656 /* Frameworks */,
 			);
@@ -349,6 +394,7 @@
 				D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */,
 				D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */,
 				D89071882C4B01FC00C11DE8 /* screenshot-sis */,
+				D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -408,6 +454,7 @@
 			children = (
 				D876E60D2C22BAB9004A6881 /* libSystem.tbd */,
 				D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */,
+				D8B1AC442E0F4C220084BFD5 /* Quartz.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -447,6 +494,19 @@
 				D8AB9C372DEE3EFC0087F13E /* WindowProxy.swift */,
 			);
 			path = Environment;
+			sourceTree = "<group>";
+		};
+		D8B1AC652E0F88380084BFD5 /* ReconnectPreviews */ = {
+			isa = PBXGroup;
+			children = (
+				D8B1AC5E2E0F88380084BFD5 /* Info.plist */,
+				D8B1AC5F2E0F88380084BFD5 /* InstallerPreviewView.swift */,
+				D8B1AC602E0F88380084BFD5 /* PreviewProvider.swift */,
+				D8B1AC612E0F88380084BFD5 /* PreviewViewController.swift */,
+				D8B1AC632E0F88380084BFD5 /* PreviewViewController.xib */,
+				D8B1AC642E0F88380084BFD5 /* ReconnectPreviews.entitlements */,
+			);
+			path = ReconnectPreviews;
 			sourceTree = "<group>";
 		};
 		D8E31EB82C26E1CA00350082 /* Licenses */ = {
@@ -500,11 +560,13 @@
 				D84964D32C1BFCB600405656 /* Frameworks */,
 				D809546A2C4AAA4A00752BBC /* CopyFiles */,
 				D84964D42C1BFCB600405656 /* Resources */,
+				D8B1AC522E0F4C220084BFD5 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				D809546D2C4AAC7F00752BBC /* PBXTargetDependency */,
+				D8B1AC512E0F4C220084BFD5 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D83BD9672DE863220075902D /* Resources */,
@@ -581,6 +643,26 @@
 			productReference = D89071882C4B01FC00C11DE8 /* screenshot-sis */;
 			productType = "com.apple.product-type.tool";
 		};
+		D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8B1AC572E0F4C220084BFD5 /* Build configuration list for PBXNativeTarget "ReconnectPreviews" */;
+			buildPhases = (
+				D8B1AC3F2E0F4C220084BFD5 /* Sources */,
+				D8B1AC402E0F4C220084BFD5 /* Frameworks */,
+				D8B1AC412E0F4C220084BFD5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReconnectPreviews;
+			packageProductDependencies = (
+				D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */,
+			);
+			productName = ReconnectPreviews;
+			productReference = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D8F1A5A92C4A4C9C00931C00 /* Build configuration list for PBXNativeTarget "Reconnect Menu" */;
@@ -609,7 +691,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1540;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					D84964D52C1BFCB600405656 = {
@@ -626,6 +708,9 @@
 					};
 					D89071872C4B01FC00C11DE8 = {
 						CreatedOnToolsVersion = 15.4;
+					};
+					D8B1AC422E0F4C220084BFD5 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 					D8F1A59A2C4A4C9B00931C00 = {
 						CreatedOnToolsVersion = 15.4;
@@ -660,6 +745,7 @@
 				D84964F02C1BFCB700405656 /* ReconnectUITests */,
 				D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */,
 				D89071872C4B01FC00C11DE8 /* screenshot-sis */,
+				D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */,
 			);
 		};
 /* End PBXProject section */
@@ -691,6 +777,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B1AC412E0F4C220084BFD5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B1AC5D2E0F870D0084BFD5 /* Localizable.strings in Resources */,
+				D8B1AC5C2E0F6DAE0084BFD5 /* src in Resources */,
+				D8B1AC672E0F88380084BFD5 /* PreviewViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -779,6 +875,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D8B1AC3F2E0F4C220084BFD5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B1AC682E0F88380084BFD5 /* InstallerPreviewView.swift in Sources */,
+				D8B1AC692E0F88380084BFD5 /* PreviewProvider.swift in Sources */,
+				D8B1AC6A2E0F88380084BFD5 /* PreviewViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D8F1A5972C4A4C9B00931C00 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -807,9 +913,22 @@
 			target = D84964D52C1BFCB600405656 /* Reconnect */;
 			targetProxy = D84964F22C1BFCB700405656 /* PBXContainerItemProxy */;
 		};
+		D8B1AC512E0F4C220084BFD5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
+			targetProxy = D8B1AC502E0F4C220084BFD5 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		D8B1AC632E0F88380084BFD5 /* PreviewViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D8B1AC622E0F88380084BFD5 /* Base */,
+			);
+			name = PreviewViewController.xib;
+			sourceTree = "<group>";
+		};
 		D8D362972DE79CB000DDDD19 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1110,6 +1229,64 @@
 			};
 			name = Release;
 		};
+		D8B1AC542E0F4C220084BFD5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ReconnectPreviews/ReconnectPreviews.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectPreviews/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ReconnectPreviews;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple.previews;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D8B1AC552E0F4C220084BFD5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ReconnectPreviews/ReconnectPreviews.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectPreviews/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ReconnectPreviews;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple.previews;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Reconnect Previews Developer ID Profile";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		D8F1A5A72C4A4C9C00931C00 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1222,6 +1399,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		D8B1AC572E0F4C220084BFD5 /* Build configuration list for PBXNativeTarget "ReconnectPreviews" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B1AC542E0F4C220084BFD5 /* Debug */,
+				D8B1AC552E0F4C220084BFD5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D8F1A5A92C4A4C9C00931C00 /* Build configuration list for PBXNativeTarget "Reconnect Menu" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1328,6 +1514,10 @@
 		D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PsionSoftwareIndex;
+		};
+		D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
 		};
 		D8CBAC642C4A02580035FC3D /* ReconnectCore */ = {
 			isa = XCSwiftPackageProductDependency;

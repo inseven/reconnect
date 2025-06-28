@@ -137,6 +137,7 @@ echo "$DEVELOPER_ID_APPLICATION_CERTIFICATE_PASSWORD" | build-tools import-base6
 # Install the provisioning profiles.
 build-tools install-provisioning-profile "profiles/Reconnect_Developer_ID_Profile.provisionprofile"
 build-tools install-provisioning-profile "profiles/Reconnect_Menu_Developer_ID_Profile.provisionprofile"
+build-tools install-provisioning-profile "profiles/Reconnect_Previews_Developer_ID_Profile.provisionprofile"
 
 # Build and archive the macOS project.
 sudo xcode-select --switch "$MACOS_XCODE_PATH"
