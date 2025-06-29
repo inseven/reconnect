@@ -98,7 +98,7 @@ class InstallerModel: Runnable {
     enum Page {
         case loading
         case ready
-        case checkingInstalledPackages(Float)
+        case checkingInstalledPackages(Double)
         case copy(String, Float)
         case delete(String)
         case error(Error)
@@ -253,35 +253,59 @@ class InstallerModel: Runnable {
 
 }
 
+extension String {
+
+    public static let installDirectory = "C:\\System\\Install\\"
+
+}
+
+extension FileServer {
+
+    func getStubs(callback: (Progress) -> ProgressResponse) throws -> [Sis.Stub] {
+        guard try exists(path: .installDirectory) else {
+            return []
+        }
+        let fileManager = FileManager.default
+        let paths = try dirSync(path: .installDirectory)
+            .filter { $0.pathExtension.lowercased() == "sis" }
+        var stubs: [Sis.Stub] = []
+        let progress = Progress(totalUnitCount: Int64(paths.count))
+        for file in paths {
+            let temporaryURL = fileManager.temporaryURL()
+            defer {
+                try? fileManager.removeItem(at: temporaryURL)
+            }
+            try copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
+                return .continue
+            }
+            let contents = try Data(contentsOf: temporaryURL)
+            progress.completedUnitCount += 1
+            guard callback(progress) == .continue else {
+                break
+            }
+            stubs.append(Sis.Stub(path: file.path, contents: contents))
+        }
+        return stubs
+    }
+
+}
+
 extension InstallerModel: SisInstallIoHandler {
 
     func sisGetStubs() -> Sis.GetStubsResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
-            let fileManager = FileManager.default
-
             // Ensure the install directory exists on the Psion.
-            if !(try fileServer.exists(path: Self.installDirectory)) {
-                try fileServer.mkdir(path: Self.installDirectory)
+            if !(try fileServer.exists(path: .installDirectory)) {
+                try fileServer.mkdir(path: .installDirectory)
             }
 
             // Index the existing stubs.
-            let paths = try fileServer.dirSync(path: Self.installDirectory)
-                .filter { $0.pathExtension.lowercased() == "sis" }
-            var stubs: [Sis.Stub] = []
-            for (index, file) in paths.enumerated() {
-                let temporaryURL = fileManager.temporaryURL()
-                defer {
-                    try? fileManager.removeItem(at: temporaryURL)
-                }
-                try fileServer.copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
-                    return .continue
-                }
-                let contents = try Data(contentsOf: temporaryURL)
+            let stubs = try fileServer.getStubs { progress in
                 DispatchQueue.main.sync {
-                    self.page = .checkingInstalledPackages(Float(index + 1) / Float(paths.count))
+                    self.page = .checkingInstalledPackages(progress.fractionCompleted)
                 }
-                stubs.append(Sis.Stub(path: file.path, contents: contents))
+                return .continue
             }
             return .stubs(stubs)
         } catch {

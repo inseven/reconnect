@@ -18,35 +18,36 @@
 
 import SwiftUI
 
-import OpoLua
-import ReconnectCore
+struct ProgramManagerView: View {
 
-struct InstallerPreviewView: View {
-
-    let file: Sis.File
+    @State var programManagerModel = ProgramManagerModel()
 
     var body: some View {
-        VStack(alignment: .center) {
-            Text(file.localizedDisplayName)
-                .multilineTextAlignment(.center)
-                .font(.title)
-            Text("\(file.version.major).\(file.version.minor)")
-                .font(.title2)
-                .frame(maxWidth: .infinity)
-
-            Divider()
-
-            Text("Languages")
-                .foregroundStyle(.secondary)
-            ForEach(file.languages, id: \.self) { language in
-                Text(NSLocalizedString(language, comment: language))
+        HStack {
+            switch programManagerModel.state {
+            case .checkingInstalledPackages(let progress):
+                ProgressView(value: progress)
+            case .ready:
+                List {
+                    ForEach(programManagerModel.installedPrograms, id: \.path) { program in
+                        Text(program.sis.localizedDisplayNameAndVersion)
+                    }
+                }
+            case .error(let error):
+                Text(error.localizedDescription)
             }
+            VStack {
+                Button("Remove") {
 
-            Spacer()
+                }
+                Button("Add...") {
+
+                }
+                Spacer()
+            }
         }
-        .padding()
-        .background(Color(nsColor: .textBackgroundColor))
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .runs(programManagerModel)
+        .frame(width: 800, height: 600)
     }
 
 }

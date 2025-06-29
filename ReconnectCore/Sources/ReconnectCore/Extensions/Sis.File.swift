@@ -29,7 +29,11 @@ extension Sis.File: @retroactive Identifiable, @retroactive Equatable {
     public var id: String { "\(uid):\(version)" }
 
     public var localizedDisplayName: String {
-        return "\((try? Locale.localize(name).text) ?? "Unknown Installer") - \(version)"
+        return (try? Locale.localize(name).text) ?? "Unknown Installer"
+    }
+
+    public var localizedDisplayNameAndVersion: String {
+        return "\(localizedDisplayName) \(version)"
     }
 
 }
