@@ -49,6 +49,10 @@ struct ReconnectApp: App {
                 }
             }
 
+        ProgramManagerWindow()
+            .environment(appDelegate.applicationModel)
+            .environment(appDelegate.transfersModel)
+
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("GitHub", url: .gitHub)
             Action("Discord", url: .discord)

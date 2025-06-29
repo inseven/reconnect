@@ -40,4 +40,12 @@ extension PsiLuaEnv {
         return sis
     }
 
+    public func loadSisFile(data: Data) throws -> Sis.File {
+        let info = getFileInfo(data: data)
+        guard case let .sis(sis) = info else {
+            throw ReconnectError.invalidSisFile
+        }
+        return sis
+    }
+
 }

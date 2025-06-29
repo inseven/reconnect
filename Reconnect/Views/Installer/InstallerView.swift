@@ -169,7 +169,7 @@ struct InstallerView: View {
             guard let newValue else {
                 return
             }
-            window.title = newValue.localizedDisplayName
+            window.title = newValue.localizedDisplayNameAndVersion
         }
         .runs(installerModel)
     }

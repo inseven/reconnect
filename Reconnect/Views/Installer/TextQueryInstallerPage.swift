@@ -24,7 +24,7 @@ struct TextQueryInstallerPage: View {
     let query: InstallerModel.TextQuery
 
     var body: some View {
-        InstallerPage(query.sis.localizedDisplayName) {
+        InstallerPage(query.sis.localizedDisplayNameAndVersion) {
             ScrollView {
                 Text(query.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
