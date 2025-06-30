@@ -19,6 +19,7 @@
 import Foundation
 
 import ncp
+import OpoLua
 
 // Thread-safe FileServer implementation.
 // This intentionally provides a blocking API to make it easy to perform sequential operations without relying on the
@@ -473,5 +474,125 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
+
+}
+
+extension FileServer {
+
+    public func fsop(_ operation: Fs.Operation, callback: @escaping (Progress) -> Void) -> Fs.Result {
+        do {
+            switch operation.type {
+            case .delete:
+
+                print("Delete '\(operation.path)'...")
+                let progress = Progress(totalUnitCount: 1)
+                callback(progress)
+                try remove(path: operation.path)
+                progress.completedUnitCount = 1
+                callback(progress)
+
+                return .success
+
+            case .mkdir:
+
+                print("Create directory '\(operation.path)'...")
+                let progress = Progress(totalUnitCount: 1)
+                callback(progress)
+                try mkdir(path: operation.path)
+                progress.completedUnitCount = 1
+                callback(progress)
+
+                return .success
+
+            case .rmdir:
+
+                return .err(.notReady)
+
+            case .write(let data):
+
+                let progress = Progress()
+                progress.totalUnitCount = Int64(data.count)
+                callback(progress)
+                let temporaryURL = FileManager.default.temporaryURL()
+                defer {
+                    do {
+                        try FileManager.default.removeItem(at: temporaryURL)
+                    } catch {
+                        print("Failed to clean up temporary file with error '\(error)'.")
+                    }
+                }
+                try data.write(to: temporaryURL)
+                try copyFileSync(fromLocalPath: temporaryURL.path, toRemotePath: operation.path) { completed, size in
+                    progress.totalUnitCount = Int64(size)
+                    progress.completedUnitCount = Int64(completed)
+                    callback(progress)
+                    return .continue
+                }
+                return .success
+
+            case .stat:
+
+                let attributes = try getExtendedAttributesSync(path: operation.path)
+                return .stat(Fs.Stat(size: UInt64(attributes.size),
+                                     lastModified: attributes.modificationDate,
+                                     isDirectory: attributes.isDirectory))
+
+            case .exists:
+
+                return try exists(path: operation.path) ? .success : .err(.notFound)
+
+            default:
+
+                print("Unsupported operation '\(operation.type)' '\(operation.path)'")
+                return .err(.notReady)
+                
+            }
+        } catch PLPToolsError.inUse {
+            return .err(.inUse)
+        } catch PLPToolsError.noSuchFile,
+                PLPToolsError.noSuchDevice,
+                PLPToolsError.noSuchRecord,
+                PLPToolsError.noSuchDirectory {
+            return .err(.notFound)
+        } catch PLPToolsError.fileAlreadyExists {
+            return .err(.alreadyExists)
+        } catch PLPToolsError.notReady {
+            return .err(.notReady)
+        } catch {
+            if let error = error as? PLPToolsError {
+                return .epocError(error.rawValue)
+            } else {
+                print("Encountered unmapped internal plptools error during install '\(error)'.")
+                return .err(.general)
+            }
+        }
+    }
+
+    public func getStubs(callback: (Progress) -> ProgressResponse) throws -> [Sis.Stub] {
+        guard try exists(path: .installDirectory) else {
+            return []
+        }
+        let fileManager = FileManager.default
+        let paths = try dirSync(path: .installDirectory)
+            .filter { $0.pathExtension.lowercased() == "sis" }
+        var stubs: [Sis.Stub] = []
+        let progress = Progress(totalUnitCount: Int64(paths.count))
+        for file in paths {
+            let temporaryURL = fileManager.temporaryURL()
+            defer {
+                try? fileManager.removeItem(at: temporaryURL)
+            }
+            try copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
+                return .continue
+            }
+            let contents = try Data(contentsOf: temporaryURL)
+            progress.completedUnitCount += 1
+            guard callback(progress) == .continue else {
+                break
+            }
+            stubs.append(Sis.Stub(path: file.path, contents: contents))
+        }
+        return stubs
+    }
 
 }
