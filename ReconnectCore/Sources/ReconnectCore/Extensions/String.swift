@@ -20,6 +20,7 @@ import Foundation
 
 public extension String {
 
+    static let installDirectory = "C:\\System\\Install\\"
     static let windowsPathSeparator = "\\"
 
     var deletingLastWindowsPathComponent: String {
