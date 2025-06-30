@@ -43,7 +43,7 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
     }
 
     var state: State = .checkingInstalledPackages(Progress())
-    var stubs: [Sis.Stub] = []  // TODO: It's messy that we need to have both of these.
+    var stubs: [Sis.Stub] = []
     var installedPrograms: [ProgramDetails] = []
     var selection: ProgramDetails.ID?
 
@@ -71,10 +71,10 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
         else {
             return
         }
-        syncQueue.async { [stubs] in  // TODO: Runner that reports the error for us?
+        syncQueue.async { [stubs] in
             do {
                 let interpreter = PsiLuaEnv()
-                try interpreter.uninstallSisFile(stubs: stubs, uid: sis.sis.uid, handler: self)  // TODO: API requires refinement
+                try interpreter.uninstallSisFile(stubs: stubs, uid: sis.sis.uid, handler: self)
             } catch {
                 DispatchQueue.main.sync {
                     self.state = .error(error)
@@ -145,6 +145,5 @@ extension ProgramManagerModel: OpoLua.FileSystemIoHandler {
             }
         }
     }
-
 
 }

@@ -26,12 +26,12 @@ struct ProgramManagerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Table(of: ProgramManagerModel.ProgramDetails.self, selection: $programManagerModel.selection) {  // TODO: Wrong selection type?!
+            Table(of: ProgramManagerModel.ProgramDetails.self, selection: $programManagerModel.selection) {
                 TableColumn("Program") { programDetails in
                     Text(programDetails.sis.localizedDisplayName)
                 }
                 TableColumn("Version") { programDetails in
-                    Text("\(programDetails.sis.version.major).\(programDetails.sis.version.minor)")  // TODO: As string??
+                    Text("\(programDetails.sis.version.major).\(programDetails.sis.version.minor)")
                 }
             } rows: {
                 ForEach(programManagerModel.installedPrograms, id: \.self) { programDetails in

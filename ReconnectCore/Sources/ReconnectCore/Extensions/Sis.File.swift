@@ -20,10 +20,8 @@ import Foundation
 
 import OpoLua
 
-// TODO: We could probably push the localized display name into OpoLua too. That might be better for the future.
 extension Sis.File: @retroactive Identifiable {
 
-    // TODO: Move this!
     public var id: String { "\(uid):\(version)" }
 
     public var localizedDisplayName: String {
