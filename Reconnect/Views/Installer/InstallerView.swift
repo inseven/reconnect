@@ -166,7 +166,7 @@ struct InstallerView: View {
             guard let newValue else {
                 return
             }
-            window.title = newValue.localizedDisplayNameAndVersion
+            window.title = newValue.localizedDisplayName
         }
         .runs(installerModel)
     }
