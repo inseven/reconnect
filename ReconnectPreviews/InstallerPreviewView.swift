@@ -27,7 +27,7 @@ struct InstallerPreviewView: View {
 
     var body: some View {
         VStack(alignment: .center) {
-            Text((try? Locale.localize(file.name))?.text ?? "Unknown Name")
+            Text(file.localizedDisplayName)
                 .multilineTextAlignment(.center)
                 .font(.title)
             Text("\(file.version.major).\(file.version.minor)")
