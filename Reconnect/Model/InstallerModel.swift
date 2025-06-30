@@ -122,8 +122,6 @@ class InstallerModel: Runnable {
         case text(TextQuery)
     }
 
-    private static let installDirectory = "C:\\System\\Install\\"
-
     private let fileServer = FileServer()
     private let url: URL
 
@@ -248,43 +246,6 @@ class InstallerModel: Runnable {
         }
         sem.wait()
         return result
-    }
-
-}
-
-extension String {
-
-    public static let installDirectory = "C:\\System\\Install\\"
-
-}
-
-extension FileServer {
-
-    func getStubs(callback: (Progress) -> ProgressResponse) throws -> [Sis.Stub] {
-        guard try exists(path: .installDirectory) else {
-            return []
-        }
-        let fileManager = FileManager.default
-        let paths = try dirSync(path: .installDirectory)
-            .filter { $0.pathExtension.lowercased() == "sis" }
-        var stubs: [Sis.Stub] = []
-        let progress = Progress(totalUnitCount: Int64(paths.count))
-        for file in paths {
-            let temporaryURL = fileManager.temporaryURL()
-            defer {
-                try? fileManager.removeItem(at: temporaryURL)
-            }
-            try copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
-                return .continue
-            }
-            let contents = try Data(contentsOf: temporaryURL)
-            progress.completedUnitCount += 1
-            guard callback(progress) == .continue else {
-                break
-            }
-            stubs.append(Sis.Stub(path: file.path, contents: contents))
-        }
-        return stubs
     }
 
 }
