@@ -25,26 +25,37 @@ struct ProgramManagerView: View {
     @State private var programManagerModel = ProgramManagerModel()
 
     var body: some View {
-        HStack {
-            switch programManagerModel.state {
-            case .checkingInstalledPackages(let progress):
-                ProgressView(value: progress)
-            case .ready:
-                Table(of: ProgramManagerModel.ProgramDetails.self, selection: $programManagerModel.selection) {  // TODO: Wrong selection type?!
-                    TableColumn("Program") { programDetails in
-                        Text(programDetails.sis.localizedDisplayName)
-                    }
-                    TableColumn("Version") { programDetails in
-                        Text("\(programDetails.sis.version.major).\(programDetails.sis.version.minor)")  // TODO: As string??
-                    }
-                } rows: {
-                    ForEach(programManagerModel.installedPrograms, id: \.self) { programDetails in
-                        TableRow(programDetails)
-                    }
+        VStack(spacing: 0) {
+            Table(of: ProgramManagerModel.ProgramDetails.self, selection: $programManagerModel.selection) {  // TODO: Wrong selection type?!
+                TableColumn("Program") { programDetails in
+                    Text(programDetails.sis.localizedDisplayName)
                 }
-            case .error(let error):
-                Text(error.localizedDescription)
+                TableColumn("Version") { programDetails in
+                    Text("\(programDetails.sis.version.major).\(programDetails.sis.version.minor)")  // TODO: As string??
+                }
+            } rows: {
+                ForEach(programManagerModel.installedPrograms, id: \.self) { programDetails in
+                    TableRow(programDetails)
+                }
             }
+
+            Divider()
+
+            if case ProgramManagerModel.State.checkingInstalledPackages(let progress) = programManagerModel.state {
+                HStack {
+                    ProgressView(value: progress.fractionCompleted)
+                        .progressViewStyle(.circular)
+                        .controlSize(.small)
+                    Text("Updating...")
+                }
+                .foregroundStyle(.secondary)
+                .padding()
+            } else {
+                Text("\(programManagerModel.installedPrograms.count) Programs")
+                    .foregroundStyle(.secondary)
+                    .padding()
+            }
+
         }
         .toolbar {
 
@@ -74,6 +85,7 @@ struct ProgramManagerView: View {
             }
 
         }
+        .disabled(!programManagerModel.isReady)
         .runs(programManagerModel)
         .frame(minWidth: 640, minHeight: 480)
     }

@@ -23,11 +23,6 @@ import OpoLua
 
 import ReconnectCore
 
-// TODO: Move Sis.File Identifiable conformance?
-// TODO: I think runnable needs to remove the MainActor thing.
-
-
-// TODO: Shared file server?
 @Observable
 class ProgramManagerModel: Runnable {
 
@@ -42,12 +37,12 @@ class ProgramManagerModel: Runnable {
     }
 
     enum State {
-        case checkingInstalledPackages(Double)
+        case checkingInstalledPackages(Progress)
         case ready
         case error(Error)
     }
 
-    var state: State = .checkingInstalledPackages(0.0)
+    var state: State = .checkingInstalledPackages(Progress())
     var stubs: [Sis.Stub] = []  // TODO: It's messy that we need to have both of these.
     var installedPrograms: [ProgramDetails] = []
     var selection: ProgramDetails.ID?
@@ -60,6 +55,13 @@ class ProgramManagerModel: Runnable {
             return false
         }
         return selection != nil
+    }
+
+    var isReady: Bool {
+        guard case .ready = state else {
+            return false
+        }
+        return true
     }
 
     func remove() {
@@ -88,8 +90,7 @@ class ProgramManagerModel: Runnable {
             // Get the installed stubs.
             let stubs = try self.fileServer.getStubs { progress in
                 DispatchQueue.main.sync {
-                    print(progress)
-                    self.state = .checkingInstalledPackages(progress.fractionCompleted)
+                    self.state = .checkingInstalledPackages(progress)
                 }
                 return .continue
             }
