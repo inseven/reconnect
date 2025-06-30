@@ -24,7 +24,7 @@ import OpoLua
 import ReconnectCore
 
 @Observable
-class ProgramManagerModel: Runnable {
+class ProgramManagerModel: Runnable, @unchecked Sendable {
 
     struct ProgramDetails: Identifiable, Hashable {
 
@@ -115,8 +115,8 @@ class ProgramManagerModel: Runnable {
         }
     }
 
-    func start() {  // TODO: MainActor??
-        dispatchPrecondition(condition: .onQueue(.main))
+    @MainActor
+    func start() {
         syncQueue.async {
             self.syncQueue_reload()
         }
