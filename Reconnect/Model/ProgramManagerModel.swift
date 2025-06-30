@@ -28,7 +28,7 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
 
     struct ProgramDetails: Identifiable, Hashable {
 
-        var id: String {  // TODO: Is this necessary?
+        var id: String {
             return "\(path):\(sis.id)"
         }
 
@@ -64,17 +64,14 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
         return true
     }
 
-    func remove() {
-        guard
-            let selection,
-            let sis = self.installedPrograms.first(where: { $0.id == selection })
-        else {
+    func remove(uid: UInt32? = nil) {
+        guard let uid = uid ?? installedPrograms.first(where: { $0.id == selection })?.sis.uid else {
             return
         }
         syncQueue.async { [stubs] in
             do {
                 let interpreter = PsiLuaEnv()
-                try interpreter.uninstallSisFile(stubs: stubs, uid: sis.sis.uid, handler: self)
+                try interpreter.uninstallSisFile(stubs: stubs, uid: uid, handler: self)
             } catch {
                 DispatchQueue.main.sync {
                     self.state = .error(error)
@@ -84,7 +81,7 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
         }
     }
 
-    func syncQueue_reload() {
+    private func syncQueue_reload() {
         dispatchPrecondition(condition: .onQueue(syncQueue))
         do {
             // Get the installed stubs.

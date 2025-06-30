@@ -36,6 +36,11 @@ struct ProgramManagerView: View {
             } rows: {
                 ForEach(programManagerModel.installedPrograms, id: \.self) { programDetails in
                     TableRow(programDetails)
+                        .contextMenu {
+                            Button("Remove") {
+                                programManagerModel.remove(uid: programDetails.sis.uid)
+                            }
+                        }
                 }
             }
 
