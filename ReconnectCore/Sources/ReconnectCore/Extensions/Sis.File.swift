@@ -20,7 +20,7 @@ import Foundation
 
 import OpoLua
 
-extension Sis.File: @retroactive Identifiable, @retroactive Equatable {
+extension Sis.File: @retroactive Identifiable {
 
     public static func == (lhs: Sis.File, rhs: Sis.File) -> Bool {
         return lhs.id == rhs.id
