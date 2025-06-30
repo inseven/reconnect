@@ -99,8 +99,8 @@ class InstallerModel: Runnable {
         case loading
         case ready
         case checkingInstalledPackages(Double)
-        case copy(String, Float)
-        case delete(String)
+//        case copy(String, Float)
+//        case delete(String)
         case operation(Fs.Operation, Progress)
         case error(Error)
         case complete

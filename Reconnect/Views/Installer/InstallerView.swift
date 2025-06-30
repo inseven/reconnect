@@ -85,31 +85,6 @@ struct InstallerView: View {
                     Button("Cancel", role: .destructive) {}
                         .disabled(true)
                 }
-            case .copy(let path, let progress):
-                InstallerPage {
-                    VStack {
-                        Text("Copying '\(path)'...")
-                        AnimatedImage(named: "install")
-                            .frame(width: 240, height: 70)
-                        ProgressView(value: progress)
-                    }
-                    .padding()
-                    .frame(maxWidth: LayoutMetrics.maximumContentWidth)
-                } actions: {
-                    Button("Cancel", role: .destructive) {}
-                        .disabled(true)
-                }
-            case .delete(let path):
-                InstallerPage {
-                    VStack {
-                        Text("Deleting '\(path)'...")
-                    }
-                    .padding()
-                    .frame(maxWidth: LayoutMetrics.maximumContentWidth)
-                } actions: {
-                    Button("Cancel", role: .destructive) {}
-                        .disabled(true)
-                }
             case .operation(let operation, let progress):
                 InstallerPage {
                     VStack {
