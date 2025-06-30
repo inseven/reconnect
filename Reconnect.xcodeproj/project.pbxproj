@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
-		D8068F722C4AFF29004177F6 /* BrowserWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8068F712C4AFF29004177F6 /* BrowserWindow.swift */; };
 		D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
 		D820123F2DE1170700854FE9 /* HelpCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D820123E2DE1170200854FE9 /* HelpCommands.swift */; };
@@ -16,7 +15,6 @@
 		D83658B92C298C4F00B45693 /* NavigationHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83658B82C298C4F00B45693 /* NavigationHistory.swift */; };
 		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
-		D83BD9772DE8F4B40075902D /* NSInstallerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83BD9762DE8F4B10075902D /* NSInstallerWindow.swift */; };
 		D83BD9792DE914B40075902D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83BD9782DE914B20075902D /* AppDelegate.swift */; };
 		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
 		D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964DD2C1BFCB700405656 /* Assets.xcassets */; };
@@ -53,7 +51,6 @@
 		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
 		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
 		D8E8B4FE2D1529E800405445 /* src in Resources */ = {isa = PBXBuildFile; fileRef = D8E8B4FD2D1529E800405445 /* src */; };
-		D8EF0AA62E110B2600B566FC /* ProgramManagerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EF0AA52E110B2300B566FC /* ProgramManagerWindow.swift */; };
 		D8F1A59E2C4A4C9B00931C00 /* ReconnectMenuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F1A59D2C4A4C9B00931C00 /* ReconnectMenuApp.swift */; };
 		D8F1A5A22C4A4C9C00931C00 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8F1A5A12C4A4C9C00931C00 /* Assets.xcassets */; };
 		D8F1A5A52C4A4C9C00931C00 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8F1A5A42C4A4C9C00931C00 /* Preview Assets.xcassets */; };
@@ -61,7 +58,6 @@
 		D8F1A5B02C4A4EBC00931C00 /* ApplicationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F1A5AF2C4A4EBC00931C00 /* ApplicationModel.swift */; };
 		D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8F1A5B72C4A4F8000931C00 /* Interact */; };
 		D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */ = {isa = PBXBuildFile; fileRef = D8FD72722C3D192F0038DB17 /* sparkle-license */; };
-		D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,12 +126,10 @@
 
 /* Begin PBXFileReference section */
 		D8068F6D2C4AFCE4004177F6 /* ReconnectCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReconnectCore; sourceTree = "<group>"; };
-		D8068F712C4AFF29004177F6 /* BrowserWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserWindow.swift; sourceTree = "<group>"; };
 		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
 		D820123E2DE1170200854FE9 /* HelpCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCommands.swift; sourceTree = "<group>"; };
 		D83658B62C29596F00B45693 /* NavigationHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHistoryTests.swift; sourceTree = "<group>"; };
 		D83658B82C298C4F00B45693 /* NavigationHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationHistory.swift; sourceTree = "<group>"; };
-		D83BD9762DE8F4B10075902D /* NSInstallerWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSInstallerWindow.swift; sourceTree = "<group>"; };
 		D83BD9782DE914B20075902D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964D92C1BFCB600405656 /* ReconnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectApp.swift; sourceTree = "<group>"; };
@@ -172,7 +166,6 @@
 		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
 		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
 		D8E8B4FD2D1529E800405445 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = dependencies/opolua/src; sourceTree = "<group>"; };
-		D8EF0AA52E110B2300B566FC /* ProgramManagerWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramManagerWindow.swift; sourceTree = "<group>"; };
 		D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Reconnect Menu.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8F1A59D2C4A4C9B00931C00 /* ReconnectMenuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectMenuApp.swift; sourceTree = "<group>"; };
 		D8F1A5A12C4A4C9C00931C00 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -180,10 +173,10 @@
 		D8F1A5A62C4A4C9C00931C00 /* ReconnectMenu.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReconnectMenu.entitlements; sourceTree = "<group>"; };
 		D8F1A5AF2C4A4EBC00931C00 /* ApplicationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationModel.swift; sourceTree = "<group>"; };
 		D8FD72722C3D192F0038DB17 /* sparkle-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "sparkle-license"; sourceTree = "<group>"; };
-		D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfersWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		D823DB392E132DD500425703 /* Windows */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Windows; sourceTree = "<group>"; };
 		D83BD9672DE863220075902D /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
 		D8EF0AB02E110B6700B566FC /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
 		D8EF0ACF2E110BB200B566FC /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
@@ -249,17 +242,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D8068F702C4AFF05004177F6 /* Windows */ = {
-			isa = PBXGroup;
-			children = (
-				D8EF0AA52E110B2300B566FC /* ProgramManagerWindow.swift */,
-				D83BD9762DE8F4B10075902D /* NSInstallerWindow.swift */,
-				D8068F712C4AFF29004177F6 /* BrowserWindow.swift */,
-				D8FFE85E2C49F2FB001F7D8A /* TransfersWindow.swift */,
-			);
-			path = Windows;
-			sourceTree = "<group>";
-		};
 		D80954632C4A57D400752BBC /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -334,7 +316,7 @@
 				D83BD9672DE863220075902D /* Resources */,
 				D822EA0F2C2BA305008A4BAA /* Utilities */,
 				D8EF0ACF2E110BB200B566FC /* Views */,
-				D8068F702C4AFF05004177F6 /* Windows */,
+				D823DB392E132DD500425703 /* Windows */,
 			);
 			path = Reconnect;
 			sourceTree = "<group>";
@@ -474,6 +456,7 @@
 				D8B1AC512E0F4C220084BFD5 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				D823DB392E132DD500425703 /* Windows */,
 				D83BD9672DE863220075902D /* Resources */,
 				D8EF0AB02E110B6700B566FC /* Model */,
 				D8EF0ACF2E110BB200B566FC /* Views */,
@@ -714,16 +697,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D820123F2DE1170700854FE9 /* HelpCommands.swift in Sources */,
-				D8068F722C4AFF29004177F6 /* BrowserWindow.swift in Sources */,
 				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
 				D8DC357F2E0F37C700471D7D /* NavigationCommands.swift in Sources */,
-				D8FFE85F2C49F2FB001F7D8A /* TransfersWindow.swift in Sources */,
 				D83658B92C298C4F00B45693 /* NavigationHistory.swift in Sources */,
 				D874B0CC2DEE4EB1008E938D /* SisInstallError.swift in Sources */,
-				D83BD9772DE8F4B40075902D /* NSInstallerWindow.swift in Sources */,
 				D8981E422DE3B03F003CBCF0 /* FileCommands.swift in Sources */,
 				D8981E442DE3B14F003CBCF0 /* SparkleCommands.swift in Sources */,
-				D8EF0AA62E110B2600B566FC /* ProgramManagerWindow.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 				D83BD9792DE914B40075902D /* AppDelegate.swift in Sources */,
 				D8AB9C382DEE3EFE0087F13E /* WindowProxy.swift in Sources */,
