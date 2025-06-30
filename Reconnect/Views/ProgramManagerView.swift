@@ -20,7 +20,9 @@ import SwiftUI
 
 struct ProgramManagerView: View {
 
-    @State var programManagerModel = ProgramManagerModel()
+    @Environment(ApplicationModel.self) private var applicationModel
+
+    @State private var programManagerModel = ProgramManagerModel()
 
     var body: some View {
         HStack {
@@ -28,26 +30,52 @@ struct ProgramManagerView: View {
             case .checkingInstalledPackages(let progress):
                 ProgressView(value: progress)
             case .ready:
-                List {
-                    ForEach(programManagerModel.installedPrograms, id: \.path) { program in
-                        Text(program.sis.localizedDisplayNameAndVersion)
+                Table(of: ProgramManagerModel.ProgramDetails.self, selection: $programManagerModel.selection) {  // TODO: Wrong selection type?!
+                    TableColumn("Program") { programDetails in
+                        Text(programDetails.sis.localizedDisplayName)
+                    }
+                    TableColumn("Version") { programDetails in
+                        Text("\(programDetails.sis.version.major).\(programDetails.sis.version.minor)")  // TODO: As string??
+                    }
+                } rows: {
+                    ForEach(programManagerModel.installedPrograms, id: \.self) { programDetails in
+                        TableRow(programDetails)
                     }
                 }
             case .error(let error):
                 Text(error.localizedDescription)
             }
-            VStack {
-                Button("Remove") {
+        }
+        .toolbar {
 
+            ToolbarItem {
+                Button {
+                    programManagerModel.reload()
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
                 }
-                Button("Add...") {
-
-                }
-                Spacer()
             }
+
+            ToolbarItem {
+                Button {
+                    programManagerModel.remove()
+                } label: {
+                    Label("Remove", systemImage: "trash")
+                }
+                .disabled(!programManagerModel.canRemove)
+            }
+
+            ToolbarItem {
+                Button {
+                    applicationModel.openInstaller()
+                } label: {
+                    Label("Add...", systemImage: "plus")
+                }
+            }
+
         }
         .runs(programManagerModel)
-        .frame(width: 800, height: 600)
+        .frame(minWidth: 640, minHeight: 480)
     }
 
 }

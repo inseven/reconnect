@@ -101,6 +101,7 @@ class InstallerModel: Runnable {
         case checkingInstalledPackages(Double)
         case copy(String, Float)
         case delete(String)
+        case operation(Fs.Operation, Progress)
         case error(Error)
         case complete
     }
@@ -377,73 +378,15 @@ extension InstallerModel: SisInstallIoHandler {
 
     func sisInstallComplete(sis: Sis.File) {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        print("Install phase complete .")
+        print("Install phase complete (\(sis.name)).")
     }
 
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        do {
-            switch operation.type {
-            case .delete:
-                print("Delete '\(operation.path)'...")
-                DispatchQueue.main.sync {
-                    self.page = .delete(operation.path)
-                }
-                try fileServer.remove(path: operation.path)
-                return .success
-            case .mkdir:
-                try fileServer.mkdir(path: operation.path)
-                return .success
-            case .rmdir:
-                return .err(.notReady)
-            case .write(let data):
-                DispatchQueue.main.sync {
-                    self.page = .copy(operation.path, 0.0)
-                }
-                let temporaryURL = FileManager.default.temporaryURL()
-                defer {
-                    do {
-                        try FileManager.default.removeItem(at: temporaryURL)
-                    } catch {
-                        print("Failed to clean up temporary file with error '\(error)'.")
-                    }
-                }
-                try data.write(to: temporaryURL)
-                try fileServer.copyFileSync(fromLocalPath: temporaryURL.path, toRemotePath: operation.path) { progress, size in
-                    DispatchQueue.main.sync {
-                        self.page = .copy(operation.path, Float(progress) / Float(size))
-                    }
-                    return .continue
-                }
-                return .success
-            case .stat:
-                let attributes = try fileServer.getExtendedAttributesSync(path: operation.path)
-                return .stat(Fs.Stat(size: UInt64(attributes.size),
-                                     lastModified: attributes.modificationDate,
-                                     isDirectory: attributes.isDirectory))
-            case .exists:
-                return try fileServer.exists(path: operation.path) ? .success : .err(.notFound)
-            default:
-                print("Unsupported operation '\(operation.type)' '\(operation.path)'")
-                return .err(.notReady)
-            }
-        } catch PLPToolsError.inUse {
-            return .err(.inUse)
-        } catch PLPToolsError.noSuchFile,
-                PLPToolsError.noSuchDevice,
-                PLPToolsError.noSuchRecord,
-                PLPToolsError.noSuchDirectory {
-            return .err(.notFound)
-        } catch PLPToolsError.fileAlreadyExists {
-            return .err(.alreadyExists)
-        } catch PLPToolsError.notReady {
-            return .err(.notReady)
-        } catch {
-            if let error = error as? PLPToolsError {
-                return .epocError(error.rawValue)
-            } else {
-                print("Encountered unmapped internal plptools error during install '\(error)'.")
-                return .err(.general)
+        print("Perform operation \(operation)...")
+        return fileServer.fsop(operation) { progress in
+            DispatchQueue.main.sync {
+                self.page = .operation(operation, progress)
             }
         }
     }

@@ -23,11 +23,20 @@ import OpoLua
 
 import ReconnectCore
 
+// TODO: Move Sis.File Identifiable conformance?
+// TODO: I think runnable needs to remove the MainActor thing.
+
+
 // TODO: Shared file server?
 @Observable
 class ProgramManagerModel: Runnable {
 
-    struct ProgramDetails {
+    struct ProgramDetails: Identifiable, Hashable {
+
+        var id: String {  // TODO: Is this necessary?
+            return "\(path):\(sis.id)"
+        }
+
         let path: String
         let sis: Sis.File
     }
@@ -39,42 +48,102 @@ class ProgramManagerModel: Runnable {
     }
 
     var state: State = .checkingInstalledPackages(0.0)
+    var stubs: [Sis.Stub] = []  // TODO: It's messy that we need to have both of these.
     var installedPrograms: [ProgramDetails] = []
+    var selection: ProgramDetails.ID?
 
     let syncQueue = DispatchQueue(label: "ProgramManagerModel.syncQueue")
     let fileServer = FileServer()
 
-    func start() {
-        syncQueue.async {
+    var canRemove: Bool {
+        guard case .ready = state else {
+            return false
+        }
+        return selection != nil
+    }
+
+    func remove() {
+        guard
+            let selection,
+            let sis = self.installedPrograms.first(where: { $0.id == selection })
+        else {
+            return
+        }
+        syncQueue.async { [stubs] in  // TODO: Runner that reports the error for us?
             do {
-                // Get the installed stubs.
-                let stubs = try self.fileServer.getStubs { progress in
-                    DispatchQueue.main.sync {
-                        print(progress)
-                        self.state = .checkingInstalledPackages(progress.fractionCompleted)
-                    }
-                    return .continue
-                }
-                // Parse them to determine the program names and versions.
                 let interpreter = PsiLuaEnv()
-                let installedPrograms = try stubs.map { stub in
-                    return ProgramDetails(path: stub.path, sis: try interpreter.loadSisFile(data: stub.contents))
-                }
-                // Update the model with the new state.
-                DispatchQueue.main.sync {
-                    self.installedPrograms = installedPrograms
-                    self.state = .ready
-                }
+                try interpreter.uninstallSisFile(stubs: stubs, uid: sis.sis.uid, handler: self)  // TODO: API requires refinement
             } catch {
                 DispatchQueue.main.sync {
                     self.state = .error(error)
                 }
             }
+            self.syncQueue_reload()
+        }
+    }
+
+    func syncQueue_reload() {
+        dispatchPrecondition(condition: .onQueue(syncQueue))
+        do {
+            // Get the installed stubs.
+            let stubs = try self.fileServer.getStubs { progress in
+                DispatchQueue.main.sync {
+                    print(progress)
+                    self.state = .checkingInstalledPackages(progress.fractionCompleted)
+                }
+                return .continue
+            }
+            // Parse them to determine the program names and versions.
+            let interpreter = PsiLuaEnv()
+            let installedPrograms = try stubs.map { stub in
+                return ProgramDetails(path: stub.path, sis: try interpreter.loadSisFile(data: stub.contents))
+            }.sorted {
+                $0.sis.localizedDisplayName.localizedCaseInsensitiveCompare($1.sis.localizedDisplayName) == .orderedAscending
+            }
+
+            // Update the model with the new state.
+            DispatchQueue.main.sync {
+                self.stubs = stubs
+                self.installedPrograms = installedPrograms
+                self.state = .ready
+            }
+        } catch {
+            DispatchQueue.main.sync {
+                self.state = .error(error)
+            }
+        }
+    }
+
+    func start() {  // TODO: MainActor??
+        dispatchPrecondition(condition: .onQueue(.main))
+        syncQueue.async {
+            self.syncQueue_reload()
         }
     }
 
     func stop() {
 
     }
+
+    func reload() {
+        dispatchPrecondition(condition: .onQueue(.main))
+        syncQueue.async {
+            self.syncQueue_reload()
+        }
+    }
+
+}
+
+extension ProgramManagerModel: OpoLua.FileSystemIoHandler {
+
+    func fsop(_ operation: Fs.Operation) -> Fs.Result {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        return fileServer.fsop(operation) { progress in
+            DispatchQueue.main.sync {
+                print("\(operation): \(progress)")
+            }
+        }
+    }
+
 
 }
