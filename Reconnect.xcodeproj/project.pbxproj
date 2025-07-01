@@ -9,42 +9,27 @@
 /* Begin PBXBuildFile section */
 		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
 		D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D813FF152C26E869009CF0DC /* plptools-license in Resources */ = {isa = PBXBuildFile; fileRef = D813FF142C26E869009CF0DC /* plptools-license */; };
-		D820123F2DE1170700854FE9 /* HelpCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D820123E2DE1170200854FE9 /* HelpCommands.swift */; };
 		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
 		D83BD9792DE914B40075902D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D83BD9782DE914B20075902D /* AppDelegate.swift */; };
 		D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84964D92C1BFCB600405656 /* ReconnectApp.swift */; };
 		D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D84964DD2C1BFCB700405656 /* Assets.xcassets */; };
-		D874B0CC2DEE4EB1008E938D /* SisInstallError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D874B0CB2DEE4EAE008E938D /* SisInstallError.swift */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
 		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
-		D8981E422DE3B03F003CBCF0 /* FileCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8981E412DE3B03C003CBCF0 /* FileCommands.swift */; };
-		D8981E442DE3B14F003CBCF0 /* SparkleCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8981E432DE3B14D003CBCF0 /* SparkleCommands.swift */; };
 		D8A8A8082DE19312007A657B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = D8A8A8072DE19312007A657B /* Algorithms */; };
-		D8A8A80E2DE1A7A0007A657B /* apache-2.0-license in Resources */ = {isa = PBXBuildFile; fileRef = D8A8A80D2DE1A799007A657B /* apache-2.0-license */; };
-		D8AB9C382DEE3EFE0087F13E /* WindowProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AB9C372DEE3EFC0087F13E /* WindowProxy.swift */; };
 		D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */ = {isa = PBXBuildFile; productRef = D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */; };
 		D8B1AC452E0F4C220084BFD5 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8B1AC442E0F4C220084BFD5 /* Quartz.framework */; };
 		D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */; };
 		D8B1AC5C2E0F6DAE0084BFD5 /* src in Resources */ = {isa = PBXBuildFile; fileRef = D8E8B4FD2D1529E800405445 /* src */; };
 		D8B1AC5D2E0F870D0084BFD5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8D362972DE79CB000DDDD19 /* Localizable.strings */; };
-		D8B1AC672E0F88380084BFD5 /* PreviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D8B1AC632E0F88380084BFD5 /* PreviewViewController.xib */; };
-		D8B1AC682E0F88380084BFD5 /* InstallerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B1AC5F2E0F88380084BFD5 /* InstallerPreviewView.swift */; };
-		D8B1AC692E0F88380084BFD5 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B1AC602E0F88380084BFD5 /* PreviewProvider.swift */; };
-		D8B1AC6A2E0F88380084BFD5 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B1AC612E0F88380084BFD5 /* PreviewViewController.swift */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D362992DE79CB000DDDD19 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D8D362972DE79CB000DDDD19 /* Localizable.strings */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
-		D8DC357F2E0F37C700471D7D /* NavigationCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DC357E2E0F37C100471D7D /* NavigationCommands.swift */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
-		D8E31EB52C26E10900350082 /* Licensable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E31EB42C26E10900350082 /* Licensable.swift */; };
-		D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */ = {isa = PBXBuildFile; fileRef = D8E31EB92C26E1E400350082 /* reconnect-license */; };
 		D8E8B4FE2D1529E800405445 /* src in Resources */ = {isa = PBXBuildFile; fileRef = D8E8B4FD2D1529E800405445 /* src */; };
 		D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8F1A5B72C4A4F8000931C00 /* Interact */; };
-		D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */ = {isa = PBXBuildFile; fileRef = D8FD72722C3D192F0038DB17 /* sparkle-license */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,8 +98,6 @@
 
 /* Begin PBXFileReference section */
 		D8068F6D2C4AFCE4004177F6 /* ReconnectCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReconnectCore; sourceTree = "<group>"; };
-		D813FF142C26E869009CF0DC /* plptools-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "plptools-license"; sourceTree = "<group>"; };
-		D820123E2DE1170200854FE9 /* HelpCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCommands.swift; sourceTree = "<group>"; };
 		D83BD9782DE914B20075902D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964D92C1BFCB600405656 /* ReconnectApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReconnectApp.swift; sourceTree = "<group>"; };
@@ -122,31 +105,26 @@
 		D84964E22C1BFCB700405656 /* Reconnect.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Reconnect.entitlements; sourceTree = "<group>"; };
 		D84964E72C1BFCB700405656 /* ReconnectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D874B0CB2DEE4EAE008E938D /* SisInstallError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SisInstallError.swift; sourceTree = "<group>"; };
 		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
 		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
 		D89071882C4B01FC00C11DE8 /* screenshot-sis */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "screenshot-sis"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8981E412DE3B03C003CBCF0 /* FileCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCommands.swift; sourceTree = "<group>"; };
-		D8981E432DE3B14D003CBCF0 /* SparkleCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SparkleCommands.swift; sourceTree = "<group>"; };
-		D8A8A80D2DE1A799007A657B /* apache-2.0-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "apache-2.0-license"; sourceTree = "<group>"; };
-		D8AB9C372DEE3EFC0087F13E /* WindowProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowProxy.swift; sourceTree = "<group>"; };
 		D8AD8B532C2379A10063A613 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReconnectPreviews.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8B1AC442E0F4C220084BFD5 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
-		D8B1AC5E2E0F88380084BFD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D8B1AC5F2E0F88380084BFD5 /* InstallerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstallerPreviewView.swift; sourceTree = "<group>"; };
-		D8B1AC602E0F88380084BFD5 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
-		D8B1AC612E0F88380084BFD5 /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
-		D8B1AC622E0F88380084BFD5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreviewViewController.xib; sourceTree = "<group>"; };
-		D8B1AC642E0F88380084BFD5 /* ReconnectPreviews.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReconnectPreviews.entitlements; sourceTree = "<group>"; };
 		D8D362982DE79CB000DDDD19 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		D8DC357E2E0F37C100471D7D /* NavigationCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCommands.swift; sourceTree = "<group>"; };
-		D8E31EB42C26E10900350082 /* Licensable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Licensable.swift; sourceTree = "<group>"; };
-		D8E31EB92C26E1E400350082 /* reconnect-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "reconnect-license"; sourceTree = "<group>"; };
 		D8E8B4FD2D1529E800405445 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = dependencies/opolua/src; sourceTree = "<group>"; };
 		D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Reconnect Menu.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8FD72722C3D192F0038DB17 /* sparkle-license */ = {isa = PBXFileReference; lastKnownFileType = text; path = "sparkle-license"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D823DB392E132DD500425703 /* Windows */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Windows; sourceTree = "<group>"; };
@@ -157,6 +135,11 @@
 		D891AE5D2E13724E009EC465 /* ScreenshotSIS */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ScreenshotSIS; sourceTree = "<group>"; };
 		D891AE602E137263009EC465 /* Preview Content */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Preview Content"; sourceTree = "<group>"; };
 		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
+		D891AE752E1372E3009EC465 /* Licenses */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Licenses; sourceTree = "<group>"; };
+		D891AE7C2E1373B2009EC465 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
+		D891AE832E1373BB009EC465 /* Commands */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Commands; sourceTree = "<group>"; };
+		D891AE892E1373BF009EC465 /* Environment */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Environment; sourceTree = "<group>"; };
+		D891AE922E1373CE009EC465 /* ReconnectPreviews */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectPreviews; sourceTree = "<group>"; };
 		D8EF0AB02E110B6700B566FC /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
 		D8EF0ACF2E110BB200B566FC /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -221,17 +204,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D820123D2DE116EF00854FE9 /* Commands */ = {
-			isa = PBXGroup;
-			children = (
-				D8981E412DE3B03C003CBCF0 /* FileCommands.swift */,
-				D820123E2DE1170200854FE9 /* HelpCommands.swift */,
-				D8DC357E2E0F37C100471D7D /* NavigationCommands.swift */,
-				D8981E432DE3B14D003CBCF0 /* SparkleCommands.swift */,
-			);
-			path = Commands;
-			sourceTree = "<group>";
-		};
 		D84964CD2C1BFCB600405656 = {
 			isa = PBXGroup;
 			children = (
@@ -242,7 +214,7 @@
 				D891AE562E137239009EC465 /* ReconnectUITests */,
 				D891AE6B2E13726F009EC465 /* ReconnectMenu */,
 				D891AE5D2E13724E009EC465 /* ScreenshotSIS */,
-				D8B1AC652E0F88380084BFD5 /* ReconnectPreviews */,
+				D891AE922E1373CE009EC465 /* ReconnectPreviews */,
 				D84964D72C1BFCB600405656 /* Products */,
 				D84965332C1C30E500405656 /* Frameworks */,
 			);
@@ -269,10 +241,10 @@
 				D83BD9782DE914B20075902D /* AppDelegate.swift */,
 				D84964D92C1BFCB600405656 /* ReconnectApp.swift */,
 				D84964DD2C1BFCB700405656 /* Assets.xcassets */,
-				D820123D2DE116EF00854FE9 /* Commands */,
-				D8AB9C362DEE3EF70087F13E /* Environment */,
-				D849653D2C1D07AD00405656 /* Extensions */,
-				D8E31EB82C26E1CA00350082 /* Licenses */,
+				D891AE832E1373BB009EC465 /* Commands */,
+				D891AE892E1373BF009EC465 /* Environment */,
+				D891AE7C2E1373B2009EC465 /* Extensions */,
+				D891AE752E1372E3009EC465 /* Licenses */,
 				D8D362972DE79CB000DDDD19 /* Localizable.strings */,
 				D8EF0AB02E110B6700B566FC /* Model */,
 				D891AE602E137263009EC465 /* Preview Content */,
@@ -292,47 +264,6 @@
 				D8B1AC442E0F4C220084BFD5 /* Quartz.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		D849653D2C1D07AD00405656 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				D8E31EB42C26E10900350082 /* Licensable.swift */,
-				D874B0CB2DEE4EAE008E938D /* SisInstallError.swift */,
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		D8AB9C362DEE3EF70087F13E /* Environment */ = {
-			isa = PBXGroup;
-			children = (
-				D8AB9C372DEE3EFC0087F13E /* WindowProxy.swift */,
-			);
-			path = Environment;
-			sourceTree = "<group>";
-		};
-		D8B1AC652E0F88380084BFD5 /* ReconnectPreviews */ = {
-			isa = PBXGroup;
-			children = (
-				D8B1AC5E2E0F88380084BFD5 /* Info.plist */,
-				D8B1AC5F2E0F88380084BFD5 /* InstallerPreviewView.swift */,
-				D8B1AC602E0F88380084BFD5 /* PreviewProvider.swift */,
-				D8B1AC612E0F88380084BFD5 /* PreviewViewController.swift */,
-				D8B1AC632E0F88380084BFD5 /* PreviewViewController.xib */,
-				D8B1AC642E0F88380084BFD5 /* ReconnectPreviews.entitlements */,
-			);
-			path = ReconnectPreviews;
-			sourceTree = "<group>";
-		};
-		D8E31EB82C26E1CA00350082 /* Licenses */ = {
-			isa = PBXGroup;
-			children = (
-				D8A8A80D2DE1A799007A657B /* apache-2.0-license */,
-				D813FF142C26E869009CF0DC /* plptools-license */,
-				D8E31EB92C26E1E400350082 /* reconnect-license */,
-				D8FD72722C3D192F0038DB17 /* sparkle-license */,
-			);
-			path = Licenses;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -359,6 +290,10 @@
 				D83BD9672DE863220075902D /* Resources */,
 				D891AE5A2E137243009EC465 /* Utilities */,
 				D891AE602E137263009EC465 /* Preview Content */,
+				D891AE752E1372E3009EC465 /* Licenses */,
+				D891AE7C2E1373B2009EC465 /* Extensions */,
+				D891AE832E1373BB009EC465 /* Commands */,
+				D891AE892E1373BF009EC465 /* Environment */,
 				D8EF0AB02E110B6700B566FC /* Model */,
 				D8EF0ACF2E110BB200B566FC /* Views */,
 			);
@@ -454,6 +389,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D891AE922E1373CE009EC465 /* ReconnectPreviews */,
 			);
 			name = ReconnectPreviews;
 			packageProductDependencies = (
@@ -559,12 +497,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D8E8B4FE2D1529E800405445 /* src in Resources */,
-				D813FF152C26E869009CF0DC /* plptools-license in Resources */,
 				D84964DE2C1BFCB700405656 /* Assets.xcassets in Resources */,
-				D8FD72732C3D192F0038DB17 /* sparkle-license in Resources */,
 				D8D362992DE79CB000DDDD19 /* Localizable.strings in Resources */,
-				D8E31EBA2C26E1E400350082 /* reconnect-license in Resources */,
-				D8A8A80E2DE1A7A0007A657B /* apache-2.0-license in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,7 +522,6 @@
 			files = (
 				D8B1AC5D2E0F870D0084BFD5 /* Localizable.strings in Resources */,
 				D8B1AC5C2E0F6DAE0084BFD5 /* src in Resources */,
-				D8B1AC672E0F88380084BFD5 /* PreviewViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,15 +539,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D820123F2DE1170700854FE9 /* HelpCommands.swift in Sources */,
-				D8E31EB52C26E10900350082 /* Licensable.swift in Sources */,
-				D8DC357F2E0F37C700471D7D /* NavigationCommands.swift in Sources */,
-				D874B0CC2DEE4EB1008E938D /* SisInstallError.swift in Sources */,
-				D8981E422DE3B03F003CBCF0 /* FileCommands.swift in Sources */,
-				D8981E442DE3B14F003CBCF0 /* SparkleCommands.swift in Sources */,
 				D84964DA2C1BFCB600405656 /* ReconnectApp.swift in Sources */,
 				D83BD9792DE914B40075902D /* AppDelegate.swift in Sources */,
-				D8AB9C382DEE3EFE0087F13E /* WindowProxy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -643,9 +569,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8B1AC682E0F88380084BFD5 /* InstallerPreviewView.swift in Sources */,
-				D8B1AC692E0F88380084BFD5 /* PreviewProvider.swift in Sources */,
-				D8B1AC6A2E0F88380084BFD5 /* PreviewViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,14 +605,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		D8B1AC632E0F88380084BFD5 /* PreviewViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D8B1AC622E0F88380084BFD5 /* Base */,
-			);
-			name = PreviewViewController.xib;
-			sourceTree = "<group>";
-		};
 		D8D362972DE79CB000DDDD19 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
