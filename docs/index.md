@@ -22,5 +22,6 @@
 
 - Browse files on your Psion
 - Transfer files between your Mac and Psion
-- Install Psion programs from your Mac
+- Add and remove Psion programs
 - Automatically convert image files
+- Preview SIS installer files using QuickLook
