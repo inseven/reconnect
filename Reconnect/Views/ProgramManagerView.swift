@@ -51,7 +51,7 @@ struct ProgramManagerView: View {
                     ProgressView(value: progress.fractionCompleted)
                         .progressViewStyle(.circular)
                         .controlSize(.small)
-                    Text("Updating...")
+                    Text("Checking installed packages...")
                 }
                 .foregroundStyle(.secondary)
                 .padding()
