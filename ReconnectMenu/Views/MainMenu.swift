@@ -40,6 +40,13 @@ struct MainMenu: View {
         .disabled(!applicationModel.isConnected)
         Divider()
         Button {
+            openURL(.programManager)
+        } label: {
+            Text("Add/Remove Programs...")
+        }
+        .disabled(!applicationModel.isConnected)
+        Divider()
+        Button {
             openURL(.about)
         } label: {
             Text("About...")
