@@ -77,14 +77,6 @@ hr {
     border-bottom: var(--line-weight) solid var(--secondary-foreground-color);
 }
 
-page-controls {
-    border-top: var(--line-weight) solid var(--secondary-foreground-color);
-    padding-top: var(--vertical-spacing);
-    font-size: small;
-    text-align: right;
-    display: block;
-}
-
 ul {
     margin-bottom: calc(2 * var(--vertical-spacing));
 }
