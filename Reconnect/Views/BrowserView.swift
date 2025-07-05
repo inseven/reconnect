@@ -110,40 +110,13 @@ struct BrowserView: View {
                 }
             }
 
-            ToolbarItem(id: "new-folder") {
-                Button {
-                    browserModel.newFolder()
-                } label: {
-                    Label("New Folder", systemImage: "folder.badge.plus")
-                }
+            ToolsToolbar(browserModel: browserModel)
+
+            ToolbarItem(id: "spacer") {
+                Spacer()
             }
 
-            ToolbarItem(id: "download") {
-                Button {
-                    browserModel.download(to: FileManager.default.downloadsDirectory,
-                                          convertFiles: applicationModel.convertFiles)
-                } label: {
-                    Label("New Folder", systemImage: "square.and.arrow.down")
-                }
-                .disabled(browserModel.isSelectionEmpty)
-            }
-
-            ToolbarItem(id: "screenshot") {
-                Button {
-                    browserModel.captureScreenshot()
-                } label: {
-                    Label("Screenshot", systemImage: "camera.viewfinder")
-                }
-            }
-
-            ToolbarItem(id: "delete") {
-                Button {
-                    browserModel.delete()
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
-                .disabled(browserModel.isSelectionEmpty)
-            }
+            FilesToolbar(browserModel: browserModel)
 
             ToolbarItem(id: "action") {
                 Menu {
@@ -187,17 +160,17 @@ struct BrowserView: View {
                 Spacer()
             }
 
-//            ToolbarItem(id: "add") {
-//                Menu {
-//                    Button("Install...") {
-//                        applicationModel.openInstaller()
-//                    }
-//                    Divider()
-//                    PsionSoftwareIndexLink()
-//                } label: {
-//                    Label("Add", systemImage: "plus")
-//                }
-//            }
+            ToolbarItem(id: "add") {
+                Menu {
+                    Button("Install...") {
+                        applicationModel.openInstaller()
+                    }
+                    Divider()
+                    PsionSoftwareIndexLink()
+                } label: {
+                    Label("Add", systemImage: "plus")
+                }
+            }
 
         }
         .navigationTitle(browserModel.navigationTitle ?? "My Psion")
@@ -208,6 +181,72 @@ struct BrowserView: View {
         .task {
             await browserModel.start()
         }
+    }
+
+}
+
+
+struct ToolsToolbar: CustomizableToolbarContent {
+
+    private var browserModel: BrowserModel
+
+    init(browserModel: BrowserModel) {
+        self.browserModel = browserModel
+    }
+
+    var body: some CustomizableToolbarContent {
+
+        ToolbarItem(id: "screenshot") {
+            Button {
+                browserModel.captureScreenshot()
+            } label: {
+                Label("Screenshot", systemImage: "camera.viewfinder")
+            }
+        }
+
+    }
+
+}
+
+struct FilesToolbar: CustomizableToolbarContent {
+
+    @Environment(ApplicationModel.self) private var applicationModel
+
+    private var browserModel: BrowserModel
+
+    init(browserModel: BrowserModel) {
+        self.browserModel = browserModel
+    }
+
+    var body: some CustomizableToolbarContent {
+
+        ToolbarItem(id: "new-folder") {
+            Button {
+                browserModel.newFolder()
+            } label: {
+                Label("New Folder", systemImage: "folder.badge.plus")
+            }
+        }
+
+        ToolbarItem(id: "download") {
+            Button {
+                browserModel.download(to: FileManager.default.downloadsDirectory,
+                                      convertFiles: applicationModel.convertFiles)
+            } label: {
+                Label("New Folder", systemImage: "square.and.arrow.down")
+            }
+            .disabled(browserModel.isSelectionEmpty)
+        }
+
+        ToolbarItem(id: "delete") {
+            Button {
+                browserModel.delete()
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+            .disabled(browserModel.isSelectionEmpty)
+        }
+
     }
 
 }
