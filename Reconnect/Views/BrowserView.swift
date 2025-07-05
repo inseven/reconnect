@@ -128,6 +128,14 @@ struct BrowserView: View {
                 .disabled(browserModel.isSelectionEmpty)
             }
 
+            ToolbarItem(id: "screenshot") {
+                Button {
+                    browserModel.captureScreenshot()
+                } label: {
+                    Label("Screenshot", systemImage: "camera.viewfinder")
+                }
+            }
+
             ToolbarItem(id: "delete") {
                 Button {
                     browserModel.delete()
@@ -179,17 +187,17 @@ struct BrowserView: View {
                 Spacer()
             }
 
-            ToolbarItem(id: "add") {
-                Menu {
-                    Button("Install...") {
-                        applicationModel.openInstaller()
-                    }
-                    Divider()
-                    PsionSoftwareIndexLink()
-                } label: {
-                    Label("Add", systemImage: "plus")
-                }
-            }
+//            ToolbarItem(id: "add") {
+//                Menu {
+//                    Button("Install...") {
+//                        applicationModel.openInstaller()
+//                    }
+//                    Divider()
+//                    PsionSoftwareIndexLink()
+//                } label: {
+//                    Label("Add", systemImage: "plus")
+//                }
+//            }
 
         }
         .navigationTitle(browserModel.navigationTitle ?? "My Psion")

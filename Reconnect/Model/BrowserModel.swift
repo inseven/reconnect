@@ -356,8 +356,61 @@ class BrowserModel {
         }
     }
 
+    // TODO: Some hybrid class for performing remote operations on a Psion? `RemoteDevice` / `Session`?
     func captureScreenshot() {
         run {
+            // TODO: Move to `String`.
+            let screenshotPath = "C:\\screenshot.mbm"
+
+            let fileServer = FileServer()
+            let client = RemoteCommandServicesClient()
+
+            // Take a screenshot.
+            print("Taking screenshot...")
+            try client.execProgram(program: "C:\\System\\Reconnect\\screenshot.exe", args: "")
+            // TODO: Consider polling.
+//            while !(try fileServer.exists(path: "C:\\screenshot")) {
+//                print("Waiting...")
+//                usleep(200)
+//            }
+            sleep(5)
+            print("Done.")
+
+            let fileManager = FileManager.default
+
+            let temporaryDirectory = try fileManager.createTemporaryDirectory()
+            defer {
+                do {
+                    try fileManager.removeItem(at: temporaryDirectory)
+                } catch {
+                    print("Failed to delete temporary directory '\(temporaryDirectory.path)' with error '\(error.localizedDescription)'.")
+                }
+            }
+
+            // Copy the screenshot.
+            let outputURL = fileManager
+                .temporaryDirectory
+                .appendingPathComponent("screenshot.mbm")
+            try fileServer.copyFileSync(fromRemotePath: screenshotPath, toLocalPath: outputURL.path) { progress, size in
+                let p = Progress(totalUnitCount: Int64(size))
+                p.completedUnitCount = Int64(progress)
+                let formatString = String(format: "%f", p.fractionCompleted * 100)
+                print("Copying screenshot (\(formatString))")
+                return .continue
+            }
+
+            // Convert the screenshot.
+            let convertedURL = fileManager.downloadsDirectory
+                .appendingPathComponent("screenshot.tiff")
+            try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL)
+
+            // Cleanup.
+            try fileServer.remove(path: screenshotPath)
+            try fileManager.removeItem(at: outputURL)
+
+            // Reveal the screenshot.
+            NSWorkspace.shared.activateFileViewerSelecting([convertedURL])
+
         }
     }
 
