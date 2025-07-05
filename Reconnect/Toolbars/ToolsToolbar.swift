@@ -34,6 +34,7 @@ struct ToolsToolbar: CustomizableToolbarContent {
             } label: {
                 Label("Screenshot", systemImage: "camera.viewfinder")
             }
+            .help("Capture a screenshot of your Psion")
         }
 
     }

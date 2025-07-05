@@ -37,6 +37,7 @@ class ApplicationModel: NSObject {
 
     enum SettingsKey: String {
         case convertFiles
+        case downloadsURL
         case screenshotsURL
         case revealScreenshots
         case selectedDevices
@@ -48,7 +49,17 @@ class ApplicationModel: NSObject {
         }
     }
 
-    @MainActor var revealScreenshots: Bool {
+    var downloadsURL: URL {
+        didSet {
+            do {
+                try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .downloadsURL)
+            } catch {
+                print("Failed to save downloads path with error \(error).")
+            }
+        }
+    }
+
+    var revealScreenshots: Bool {
         didSet {
             keyedDefaults.set(revealScreenshots, forKey: .revealScreenshots)
         }
@@ -59,7 +70,7 @@ class ApplicationModel: NSObject {
             do {
                 try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .screenshotsURL)
             } catch {
-                print("Failed to save bookmark data with error \(error).")
+                print("Failed to save screenshots path with error \(error).")
             }
         }
     }
@@ -72,6 +83,7 @@ class ApplicationModel: NSObject {
 
     override init() {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
+        downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         super.init()
@@ -135,12 +147,27 @@ class ApplicationModel: NSObject {
         showInstallerWindow(url: url)
     }
 
-    @MainActor func setScreenshotsURL() -> Bool {
+    func setDownloadsURL() -> Bool {
+        dispatchPrecondition(condition: .onQueue(.main))
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = false
+        openPanel.canChooseDirectories = true
+        openPanel.directoryURL = downloadsURL
+        guard openPanel.runModal() ==  NSApplication.ModalResponse.OK,
+              let url = openPanel.url else {
+            return false
+        }
+        downloadsURL = url
+        return true
+    }
+
+    func setScreenshotsURL() -> Bool {
         dispatchPrecondition(condition: .onQueue(.main))
         let openPanel = NSOpenPanel()
         openPanel.canChooseFiles = false
         openPanel.canChooseDirectories = true
         openPanel.canCreateDirectories = true
+        openPanel.directoryURL = screenshotsURL
         guard openPanel.runModal() ==  NSApplication.ModalResponse.OK,
               let url = openPanel.url else {
             return false

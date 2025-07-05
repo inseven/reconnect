@@ -33,12 +33,34 @@ struct SettingsView: View {
     var body: some View {
         @Bindable var applicationModel = applicationModel
         Form {
+
+            Section("Downloads") {
+                LabeledContent {
+                    HStack {
+                        Text(applicationModel.downloadsURL.displayName)
+                        Button("Select...") {
+                            _ = applicationModel.setDownloadsURL()
+                        }
+                    }
+                } label: {
+                    Text("Destination")
+                }
+            }
+
             Section("Screenshots") {
-                Button("Set Screenshots Folder") {
-                    _ = applicationModel.setScreenshotsURL()
+                LabeledContent {
+                    HStack {
+                        Text(applicationModel.screenshotsURL.displayName)
+                        Button("Select...") {
+                            _ = applicationModel.setScreenshotsURL()
+                        }
+                    }
+                } label: {
+                    Text("Destination")
                 }
                 Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
             }
+
         }
         .formStyle(.grouped)
         .frame(width: 400, height: 400)
