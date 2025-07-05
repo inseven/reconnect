@@ -21,32 +21,6 @@ import SwiftUI
 import Interact
 import Sparkle
 
-extension KeyedDefaults {
-
-    func set(securityScopedURL url: URL?, forKey key: Key) throws {
-        let bookmarkData = try url?.bookmarkData(options: .withSecurityScope,
-                                                 includingResourceValuesForKeys: nil,
-                                                 relativeTo: nil)
-        set(bookmarkData, forKey: key)
-    }
-
-    func securityScopedURL(forKey key: Key) throws -> URL? {
-        guard let bookmarkData = object(forKey: key) as? Data else {
-            return nil
-        }
-        var isStale = true
-        let url = try URL(resolvingBookmarkData: bookmarkData,
-                          options: .withSecurityScope,
-                          bookmarkDataIsStale: &isStale)
-        guard url.startAccessingSecurityScopedResource() else {
-            return nil
-        }
-        return url
-    }
-
-}
-
-
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
