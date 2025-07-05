@@ -21,6 +21,7 @@ import Foundation
 public extension String {
 
     static let installDirectory = "C:\\System\\Install\\"
+    static let screenshotPath = "C:\\screenshot.mbm"
     static let windowsPathSeparator = "\\"
 
     var deletingLastWindowsPathComponent: String {

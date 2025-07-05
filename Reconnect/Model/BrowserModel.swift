@@ -359,9 +359,6 @@ class BrowserModel {
     // TODO: Some hybrid class for performing remote operations on a Psion? `RemoteDevice` / `Session`?
     func captureScreenshot() {
         run {
-            // TODO: Move to `String`.
-            let screenshotPath = "C:\\screenshot.mbm"
-
             let fileServer = FileServer()
             let client = RemoteCommandServicesClient()
 
@@ -391,10 +388,10 @@ class BrowserModel {
             let outputURL = fileManager
                 .temporaryDirectory
                 .appendingPathComponent("screenshot.mbm")
-            try fileServer.copyFileSync(fromRemotePath: screenshotPath, toLocalPath: outputURL.path) { progress, size in
+            try fileServer.copyFileSync(fromRemotePath: .screenshotPath, toLocalPath: outputURL.path) { progress, size in
                 let p = Progress(totalUnitCount: Int64(size))
                 p.completedUnitCount = Int64(progress)
-                let formatString = String(format: "%f", p.fractionCompleted * 100)
+                let formatString = String(format: "%.0f%%", p.fractionCompleted * 100)
                 print("Copying screenshot (\(formatString))")
                 return .continue
             }
@@ -405,7 +402,7 @@ class BrowserModel {
             try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL)
 
             // Cleanup.
-            try fileServer.remove(path: screenshotPath)
+            try fileServer.remove(path: .screenshotPath)
             try fileManager.removeItem(at: outputURL)
 
             // Reveal the screenshot.
