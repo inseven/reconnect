@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 import Algorithms
 import OpoLua
@@ -359,6 +360,10 @@ class BrowserModel {
     // TODO: Some hybrid class for performing remote operations on a Psion? `RemoteDevice` / `Session`?
     func captureScreenshot() {
         run {
+            let format: UTType = .png
+            let nameFormatter = DateFormatter()
+            nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
+
             let fileManager = FileManager.default
             let fileServer = FileServer()
             let client = RemoteCommandServicesClient()
@@ -373,8 +378,10 @@ class BrowserModel {
                 }
             }
 
+
             // Take a screenshot.
             print("Taking screenshot...")
+            let timestamp = Date.now
             try client.execProgram(program: .screenshotToolPath, args: "")
             sleep(5)
 
@@ -386,14 +393,16 @@ class BrowserModel {
                 let p = Progress(totalUnitCount: Int64(size))
                 p.completedUnitCount = Int64(progress)
                 let formatString = String(format: "%.0f%%", p.fractionCompleted * 100)
-                print("Copying screenshot (\(formatString))")
+                print("Copying screenshot... (\(formatString))")
                 return .continue
             }
+            print("Done.")
 
             // Convert the screenshot.
+            let name = nameFormatter.string(from: timestamp)
             let convertedURL = fileManager.downloadsDirectory
-                .appendingPathComponent("screenshot.tiff")
-            try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL)
+                .appendingPathComponent(name, conformingTo: format)
+            try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL, type: format)
 
             // Cleanup.
             try fileServer.remove(path: .screenshotPath)

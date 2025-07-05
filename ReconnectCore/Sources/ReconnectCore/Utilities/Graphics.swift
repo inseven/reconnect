@@ -20,9 +20,9 @@ import Foundation
 import ImageIO
 import UniformTypeIdentifiers
 
-public func CGImageWriteTIFF(destinationURL: URL, images: [CGImage]) throws  {
+public func CGImageWrite(destinationURL: URL, images: [CGImage], type: UTType) throws  {
     guard let destination = CGImageDestinationCreateWithURL(destinationURL as CFURL,
-                                                            UTType.tiff.identifier as CFString,
+                                                            type.identifier as CFString,
                                                             images.count,
                                                             nil) else {
         throw ReconnectError.imageSaveError
