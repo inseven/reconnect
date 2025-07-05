@@ -359,22 +359,11 @@ class BrowserModel {
     // TODO: Some hybrid class for performing remote operations on a Psion? `RemoteDevice` / `Session`?
     func captureScreenshot() {
         run {
+            let fileManager = FileManager.default
             let fileServer = FileServer()
             let client = RemoteCommandServicesClient()
 
-            // Take a screenshot.
-            print("Taking screenshot...")
-            try client.execProgram(program: "C:\\System\\Reconnect\\screenshot.exe", args: "")
-            // TODO: Consider polling.
-//            while !(try fileServer.exists(path: "C:\\screenshot")) {
-//                print("Waiting...")
-//                usleep(200)
-//            }
-            sleep(5)
-            print("Done.")
-
-            let fileManager = FileManager.default
-
+            // Create a temporary directory.
             let temporaryDirectory = try fileManager.createTemporaryDirectory()
             defer {
                 do {
@@ -383,6 +372,11 @@ class BrowserModel {
                     print("Failed to delete temporary directory '\(temporaryDirectory.path)' with error '\(error.localizedDescription)'.")
                 }
             }
+
+            // Take a screenshot.
+            print("Taking screenshot...")
+            try client.execProgram(program: .screenshotToolPath, args: "")
+            sleep(5)
 
             // Copy the screenshot.
             let outputURL = fileManager

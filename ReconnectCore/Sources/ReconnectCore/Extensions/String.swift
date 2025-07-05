@@ -22,6 +22,7 @@ public extension String {
 
     static let installDirectory = "C:\\System\\Install\\"
     static let screenshotPath = "C:\\screenshot.mbm"
+    static let screenshotToolPath = "C:\\System\\Reconnect\\screenshot.exe"
     static let windowsPathSeparator = "\\"
 
     var deletingLastWindowsPathComponent: String {
