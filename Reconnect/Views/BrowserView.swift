@@ -83,7 +83,6 @@ struct BrowserView: View {
         .navigationTitle(browserModel.navigationTitle ?? "My Psion")
         .presents($browserModel.lastError)
         .onAppear {
-            // TODO: Set the selection??
             browserModel.navigate(to: "C:\\")
         }
         .task {

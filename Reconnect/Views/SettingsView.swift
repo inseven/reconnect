@@ -18,15 +18,28 @@
 
 import SwiftUI
 
-public struct SparkleCommands: Commands {
+import Interact
 
-    let applicationModel: ApplicationModel
+struct SettingsView: View {
 
-    public var body: some Commands {
-        CommandGroup(before: .appSettings) {
-            CheckForUpdatesView(updater: applicationModel.updaterController.updater)
-            Divider()
+    var applicationModel: ApplicationModel
+
+    @ObservedObject var application = Application.shared
+
+    init(applicationModel: ApplicationModel) {
+        self.applicationModel = applicationModel
+    }
+
+    var body: some View {
+        @Bindable var applicationModel = applicationModel
+        Form {
+            Section {
+                Button("Set Screenshots Folder") {
+                    _ = applicationModel.setScreenshotsURL()
+                }
+            }
         }
+        .frame(width: 400, height: 400)
     }
 
 }

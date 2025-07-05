@@ -52,6 +52,7 @@ class BrowserModel {
 
     let fileServer = FileServer()
 
+    let applicationModel: ApplicationModel
     let transfersModel: TransfersModel
 
     var drives: [FileServer.DriveInfo] = []
@@ -72,7 +73,8 @@ class BrowserModel {
 
     private var navigationHistory = NavigationHistory()
 
-    init(transfersModel: TransfersModel) {
+    init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
+        self.applicationModel = applicationModel
         self.transfersModel = transfersModel
     }
 
@@ -359,7 +361,7 @@ class BrowserModel {
 
     // TODO: Some hybrid class for performing remote operations on a Psion? `RemoteDevice` / `Session`?
     func captureScreenshot() {
-        run {
+        run { [applicationModel] in
             let format: UTType = .png
             let nameFormatter = DateFormatter()
             nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
@@ -377,7 +379,6 @@ class BrowserModel {
                     print("Failed to delete temporary directory '\(temporaryDirectory.path)' with error '\(error.localizedDescription)'.")
                 }
             }
-
 
             // Take a screenshot.
             print("Taking screenshot...")
@@ -400,7 +401,7 @@ class BrowserModel {
 
             // Convert the screenshot.
             let name = nameFormatter.string(from: timestamp)
-            let convertedURL = fileManager.downloadsDirectory
+            let convertedURL = applicationModel.screenshotsURL
                 .appendingPathComponent(name, conformingTo: format)
             try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL, type: format)
 
