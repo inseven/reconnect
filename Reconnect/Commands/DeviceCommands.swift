@@ -35,6 +35,7 @@ public struct DeviceCommands: Commands {
             Button("Capture Screenshot") {
                 browserModel.captureScreenshot()
             }
+            .keyboardShortcut("S", modifiers: [.command, .shift])
 
             Divider()
 

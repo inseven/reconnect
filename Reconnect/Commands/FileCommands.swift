@@ -20,8 +20,6 @@ import SwiftUI
 
 public struct FileCommands: Commands {
 
-    @Environment(ApplicationModel.self) private var applicationModel
-
     private let browserModel: BrowserModel
 
     init(browserModel: BrowserModel) {
@@ -55,17 +53,6 @@ public struct FileCommands: Commands {
             .keyboardShortcut("R")
 
             Divider()
-            
-        }
-
-        CommandGroup(after: .newItem) {
-
-            Button("Install Reconnect Tools...") {
-                applicationModel.installGuestTools()
-            }
-
-            Divider()
-
         }
 
     }
