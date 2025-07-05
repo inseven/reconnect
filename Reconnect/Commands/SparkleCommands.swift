@@ -25,6 +25,7 @@ public struct SparkleCommands: Commands {
     public var body: some Commands {
         CommandGroup(before: .appSettings) {
             CheckForUpdatesView(updater: applicationModel.updaterController.updater)
+            Divider()
         }
     }
 

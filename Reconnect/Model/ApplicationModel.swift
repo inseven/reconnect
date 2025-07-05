@@ -21,6 +21,32 @@ import SwiftUI
 import Interact
 import Sparkle
 
+extension KeyedDefaults {
+
+    func set(securityScopedURL url: URL?, forKey key: Key) throws {
+        let bookmarkData = try url?.bookmarkData(options: .withSecurityScope,
+                                                 includingResourceValuesForKeys: nil,
+                                                 relativeTo: nil)
+        set(bookmarkData, forKey: key)
+    }
+
+    func securityScopedURL(forKey key: Key) throws -> URL? {
+        guard let bookmarkData = object(forKey: key) as? Data else {
+            return nil
+        }
+        var isStale = true
+        let url = try URL(resolvingBookmarkData: bookmarkData,
+                          options: .withSecurityScope,
+                          bookmarkDataIsStale: &isStale)
+        guard url.startAccessingSecurityScopedResource() else {
+            return nil
+        }
+        return url
+    }
+
+}
+
+
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
@@ -36,13 +62,31 @@ class ApplicationModel: NSObject {
     }
 
     enum SettingsKey: String {
-        case selectedDevices
         case convertFiles
+        case screenshotsURL
+        case revealScreenshots
+        case selectedDevices
     }
 
     var convertFiles: Bool {
         didSet {
             keyedDefaults.set(convertFiles, forKey: .convertFiles)
+        }
+    }
+
+    @MainActor var revealScreenshots: Bool {
+        didSet {
+            keyedDefaults.set(revealScreenshots, forKey: .revealScreenshots)
+        }
+    }
+
+    var screenshotsURL: URL {
+        didSet {
+            do {
+                try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .screenshotsURL)
+            } catch {
+                print("Failed to save bookmark data with error \(error).")
+            }
         }
     }
 
@@ -54,6 +98,8 @@ class ApplicationModel: NSObject {
 
     override init() {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
+        revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
+        screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         super.init()
         openMenuApplication()
         updaterController.startUpdater()
@@ -106,6 +152,27 @@ class ApplicationModel: NSObject {
 
         // Foreground the window.
         window?.makeKeyAndOrderFront(nil)
+    }
+
+    func installGuestTools() {
+        guard let url = Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis") else {
+            return
+        }
+        showInstallerWindow(url: url)
+    }
+
+    @MainActor func setScreenshotsURL() -> Bool {
+        dispatchPrecondition(condition: .onQueue(.main))
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = false
+        openPanel.canChooseDirectories = true
+        openPanel.canCreateDirectories = true
+        guard openPanel.runModal() ==  NSApplication.ModalResponse.OK,
+              let url = openPanel.url else {
+            return false
+        }
+        screenshotsURL = url
+        return true
     }
 
 }

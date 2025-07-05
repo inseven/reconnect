@@ -16,21 +16,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
-import ImageIO
-import UniformTypeIdentifiers
+import SwiftUI
 
-public func CGImageWrite(destinationURL: URL, images: [CGImage], type: UTType) throws  {
-    guard let destination = CGImageDestinationCreateWithURL(destinationURL as CFURL,
-                                                            type.identifier as CFString,
-                                                            images.count,
-                                                            nil) else {
-        throw ReconnectError.imageSaveError
+struct ToolbarSpacer: CustomizableToolbarContent {
+
+    var body: some CustomizableToolbarContent {
+        ToolbarItem(id: "spacer") {
+            Spacer()
+        }
     }
-    for image in images {
-        CGImageDestinationAddImage(destination, image, nil)
-    }
-    guard CGImageDestinationFinalize(destination) else {
-        throw ReconnectError.imageSaveError
-    }
+
 }
