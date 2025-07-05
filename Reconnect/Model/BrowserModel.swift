@@ -361,7 +361,12 @@ class BrowserModel {
 
     // TODO: Some hybrid class for performing remote operations on a Psion? `RemoteDevice` / `Session`?
     func captureScreenshot() {
-        run { [applicationModel] in
+        dispatchPrecondition(condition: .onQueue(.main))
+
+        let destinationURL = applicationModel.screenshotsURL
+        let revealScreenshot = applicationModel.revealScreenshots
+
+        run {
             let format: UTType = .png
             let nameFormatter = DateFormatter()
             nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
@@ -401,7 +406,7 @@ class BrowserModel {
 
             // Convert the screenshot.
             let name = nameFormatter.string(from: timestamp)
-            let convertedURL = applicationModel.screenshotsURL
+            let convertedURL = destinationURL
                 .appendingPathComponent(name, conformingTo: format)
             try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL, type: format)
 
@@ -410,7 +415,11 @@ class BrowserModel {
             try fileManager.removeItem(at: outputURL)
 
             // Reveal the screenshot.
-            NSWorkspace.shared.activateFileViewerSelecting([convertedURL])
+            DispatchQueue.main.sync {
+                if revealScreenshot {
+                    NSWorkspace.shared.activateFileViewerSelecting([convertedURL])
+                }
+            }
 
         }
     }

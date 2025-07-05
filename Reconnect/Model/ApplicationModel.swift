@@ -64,12 +64,19 @@ class ApplicationModel: NSObject {
     enum SettingsKey: String {
         case convertFiles
         case screenshotsURL
+        case revealScreenshots
         case selectedDevices
     }
 
     var convertFiles: Bool {
         didSet {
             keyedDefaults.set(convertFiles, forKey: .convertFiles)
+        }
+    }
+
+    @MainActor var revealScreenshots: Bool {
+        didSet {
+            keyedDefaults.set(revealScreenshots, forKey: .revealScreenshots)
         }
     }
 
@@ -90,8 +97,9 @@ class ApplicationModel: NSObject {
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
     override init() {
-        screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
+        revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
+        screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         super.init()
         openMenuApplication()
         updaterController.startUpdater()
