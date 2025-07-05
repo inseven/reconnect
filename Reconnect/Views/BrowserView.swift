@@ -57,108 +57,12 @@ struct BrowserView: View {
         }
         .toolbar(id: "main") {
 
-            ToolbarItem(id: "open-enclosing-folder", placement: .navigation) {
-                Button {
-                    browserModel.openEnclosingFolder()
-                } label: {
-                    Label("Enclosing Folder", systemImage: "arrow.turn.left.up")
-                }
-                .disabled(!browserModel.canOpenEnclosingFolder)
-            }
-
-            ToolbarItem(id: "navigation", placement: .navigation) {
-                LabeledContent {
-                    HStack(spacing: 8) {
-
-                        Menu {
-                            ForEach(browserModel.previousItems) { item in
-                                Button {
-                                    browserModel.navigate(to: item)
-                                } label: {
-                                    HistoryItemView(item: item)
-                                }
-                            }
-                        } label: {
-                            Label("Back", systemImage: "chevron.backward")
-                        } primaryAction: {
-                            browserModel.back()
-                        }
-                        .menuIndicator(.hidden)
-                        .disabled(!browserModel.canGoBack)
-
-                        Menu {
-                            ForEach(browserModel.nextItems) { item in
-                                Button {
-                                    browserModel.navigate(to: item)
-                                } label: {
-                                    HistoryItemView(item: item)
-                                }
-                            }
-                        } label: {
-                            Label("Forward", systemImage: "chevron.forward")
-                        } primaryAction: {
-                            browserModel.forward()
-                        }
-                        .menuIndicator(.hidden)
-                        .disabled(!browserModel.canGoForward)
-
-                    }
-                    .help("See folders you viewed previously")
-
-                } label: {
-                    Text("Back/Forward")
-                }
-            }
+            NavigationToolbar(browserModel: browserModel)
 
             ToolsToolbar(browserModel: browserModel)
-
-            ToolbarItem(id: "spacer") {
-                Spacer()
-            }
-
-            FilesToolbar(browserModel: browserModel)
-
-            ToolbarItem(id: "action") {
-                Menu {
-
-                    Button("New Folder") {
-                        browserModel.newFolder()
-                    }
-
-                    Divider()
-
-                    Button("Download") {
-                        browserModel.download(convertFiles: applicationModel.convertFiles)
-                    }
-                    .disabled(browserModel.isSelectionEmpty)
-
-                    Divider()
-
-                    Button("Delete") {
-                        browserModel.delete()
-                    }
-                    .disabled(browserModel.isSelectionEmpty)
-
-                } label: {
-                    Label("Action", systemImage: "ellipsis.circle")
-                }
-            }
-
-            ToolbarItem(id: "spacer") {
-                Spacer()
-            }
-
-            ToolbarItem(id: "refresh") {
-                Button {
-                    browserModel.refresh()
-                } label: {
-                    Label("Refresh", systemImage: "arrow.clockwise")
-                }
-            }
-
-            ToolbarItem(id: "spacer") {
-                Spacer()
-            }
+            ToolbarSpacer()
+            FileToolbar(browserModel: browserModel)
+            ToolbarSpacer()
 
             ToolbarItem(id: "add") {
                 Menu {
@@ -172,81 +76,19 @@ struct BrowserView: View {
                 }
             }
 
+            ToolbarSpacer()
+            BrowserToolbar(browserModel: browserModel)
+
         }
         .navigationTitle(browserModel.navigationTitle ?? "My Psion")
         .presents($browserModel.lastError)
         .onAppear {
+            // TODO: Set the selection??
             browserModel.navigate(to: "C:\\")
         }
         .task {
             await browserModel.start()
         }
-    }
-
-}
-
-
-struct ToolsToolbar: CustomizableToolbarContent {
-
-    private var browserModel: BrowserModel
-
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                browserModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-        }
-
-    }
-
-}
-
-struct FilesToolbar: CustomizableToolbarContent {
-
-    @Environment(ApplicationModel.self) private var applicationModel
-
-    private var browserModel: BrowserModel
-
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "new-folder") {
-            Button {
-                browserModel.newFolder()
-            } label: {
-                Label("New Folder", systemImage: "folder.badge.plus")
-            }
-        }
-
-        ToolbarItem(id: "download") {
-            Button {
-                browserModel.download(to: FileManager.default.downloadsDirectory,
-                                      convertFiles: applicationModel.convertFiles)
-            } label: {
-                Label("New Folder", systemImage: "square.and.arrow.down")
-            }
-            .disabled(browserModel.isSelectionEmpty)
-        }
-
-        ToolbarItem(id: "delete") {
-            Button {
-                browserModel.delete()
-            } label: {
-                Label("Delete", systemImage: "trash")
-            }
-            .disabled(browserModel.isSelectionEmpty)
-        }
-
     }
 
 }
