@@ -52,7 +52,7 @@ class ApplicationModel: NSObject {
     var downloadsURL: URL {
         didSet {
             do {
-                try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .downloadsURL)
+                try keyedDefaults.set(securityScopedURL: downloadsURL, forKey: .downloadsURL)
             } catch {
                 print("Failed to save downloads path with error \(error).")
             }
@@ -145,35 +145,6 @@ class ApplicationModel: NSObject {
             return
         }
         showInstallerWindow(url: url)
-    }
-
-    func setDownloadsURL() -> Bool {
-        dispatchPrecondition(condition: .onQueue(.main))
-        let openPanel = NSOpenPanel()
-        openPanel.canChooseFiles = false
-        openPanel.canChooseDirectories = true
-        openPanel.directoryURL = downloadsURL
-        guard openPanel.runModal() ==  NSApplication.ModalResponse.OK,
-              let url = openPanel.url else {
-            return false
-        }
-        downloadsURL = url
-        return true
-    }
-
-    func setScreenshotsURL() -> Bool {
-        dispatchPrecondition(condition: .onQueue(.main))
-        let openPanel = NSOpenPanel()
-        openPanel.canChooseFiles = false
-        openPanel.canChooseDirectories = true
-        openPanel.canCreateDirectories = true
-        openPanel.directoryURL = screenshotsURL
-        guard openPanel.runModal() ==  NSApplication.ModalResponse.OK,
-              let url = openPanel.url else {
-            return false
-        }
-        screenshotsURL = url
-        return true
     }
 
 }

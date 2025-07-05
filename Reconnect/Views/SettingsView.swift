@@ -33,34 +33,17 @@ struct SettingsView: View {
     var body: some View {
         @Bindable var applicationModel = applicationModel
         Form {
-
             Section("Downloads") {
-                LabeledContent {
-                    HStack {
-                        Text(applicationModel.downloadsURL.displayName)
-                        Button("Select...") {
-                            _ = applicationModel.setDownloadsURL()
-                        }
-                    }
-                } label: {
-                    Text("Destination")
-                }
+                FilePicker("Destination",
+                           url: $applicationModel.downloadsURL,
+                           options: [.canChooseDirectories, .canCreateDirectories])
             }
-
             Section("Screenshots") {
-                LabeledContent {
-                    HStack {
-                        Text(applicationModel.screenshotsURL.displayName)
-                        Button("Select...") {
-                            _ = applicationModel.setScreenshotsURL()
-                        }
-                    }
-                } label: {
-                    Text("Destination")
-                }
+                FilePicker("Destination",
+                           url: $applicationModel.screenshotsURL,
+                           options: [.canChooseDirectories, .canCreateDirectories])
                 Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
             }
-
         }
         .formStyle(.grouped)
         .frame(width: 400, height: 400)
