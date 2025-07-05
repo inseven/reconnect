@@ -356,4 +356,9 @@ class BrowserModel {
         }
     }
 
+    func captureScreenshot() {
+        run {
+        }
+    }
+
 }
