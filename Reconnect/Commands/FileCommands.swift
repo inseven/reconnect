@@ -20,7 +20,13 @@ import SwiftUI
 
 public struct FileCommands: Commands {
 
-    let browserModel: BrowserModel
+    @Environment(ApplicationModel.self) private var applicationModel
+
+    private let browserModel: BrowserModel
+
+    init(browserModel: BrowserModel) {
+        self.browserModel = browserModel
+    }
 
     public var body: some Commands {
 
@@ -36,15 +42,30 @@ public struct FileCommands: Commands {
             }
             .keyboardShortcut("O", modifiers: [.command])
             .disabled(!browserModel.canOpenSelection)
-            
+
+            Divider()
+
         }
 
         CommandGroup(before: .newItem) {
+
             Button("Refresh") {
                 browserModel.refresh()
             }
             .keyboardShortcut("R")
+
             Divider()
+            
+        }
+
+        CommandGroup(after: .newItem) {
+
+            Button("Install Reconnect Tools...") {
+                applicationModel.installGuestTools()
+            }
+
+            Divider()
+
         }
 
     }

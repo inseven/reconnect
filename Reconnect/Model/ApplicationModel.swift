@@ -108,4 +108,11 @@ class ApplicationModel: NSObject {
         window?.makeKeyAndOrderFront(nil)
     }
 
+    func installGuestTools() {
+        guard let url = Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis") else {
+            return
+        }
+        showInstallerWindow(url: url)
+    }
+
 }
