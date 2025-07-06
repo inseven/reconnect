@@ -22,6 +22,12 @@ import Interact
 
 struct TransfersWindow: Scene {
 
+    static func reveal() {
+        DispatchQueue.main.async {
+            NSWorkspace.shared.open(.transfers)
+        }
+    }
+
     static let id = "transfers"
 
     @Environment(TransfersModel.self) private var transfersModel

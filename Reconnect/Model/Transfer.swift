@@ -35,9 +35,9 @@ class Transfer: Identifiable {
                     return true
                 }
                 return false
-            case .active(let lhsProgress, let lhsSize):
-                if case let .active(rhsProgress, rhsSize) = rhs {
-                    return lhsProgress == rhsProgress && lhsSize == rhsSize
+            case .active(let lhsProgress):
+                if case let .active(rhsProgress) = rhs {
+                    return lhsProgress == rhsProgress
                 }
                 return false
             case .complete(let lhsDetails):
@@ -59,7 +59,7 @@ class Transfer: Identifiable {
         }
 
         case waiting
-        case active(UInt32, UInt32)
+        case active(Progress)
         case complete(FileDetails?)
         case cancelled
         case failed(Error)

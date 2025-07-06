@@ -20,18 +20,6 @@ import SwiftUI
 
 import ReconnectCore
 
-extension FileManager {
-
-    func removeItemLoggingErrors(at url: URL) {
-        do {
-            try removeItem(at: url)
-        } catch {
-            print("Failed to remove item at path '\(url.path)' with error '\(error)'.")
-        }
-    }
-
-}
-
 struct BrowserDetailView: View {
 
     @Environment(ApplicationModel.self) var applicationModel
@@ -55,13 +43,12 @@ struct BrowserDetailView: View {
                         case .failure(let error):
                             completion(nil, false, error)
                         }
-                        fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
+                        try? fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
                     }
                 } catch {
                     print("Failed to download dragged file with error \(error).")
                     completion(nil, false, error)
                 }
-
             }
             return nil
         }

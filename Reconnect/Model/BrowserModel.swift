@@ -307,24 +307,16 @@ class BrowserModel {
         let selection = selection ?? fileSelection
         let files = files.filter { selection.contains($0.id) }
 
-        // Reveal the transfers window.
-        NSWorkspace.shared.open(.transfers)
+        TransfersWindow.reveal()
 
         Task {
             do {
                 var results: [URL] = []
                 for file in files {
-                    if file.path.isWindowsDirectory {
-                        let url = try await _downloadDirectory(path: file.path,
-                                                               to: destinationURL,
-                                                               convertFiles: convertFiles)
-                        results.append(url)
-                    } else {
-                        let url = try await transfersModel.download(from: file,
-                                                                    to: destinationURL,
-                                                                    convertFiles: convertFiles)
-                        results.append(url)
-                    }
+                    let url = try await transfersModel.download(from: file,
+                                                                to: destinationURL,
+                                                                convertFiles: convertFiles)
+                    results.append(url)
                 }
                 completion(.success(results))
             } catch {
@@ -332,33 +324,9 @@ class BrowserModel {
             }
         }
     }
-
-    private func _downloadDirectory(path: String, to downloadsURL: URL, convertFiles: Bool) async throws -> URL {
-        let fileManager = FileManager.default
-        let targetURL = downloadsURL.appendingPathComponent(path.lastWindowsPathComponent)
-        let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
-
-        // Here we know we're downloading a directory, so we make sure the destination exists.
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
-
-        // Iterate over the recursive directory listing creating directories where necessary and downloading files.
-        let files = try await self.fileServer.dir(path: path, recursive: true)
-        for file in files {
-            let relativePath = String(file.path.dropFirst(parentPath.count))
-            let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents.dropLast())
-            if file.isDirectory {
-                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
-            } else {
-                _ = try await self.transfersModel.download(from: file,
-                                                           to: destinationURL,
-                                                           convertFiles: convertFiles)
-            }
-        }
-        return targetURL
-    }
-
+    
     func upload(url: URL) {
-        NSWorkspace.shared.open(.transfers)
+        TransfersWindow.reveal()
         runAsync {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
