@@ -29,14 +29,12 @@ class TransfersModel {
             .reduce(false) { $0 || $1 }
     }
 
-    let applicationModel: ApplicationModel
-    let fileServer = FileServer()
-
     var transfers: [Transfer] = []
     var selection: UUID? = nil
 
-    init(applicationModel: ApplicationModel) {
-        self.applicationModel = applicationModel
+    let fileServer = FileServer()
+
+    init() {
     }
 
     // Downloads and converts a single file. Fails if it's a directory entry.
