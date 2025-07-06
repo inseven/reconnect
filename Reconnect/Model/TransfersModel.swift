@@ -142,7 +142,6 @@ class TransfersModel {
                 progress.kind = .file
                 progress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                 transfer.setStatus(.active(progress))
-                // TODO: I can use NSProgress to cancel!
                 let details = try await self._download(from: source,
                                                        to: destinationURL,
                                                        convertFiles: convertFiles) { p, size in
