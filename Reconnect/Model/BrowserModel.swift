@@ -307,17 +307,16 @@ class BrowserModel {
         let selection = selection ?? fileSelection
         let files = files.filter { selection.contains($0.id) }
 
-        // Reveal the transfers window.
-        NSWorkspace.shared.open(.transfers)
+        TransfersWindow.reveal()
 
         Task {
             do {
                 var results: [URL] = []
                 for file in files {
                     if file.path.isWindowsDirectory {
-                        let url = try await _downloadDirectory(path: file.path,
-                                                               to: destinationURL,
-                                                               convertFiles: convertFiles)
+                        let url = try await transfersModel.downloadDirectory(from: file.path,
+                                                                             to: destinationURL,
+                                                                             convertFiles: convertFiles)
                         results.append(url)
                     } else {
                         let url = try await transfersModel.download(from: file,
@@ -332,34 +331,9 @@ class BrowserModel {
             }
         }
     }
-
-    private func _downloadDirectory(path: String, to downloadsURL: URL, convertFiles: Bool) async throws -> URL {
-        let fileManager = FileManager.default
-        let targetURL = downloadsURL.appendingPathComponent(path.lastWindowsPathComponent)
-        let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
-
-        // Here we know we're downloading a directory, so we make sure the destination exists.
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
-
-        // Iterate over the recursive directory listing creating directories where necessary and downloading files.
-        // TODO: We can use this to improve progress reporting by pre-creating Progress objects for it.
-        let files = try await self.fileServer.dir(path: path, recursive: true)
-        for file in files {
-            let relativePath = String(file.path.dropFirst(parentPath.count))
-            let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents.dropLast())
-            if file.isDirectory {
-                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
-            } else {
-                _ = try await self.transfersModel.download(from: file,
-                                                           to: destinationURL,
-                                                           convertFiles: convertFiles)
-            }
-        }
-        return targetURL
-    }
-
+    
     func upload(url: URL) {
-        NSWorkspace.shared.open(.transfers)
+        TransfersWindow.reveal()
         runAsync {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
@@ -373,11 +347,10 @@ class BrowserModel {
     func captureScreenshot() {
         dispatchPrecondition(condition: .onQueue(.main))
 
-        let destinationURL = applicationModel.screenshotsURL
+        let screenshotsURL = applicationModel.screenshotsURL
         let revealScreenshot = applicationModel.revealScreenshots
 
-        run {
-            let format: UTType = .png
+        runAsync { [transfersModel] in
             let nameFormatter = DateFormatter()
             nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
 
@@ -388,46 +361,37 @@ class BrowserModel {
             // Create a temporary directory.
             let temporaryDirectory = try fileManager.createTemporaryDirectory()
             defer {
-                do {
-                    try fileManager.removeItem(at: temporaryDirectory)
-                } catch {
-                    print("Failed to delete temporary directory '\(temporaryDirectory.path)' with error '\(error.localizedDescription)'.")
-                }
+                try? fileManager.removeItemLoggingErrors(at: temporaryDirectory)
             }
 
             // Take a screenshot.
             print("Taking screenshot...")
             let timestamp = Date.now
             try client.execProgram(program: .screenshotToolPath, args: "")
-            sleep(5)
+            try await Task.sleep(for: .seconds(5))
 
-            // Copy the screenshot.
-            let outputURL = fileManager
-                .temporaryDirectory
-                .appendingPathComponent("screenshot.mbm")
-            try fileServer.copyFileSync(fromRemotePath: .screenshotPath, toLocalPath: outputURL.path) { progress, size in
-                let p = Progress(totalUnitCount: Int64(size))
-                p.completedUnitCount = Int64(progress)
-                let formatString = String(format: "%.0f%%", p.fractionCompleted * 100)
-                print("Copying screenshot... (\(formatString))")
-                return .continue
-            }
-            print("Done.")
-
-            // Convert the screenshot.
+            // Rename the screenshot before transferring it to allow us to defer renaming to the transfers model.
             let name = nameFormatter.string(from: timestamp)
-            let convertedURL = destinationURL
-                .appendingPathComponent(name, conformingTo: format)
-            try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL, type: format)
+            let screenshotPath = "C:\\\(name).mbm"
+            try await fileServer.rename(from: .screenshotPath, to: screenshotPath)  // TODO: Sync version of this?
+
+            // TODO: This feels like overkill as a way to synthesize a directory entry.
+            // Perhaps the transfer model can use some paired down reference which includes the type?
+            let screenshotDetails = try fileServer.getExtendedAttributesSync(path: screenshotPath)
+
+            TransfersWindow.reveal()
+            // TODO: Support converting to PNG.
+            let outputURL = try await transfersModel.download(from: screenshotDetails,
+                                                              to: screenshotsURL,
+                                                              convertFiles: true)
 
             // Cleanup.
-            try fileServer.remove(path: .screenshotPath)
-            try fileManager.removeItem(at: outputURL)
+            try fileServer.remove(path: screenshotPath)
 
             // Reveal the screenshot.
-            DispatchQueue.main.sync {
+            await MainActor.run {
                 if revealScreenshot {
-                    NSWorkspace.shared.activateFileViewerSelecting([convertedURL])
+                    NSWorkspace.shared.activateFileViewerSelecting([outputURL])
                 }
             }
 

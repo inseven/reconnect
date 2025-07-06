@@ -91,6 +91,10 @@ class ApplicationModel: NSObject {
         updaterController.startUpdater()
     }
 
+    func installGuestTools() {
+        showInstallerWindow(url: Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis")!)
+    }
+
     func openInstaller() {
         let openPanel = NSOpenPanel()
         openPanel.canChooseFiles = true
@@ -138,13 +142,6 @@ class ApplicationModel: NSObject {
 
         // Foreground the window.
         window?.makeKeyAndOrderFront(nil)
-    }
-
-    func installGuestTools() {
-        guard let url = Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis") else {
-            return
-        }
-        showInstallerWindow(url: url)
     }
 
 }

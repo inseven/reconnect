@@ -80,6 +80,7 @@ class TransfersModel {
         return details
     }
 
+    // TODO: Some form of completion block based decisions and progress?
     func download(from source: FileServer.DirectoryEntry,
                   to destinationURL: URL,
                   convertFiles: Bool) async throws -> URL {
@@ -115,6 +116,33 @@ class TransfersModel {
         }
 
         return url
+    }
+
+    func downloadDirectory(from path: String,
+                           to downloadsURL: URL,
+                           convertFiles: Bool) async throws -> URL {
+        let fileManager = FileManager.default
+        let targetURL = downloadsURL.appendingPathComponent(path.lastWindowsPathComponent)
+        let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
+
+        // Here we know we're downloading a directory, so we make sure the destination exists.
+        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
+
+        // Iterate over the recursive directory listing creating directories where necessary and downloading files.
+        // TODO: We can use this to improve progress reporting by pre-creating Progress objects for it.
+        let files = try await self.fileServer.dir(path: path, recursive: true)
+        for file in files {
+            let relativePath = String(file.path.dropFirst(parentPath.count))
+            let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents.dropLast())
+            if file.isDirectory {
+                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+            } else {
+                _ = try await self.download(from: file,
+                                            to: destinationURL,
+                                            convertFiles: convertFiles)
+            }
+        }
+        return targetURL
     }
 
     func upload(from sourceURL: URL, to destinationPath: String) async throws {
