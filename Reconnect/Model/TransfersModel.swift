@@ -43,7 +43,7 @@ class TransfersModel {
     fileprivate func _download(from source: FileServer.DirectoryEntry,
                                to destinationURL: URL,
                                convertFiles: Bool,
-                               callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {  // TODO: Plural?
+                               callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {
 
         let fileManager = FileManager.default
 
@@ -68,6 +68,7 @@ class TransfersModel {
 
         // Move the completed file to the destination.
         // TODO: Move as v2 if it exists.
+        // TODO: Perhaps implement this as a conflict handler?
         // Numbering move?
         let filename = converter?.filename(source) ?? source.name
         let finalURL = destinationURL.appendingPathComponent(filename)
@@ -84,32 +85,96 @@ class TransfersModel {
                   to destinationURL: URL,
                   convertFiles: Bool) async throws -> URL {
         precondition(destinationURL.hasDirectoryPath)
-        print("Downloading file '\(source.path)' to '\(destinationURL.path)'...")
 
         let download = Transfer(item: .remote(source)) { transfer in
 
-            // Perform the transfer updating the progress as we do so.
-            // This inner implementation takes responsibility of downloading to a temporary location and automatically
-            // converting files for us. Future implementations should allow for an inline interactive conversion prompt.
-            let details = try await self._download(from: source,
-                                                    to: destinationURL,
-                                                    convertFiles: convertFiles) { progress, size in
-                transfer.setStatus(.active(progress, size))
-                return transfer.isCancelled ? .cancel : .continue
+            // Check to see if we're downloading a single file or a directory.
+            if source.isDirectory {
+                let fileManager = FileManager.default
+                let targetURL = destinationURL.appendingPathComponent(source.path.lastWindowsPathComponent)
+                let parentPath = source.path
+                    .deletingLastWindowsPathComponent
+                    .ensuringTrailingWindowsPathSeparator(isPresent: true)
+
+                // Ensure the matching destination directory exists.
+                try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
+
+                // Set the initial progress.
+                let progress = Progress()
+                transfer.setStatus(.active(progress))
+
+                // Determine the number of items we need to process and update the process object.
+                let files = try await self.fileServer.dir(path: source.path, recursive: true)
+                progress.totalUnitCount = Int64(files.count)
+                progress.fileTotalCount = files.count
+                transfer.setStatus(.active(progress))
+
+                // Iterate over the recursive directory listing creating directories and downloading files.
+                var totalSize: UInt64 = 0
+
+                // Create the directories.
+                for file in files.filter({ $0.isDirectory }) {
+                    print(file.path)
+                    let relativePath = String(file.path.dropFirst(parentPath.count))
+                    let innerDestinationURL = destinationURL
+                        .appendingPathComponents(relativePath.windowsPathComponents)
+                    let innerProgress = Progress()
+                    innerProgress.kind = .file
+                    innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
+                    innerProgress.totalUnitCount = 1
+                    progress.addChild(innerProgress, withPendingUnitCount: 1)
+                    transfer.status = .active(progress)
+                    try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
+                    innerProgress.completedUnitCount = 1
+                    transfer.status = .active(progress)
+                }
+
+                // Copy the files.
+                for file in files.filter({ !$0.isDirectory }) {
+                    let relativePath = String(file.path.dropFirst(parentPath.count))
+                    let innerDestinationURL = destinationURL
+                        .appendingPathComponents(relativePath.windowsPathComponents.dropLast())
+                    let innerProgress = Progress()
+                    innerProgress.kind = .file
+                    innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
+                    progress.addChild(innerProgress, withPendingUnitCount: 1)
+                    let innerDetails = try await self._download(from: file,
+                                                                to: innerDestinationURL,
+                                                                convertFiles: convertFiles) { p, size in
+                        innerProgress.totalUnitCount = Int64(size)
+                        innerProgress.completedUnitCount = Int64(p)
+                        transfer.setStatus(.active(progress))
+                        return transfer.isCancelled ? .cancel : .continue
+                    }
+                    totalSize += innerDetails.size
+                }
+
+                let details: Transfer.FileDetails = .init(reference: .local(targetURL), size: totalSize)
+                transfer.status = .complete(details)
+                return details.reference
+            } else {
+                let progress = Progress()
+                progress.kind = .file
+                progress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
+                transfer.setStatus(.active(progress))
+                let details = try await self._download(from: source,
+                                                       to: destinationURL,
+                                                       convertFiles: convertFiles) { p, size in
+                    progress.totalUnitCount = Int64(size)
+                    progress.completedUnitCount = Int64(p)
+                    transfer.setStatus(.active(progress))
+                    return transfer.isCancelled ? .cancel : .continue
+                }
+                transfer.status = .complete(details)
+                return details.reference
             }
-
-            // Mark the transfer as complete.
-            transfer.status = .complete(details)
-
-            // Report the result.
-            return details.reference
         }
 
         // Append and run the transfer operation, waiting until it's complete.
         transfers.append(download)
         let reference = try await download.run()
 
-        // Double check that we received a local file. This could perhaps be an assertion.
+        // Double check that we received a local file.
         guard case .local(let url) = reference else {
             throw ReconnectError.invalidFileReference
         }
@@ -122,7 +187,9 @@ class TransfersModel {
         let upload = Transfer(item: .local(sourceURL)) { transfer in
             try await self.fileServer.copyFile(fromLocalPath: sourceURL.path,
                                                toRemotePath: destinationPath) { progress, size in
-                transfer.setStatus(.active(progress, size))
+                let p = Progress(totalUnitCount: Int64(size))
+                p.completedUnitCount = Int64(progress)
+                transfer.setStatus(.active(p))
                 return transfer.isCancelled ? .cancel : .continue
             }
             let directoryEntry = try await self.fileServer.getExtendedAttributes(path: destinationPath)
@@ -134,7 +201,7 @@ class TransfersModel {
         transfers.append(upload)
         _ = try await upload.run()
     }
-    
+
     func clear() {
         transfers.removeAll { !$0.isActive }
     }

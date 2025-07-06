@@ -41,6 +41,15 @@ extension FileManager {
         return fileExists(atPath: url.path)
     }
 
+    public func removeItemLoggingErrors(at url: URL) throws {
+        do {
+            try removeItem(at: url)
+        } catch {
+            print("Failed to remove item at path '\(url.path)' with error '\(error)'.")
+            throw error
+        }
+    }
+
     public func safelyMoveItem(at sourceURL: URL, toDirectory destinationDirectoryURL: URL) throws -> URL {
         for index in 1... {
             let filename = if index == 1 {
