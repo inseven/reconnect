@@ -64,12 +64,12 @@ struct TransferRow: View {
         .frame(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize)
     }
     
-    var statusText: String {
+    var statusText: String? {
         switch transfer.status {
         case .waiting:
             return "Waiting to start…"
-        case .active(let progress, let size):
-            return "\(progress.formatted(.byteCount(style: .memory))) of \(size.formatted(.byteCount(style: .memory)))"
+        case .active:
+            return nil
         case .complete(let details):
             if let details {
                 return details.size.formatted(.byteCount(style: .file))
@@ -100,18 +100,20 @@ struct TransferRow: View {
                 case .waiting:
                     ProgressView(value: 0)
                         .controlSize(.small)
-                case .active(let progress, let size):
-                    ProgressView(value: Float(progress) / Float(size))
+                case .active(let progress):
+                    ProgressView(progress)
                         .controlSize(.small)
                 case .complete, .cancelled, .failed:
                     EmptyView()
                 }
 
-                Text(statusText)
-                    .lineLimit(1)
-                    .foregroundStyle(.secondary)
-                    .font(.callout)
-                    .help(statusText)
+                if let statusText {
+                    Text(statusText)
+                        .lineLimit(1)
+                        .foregroundStyle(.secondary)
+                        .font(.callout)
+                        .help(statusText)
+                }
 
             }
 
