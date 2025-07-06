@@ -49,7 +49,6 @@ struct BrowserDetailView: View {
                     print("Failed to download dragged file with error \(error).")
                     completion(nil, false, error)
                 }
-
             }
             return nil
         }
