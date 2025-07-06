@@ -32,7 +32,8 @@ struct BrowserWindow: Scene {
     init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
-        _browserModel = State(initialValue: BrowserModel(transfersModel: transfersModel))
+        _browserModel = State(initialValue: BrowserModel(applicationModel: applicationModel,
+                                                         transfersModel: transfersModel))
     }
 
     var body: some Scene {

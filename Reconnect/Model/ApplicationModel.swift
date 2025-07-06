@@ -36,13 +36,24 @@ class ApplicationModel: NSObject {
     }
 
     enum SettingsKey: String {
-        case selectedDevices
         case convertFiles
+        case downloadsURL
+        case selectedDevices
     }
 
     var convertFiles: Bool {
         didSet {
             keyedDefaults.set(convertFiles, forKey: .convertFiles)
+        }
+    }
+
+    var downloadsURL: URL {
+        didSet {
+            do {
+                try keyedDefaults.set(securityScopedURL: downloadsURL, forKey: .downloadsURL)
+            } catch {
+                print("Failed to save downloads path with error \(error).")
+            }
         }
     }
 
@@ -54,6 +65,7 @@ class ApplicationModel: NSObject {
 
     override init() {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
+        downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         super.init()
         openMenuApplication()
         updaterController.startUpdater()

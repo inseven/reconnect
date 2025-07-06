@@ -24,12 +24,12 @@ extension FileManager {
         return urls(for: .downloadsDirectory, in: .userDomainMask)[0]
     }
 
-    public func temporaryURL() -> URL {
-        return temporaryDirectory.appendingPathComponent((UUID().uuidString))
+    public func temporaryURL(isDirectory: Bool = false) -> URL {
+        return temporaryDirectory.appendingPathComponent((UUID().uuidString), isDirectory: isDirectory)
     }
 
     public func createTemporaryDirectory() throws -> URL {
-        let temporaryURL = temporaryURL()
+        let temporaryURL = temporaryURL(isDirectory: true)
         try createDirectory(at: temporaryURL, withIntermediateDirectories: true)
         return temporaryURL
     }
