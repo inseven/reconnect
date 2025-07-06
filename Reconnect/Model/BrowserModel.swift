@@ -313,17 +313,10 @@ class BrowserModel {
             do {
                 var results: [URL] = []
                 for file in files {
-                    if file.path.isWindowsDirectory {
-                        let url = try await transfersModel.downloadDirectory(from: file.path,
-                                                                             to: destinationURL,
-                                                                             convertFiles: convertFiles)
-                        results.append(url)
-                    } else {
-                        let url = try await transfersModel.download(from: file,
-                                                                    to: destinationURL,
-                                                                    convertFiles: convertFiles)
-                        results.append(url)
-                    }
+                    let url = try await transfersModel.download(from: file,
+                                                                to: destinationURL,
+                                                                convertFiles: convertFiles)
+                    results.append(url)
                 }
                 completion(.success(results))
             } catch {

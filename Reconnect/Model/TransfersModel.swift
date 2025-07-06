@@ -68,6 +68,7 @@ class TransfersModel {
 
         // Move the completed file to the destination.
         // TODO: Move as v2 if it exists.
+        // TODO: Perhaps implement this as a conflict handler?
         // Numbering move?
         let filename = converter?.filename(source) ?? source.name
         let finalURL = destinationURL.appendingPathComponent(filename)
@@ -89,21 +90,49 @@ class TransfersModel {
 
         let download = Transfer(item: .remote(source)) { transfer in
 
-            // Perform the transfer updating the progress as we do so.
-            // This inner implementation takes responsibility of downloading to a temporary location and automatically
-            // converting files for us. Future implementations should allow for an inline interactive conversion prompt.
-            let details = try await self._download(from: source,
-                                                    to: destinationURL,
-                                                    convertFiles: convertFiles) { progress, size in
-                transfer.setStatus(.active(progress, size))
-                return transfer.isCancelled ? .cancel : .continue
+            // Check to see if we're downloading a single file or a directory.
+            if source.isDirectory {
+                let fileManager = FileManager.default
+                let targetURL = destinationURL.appendingPathComponent(source.path.lastWindowsPathComponent)
+                let parentPath = source.path
+                    .deletingLastWindowsPathComponent
+                    .ensuringTrailingWindowsPathSeparator(isPresent: true)
+
+                // Ensure the matching destination directory exists.
+                try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
+                // TODO: Update the progress.
+
+                // Iterate over the recursive directory listing creating directories and downloading files.
+                let files = try await self.fileServer.dir(path: source.path, recursive: true)
+                for file in files {
+                    let relativePath = String(file.path.dropFirst(parentPath.count))
+                    let innerDestinationURL = destinationURL
+                        .appendingPathComponents(relativePath.windowsPathComponents.dropLast())
+                    if file.isDirectory {
+                        try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
+                    } else {
+                        // We ignore the intermeidate details when transfering a full folder structure.
+                        _ = try await self._download(from: file,
+                                                     to: innerDestinationURL,
+                                                     convertFiles: convertFiles) { progress, size in
+                            transfer.setStatus(.active(progress, size))
+                            return transfer.isCancelled ? .cancel : .continue
+                        }
+                    }
+                }
+                let details: Transfer.FileDetails = .init(reference: .local(targetURL), size: 0)
+                transfer.status = .complete(details)
+                return details.reference
+            } else {
+                let details = try await self._download(from: source,
+                                                        to: destinationURL,
+                                                        convertFiles: convertFiles) { progress, size in
+                    transfer.setStatus(.active(progress, size))
+                    return transfer.isCancelled ? .cancel : .continue
+                }
+                transfer.status = .complete(details)
+                return details.reference
             }
-
-            // Mark the transfer as complete.
-            transfer.status = .complete(details)
-
-            // Report the result.
-            return details.reference
         }
 
         // Append and run the transfer operation, waiting until it's complete.
@@ -116,33 +145,6 @@ class TransfersModel {
         }
 
         return url
-    }
-
-    func downloadDirectory(from path: String,
-                           to downloadsURL: URL,
-                           convertFiles: Bool) async throws -> URL {
-        let fileManager = FileManager.default
-        let targetURL = downloadsURL.appendingPathComponent(path.lastWindowsPathComponent)
-        let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
-
-        // Here we know we're downloading a directory, so we make sure the destination exists.
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
-
-        // Iterate over the recursive directory listing creating directories where necessary and downloading files.
-        // TODO: We can use this to improve progress reporting by pre-creating Progress objects for it.
-        let files = try await self.fileServer.dir(path: path, recursive: true)
-        for file in files {
-            let relativePath = String(file.path.dropFirst(parentPath.count))
-            let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents.dropLast())
-            if file.isDirectory {
-                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
-            } else {
-                _ = try await self.download(from: file,
-                                            to: destinationURL,
-                                            convertFiles: convertFiles)
-            }
-        }
-        return targetURL
     }
 
     func upload(from sourceURL: URL, to destinationPath: String) async throws {
