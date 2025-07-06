@@ -39,8 +39,8 @@ class ApplicationModel: NSObject {
         case convertFiles
         case downloadsURL
         case screenshotsURL
-        case revealScreenshots
         case selectedDevices
+        case revealScreenshots
     }
 
     var convertFiles: Bool {

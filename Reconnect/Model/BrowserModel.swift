@@ -333,9 +333,6 @@ class BrowserModel {
         }
     }
 
-    // TODO: Shouldn't be async.
-    // TODO: This could become the single item download.
-    // TODO: Perhaps push this into transfers or directly on the file server?
     private func _downloadDirectory(path: String, to downloadsURL: URL, convertFiles: Bool) async throws -> URL {
         let fileManager = FileManager.default
         let targetURL = downloadsURL.appendingPathComponent(path.lastWindowsPathComponent)
