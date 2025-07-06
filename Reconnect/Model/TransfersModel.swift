@@ -111,27 +111,42 @@ class TransfersModel {
 
                 // Iterate over the recursive directory listing creating directories and downloading files.
                 var totalSize: UInt64 = 0
-                for file in files {
+
+                // Create the directories.
+                for file in files.filter({ $0.isDirectory }) {
+                    print(file.path)
+                    let relativePath = String(file.path.dropFirst(parentPath.count))
+                    let innerDestinationURL = destinationURL
+                        .appendingPathComponents(relativePath.windowsPathComponents)
+                    let innerProgress = Progress()
+                    innerProgress.kind = .file
+                    innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
+                    innerProgress.totalUnitCount = 1
+                    progress.addChild(innerProgress, withPendingUnitCount: 1)
+                    transfer.status = .active(progress)
+                    try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
+                    innerProgress.completedUnitCount = 1
+                    transfer.status = .active(progress)
+                }
+
+                // Copy the files.
+                for file in files.filter({ !$0.isDirectory }) {
                     let relativePath = String(file.path.dropFirst(parentPath.count))
                     let innerDestinationURL = destinationURL
                         .appendingPathComponents(relativePath.windowsPathComponents.dropLast())
-                    if file.isDirectory {
-                        try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
-                    } else {
-                        let innerProgress = Progress()
-                        innerProgress.kind = .file
-                        innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
-                        progress.addChild(innerProgress, withPendingUnitCount: 1)
-                        let innerDetails = try await self._download(from: file,
-                                                                    to: innerDestinationURL,
-                                                                    convertFiles: convertFiles) { p, size in
-                            innerProgress.totalUnitCount = Int64(size)
-                            innerProgress.completedUnitCount = Int64(p)
-                            transfer.setStatus(.active(progress))
-                            return transfer.isCancelled ? .cancel : .continue
-                        }
-                        totalSize += innerDetails.size
+                    let innerProgress = Progress()
+                    innerProgress.kind = .file
+                    innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
+                    progress.addChild(innerProgress, withPendingUnitCount: 1)
+                    let innerDetails = try await self._download(from: file,
+                                                                to: innerDestinationURL,
+                                                                convertFiles: convertFiles) { p, size in
+                        innerProgress.totalUnitCount = Int64(size)
+                        innerProgress.completedUnitCount = Int64(p)
+                        transfer.setStatus(.active(progress))
+                        return transfer.isCancelled ? .cancel : .continue
                     }
+                    totalSize += innerDetails.size
                 }
 
                 let details: Transfer.FileDetails = .init(reference: .local(targetURL), size: totalSize)
