@@ -242,9 +242,15 @@ public class FileServer: @unchecked Sendable {
                 return false
             }
         } else {
-            var exists: Bool = false
-            try client.pathtest(path, &exists).check()
-            return exists
+            do {
+                _ = try workQueue_getExtendedAttributes(path: path)
+                return true
+            } catch {
+                guard case .noSuchFile = error else {
+                    throw error
+                }
+                return false
+            }
         }
     }
 

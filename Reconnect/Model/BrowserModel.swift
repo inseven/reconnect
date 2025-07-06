@@ -359,6 +359,11 @@ class BrowserModel {
             let fileServer = FileServer()
             let client = RemoteCommandServicesClient()
 
+            // Check to see if the guest tools are installed.
+            guard try fileServer.exists(path: .reconnectToolsStubPath) else {
+                throw ReconnectError.missingTools
+            }
+
             // Create a temporary directory.
             let temporaryDirectory = try fileManager.createTemporaryDirectory()
             defer {
