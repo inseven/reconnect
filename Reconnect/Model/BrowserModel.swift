@@ -101,18 +101,6 @@ class BrowserModel {
         return "Folder16"
     }
 
-    private func runAsync(task: @escaping () async throws -> Void) {
-        Task {
-            do {
-                try await task()
-            } catch {
-                await MainActor.run {
-                    lastError = error
-                }
-            }
-        }
-    }
-
     private func run(task: @escaping () throws -> Void) {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
@@ -144,10 +132,10 @@ class BrowserModel {
             return
         }
         self.files = []
-        self.runAsync {
-            let files = try await self.fileServer.dir(path: path)
+        self.run {
+            let files = try self.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-            await MainActor.run {
+            DispatchQueue.main.sync {
                 self.files = files
                 self.fileSelection = self.fileSelection.intersection(files.map({ $0.id }))
             }
@@ -266,17 +254,17 @@ class BrowserModel {
     }
 
     func rename(file: FileServer.DirectoryEntry, to newName: String) {
-        runAsync {
+        run {
             let newPath = file.path
                 .deletingLastWindowsPathComponent
                 .appendingWindowsPathComponent(newName, isDirectory: file.isDirectory)
             do {
-                try await self.fileServer.rename(from: file.path, to: newPath)
+                try self.fileServer.rename(from: file.path, to: newPath)
             } catch {
                 self.refresh()
                 throw error
             }
-            await MainActor.run {
+            DispatchQueue.main.sync {
                 var newFile = file
                 newFile.path = newPath
                 newFile.name = newName
@@ -328,7 +316,7 @@ class BrowserModel {
     
     func upload(url: URL) {
         TransfersWindow.reveal()
-        runAsync {
+        Task {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
             }
@@ -344,7 +332,7 @@ class BrowserModel {
         let revealScreenshot = applicationModel.revealScreenshots
         isCapturingScreenshot = true
 
-        runAsync { [transfersModel] in
+        run { [transfersModel] in
 
             defer {
                 DispatchQueue.main.async {
@@ -374,12 +362,12 @@ class BrowserModel {
             print("Taking screenshot...")
             let timestamp = Date.now
             try client.execProgram(program: .screenshotToolPath, args: "")
-            try await Task.sleep(for: .seconds(5))
+            sleep(5)
 
             // Rename the screenshot before transferring it to allow us to defer renaming to the transfers model.
             let name = nameFormatter.string(from: timestamp)
             let screenshotPath = "C:\\\(name).mbm"
-            try await fileServer.rename(from: .screenshotPath, to: screenshotPath)  // TODO: Sync version of this?
+            try fileServer.rename(from: .screenshotPath, to: screenshotPath)  // TODO: Sync version of this?
 
             // TODO: This feels like overkill as a way to synthesize a directory entry.
             // Perhaps the transfer model can use some paired down reference which includes the type?
@@ -387,18 +375,23 @@ class BrowserModel {
 
             TransfersWindow.reveal()
             // TODO: Support converting to PNG.
-            let outputURL = try await transfersModel.download(from: screenshotDetails,
-                                                              to: screenshotsURL,
-                                                              convertFiles: true)
 
-            // Cleanup.
-            try fileServer.remove(path: screenshotPath)
+            Task {
 
-            // Reveal the screenshot.
-            await MainActor.run {
-                if revealScreenshot {
-                    NSWorkspace.shared.activateFileViewerSelecting([outputURL])
+                let outputURL = try await transfersModel.download(from: screenshotDetails,
+                                                                  to: screenshotsURL,
+                                                                  convertFiles: true)
+
+                // Cleanup.
+                try fileServer.remove(path: screenshotPath)
+
+                // Reveal the screenshot.
+                await MainActor.run {
+                    if revealScreenshot {
+                        NSWorkspace.shared.activateFileViewerSelecting([outputURL])
+                    }
                 }
+
             }
 
         }

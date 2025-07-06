@@ -462,8 +462,8 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func rename(from fromPath: String, to toPath: String) async throws {
-        try await perform {
+    public func rename(from fromPath: String, to toPath: String) throws {
+        try performSync {
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
     }
