@@ -35,6 +35,7 @@ struct ToolsToolbar: CustomizableToolbarContent {
                 Label("Screenshot", systemImage: "camera.viewfinder")
             }
             .help("Capture a screenshot of your Psion")
+            .disabled(browserModel.isCapturingScreenshot)
         }
 
     }

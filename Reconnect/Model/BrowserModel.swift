@@ -57,6 +57,7 @@ class BrowserModel {
 
     var drives: [FileServer.DriveInfo] = []
     var files: [FileServer.DirectoryEntry] = []
+    var isCapturingScreenshot: Bool = false
 
     var driveSelection: String? = nil {
         didSet {
@@ -336,14 +337,21 @@ class BrowserModel {
         }
     }
 
-    // TODO: Some hybrid class for performing remote operations on a Psion? `RemoteDevice` / `Session`?
     func captureScreenshot() {
         dispatchPrecondition(condition: .onQueue(.main))
 
         let screenshotsURL = applicationModel.screenshotsURL
         let revealScreenshot = applicationModel.revealScreenshots
+        isCapturingScreenshot = true
 
         runAsync { [transfersModel] in
+
+            defer {
+                DispatchQueue.main.async {
+                    self.isCapturingScreenshot = false
+                }
+            }
+
             let nameFormatter = DateFormatter()
             nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
 
