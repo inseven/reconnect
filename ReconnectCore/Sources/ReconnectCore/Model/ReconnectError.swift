@@ -27,6 +27,7 @@ public enum ReconnectError: Error {
     case imageSaveError
     case invalidLocalization
     case invalidSisFile
+    case invalidFileReference
 }
 
 extension ReconnectError: LocalizedError {
@@ -45,6 +46,8 @@ extension ReconnectError: LocalizedError {
             return "Badly formatted localized text."
         case .invalidSisFile:
             return "Invalid SIS file."
+        case .invalidFileReference:
+            return "Invalid file reference."
         }
     }
 

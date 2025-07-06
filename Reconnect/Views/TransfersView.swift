@@ -53,12 +53,6 @@ struct TransfersView: View {
                     
                     Spacer()
 
-#if DEBUG
-                    Button("Add Demo Data") {
-                        transfersModel.addDemoData()
-                    }
-#endif
-
                     Button("Clear") {
                         transfersModel.clear()
                         if transfersModel.transfers.isEmpty {

@@ -21,8 +21,13 @@ import SwiftUI
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
-    let applicationModel = ApplicationModel()
-    let transfersModel = TransfersModel()
+    let applicationModel: ApplicationModel
+    let transfersModel: TransfersModel
+
+    override init() {
+        applicationModel = ApplicationModel()
+        transfersModel = TransfersModel(applicationModel: applicationModel)
+    }
 
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {

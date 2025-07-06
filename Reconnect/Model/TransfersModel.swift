@@ -29,12 +29,14 @@ class TransfersModel {
             .reduce(false) { $0 || $1 }
     }
 
+    let applicationModel: ApplicationModel
+    let fileServer = FileServer()
+
     var transfers: [Transfer] = []
     var selection: UUID? = nil
 
-    let fileServer = FileServer()
-
-    init() {
+    init(applicationModel: ApplicationModel) {
+        self.applicationModel = applicationModel
     }
 
     // Downloads and converts a single file. Fails if it's a directory entry.
@@ -80,27 +82,17 @@ class TransfersModel {
         return details
     }
 
-    // TODO: Consider exposing the downlaod filenames here for drag-and-drop consistency.
-
-    // TODO: Should the converter be injected or should this provide the filename proposal API?
-    // TODO: Injecting the converter isn't great since we want to be able to let the user choose interactively if
-    // possible.
     func download(from source: FileServer.DirectoryEntry,
-                  to destinationURL: URL? = nil,
-                  convertFiles: Bool) async throws -> URL {  // TODO: Plural?
-        let fileManager = FileManager.default
-
-        print("Downloading file '\(source.path)'...")
+                  to destinationURL: URL,
+                  convertFiles: Bool) async throws -> URL {
+        precondition(destinationURL.hasDirectoryPath)
+        print("Downloading file '\(source.path)' to '\(destinationURL.path)'...")
 
         let download = Transfer(item: .remote(source)) { transfer in
 
-            // Get the files into an array.
-            // For each file in the array. Ensure the destination directory exists. Transfer it.
-
-            // TODO: Consider always downloading to a temporary directory and then moving out in the last step.
-
-            // Iterate over the files:
-            let destinationURL = try (destinationURL ?? fileManager.createTemporaryDirectory())
+            // Perform the transfer updating the progress as we do so.
+            // This inner implementation takes responsibility of downloading to a temporary location and automatically
+            // converting files for us. Future implementations should allow for an inline interactive conversion prompt.
             let details = try await self._download(from: source,
                                                     to: destinationURL,
                                                     convertFiles: convertFiles) { progress, size in
@@ -121,7 +113,7 @@ class TransfersModel {
 
         // Double check that we received a local file. This could perhaps be an assertion.
         guard case .local(let url) = reference else {
-            throw ReconnectError.unknown // TODO
+            throw ReconnectError.invalidFileReference
         }
 
         return url
@@ -149,35 +141,4 @@ class TransfersModel {
         transfers.removeAll { !$0.isActive }
     }
 
-}
-
-extension TransfersModel {
-    
-    func addDemoData() {
-//        let remoteFile = FileServer.DirectoryEntry(path: "D:\\Screenshots\\Thoughts Splash Screen",
-//                                                   name: "Thoughts Splash Screen",
-//                                                   size: 2938478,
-//                                                   attributes: .normal,
-//                                                   modificationDate: .now,
-//                                                   uid1: .directFileStore,
-//                                                   uid2: .appDllDoc,
-//                                                   uid3: .sketch)
-//        let localFile = URL(fileURLWithPath: "/Users/jbmorley/Thoughts Screenshot.png")
-//        let error = ReconnectError.rfsvError(.init(rawValue: -37))
-//        transfers.append(Transfer(item: .remote(remoteFile), status: .waiting))
-//        transfers.append(Transfer(item: .remote(remoteFile), status: .failed(error)))
-//        transfers.append(Transfer(item: .local(localFile), status: .cancelled))
-//
-//        var min: UInt32 = 0
-//        transfers.append(Transfer(item: .remote(remoteFile)) { transfer in
-//            while min < remoteFile.size {
-//                try await Task.sleep(for: .milliseconds(1))
-//                min += 100
-//                transfer.setStatus(.active(min, remoteFile.size))
-//            }
-//            transfer.setStatus(.complete(Transfer.FileDetails(url: localFile, size: UInt64(remoteFile.size))))
-//        })
-
-    }
-    
 }
