@@ -300,14 +300,21 @@ class BrowserModel {
 
         Task {
             do {
-                var results: [URL] = []
-                for file in files {
-                    let url = try await transfersModel.download(from: file,
-                                                                to: destinationURL,
-                                                                convertFiles: convertFiles)
-                    results.append(url)
+                let urls = try await withThrowingTaskGroup(of: URL.self) { [transfersModel] group in
+                    for file in files {
+                        group.addTask {
+                            return try await transfersModel.download(from: file,
+                                                                     to: destinationURL,
+                                                                     convertFiles: convertFiles)
+                        }
+                    }
+                    var results: [URL] = []
+                    for try await url in group {
+                        results.append(url)
+                    }
+                    return results
                 }
-                completion(.success(results))
+                completion(.success(urls))
             } catch {
                 completion(.failure(error))
             }
