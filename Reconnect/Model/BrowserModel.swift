@@ -333,9 +333,6 @@ class BrowserModel {
         }
     }
 
-    // TODO: Shouldn't be async.
-    // TODO: This could become the single item download.
-    // TODO: Perhaps push this into transfers or directly on the file server?
     private func _downloadDirectory(path: String, to downloadsURL: URL, convertFiles: Bool) async throws -> URL {
         let fileManager = FileManager.default
         let targetURL = downloadsURL.appendingPathComponent(path.lastWindowsPathComponent)
@@ -345,7 +342,6 @@ class BrowserModel {
         try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
 
         // Iterate over the recursive directory listing creating directories where necessary and downloading files.
-        // TODO: We can use this to improve progress reporting by pre-creating Progress objects for it.
         let files = try await self.fileServer.dir(path: path, recursive: true)
         for file in files {
             let relativePath = String(file.path.dropFirst(parentPath.count))
