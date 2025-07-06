@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 import Algorithms
 import OpoLua
@@ -51,6 +52,7 @@ class BrowserModel {
 
     let fileServer = FileServer()
 
+    let applicationModel: ApplicationModel
     let transfersModel: TransfersModel
 
     var drives: [FileServer.DriveInfo] = []
@@ -71,7 +73,8 @@ class BrowserModel {
 
     private var navigationHistory = NavigationHistory()
 
-    init(transfersModel: TransfersModel) {
+    init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
+        self.applicationModel = applicationModel
         self.transfersModel = transfersModel
     }
 
@@ -292,57 +295,70 @@ class BrowserModel {
         }
     }
 
-    // TODO: Should I even be using this?
-    func download(_ selection: FileServer.DirectoryEntry.ID, convertFiles: Bool) async throws -> URL {
-        NSWorkspace.shared.open(.transfers)
-        guard let file = files.first(where: { $0.id == selection }) else {
-            throw ReconnectError.unknown  // TODO: UGGGGGLY
-        }
-        return try await transfersModel.download(from: file, convertFiles: convertFiles)
-    }
+    // Download a set of files from the Psion to the destination directory URL.
+    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil,
+                  to: URL?,
+                  convertFiles: Bool,
+                  completion: @escaping (Result<Array<URL>, Error>) -> Void) {
 
-    // TODO: Better naming.
-    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil, to: URL? = nil, convertFiles: Bool) {
-        NSWorkspace.shared.open(.transfers)
+        dispatchPrecondition(condition: .onQueue(.main))
+        let destinationURL = to ?? applicationModel.downloadsURL
+        precondition(destinationURL.hasDirectoryPath)
         let selection = selection ?? fileSelection
         let files = files.filter { selection.contains($0.id) }
-        for file in files {
-            if file.path.isWindowsDirectory {
-                downloadDirectory(path: file.path, convertFiles: convertFiles)
-            } else {
-                Task {
-                    try? await transfersModel.download(from: file, to: to, convertFiles: convertFiles)
+
+        // Reveal the transfers window.
+        NSWorkspace.shared.open(.transfers)
+
+        Task {
+            do {
+                var results: [URL] = []
+                for file in files {
+                    if file.path.isWindowsDirectory {
+                        let url = try await _downloadDirectory(path: file.path,
+                                                               to: destinationURL,
+                                                               convertFiles: convertFiles)
+                        results.append(url)
+                    } else {
+                        let url = try await transfersModel.download(from: file,
+                                                                    to: destinationURL,
+                                                                    convertFiles: convertFiles)
+                        results.append(url)
+                    }
                 }
+                completion(.success(results))
+            } catch {
+                completion(.failure(error))
             }
         }
     }
 
-    private func downloadDirectory(path: String, convertFiles: Bool) {
-        runAsync {
-            let fileManager = FileManager.default
-            let downloadsURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-            let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
+    // TODO: Shouldn't be async.
+    // TODO: This could become the single item download.
+    // TODO: Perhaps push this into transfers or directly on the file server?
+    private func _downloadDirectory(path: String, to downloadsURL: URL, convertFiles: Bool) async throws -> URL {
+        let fileManager = FileManager.default
+        let targetURL = downloadsURL.appendingPathComponent(path.lastWindowsPathComponent)
+        let parentPath = path.deletingLastWindowsPathComponent.ensuringTrailingWindowsPathSeparator(isPresent: true)
 
-            // Here we know we're downloading a directory, so we make sure the destination exists.
-            try fileManager.createDirectory(at: downloadsURL.appendingPathComponent(path.lastWindowsPathComponent),
-                                            withIntermediateDirectories: true)
+        // Here we know we're downloading a directory, so we make sure the destination exists.
+        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true)
 
-            // Iterate over the recursive directory listing creating directories where necessary and downloading files.
-            let files = try await self.fileServer.dir(path: path, recursive: true)
-            for file in files {
-                let relativePath = String(file.path.dropFirst(parentPath.count))
-                let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents)
-                if file.isDirectory {
-                    try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
-                } else {
-                    Task {
-                        try? await self.transfersModel.download(from: file,
-                                                                to: destinationURL,
-                                                                convertFiles: convertFiles)
-                    }
-                }
+        // Iterate over the recursive directory listing creating directories where necessary and downloading files.
+        // TODO: We can use this to improve progress reporting by pre-creating Progress objects for it.
+        let files = try await self.fileServer.dir(path: path, recursive: true)
+        for file in files {
+            let relativePath = String(file.path.dropFirst(parentPath.count))
+            let destinationURL = downloadsURL.appendingPathComponents(relativePath.windowsPathComponents.dropLast())
+            if file.isDirectory {
+                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+            } else {
+                _ = try await self.transfersModel.download(from: file,
+                                                           to: destinationURL,
+                                                           convertFiles: convertFiles)
             }
         }
+        return targetURL
     }
 
     func upload(url: URL) {

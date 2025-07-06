@@ -40,8 +40,9 @@ struct FileToolbar: CustomizableToolbarContent {
 
         ToolbarItem(id: "download") {
             Button {
-                browserModel.download(to: FileManager.default.downloadsDirectory,
-                                      convertFiles: applicationModel.convertFiles)
+                browserModel.download(to: applicationModel.downloadsURL,
+                                      convertFiles: applicationModel.convertFiles,
+                                      completion: { _ in })
             } label: {
                 Label("New Folder", systemImage: "square.and.arrow.down")
             }
@@ -67,7 +68,9 @@ struct FileToolbar: CustomizableToolbarContent {
                 Divider()
 
                 Button("Download") {
-                    browserModel.download(convertFiles: applicationModel.convertFiles)
+                    browserModel.download(to: applicationModel.downloadsURL,
+                                          convertFiles: applicationModel.convertFiles,
+                                          completion: { _ in })
                 }
                 .disabled(browserModel.isSelectionEmpty)
 

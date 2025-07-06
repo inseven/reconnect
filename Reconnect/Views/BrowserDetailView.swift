@@ -20,6 +20,18 @@ import SwiftUI
 
 import ReconnectCore
 
+extension FileManager {
+
+    func removeItemLoggingErrors(at url: URL) {
+        do {
+            try removeItem(at: url)
+        } catch {
+            print("Failed to remove item at path '\(url.path)' with error '\(error)'.")
+        }
+    }
+
+}
+
 struct BrowserDetailView: View {
 
     @Environment(ApplicationModel.self) var applicationModel
@@ -29,25 +41,31 @@ struct BrowserDetailView: View {
     var browserModel: BrowserModel
 
     func itemProvider(for file: FileServer.DirectoryEntry) -> NSItemProvider? {
-        if file.isDirectory {
-            return nil
-        } else {
-            let provider = NSItemProvider()
-            provider.suggestedName = FileConverter.targetFilename(for: file)
-            provider.registerFileRepresentation(for: .data) { completion in
-                Task {
-                    do {
-                        let url = try await self.browserModel.download(file.id, convertFiles: true)
-                        completion(url, false, nil)
-                    } catch {
-                        print("Failed to download dragged file with error \(error).")
-                        completion(nil, false, error)
+        let provider = NSItemProvider()
+        provider.suggestedName = FileConverter.targetFilename(for: file)
+        provider.registerFileRepresentation(for: file.isDirectory ? .folder : .data) { completion in
+            DispatchQueue.main.async {
+                do {
+                    let fileManager = FileManager.default
+                    let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
+                    self.browserModel.download(Set([file.id]), to: temporaryDirectoryURL, convertFiles: true) { result in
+                        switch result {
+                        case .success(let urls):
+                            completion(urls.first!, false, nil)
+                        case .failure(let error):
+                            completion(nil, false, error)
+                        }
+                        fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
                     }
+                } catch {
+                    print("Failed to download dragged file with error \(error).")
+                    completion(nil, false, error)
                 }
-                return nil
+
             }
-            return provider
+            return nil
         }
+        return provider
     }
 
     var body: some View {
@@ -100,7 +118,8 @@ struct BrowserDetailView: View {
                 Button("Download") {
                     browserModel.download(items,
                                           to: FileManager.default.downloadsDirectory,
-                                          convertFiles: applicationModel.convertFiles)
+                                          convertFiles: applicationModel.convertFiles,
+                                          completion: { _ in })
                 }
 
                 Divider()
