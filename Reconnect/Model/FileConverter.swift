@@ -36,8 +36,6 @@ class FileConverter {
         guard let converter = converter(for: entry) else {
             return url
         }
-
-        // TODO: Inject the destination.
         return try converter.perform(url, url.deletingLastPathComponent())
     }
 
@@ -50,10 +48,10 @@ class FileConverter {
         // MBM
         Conversion { entry in
             return entry.fileType == .mbm || entry.pathExtension.lowercased() == "mbm"
-        } filename: { entry in  // TODO: Is this necessary?
+        } filename: { entry in
             return entry.name
                 .deletingPathExtension
-                .appendingPathExtension("tiff")!  // TODO: <-- why is this necessary?
+                .appendingPathExtension("tiff")
         } perform: { sourceURL, destinationURL in
             let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
                                                                   conformingTo: .tiff)
