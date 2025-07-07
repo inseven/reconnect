@@ -305,7 +305,7 @@ class BrowserModel {
                         group.addTask {
                             return try await transfersModel.download(from: file,
                                                                      to: destinationURL,
-                                                                     convertFiles: convertFiles)
+                                                                     process: convertFiles ? FileConverter.convertFiles : FileConverter.identity)
                         }
                     }
                     var results: [URL] = []
@@ -381,13 +381,19 @@ class BrowserModel {
             let screenshotDetails = try fileServer.getExtendedAttributesSync(path: screenshotPath)
 
             TransfersWindow.reveal()
-            // TODO: Support converting to PNG.
 
             Task {
 
+                // Download and convert the screenshot.
                 let outputURL = try await transfersModel.download(from: screenshotDetails,
-                                                                  to: screenshotsURL,
-                                                                  convertFiles: true)
+                                                                  to: screenshotsURL) { entry, url in
+                    let destinationURL = url.deletingLastPathComponent()
+                    let outputURL = destinationURL.appendingPathComponent(url.lastPathComponent.deletingPathExtension,
+                                                                          conformingTo: .png)
+                    try PsiLuaEnv().convertMultiBitmap(at: url, to: outputURL, type: .png)
+                    try FileManager.default.removeItem(at: url)
+                    return outputURL
+                }
 
                 // Cleanup.
                 try fileServer.remove(path: screenshotPath)
