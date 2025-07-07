@@ -242,9 +242,15 @@ public class FileServer: @unchecked Sendable {
                 return false
             }
         } else {
-            var exists: Bool = false
-            try client.pathtest(path, &exists).check()
-            return exists
+            do {
+                _ = try workQueue_getExtendedAttributes(path: path)
+                return true
+            } catch {
+                guard case .noSuchFile = error else {
+                    throw error
+                }
+                return false
+            }
         }
     }
 
@@ -456,8 +462,8 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func rename(from fromPath: String, to toPath: String) async throws {
-        try await perform {
+    public func rename(from fromPath: String, to toPath: String) throws {
+        try performSync {
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
     }
@@ -473,7 +479,6 @@ public class FileServer: @unchecked Sendable {
             return try self.workQueue_drives()
         }
     }
-
 
 }
 

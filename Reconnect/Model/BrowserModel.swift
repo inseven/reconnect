@@ -100,18 +100,6 @@ class BrowserModel {
         return "Folder16"
     }
 
-    private func runAsync(task: @escaping () async throws -> Void) {
-        Task {
-            do {
-                try await task()
-            } catch {
-                await MainActor.run {
-                    lastError = error
-                }
-            }
-        }
-    }
-
     private func run(task: @escaping () throws -> Void) {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
@@ -143,10 +131,10 @@ class BrowserModel {
             return
         }
         self.files = []
-        self.runAsync {
-            let files = try await self.fileServer.dir(path: path)
+        self.run {
+            let files = try self.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-            await MainActor.run {
+            DispatchQueue.main.sync {
                 self.files = files
                 self.fileSelection = self.fileSelection.intersection(files.map({ $0.id }))
             }
@@ -265,17 +253,17 @@ class BrowserModel {
     }
 
     func rename(file: FileServer.DirectoryEntry, to newName: String) {
-        runAsync {
+        run {
             let newPath = file.path
                 .deletingLastWindowsPathComponent
                 .appendingWindowsPathComponent(newName, isDirectory: file.isDirectory)
             do {
-                try await self.fileServer.rename(from: file.path, to: newPath)
+                try self.fileServer.rename(from: file.path, to: newPath)
             } catch {
                 self.refresh()
                 throw error
             }
-            await MainActor.run {
+            DispatchQueue.main.sync {
                 var newFile = file
                 newFile.path = newPath
                 newFile.name = newName
@@ -334,7 +322,7 @@ class BrowserModel {
     
     func upload(url: URL) {
         TransfersWindow.reveal()
-        runAsync {
+        Task {
             guard let path = self.path else {
                 throw ReconnectError.invalidFilePath
             }
