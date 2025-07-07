@@ -58,34 +58,6 @@ struct FileToolbar: CustomizableToolbarContent {
             .disabled(browserModel.isSelectionEmpty)
         }
 
-        ToolbarItem(id: "action") {
-            Menu {
-
-                Button("New Folder") {
-                    browserModel.newFolder()
-                }
-
-                Divider()
-
-                Button("Download") {
-                    browserModel.download(to: applicationModel.downloadsURL,
-                                          convertFiles: applicationModel.convertFiles,
-                                          completion: { _ in })
-                }
-                .disabled(browserModel.isSelectionEmpty)
-
-                Divider()
-
-                Button("Delete") {
-                    browserModel.delete()
-                }
-                .disabled(browserModel.isSelectionEmpty)
-
-            } label: {
-                Label("Action", systemImage: "ellipsis.circle")
-            }
-        }
-
     }
 
 }
