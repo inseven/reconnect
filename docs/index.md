@@ -25,3 +25,4 @@
 - Add and remove Psion programs
 - Automatically convert image files
 - Preview SIS installer files using QuickLook
+- Capture screenshots of your Psion
