@@ -62,14 +62,14 @@ class FileConverter {
 
     ]
 
-    private static func converter(for entry: FileServer.DirectoryEntry) -> Conversion? {
+    private static func converter(for directoryEntry: FileServer.DirectoryEntry) -> Conversion? {
         return converters.first {
-            $0.matches(entry)
+            $0.matches(directoryEntry)
         }
     }
 
-    static func targetFilename(for entry: FileServer.DirectoryEntry) -> String {
-        return converter(for: entry)?.filename(entry) ?? entry.name
+    static func targetFilename(for directoryEntry: FileServer.DirectoryEntry) -> String {
+        return converter(for: directoryEntry)?.filename(directoryEntry) ?? directoryEntry.name
     }
 
 }
