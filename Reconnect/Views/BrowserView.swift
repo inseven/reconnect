@@ -59,6 +59,8 @@ struct BrowserView: View {
 
             NavigationToolbar(browserModel: browserModel)
 
+            ToolsToolbar(browserModel: browserModel)
+            ToolbarSpacer()
             FileToolbar(browserModel: browserModel)
             ToolbarSpacer()
 

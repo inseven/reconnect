@@ -26,31 +26,43 @@ import ReconnectCore
 // answers about conversions based on the users choices and enabled conversions.
 class FileConverter {
 
-    struct Conversion {
+    private struct Conversion {
         let matches: (FileServer.DirectoryEntry) -> Bool
         let filename: (FileServer.DirectoryEntry) -> String
         let perform: (URL, URL) throws -> URL
     }
 
-    static let converters: [Conversion] = [
+    static let convertFiles: (FileServer.DirectoryEntry, URL) throws -> URL = { entry, url in
+        guard let converter = converter(for: entry) else {
+            return url
+        }
+        return try converter.perform(url, url.deletingLastPathComponent())
+    }
+
+    static let identity: (FileServer.DirectoryEntry, URL) throws -> URL = { entry, url in
+        return url
+    }
+
+    private static let converters: [Conversion] = [
 
         // MBM
-        .init { directoryEntry in
-            return directoryEntry.fileType == .mbm || directoryEntry.pathExtension.lowercased() == "mbm"
-        } filename: { directoryEntry in
-            return directoryEntry.name
+        Conversion { entry in
+            return entry.fileType == .mbm || entry.pathExtension.lowercased() == "mbm"
+        } filename: { entry in
+            return entry.name
                 .deletingPathExtension
-                .appendingPathExtension("tiff")!
+                .appendingPathExtension("tiff")
         } perform: { sourceURL, destinationURL in
-            // TODO: Generate a temporary file? Should this be done in the outer?
-            try PsiLuaEnv().convertMultiBitmap(at: sourceURL, to: destinationURL)
+            let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
+                                                                  conformingTo: .tiff)
+            try PsiLuaEnv().convertMultiBitmap(at: sourceURL, to: outputURL)
             try FileManager.default.removeItem(at: sourceURL)
-            return destinationURL  // TODO: this is uuuugly
+            return outputURL
         }
 
     ]
 
-    static func converter(for directoryEntry: FileServer.DirectoryEntry) -> Conversion? {
+    private static func converter(for directoryEntry: FileServer.DirectoryEntry) -> Conversion? {
         return converters.first {
             $0.matches(directoryEntry)
         }

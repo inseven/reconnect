@@ -18,18 +18,19 @@
 
 import CoreGraphics
 import Foundation
+import UniformTypeIdentifiers
 
 import OpoLua
 
 extension PsiLuaEnv {
 
     // TODO: Rename source and destination
-    public func convertMultiBitmap(at url: URL, to: URL) throws {
+    public func convertMultiBitmap(at url: URL, to: URL, type: UTType = .tiff) throws {
         let bitmaps = PsiLuaEnv().getMbmBitmaps(path: url.path) ?? []
         let images = bitmaps.map { bitmap in
             return CGImage.from(bitmap: bitmap)
         }
-        try CGImageWriteTIFF(destinationURL: to, images: images)
+        try CGImageWrite(destinationURL: to, images: images, type: type)
     }
 
     public func loadSisFile(url: URL) throws -> Sis.File {

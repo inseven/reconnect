@@ -38,6 +38,12 @@ struct SettingsView: View {
                            url: $applicationModel.downloadsURL,
                            options: [.canChooseDirectories, .canCreateDirectories])
             }
+            Section("Screenshots") {
+                FilePicker("Destination",
+                           url: $applicationModel.screenshotsURL,
+                           options: [.canChooseDirectories, .canCreateDirectories])
+                Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
+            }
         }
         .formStyle(.grouped)
         .frame(width: 400, height: 400)

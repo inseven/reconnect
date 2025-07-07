@@ -28,6 +28,7 @@ public enum ReconnectError: Error {
     case invalidLocalization
     case invalidSisFile
     case invalidFileReference
+    case missingTools
 }
 
 extension ReconnectError: LocalizedError {
@@ -48,6 +49,8 @@ extension ReconnectError: LocalizedError {
             return "Invalid SIS file."
         case .invalidFileReference:
             return "Invalid file reference."
+        case .missingTools:
+            return "The Reconnect Tools are not installed on your Psion."
         }
     }
 

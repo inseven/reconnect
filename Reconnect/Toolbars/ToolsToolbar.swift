@@ -16,21 +16,28 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
-import ImageIO
-import UniformTypeIdentifiers
+import SwiftUI
 
-public func CGImageWrite(destinationURL: URL, images: [CGImage], type: UTType) throws  {
-    guard let destination = CGImageDestinationCreateWithURL(destinationURL as CFURL,
-                                                            type.identifier as CFString,
-                                                            images.count,
-                                                            nil) else {
-        throw ReconnectError.imageSaveError
+struct ToolsToolbar: CustomizableToolbarContent {
+
+    private var browserModel: BrowserModel
+
+    init(browserModel: BrowserModel) {
+        self.browserModel = browserModel
     }
-    for image in images {
-        CGImageDestinationAddImage(destination, image, nil)
+
+    var body: some CustomizableToolbarContent {
+
+        ToolbarItem(id: "screenshot") {
+            Button {
+                browserModel.captureScreenshot()
+            } label: {
+                Label("Screenshot", systemImage: "camera.viewfinder")
+            }
+            .help("Capture a screenshot of your Psion")
+            .disabled(browserModel.isCapturingScreenshot)
+        }
+
     }
-    guard CGImageDestinationFinalize(destination) else {
-        throw ReconnectError.imageSaveError
-    }
+
 }

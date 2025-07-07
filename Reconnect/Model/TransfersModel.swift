@@ -38,42 +38,30 @@ class TransfersModel {
     }
 
     // Downloads and converts a single file. Fails if it's a directory entry.
-    // destinationURL _must_ be a directory and must exist. To avoid collisions, if a temporary directory is used, it
-    // should not be the top-level OS-provided temporary directory and should ideally be cleaned up after use.
-    fileprivate func _download(from source: FileServer.DirectoryEntry,
-                               to destinationURL: URL,
-                               convertFiles: Bool,
-                               callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {
+    // destinationURL _must_ be a directory and must exist.
+    // Accepts a `process` block which can be used to perform file conversions during processing.
+    // TODO: Move this into `FileServer`
+    fileprivate func downloadFile(from source: FileServer.DirectoryEntry,
+                                  to destinationURL: URL,
+                                  process: (FileServer.DirectoryEntry, URL) throws -> URL,
+                                  callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {
 
         let fileManager = FileManager.default
+        let temporaryDirectory = try fileManager.createTemporaryDirectory()
+        defer {
+            try? fileManager.removeItemLoggingErrors(at: temporaryDirectory)
+        }
 
         // Perform the file copy.
-        let transferURL = fileManager.temporaryURL()
+        let transferURL = temporaryDirectory.appendingPathComponent(source.path.lastWindowsPathComponent)
         try await self.fileServer.copyFile(fromRemotePath: source.path,
                                            toLocalPath: transferURL.path,
                                            callback: callback)
-
-        // Convert the file if necessary.
-        // Convert known types.
-        // N.B. This would be better implemented as a user-configurable and extensible pipeline, but this is a
-        // reasonable point to hook an initial implementation.
-        // Get the file converter if necessary.
-        let converter: FileConverter.Conversion? = convertFiles ? FileConverter.converter(for: source) : nil
-        let conversionURL: URL = if let converter {
-            try converter.perform(transferURL, fileManager.temporaryURL())
-        } else {
-            transferURL
-        }
-        print("Conversion url \(conversionURL)")
+        let processedURL = try process(source, transferURL)
 
         // Move the completed file to the destination.
-        // TODO: Move as v2 if it exists.
-        // TODO: Perhaps implement this as a conflict handler?
-        // Numbering move?
-        let filename = converter?.filename(source) ?? source.name
-        let finalURL = destinationURL.appendingPathComponent(filename)
-        try fileManager.moveItem(at: conversionURL, to: finalURL)
-        print("Successfully moved from \(conversionURL) to \(finalURL)")
+        let finalURL = destinationURL.appendingPathComponent(processedURL.lastPathComponent)
+        try fileManager.moveItem(at: processedURL, to: finalURL)
 
         // Get the final details.
         let size = try fileManager.attributesOfItem(atPath: finalURL.path)[.size] as! UInt64
@@ -83,7 +71,7 @@ class TransfersModel {
 
     func download(from source: FileServer.DirectoryEntry,
                   to destinationURL: URL,
-                  convertFiles: Bool) async throws -> URL {
+                  process: @escaping (FileServer.DirectoryEntry, URL) throws -> URL) async throws -> URL {
         precondition(destinationURL.hasDirectoryPath)
 
         let download = Transfer(item: .remote(source)) { transfer in
@@ -138,9 +126,9 @@ class TransfersModel {
                     innerProgress.kind = .file
                     innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                     progress.addChild(innerProgress, withPendingUnitCount: 1)
-                    let innerDetails = try await self._download(from: file,
-                                                                to: innerDestinationURL,
-                                                                convertFiles: convertFiles) { p, size in
+                    let innerDetails = try await self.downloadFile(from: file,
+                                                                   to: innerDestinationURL,
+                                                                   process: process) { p, size in
                         innerProgress.totalUnitCount = Int64(size)
                         innerProgress.completedUnitCount = Int64(p)
                         transfer.setStatus(.active(progress))
@@ -157,9 +145,9 @@ class TransfersModel {
                 progress.kind = .file
                 progress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                 transfer.setStatus(.active(progress))
-                let details = try await self._download(from: source,
-                                                       to: destinationURL,
-                                                       convertFiles: convertFiles) { p, size in
+                let details = try await self.downloadFile(from: source,
+                                                          to: destinationURL,
+                                                          process: process) { p, size in
                     progress.totalUnitCount = Int64(size)
                     progress.completedUnitCount = Int64(p)
                     transfer.setStatus(.active(progress))

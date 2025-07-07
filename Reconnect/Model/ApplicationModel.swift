@@ -38,7 +38,9 @@ class ApplicationModel: NSObject {
     enum SettingsKey: String {
         case convertFiles
         case downloadsURL
+        case screenshotsURL
         case selectedDevices
+        case revealScreenshots
     }
 
     var convertFiles: Bool {
@@ -57,6 +59,22 @@ class ApplicationModel: NSObject {
         }
     }
 
+    var revealScreenshots: Bool {
+        didSet {
+            keyedDefaults.set(revealScreenshots, forKey: .revealScreenshots)
+        }
+    }
+
+    var screenshotsURL: URL {
+        didSet {
+            do {
+                try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .screenshotsURL)
+            } catch {
+                print("Failed to save screenshots path with error \(error).")
+            }
+        }
+    }
+
     let updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: nil,
                                                          userDriverDelegate: nil)
@@ -66,9 +84,15 @@ class ApplicationModel: NSObject {
     override init() {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
+        revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
+        screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         super.init()
         openMenuApplication()
         updaterController.startUpdater()
+    }
+
+    func installGuestTools() {
+        showInstallerWindow(url: Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis")!)
     }
 
     func openInstaller() {

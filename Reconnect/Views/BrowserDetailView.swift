@@ -138,6 +138,23 @@ struct BrowserDetailView: View {
                     .stroke(.blue, lineWidth: 4)
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            if browserModel.isCapturingScreenshot {
+                VStack(spacing: 0) {
+                    Divider()
+                    HStack {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .controlSize(.small)
+                        Text("Capturing screenshot...")
+                    }
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .padding()
+                }
+                .background(Color(nsColor: .textBackgroundColor))
+            }
+        }
         .onDrop(of: [.fileURL], isTargeted: $isTargeted) { providers in
             for provider in providers {
                 _ = provider.loadObject(ofClass: URL.self) { url, _ in

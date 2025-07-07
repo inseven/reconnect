@@ -127,6 +127,14 @@
 			);
 			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
 		};
+		D8A75B5C2E18AFA2007B6DBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"reconnect-tools/Reconnect Tools.pkg",
+				"reconnect-tools/screenshot.exe",
+			);
+			target = D84964D52C1BFCB600405656 /* Reconnect */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -136,6 +144,7 @@
 		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
 		D891AE922E1373CE009EC465 /* ReconnectPreviews */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectPreviews; sourceTree = "<group>"; };
 		D891AEDA2E13741B009EC465 /* Reconnect */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AF102E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D891AF112E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Reconnect; sourceTree = "<group>"; };
+		D8A75B552E18AF8A007B6DBA /* tools */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8A75B5C2E18AFA2007B6DBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = tools; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +210,7 @@
 		D84964CD2C1BFCB600405656 = {
 			isa = PBXGroup;
 			children = (
+				D8A75B552E18AF8A007B6DBA /* tools */,
 				D8E8B4FD2D1529E800405445 /* src */,
 				D8068F6D2C4AFCE4004177F6 /* ReconnectCore */,
 				D891AEDA2E13741B009EC465 /* Reconnect */,
@@ -258,6 +268,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D891AEDA2E13741B009EC465 /* Reconnect */,
+				D8A75B552E18AF8A007B6DBA /* tools */,
 			);
 			name = Reconnect;
 			packageProductDependencies = (
@@ -354,6 +365,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D891AE922E1373CE009EC465 /* ReconnectPreviews */,
+				D8A75B552E18AF8A007B6DBA /* tools */,
 			);
 			name = ReconnectPreviews;
 			packageProductDependencies = (

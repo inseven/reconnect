@@ -123,7 +123,9 @@ struct Command: AsyncParsableCommand {
         try await installer.install(url)
 
         // Install the screenshot file.
-        try await fileServer.copyFile(fromLocalPath: screenshot, toRemotePath: "C:\\screenshot.exe")
+        try await fileServer.copyFile(fromLocalPath: screenshot,
+                                      toRemotePath: "C:\\screenshot.exe",
+                                      callback: { _, _ in return .continue })
 
         // Detect the apps.
         let applications = installer.paths.compactMap { (path) -> String? in
@@ -160,8 +162,11 @@ struct Command: AsyncParsableCommand {
                 print("\(progress) / \(size)")
                 return .continue
             }
-            try await fileServer.remove(path: "C:\\screenshot.mbm")
-            try PsiLuaEnv().convertMultiBitmap(at: outputURL, removeSource: true)
+            try fileServer.remove(path: "C:\\screenshot.mbm")
+            let convertedURL = outputURL
+                .deletingPathExtension()
+                .appendingPathExtension("tiff")
+            try PsiLuaEnv().convertMultiBitmap(at: outputURL, to: convertedURL)
 
         }
 
@@ -173,13 +178,13 @@ struct Command: AsyncParsableCommand {
 
         // Delete the files.
         print("Cleaning up files...")
-        try await fileServer.remove(path: "C:\\screenshot.exe")
+        try fileServer.remove(path: "C:\\screenshot.exe")
         for path in installer.paths.reversed() {
             switch path {
             case .file(let path):
-                try await fileServer.remove(path: path)
+                try fileServer.remove(path: path)
             case .directory(let path):
-                try await fileServer.rmdir(path: path)
+                try fileServer.rmdir(path: path)
             }
         }
 

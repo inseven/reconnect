@@ -57,6 +57,7 @@ class BrowserModel {
 
     var drives: [FileServer.DriveInfo] = []
     var files: [FileServer.DirectoryEntry] = []
+    var isCapturingScreenshot: Bool = false
 
     var driveSelection: String? = nil {
         didSet {
@@ -304,7 +305,7 @@ class BrowserModel {
                         group.addTask {
                             return try await transfersModel.download(from: file,
                                                                      to: destinationURL,
-                                                                     convertFiles: convertFiles)
+                                                                     process: convertFiles ? FileConverter.convertFiles : FileConverter.identity)
                         }
                     }
                     var results: [URL] = []
@@ -328,6 +329,84 @@ class BrowserModel {
             }
             try? await self.transfersModel.upload(from: url, to: path + url.lastPathComponent)
             self.refresh()
+        }
+    }
+
+    func captureScreenshot() {
+        dispatchPrecondition(condition: .onQueue(.main))
+
+        let screenshotsURL = applicationModel.screenshotsURL
+        let revealScreenshot = applicationModel.revealScreenshots
+        isCapturingScreenshot = true
+
+        run { [transfersModel] in
+
+            defer {
+                DispatchQueue.main.async {
+                    self.isCapturingScreenshot = false
+                }
+            }
+
+            let nameFormatter = DateFormatter()
+            nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
+
+            let fileManager = FileManager.default
+            let fileServer = FileServer()
+            let client = RemoteCommandServicesClient()
+
+            // Check to see if the guest tools are installed.
+            guard try fileServer.exists(path: .reconnectToolsStubPath) else {
+                throw ReconnectError.missingTools
+            }
+
+            // Create a temporary directory.
+            let temporaryDirectory = try fileManager.createTemporaryDirectory()
+            defer {
+                try? fileManager.removeItemLoggingErrors(at: temporaryDirectory)
+            }
+
+            // Take a screenshot.
+            print("Taking screenshot...")
+            let timestamp = Date.now
+            try client.execProgram(program: .screenshotToolPath, args: "")
+            sleep(5)
+
+            // Rename the screenshot before transferring it to allow us to defer renaming to the transfers model.
+            let name = nameFormatter.string(from: timestamp)
+            let screenshotPath = "C:\\\(name).mbm"
+            try fileServer.rename(from: .screenshotPath, to: screenshotPath)  // TODO: Sync version of this?
+
+            // TODO: This feels like overkill as a way to synthesize a directory entry.
+            // Perhaps the transfer model can use some paired down reference which includes the type?
+            let screenshotDetails = try fileServer.getExtendedAttributesSync(path: screenshotPath)
+
+            TransfersWindow.reveal()
+
+            Task {
+
+                // Download and convert the screenshot.
+                let outputURL = try await transfersModel.download(from: screenshotDetails,
+                                                                  to: screenshotsURL) { entry, url in
+                    let destinationURL = url.deletingLastPathComponent()
+                    let outputURL = destinationURL.appendingPathComponent(url.lastPathComponent.deletingPathExtension,
+                                                                          conformingTo: .png)
+                    try PsiLuaEnv().convertMultiBitmap(at: url, to: outputURL, type: .png)
+                    try FileManager.default.removeItem(at: url)
+                    return outputURL
+                }
+
+                // Cleanup.
+                try fileServer.remove(path: screenshotPath)
+
+                // Reveal the screenshot.
+                await MainActor.run {
+                    if revealScreenshot {
+                        NSWorkspace.shared.activateFileViewerSelecting([outputURL])
+                    }
+                }
+
+            }
+
         }
     }
 
