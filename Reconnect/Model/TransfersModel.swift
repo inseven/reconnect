@@ -41,10 +41,10 @@ class TransfersModel {
     // destinationURL _must_ be a directory and must exist.
     // Accepts a `process` block which can be used to perform file conversions during processing.
     // TODO: Move this into `FileServer`
-    fileprivate func _download(from source: FileServer.DirectoryEntry,
-                               to destinationURL: URL,
-                               process: (FileServer.DirectoryEntry, URL) throws -> URL,
-                               callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {
+    fileprivate func downloadFile(from source: FileServer.DirectoryEntry,
+                                  to destinationURL: URL,
+                                  process: (FileServer.DirectoryEntry, URL) throws -> URL,
+                                  callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {
 
         let fileManager = FileManager.default
         let temporaryDirectory = try fileManager.createTemporaryDirectory()
@@ -126,9 +126,9 @@ class TransfersModel {
                     innerProgress.kind = .file
                     innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                     progress.addChild(innerProgress, withPendingUnitCount: 1)
-                    let innerDetails = try await self._download(from: file,
-                                                                to: innerDestinationURL,
-                                                                process: process) { p, size in
+                    let innerDetails = try await self.downloadFile(from: file,
+                                                                   to: innerDestinationURL,
+                                                                   process: process) { p, size in
                         innerProgress.totalUnitCount = Int64(size)
                         innerProgress.completedUnitCount = Int64(p)
                         transfer.setStatus(.active(progress))
@@ -145,9 +145,9 @@ class TransfersModel {
                 progress.kind = .file
                 progress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                 transfer.setStatus(.active(progress))
-                let details = try await self._download(from: source,
-                                                       to: destinationURL,
-                                                       process: process) { p, size in
+                let details = try await self.downloadFile(from: source,
+                                                          to: destinationURL,
+                                                          process: process) { p, size in
                     progress.totalUnitCount = Int64(size)
                     progress.completedUnitCount = Int64(p)
                     transfer.setStatus(.active(progress))

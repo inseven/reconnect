@@ -63,7 +63,22 @@ struct TransferRow: View {
         }
         .frame(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize)
     }
-    
+
+    var name: String {
+        guard
+            case .complete(let details) = transfer.status,
+            let details
+        else {
+            return transfer.item.name
+        }
+        switch details.reference {
+        case .local(let url):
+            return url.lastPathComponent
+        case .remote(let directoryEntry):
+            return directoryEntry.name
+        }
+    }
+
     var statusText: String? {
         switch transfer.status {
         case .waiting:
@@ -91,7 +106,7 @@ struct TransferRow: View {
             
             VStack(alignment: .leading, spacing: 0) {
 
-                Text(transfer.item.name)
+                Text(name)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .horizontalSpace(.trailing)

@@ -21,6 +21,7 @@ import SwiftUI
 @MainActor @Observable
 class Transfer: Identifiable {
 
+    // TODO: Enum?
     struct FileDetails: Equatable {
         let reference: FileReference
         let size: UInt64

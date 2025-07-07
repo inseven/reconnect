@@ -480,7 +480,6 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-
 }
 
 extension FileServer {
