@@ -22,7 +22,7 @@
 
 - Browse files on your Psion
 - Transfer files between your Mac and Psion
-- Add and remove Psion programs
+- Add and remove programs
 - Automatically convert image files
 - Preview SIS installer files using QuickLook
-- Capture screenshots of your Psion
+- Capture screenshots
