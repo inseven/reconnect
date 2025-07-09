@@ -34,5 +34,8 @@ source "$SCRIPTS_DIRECTORY/environment.sh"
 
 cd "$ROOT_DIRECTORY"
 
+if [ -d "$RELEASE_NOTES_DIRECTORY" ]; then
+    rm -r "$RELEASE_NOTES_DIRECTORY"
+fi
 mkdir -p "$RELEASE_NOTES_DIRECTORY"
 changes notes --all --template "$RELEASE_NOTES_TEMPLATE_PATH" > "$RELEASE_NOTES_PATH"
