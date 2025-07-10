@@ -24,5 +24,5 @@
 - Transfer files between your Mac and Psion
 - Add and remove programs
 - Automatically convert image files
-- Preview SIS installer files using QuickLook
+- Preview installers using QuickLook
 - Capture screenshots
