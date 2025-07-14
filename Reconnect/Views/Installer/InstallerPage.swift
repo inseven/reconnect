@@ -18,6 +18,12 @@
 
 import SwiftUI
 
+fileprivate struct LayoutMetrics {
+    static let minWidth: CGFloat = 600
+    static let minHeight: CGFloat = 400
+}
+
+
 @MainActor
 struct InstallerPage<Content: View, Actions: View>: View {
 
@@ -67,6 +73,7 @@ struct InstallerPage<Content: View, Actions: View>: View {
             }
             .padding()
         }
+        .frame(minWidth: LayoutMetrics.minWidth, minHeight: LayoutMetrics.minHeight)
     }
 
 }
