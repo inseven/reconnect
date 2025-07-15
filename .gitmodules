@@ -22,3 +22,6 @@
 [submodule "dependencies/PsionSoftwareIndexSwift"]
 	path = dependencies/PsionSoftwareIndexSwift
 	url = git@github.com:inseven/PsionSoftwareIndexSwift.git
+[submodule "docs/_theme"]
+	path = docs/_theme
+	url = https://github.com/jbmorley/showcase-theme.git

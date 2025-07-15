@@ -1,6 +1,5 @@
 ---
 title: Releases
-layout: page
 ---
 
 {% for release in releases -%}

@@ -1,17 +1,40 @@
+theme: theme
 title: Reconnect
+author: Jason Morley
 email: support@jbmorley.co.uk
 description: Psion Connectivity for macOS
-baseurl: ""
 url: "https://reconnect.jbmorley.co.uk"
+baseurl: ""
+repository: https://github.com/inseven/reconnect
+copyright: 2023-2025 <a href="https://jbmorley.co.uk/about">Jason Morley</a>
 
-# Build settings
-theme: minima
+navigation:
+  - title: Reconnect
+    href: /
+  - title: Documentation
+    href: /docs
+  - title: Releases
+    href: /releases
+  - title: GitHub
+    href: https://github.com/inseven/reconnect
+  - title: Donate
+    href: https://jbmorley.co.uk/support/
+
+footer:
+  - title: Privacy Policy
+    href: /privacy-policy
+  - title: License
+    href: /license
+  - title: More Software
+    href: https://jbmorley.co.uk/software/
+
 plugins:
   - jekyll-feed
   - jekyll-environment-variables
   - jekyll-toc
+  - jekyll-image-size
 destination: ../_site
 
 defaults:
   - values:
-      layout: "default"
+      layout: "page"
