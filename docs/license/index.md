@@ -1,6 +1,5 @@
 ---
 title: License
-layout: page
 ---
 
 Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](https://github.com/inseven/reconnect/blob/main/LICENSE)). It depends on the following separately licensed third-party libraries and components:
