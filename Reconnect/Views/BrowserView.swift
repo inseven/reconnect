@@ -40,20 +40,7 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar(model: browserModel)
         } detail: {
-            ZStack {
-
-                // We place hidden buttons under the browser view to allow us to add additional keyboard shortcuts that
-                // aren't reflected in the menu command structure. Hopefully we can replace this with official SwiftUI
-                // support at some point.
-                Button {
-                    browserModel.openSelection()
-                } label: {
-                    EmptyView()
-                }
-                .keyboardShortcut(.downArrow, modifiers: [.command])
-
-                BrowserDetailView(browserModel: browserModel)
-            }
+            BrowserDetailView(browserModel: browserModel)
         }
         .toolbar(id: "main") {
 

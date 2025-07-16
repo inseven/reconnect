@@ -93,6 +93,13 @@ struct BrowserDetailView: View {
                         }
                 }
             }
+            .onKeyPress { keyPress in
+                if keyPress.key == .downArrow && keyPress.modifiers.contains(.command) {
+                    browserModel.openSelection()
+                    return .handled
+                }
+                return .ignored
+            }
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
 
                 Button("Open") {
