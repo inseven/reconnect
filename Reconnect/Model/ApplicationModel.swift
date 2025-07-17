@@ -101,7 +101,7 @@ class ApplicationModel: NSObject {
         openPanel.canChooseDirectories = false
         openPanel.canCreateDirectories = false
         openPanel.allowsMultipleSelection = false
-        openPanel.allowedContentTypes = [.sis]
+        openPanel.allowedContentTypes = [.sis, .sisOpoLua]
         guard openPanel.runModal() ==  NSApplication.ModalResponse.OK else {
             return
         }
