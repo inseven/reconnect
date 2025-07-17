@@ -24,4 +24,8 @@ extension UTType {
         return UTType(exportedAs: "com.psion.sis", conformingTo: .data)
     }
 
+    public static var sisOpoLua: Self {
+        return UTType(exportedAs: "org.opolua.sis", conformingTo: .data)
+    }
+
 }
