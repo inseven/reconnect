@@ -30,9 +30,11 @@ struct InstallerPreviewView: View {
             Text(file.localizedDisplayName)
                 .multilineTextAlignment(.center)
                 .font(.title)
-            Text("\(file.version.major).\(file.version.minor)")
+            Text("\(file.version)")
                 .font(.title2)
                 .frame(maxWidth: .infinity)
+            Text(String(format: "0x%08X", file.uid))
+                .foregroundStyle(.secondary)
 
             Divider()
 
