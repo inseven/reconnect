@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1600"
+   LastUpgradeVersion = "1640"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,23 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D8F1A59A2C4A4C9B00931C00"
-               BuildableName = "Reconnect Menu.app"
-               BlueprintName = "Reconnect Menu"
-               ReferencedContainer = "container:Reconnect.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D84964D52C1BFCB600405656"
-               BuildableName = "Reconnect.app"
-               BlueprintName = "Reconnect"
+               BlueprintIdentifier = "D851ED222E2C31B60067E0CD"
+               BuildableName = "reconnectd"
+               BlueprintName = "reconnectd"
                ReferencedContainer = "container:Reconnect.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -43,30 +29,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D84964E62C1BFCB700405656"
-               BuildableName = "ReconnectTests.xctest"
-               BlueprintName = "ReconnectTests"
-               ReferencedContainer = "container:Reconnect.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D84964F02C1BFCB700405656"
-               BuildableName = "ReconnectUITests.xctest"
-               BlueprintName = "ReconnectUITests"
-               ReferencedContainer = "container:Reconnect.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -82,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D84964D52C1BFCB600405656"
-            BuildableName = "Reconnect.app"
-            BlueprintName = "Reconnect"
+            BlueprintIdentifier = "D851ED222E2C31B60067E0CD"
+            BuildableName = "reconnectd"
+            BlueprintName = "reconnectd"
             ReferencedContainer = "container:Reconnect.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -95,16 +57,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D84964D52C1BFCB600405656"
-            BuildableName = "Reconnect.app"
-            BlueprintName = "Reconnect"
+            BlueprintIdentifier = "D851ED222E2C31B60067E0CD"
+            BuildableName = "reconnectd"
+            BlueprintName = "reconnectd"
             ReferencedContainer = "container:Reconnect.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

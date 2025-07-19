@@ -16,10 +16,13 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import ServiceManagement
 import SwiftUI
 
 import Interact
 import Sparkle
+
+import ReconnectCore
 
 @MainActor @Observable
 class ApplicationModel: NSObject {
@@ -81,18 +84,36 @@ class ApplicationModel: NSObject {
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
+    private let connection: NSXPCConnection
+
     override init() {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
+        connection = NSXPCConnection(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon", options: [])
         super.init()
+
+        // Register the LaunchAgent.
+        let service = SMAppService.daemon(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
+
+        do {
+            try service.register()
+//            try service.unregister()
+            print("LaunchAgent: Successfully registered \(service)")
+        } catch {
+            print("LaunchAgent: Unable to register \(error)")
+        }
+
+        print("\(service) has status \(service.status)")
+
         openMenuApplication()
         updaterController.startUpdater()
+
     }
 
     func installGuestTools() {
-        showInstallerWindow(url: Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis")!)
+        showInstallerWindow(url: Bundle.main.url(forResource: "ReconnectTools",      withExtension: "sis")!)
     }
 
     func openInstaller() {
@@ -114,9 +135,35 @@ class ApplicationModel: NSObject {
         guard let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
             return
         }
-        let openConfiguraiton = NSWorkspace.OpenConfiguration()
-        NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguraiton)
+        let openConfiguration = NSWorkspace.OpenConfiguration()
+//        openConfiguration.allowsRunningApplicationSubstitution = false
+        NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
+
+
+        // TODO: Feels like this is the point to connect.
+
+        connection.remoteObjectInterface = NSXPCInterface(with: ConnectionInterface.self)
+        connection.interruptionHandler = {
+            print("Connection interrupted")
+        }
+        connection.invalidationHandler = {
+            print("Connection invalidated")
+        }
+        connection.resume()
+
+        proxy = connection.remoteObjectProxyWithErrorHandler { error in
+            print("XPC error: \(error)")
+        } as? ConnectionInterface
+        guard let proxy else {
+            print("Unable to create proxy!")
+            return
+        }
+        proxy.doSomething { response in
+            print("XPC: Response from service: \(response)")
+        }
     }
+
+    var proxy: (any ConnectionInterface)?
 
     func showInstallerWindow(url: URL) {
 

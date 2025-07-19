@@ -41,6 +41,8 @@ class ApplicationModel: NSObject {
     }
 
     var isConnected: Bool = false
+//
+//    let listener: NSXPCListener
 
     var devices: [SerialDevice] {
         return connectedDevices.union(selectedDevices)
@@ -82,9 +84,12 @@ class ApplicationModel: NSObject {
 
     override init() {
         selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
+//        listener = NSXPCListener(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon")
         super.init()
         server.delegate = self
         serialDeviceMonitor.delegate = self
+//        listener.delegate = self
+//        listener.resume()
         start()
     }
 
@@ -105,21 +110,38 @@ class ApplicationModel: NSObject {
 
 extension ApplicationModel: ServerDelegate {
 
-    func server(server: Server, didChangeConnectionState isConnected: Bool) {
-        self.isConnected = isConnected
+    nonisolated func server(server: Server, didChangeConnectionState isConnected: Bool) {
+        DispatchQueue.main.async {
+            self.isConnected = isConnected
+        }
     }
 
 }
 
 extension ApplicationModel: SerialDeviceMonitorDelegate {
 
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
-        connectedDevices.insert(device)
+    nonisolated func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
+        DispatchQueue.main.async {
+            self.connectedDevices.insert(device)
+        }
 
     }
 
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
-        connectedDevices.remove(device)
+    nonisolated func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
+        DispatchQueue.main.async {
+            self.connectedDevices.remove(device)
+        }
     }
 
 }
+
+//extension ApplicationModel: NSXPCListenerDelegate {
+//
+//    nonisolated func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
+//        newConnection.exportedInterface = NSXPCInterface(with: ConnectionInterface.self)
+//        newConnection.exportedObject = MyXPCService()
+//        newConnection.resume()
+//        return true
+//    }
+//    
+//}
