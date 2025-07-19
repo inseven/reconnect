@@ -95,11 +95,10 @@ class ApplicationModel: NSObject {
         super.init()
 
         // Register the LaunchAgent.
-        let service = SMAppService.daemon(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
+        let service = SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
 
         do {
             try service.register()
-//            try service.unregister()
             print("LaunchAgent: Successfully registered \(service)")
         } catch {
             print("LaunchAgent: Unable to register \(error)")
@@ -113,7 +112,7 @@ class ApplicationModel: NSObject {
     }
 
     func installGuestTools() {
-        showInstallerWindow(url: Bundle.main.url(forResource: "ReconnectTools",      withExtension: "sis")!)
+        showInstallerWindow(url: Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis")!)
     }
 
     func openInstaller() {
