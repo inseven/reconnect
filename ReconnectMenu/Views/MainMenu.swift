@@ -37,7 +37,6 @@ struct MainMenu: View {
         } label: {
             Text("My Psion...")
         }
-        .disabled(!applicationModel.daemonModel.isConnected)
         Divider()
         Button {
             applicationModel.openReconnect(.programManager)

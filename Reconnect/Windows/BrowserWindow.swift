@@ -43,9 +43,14 @@ struct BrowserWindow: Scene {
                 BrowserView(browserModel: browserModel)
             } else {
                 ContentUnavailableView {
-                    Label("Disconnected", image: "Disconnected")
+                    Label {
+                        Text("Connecting...")
+                    } icon: {
+                        AnimatedImage(named: "cnt")
+                            .frame(width: 240, height: 70)
+                    }
                 } description: {
-                    Text("No devices detected. Make sure you have selected a serial port.")
+                    Text("Make sure you have selected a serial port.")
                 } actions: {
                     SettingsLink {
                         Text("Open Settings...")
