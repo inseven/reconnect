@@ -93,4 +93,19 @@ class ApplicationModel: NSObject {
         daemonModel.setSelectedDevices(Array(selectedDevices))
     }
 
+    func openReconnect(_ url: URL) {
+        let reconnectURL = Bundle.main.bundleURL.deletingLastPathComponents(3)
+        let openConfiguration = NSWorkspace.OpenConfiguration()
+        openConfiguration.allowsRunningApplicationSubstitution = false
+        openConfiguration.activates = true
+        NSWorkspace.shared.open([url], withApplicationAt: reconnectURL, configuration: openConfiguration) { app, error in
+            guard let app else {
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+                app.activate()
+            }
+        }
+    }
+
 }

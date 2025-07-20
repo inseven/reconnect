@@ -56,7 +56,7 @@ struct BrowserWindow: Scene {
         .environment(applicationModel)
         .environment(transfersModel)
         .environment(browserModel)
-        .handlesExternalEvents(matching: [.browser, .update])
+        .handlesExternalEvents(matching: [.browser])
     }
 
 }
