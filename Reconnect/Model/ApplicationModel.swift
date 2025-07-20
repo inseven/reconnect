@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import os
 import ServiceManagement
 import SwiftUI
 
@@ -57,7 +58,7 @@ class ApplicationModel: NSObject {
             do {
                 try keyedDefaults.set(securityScopedURL: downloadsURL, forKey: .downloadsURL)
             } catch {
-                print("Failed to save downloads path with error \(error).")
+                logger.error("Failed to save downloads path with error '\(error)'")
             }
         }
     }
@@ -73,7 +74,7 @@ class ApplicationModel: NSObject {
             do {
                 try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .screenshotsURL)
             } catch {
-                print("Failed to save screenshots path with error \(error).")
+                logger.error("Failed to save screenshots path with error '\(error)'")
             }
         }
     }
@@ -83,6 +84,7 @@ class ApplicationModel: NSObject {
                                                          userDriverDelegate: nil)
 
     let daemonModel = DaemonModel()
+    let logger = Logger()
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -103,9 +105,9 @@ class ApplicationModel: NSObject {
         let service = SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
         do {
             try service.register()
-            print("LaunchAgent: Successfully registered \(service)")
+            logger.notice("Successfully registered reconnectd")
         } catch {
-            print("LaunchAgent: Unable to register \(error)")
+            logger.error("Failed to register reconnectd with error '\(error)'")
         }
         print("\(service) has status \(service.status)")
     }
@@ -130,20 +132,22 @@ class ApplicationModel: NSObject {
     }
 
     func openMenuApplication() {
-        // TODO: This doesn't relaunch the menu bar app if it's changed.
-        guard
-            let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
+        guard let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
             return
         }
 
 #if DEBUG
+        // In debug, we always restart the menu bar applicaiton to ease development.
+        terminateRunningMenuApplications()
+#endif
 
-        // We always restart the menu bar app if we're running in debug mode.
-        guard let helperBundle = Bundle(url: embeddedAppURL),
-              let bundleIdentifier = helperBundle.bundleIdentifier else {
-            return
-        }
-        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier)
+        let openConfiguration = NSWorkspace.OpenConfiguration()
+        openConfiguration.allowsRunningApplicationSubstitution = false
+        NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
+    }
+
+    func terminateRunningMenuApplications() {
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
         for app in runningApps {
             app.terminate()
         }
@@ -152,15 +156,7 @@ class ApplicationModel: NSObject {
                 RunLoop.current.run(until: Date().addingTimeInterval(0.1))
             }
         }
-
-#endif
-
-        let openConfiguration = NSWorkspace.OpenConfiguration()
-        openConfiguration.allowsRunningApplicationSubstitution = false
-        NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
     }
-
-    // TODO: Feels like this is the point to connect.
 
     func showInstallerWindow(url: URL) {
 
@@ -179,7 +175,7 @@ class ApplicationModel: NSObject {
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            print("Creating new installer window for '\(url)'...")
+            logger.debug("Creating new installer window for '\(url)'...")
             window = NSInstallerWindow(url: url)
             window?.center()
         }
