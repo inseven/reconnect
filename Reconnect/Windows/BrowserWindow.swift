@@ -38,7 +38,11 @@ struct BrowserWindow: Scene {
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            BrowserView(browserModel: browserModel)
+            if applicationModel.daemonModel.isConnected {
+                BrowserView(browserModel: browserModel)
+            } else {
+                ContentUnavailableView("Disconnected", image: "Disconnected")
+            }
         }
         .commands {
             SparkleCommands(applicationModel: applicationModel)

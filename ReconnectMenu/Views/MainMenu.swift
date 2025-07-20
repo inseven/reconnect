@@ -32,11 +32,6 @@ struct MainMenu: View {
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
-        if applicationModel.daemonModel.isConnected {
-            Text("Connected to Daemon")
-        } else {
-            Text("Not Connected to Daemon")
-        }
         Button {
             openURL(.browser)
         } label: {
