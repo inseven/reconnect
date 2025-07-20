@@ -133,7 +133,6 @@
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964E72C1BFCB700405656 /* ReconnectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D851ED082E2C22670067E0CD /* Reconnect-Menu-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Reconnect-Menu-Info.plist"; sourceTree = "<group>"; };
 		D851ED232E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reconnectd; sourceTree = BUILT_PRODUCTS_DIR; };
 		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
 		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
@@ -145,6 +144,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */;
+		};
 		D85414062E29A5E9009DEC42 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -205,7 +211,7 @@
 		D891AE502E13722A009EC465 /* ReconnectTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectTests; sourceTree = "<group>"; };
 		D891AE562E137239009EC465 /* ReconnectUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectUITests; sourceTree = "<group>"; };
 		D891AE5D2E13724E009EC465 /* ScreenshotSIS */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ScreenshotSIS; sourceTree = "<group>"; };
-		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
+		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
 		D891AE922E1373CE009EC465 /* ReconnectPreviews */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectPreviews; sourceTree = "<group>"; };
 		D891AEDA2E13741B009EC465 /* Reconnect */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AF102E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D891AF112E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Reconnect; sourceTree = "<group>"; };
 		D8A75B552E18AF8A007B6DBA /* tools */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8A75B5C2E18AFA2007B6DBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D85414062E29A5E9009DEC42 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = tools; sourceTree = "<group>"; };
@@ -282,7 +288,6 @@
 		D84964CD2C1BFCB600405656 = {
 			isa = PBXGroup;
 			children = (
-				D851ED082E2C22670067E0CD /* Reconnect-Menu-Info.plist */,
 				D8A75B552E18AF8A007B6DBA /* tools */,
 				D8E8B4FD2D1529E800405445 /* src */,
 				D8068F6D2C4AFCE4004177F6 /* ReconnectCore */,
@@ -1081,7 +1086,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Reconnect-Menu-Info.plist";
+				INFOPLIST_FILE = ReconnectMenu/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1114,7 +1119,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Reconnect-Menu-Info.plist";
+				INFOPLIST_FILE = ReconnectMenu/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
