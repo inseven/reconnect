@@ -33,21 +33,21 @@ struct MainMenu: View {
     var body: some View {
         @Bindable var applicationModel = applicationModel
         Button {
-            openURL(.browser)
+            applicationModel.openReconnect(.browser)
         } label: {
             Text("My Psion...")
         }
         .disabled(!applicationModel.isConnected)
         Divider()
         Button {
-            openURL(.programManager)
+            applicationModel.openReconnect(.programManager)
         } label: {
             Text("Add/Remove Programs...")
         }
         .disabled(!applicationModel.isConnected)
         Divider()
         Button {
-            openURL(.about)
+            applicationModel.openReconnect(.about)
         } label: {
             Text("About...")
         }
@@ -63,7 +63,7 @@ struct MainMenu: View {
         }
         Divider()
         Button("Check for Updates...") {
-            openURL(.update)
+            applicationModel.openReconnect(.update)
         }
         Divider()
         Button("Quit") {
