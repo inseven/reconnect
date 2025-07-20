@@ -78,6 +78,8 @@ class ApplicationModel: NSObject {
         }
     }
 
+    var isConnected: Bool = false
+
     let updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: nil,
                                                          userDriverDelegate: nil)
@@ -144,9 +146,17 @@ class ApplicationModel: NSObject {
         connection.remoteObjectInterface = NSXPCInterface(with: ConnectionInterface.self)
         connection.interruptionHandler = {
             print("Connection interrupted")
+            DispatchQueue.main.async {
+                print("connection interrupted")
+                self.isConnected = false
+            }
         }
         connection.invalidationHandler = {
             print("Connection invalidated")
+            DispatchQueue.main.async {
+                print("connection interrupted")
+                self.isConnected = false
+            }
         }
         connection.resume()
 
@@ -158,6 +168,10 @@ class ApplicationModel: NSObject {
             return
         }
         proxy.doSomething { response in
+            DispatchQueue.main.async {
+                print("connected = true")
+                self.isConnected = true
+            }
             print("XPC: Response from service: \(response)")
         }
     }

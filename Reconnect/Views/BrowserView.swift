@@ -44,6 +44,8 @@ struct BrowserView: View {
         }
         .toolbar(id: "main") {
 
+            StatusToolbar(applicationModel: applicationModel)
+
             NavigationToolbar(browserModel: browserModel)
 
             ToolsToolbar(browserModel: browserModel)
