@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+import Diligence
 import Interact
 
 struct BrowserWindow: Scene {
@@ -41,7 +42,15 @@ struct BrowserWindow: Scene {
             if applicationModel.daemonModel.isConnected {
                 BrowserView(browserModel: browserModel)
             } else {
-                ContentUnavailableView("Disconnected", image: "Disconnected")
+                ContentUnavailableView {
+                    Label("Disconnected", image: "Disconnected")
+                } description: {
+                    Text("No devices detected. Make sure you have selected a serial port.")
+                } actions: {
+                    SettingsLink {
+                        Text("Open Settings...")
+                    }
+                }
             }
         }
         .commands {
