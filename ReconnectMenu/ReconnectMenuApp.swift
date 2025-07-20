@@ -36,17 +36,3 @@ struct ReconnectMenuApp: App {
 
     }
 }
-
-struct StatusIcon: View {
-
-    var daemonModel: DaemonModel
-
-    var body: some View {
-        if daemonModel.isConnected {
-            Image("StatusConnected")
-        } else {
-            Image("StatusDisconnected")
-        }
-    }
-
-}

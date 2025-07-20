@@ -18,22 +18,29 @@
 
 import SwiftUI
 
-struct StatusToolbar: CustomizableToolbarContent {
+import ReconnectCore
 
-    var applicationModel: ApplicationModel
+@Observable
+class StatusIconModel {
 
-    var body: some CustomizableToolbarContent {
-        ToolbarItem(id: "status", placement: .navigation) {
-            HStack {
-                if applicationModel.daemonModel.isConnectedToDaemon {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.green)
-                } else {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.red)
-                }
-            }
+}
+
+struct StatusIcon: View {
+
+    var daemonModel: DaemonModel
+
+    var body: some View {
+        if !daemonModel.isConnectedToDaemon {
+            Image("StatusUnknown")
+                .interpolation(.none)
+
+        } else if daemonModel.isConnected {
+            Image("StatusConnected")
+                .interpolation(.none)
+        } else {
+            Image("StatusDisconnected")
+                .interpolation(.none)
         }
-
     }
+
 }

@@ -102,7 +102,7 @@ extension Daemon: NSXPCListenerDelegate {
         newConnection.remoteObjectInterface = NSXPCInterface(with: ConnectionStatusObserver.self)
         newConnection.exportedObject = self
         newConnection.invalidationHandler = { [weak self] in
-            dispatchPrecondition(condition: .onQueue(.main))
+            dispatchPrecondition(condition: .notOnQueue(.main))
             DispatchQueue.main.sync {
                 self?.connections.removeAll { $0.isEqual(newConnection) }
             }
