@@ -32,19 +32,24 @@ struct MainMenu: View {
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
+        if applicationModel.daemonModel.isConnected {
+            Text("Connected to Daemon")
+        } else {
+            Text("Not Connected to Daemon")
+        }
         Button {
             openURL(.browser)
         } label: {
             Text("My Psion...")
         }
-        .disabled(!applicationModel.isConnected)
+        .disabled(!applicationModel.daemonModel.isConnected)
         Divider()
         Button {
             openURL(.programManager)
         } label: {
             Text("Add/Remove Programs...")
         }
-        .disabled(!applicationModel.isConnected)
+        .disabled(!applicationModel.daemonModel.isConnected)
         Divider()
         Button {
             openURL(.about)

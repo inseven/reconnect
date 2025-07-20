@@ -25,7 +25,7 @@ struct StatusToolbar: CustomizableToolbarContent {
     var body: some CustomizableToolbarContent {
         ToolbarItem(id: "status", placement: .navigation) {
             HStack {
-                if applicationModel.isConnected {
+                if applicationModel.daemonModel.isConnectedToDaemon {
                     Image(systemName: "checkmark")
                         .foregroundStyle(.green)
                 } else {

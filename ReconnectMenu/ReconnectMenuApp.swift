@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 @main @MainActor
 struct ReconnectMenuApp: App {
 
@@ -29,12 +31,22 @@ struct ReconnectMenuApp: App {
             MainMenu()
                 .environment(applicationModel)
         } label: {
-            if applicationModel.isConnected {
-                Image("StatusConnected")
-            } else {
-                Image("StatusDisconnected")
-            }
+            StatusIcon(daemonModel: applicationModel.daemonModel)
         }
 
     }
+}
+
+struct StatusIcon: View {
+
+    var daemonModel: DaemonModel
+
+    var body: some View {
+        if daemonModel.isConnected {
+            Image("StatusConnected")
+        } else {
+            Image("StatusDisconnected")
+        }
+    }
+
 }

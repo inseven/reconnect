@@ -18,17 +18,21 @@
 
 import Foundation
 
+// TODO: Doesn't need to be public.
+
+@objc
+public protocol ConnectionStatusObserver {
+    func connectionStatusDidChange(to newStatus: Int)  // TODO: Rename or remove?
+    func setSerialDevices(_ devices: [String])  // TODO: Set?
+    func addSerialDevice(_ device: String)
+    func removeSerialDevice(_ device: String)
+    func setIsConnected(_ isConnected: Bool)
+}
+
 @objc
 public protocol ConnectionInterface {
 
     func doSomething(reply: @escaping (String) -> Void)
+    func setSelectedSerialDevices(_ selectedSerialDevices: [String])  // TODO: Set?
 
-}
-
-public class MyXPCService: NSObject, ConnectionInterface {
-
-    public func doSomething(reply: @escaping (String) -> Void) {
-        print("Service received request!")
-        reply("Hello from XPC Service!")
-    }
 }

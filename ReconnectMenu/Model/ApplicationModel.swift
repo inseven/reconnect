@@ -40,12 +40,8 @@ class ApplicationModel: NSObject {
         case selectedDevices
     }
 
-    var isConnected: Bool = false
-//
-//    let listener: NSXPCListener
-
-    var devices: [SerialDevice] {
-        return connectedDevices.union(selectedDevices)
+    var devices: [SerialDevice] {  // Superset of available devices for the UI.
+        return daemonModel.devices.union(selectedDevices)
             .map { device in
                 let binding: Binding<Bool> = Binding {
                     return self.selectedDevices.contains(device)
@@ -57,7 +53,7 @@ class ApplicationModel: NSObject {
                     }
                 }
                 return SerialDevice(path: device,
-                                    available: connectedDevices.contains(device),
+                                    available: daemonModel.devices.contains(device),
                                     enabled: binding)
             }
             .sorted { device1, device2 in
@@ -65,37 +61,27 @@ class ApplicationModel: NSObject {
             }
     }
 
+    var daemonModel = DaemonModel()
+
     private var selectedDevices: Set<String> {
         didSet {
+            // TODO: Can I read these from the group?
             keyedDefaults.set(Array(selectedDevices), forKey: .selectedDevices)
             update()
         }
     }
 
-    private var connectedDevices: Set<String> = [] {
-        didSet {
-            update()
-        }
-    }
-
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
-    private let server: Server = Server()
-    private let serialDeviceMonitor = SerialDeviceMonitor()
 
     override init() {
         selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
-//        listener = NSXPCListener(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon")
         super.init()
-        server.delegate = self
-        serialDeviceMonitor.delegate = self
-//        listener.delegate = self
-//        listener.resume()
         start()
     }
 
     func start() {
-        server.start()
-        serialDeviceMonitor.start()
+        daemonModel.connect()  // TODO: Handle errors here!
+        daemonModel.setSelectedDevices(Array(selectedDevices))
     }
 
     @MainActor func quit() {
@@ -103,45 +89,8 @@ class ApplicationModel: NSObject {
     }
 
     func update() {
-        server.setDevices(selectedDevices.intersection(connectedDevices).sorted())
+        // TODO: I wonder if I could explicitly manage this in the daemon?
+        daemonModel.setSelectedDevices(Array(selectedDevices))
     }
 
 }
-
-extension ApplicationModel: ServerDelegate {
-
-    nonisolated func server(server: Server, didChangeConnectionState isConnected: Bool) {
-        DispatchQueue.main.async {
-            self.isConnected = isConnected
-        }
-    }
-
-}
-
-extension ApplicationModel: SerialDeviceMonitorDelegate {
-
-    nonisolated func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
-        DispatchQueue.main.async {
-            self.connectedDevices.insert(device)
-        }
-
-    }
-
-    nonisolated func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
-        DispatchQueue.main.async {
-            self.connectedDevices.remove(device)
-        }
-    }
-
-}
-
-//extension ApplicationModel: NSXPCListenerDelegate {
-//
-//    nonisolated func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
-//        newConnection.exportedInterface = NSXPCInterface(with: ConnectionInterface.self)
-//        newConnection.exportedObject = MyXPCService()
-//        newConnection.resume()
-//        return true
-//    }
-//    
-//}

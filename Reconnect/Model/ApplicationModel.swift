@@ -78,39 +78,36 @@ class ApplicationModel: NSObject {
         }
     }
 
-    var isConnected: Bool = false
-
     let updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: nil,
                                                          userDriverDelegate: nil)
 
-    private let keyedDefaults = KeyedDefaults<SettingsKey>()
+    let daemonModel = DaemonModel()
 
-    private let connection: NSXPCConnection
+    private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
     override init() {
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
-        connection = NSXPCConnection(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon", options: [])
         super.init()
+        enableDaemon()
+        daemonModel.connect()
+        openMenuApplication()
+        updaterController.startUpdater()
 
-        // Register the LaunchAgent.
+    }
+
+    func enableDaemon() {
         let service = SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
-
         do {
             try service.register()
             print("LaunchAgent: Successfully registered \(service)")
         } catch {
             print("LaunchAgent: Unable to register \(error)")
         }
-
         print("\(service) has status \(service.status)")
-
-        openMenuApplication()
-        updaterController.startUpdater()
-
     }
 
     func installGuestTools() {
@@ -133,50 +130,37 @@ class ApplicationModel: NSObject {
     }
 
     func openMenuApplication() {
-        guard let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
+        // TODO: This doesn't relaunch the menu bar app if it's changed.
+        guard
+            let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
             return
         }
+
+#if DEBUG
+
+        // We always restart the menu bar app if we're running in debug mode.
+        guard let helperBundle = Bundle(url: embeddedAppURL),
+              let bundleIdentifier = helperBundle.bundleIdentifier else {
+            return
+        }
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier)
+        for app in runningApps {
+            app.terminate()
+        }
+        for app in runningApps {
+            while !app.isTerminated {
+                RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            }
+        }
+
+#endif
+
         let openConfiguration = NSWorkspace.OpenConfiguration()
-//        openConfiguration.allowsRunningApplicationSubstitution = false
+        openConfiguration.allowsRunningApplicationSubstitution = false
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
-
-
-        // TODO: Feels like this is the point to connect.
-
-        connection.remoteObjectInterface = NSXPCInterface(with: ConnectionInterface.self)
-        connection.interruptionHandler = {
-            print("Connection interrupted")
-            DispatchQueue.main.async {
-                print("connection interrupted")
-                self.isConnected = false
-            }
-        }
-        connection.invalidationHandler = {
-            print("Connection invalidated")
-            DispatchQueue.main.async {
-                print("connection interrupted")
-                self.isConnected = false
-            }
-        }
-        connection.resume()
-
-        proxy = connection.remoteObjectProxyWithErrorHandler { error in
-            print("XPC error: \(error)")
-        } as? ConnectionInterface
-        guard let proxy else {
-            print("Unable to create proxy!")
-            return
-        }
-        proxy.doSomething { response in
-            DispatchQueue.main.async {
-                print("connected = true")
-                self.isConnected = true
-            }
-            print("XPC: Response from service: \(response)")
-        }
     }
 
-    var proxy: (any ConnectionInterface)?
+    // TODO: Feels like this is the point to connect.
 
     func showInstallerWindow(url: URL) {
 

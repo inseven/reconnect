@@ -20,6 +20,7 @@ import Foundation
 
 import ncp
 
+// Callbacks on main.
 public protocol ServerDelegate: NSObject {
 
     func server(server: Server, didChangeConnectionState isConnected: Bool)
@@ -89,8 +90,6 @@ public class Server {
         // TODO: ONLY DO THIS ONCE!
         let thread = Thread(block: threadEntryPoint)
         thread.start()
-
-        // TODO: This should probably block until we're ready??
     }
 
     public func setDevices(_ devices: [String]) {
