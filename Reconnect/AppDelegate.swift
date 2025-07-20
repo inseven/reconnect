@@ -26,7 +26,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
-            applicationModel.showInstallerWindow(url: url)
+            if url.isFileURL {
+                applicationModel.showInstallerWindow(url: url)
+            } else if url == URL.update {
+                applicationModel.updaterController.updater.checkForUpdates()
+            } else {
+                print("Ignoring URL '\(url.absoluteString)'...")
+            }
         }
     }
 

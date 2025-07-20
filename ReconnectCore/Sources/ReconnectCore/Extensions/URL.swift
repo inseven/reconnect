@@ -45,4 +45,8 @@ extension URL {
         }
     }
 
+    public func deletingLastPathComponents(_ count: Int) -> URL {
+        return URL(fileURLWithPath: NSString.path(withComponents: pathComponents.dropLast(count)))
+    }
+
 }
