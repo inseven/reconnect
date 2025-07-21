@@ -20,6 +20,10 @@ import Foundation
 
 @objc
 public protocol DaemonInterface {
+    
+    // Restart all the ncp connections.
+    // This is a work-around for unreliable ncp connections and can hopefully be removed in the future.
+    func restart()
 
     func doSomething(reply: @escaping (String) -> Void)
     func setSelectedSerialDevices(_ selectedSerialDevices: [String])  // TODO: Set?

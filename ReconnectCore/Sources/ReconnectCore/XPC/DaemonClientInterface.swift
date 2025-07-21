@@ -18,10 +18,9 @@
 
 import Foundation
 
-// TODO: Doesn't need to be public.
-
 @objc
 public protocol DaemonClientInterface {
+
     func connectionStatusDidChange(to newStatus: Int)  // TODO: Rename or remove?
     func setSerialDevices(_ devices: [String])  // TODO: Set?
     func addSerialDevice(_ device: String)

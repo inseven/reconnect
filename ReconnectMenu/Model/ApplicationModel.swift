@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import os
 import SwiftUI
 
 import Interact
@@ -71,6 +72,7 @@ class ApplicationModel: NSObject {
         }
     }
 
+    private let logger = Logger()
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
     override init() {
@@ -104,6 +106,14 @@ class ApplicationModel: NSObject {
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
                 app.activate()
+            }
+        }
+    }
+
+    func restartConnection() {
+        daemonClient.restart { result in
+            if case .failure(let error) = result {
+                self.logger.error("Failed to restart connection with error '\(error)'.")
             }
         }
     }

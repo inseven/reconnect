@@ -162,15 +162,24 @@ extension Daemon: ServerDelegate {
 
 extension Daemon: DaemonInterface {
 
+    public func restart() {
+        logger.notice("Restarting ncp sessions...")
+        DispatchQueue.main.async {
+            self.server.setDevices(self.selectedDevices.intersection(self.connectedDevices).sorted(), force: true)
+        }
+
+    }
+
     // TODO: Connect / start.
+    // TOOD: This could be a version message?
     public func doSomething(reply: @escaping (String) -> Void) {
         print("Service received request!")
         reply("Hello from XPC Service!")
     }
 
     public func setSelectedSerialDevices(_ selectedSerialDevices: [String]) {
-        logger.notice("set selected serial deices \(selectedSerialDevices)")
-        DispatchQueue.main.async {  // TODO Sync?
+        logger.notice("Updating selected serial devices...")
+        DispatchQueue.main.async {
             self.selectedDevices = Set(selectedSerialDevices)
             self.server.setDevices(self.selectedDevices.intersection(self.connectedDevices).sorted())
         }

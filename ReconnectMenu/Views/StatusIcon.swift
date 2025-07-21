@@ -20,11 +20,6 @@ import SwiftUI
 
 import ReconnectCore
 
-@Observable
-class StatusIconModel {
-
-}
-
 struct StatusIcon: View {
 
     var daemonClient: DaemonClient

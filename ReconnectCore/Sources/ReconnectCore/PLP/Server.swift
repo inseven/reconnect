@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import os
 import Foundation
 
 import ncp
@@ -27,13 +28,16 @@ public protocol ServerDelegate: NSObject {
 
 }
 
+// TODO: Rename this?
 public class Server {
 
     public weak var delegate: ServerDelegate? = nil
 
     private var lock = NSLock()
-    var threadID: pthread_t? = nil  // Synchronized with lock.
-    var devices: [String] = []  // Synchronized with lock.
+    private var logger = Logger()
+
+    private var threadID: pthread_t? = nil  // Synchronized with lock.
+    private var devices: [String] = []  // Synchronized with lock.
 
     func device() -> String {
         print("Getting device...")
@@ -92,8 +96,7 @@ public class Server {
         thread.start()
     }
 
-    public func setDevices(_ devices: [String]) {
-        // SIGHUP?
+    public func setDevices(_ devices: [String], force: Bool = false) {
         guard let threadID = lock.withLock({
             return self.threadID
         }) else {
@@ -103,7 +106,7 @@ public class Server {
         print("Updating serial devices \(devices)")
 
         let needsRestart = lock.withLock {
-            guard self.devices != devices else {
+            guard force || self.devices != devices else {
                 return false
             }
             self.devices = devices
@@ -115,7 +118,8 @@ public class Server {
             return
         }
 
-        print("Restarting ncpd...")
+        logger.notice("Restarting ncpd...")
+        // TODO: Would it be better to use SIGHUP here?
         pthread_kill(threadID, SIGINT)
     }
 
