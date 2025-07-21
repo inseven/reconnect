@@ -49,8 +49,15 @@ module Jekyll
       prefix = ' ' * indent
 
       # Directories with index pages
-      node['children'].keys.sort.each do |dir|
-        child = node['children'][dir]
+      sorted_dirs = node['children'].sort_by do |name, child|
+        page = child['page']
+        [
+          -(page&.data&.fetch('priority', 0) || 0),
+          (page&.data&.fetch('title', name) || name).downcase
+        ]
+      end
+
+      sorted_dirs.each do |dir, child|
         next unless child['page']
         page = child['page']
         title = page.data['title'] || dir
@@ -65,15 +72,18 @@ module Jekyll
       end
 
       # Pages in current node
-      node['pages'].sort_by { |p| p.data['title'] || File.basename(p.path, '.*') }.each do |page|
-        title = page.data['title'] || File.basename(page.path, '.*')
-        url = page.url
-        active_attr = (url == current_url) ? ' class="active"' : ''
-        out << "#{prefix}<li><a href=\"#{url}\"#{active_attr}>#{title}</a></li>\n"
-      end
+      node['pages']
+        .sort_by { |p| [-(p.data['priority'] || 0), (p.data['title'] || File.basename(p.path, '.*')).downcase] }
+        .each do |page|
+          title = page.data['title'] || File.basename(page.path, '.*')
+          url = page.url
+          active_attr = (url == current_url) ? ' class="active"' : ''
+          out << "#{prefix}<li><a href=\"#{url}\"#{active_attr}>#{title}</a></li>\n"
+        end
 
       out
     end
+
   end
 end
 
