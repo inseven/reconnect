@@ -4,11 +4,7 @@
 
 Psion connectivity for macOS.
 
-<img width="1053" src="images/screenshot@2x.png">
-
-Reconnect is an attempt to recreate the original Psion PsiMac and MacConnect functionality and UI on modern macOS. It makes use of [plptools](https://github.com/rrthomas/plptools/) for both the PLP (Psion Link Protocol) session layer (NCP) and presentation layers (file server, etc). The plan is to contribute back to plptools where appropriate during development.
-
-The rationale behind creating a new app is that the existing approach taken by plptools, using [FUSE](https://en.wikipedia.org/wiki/Filesystem_in_Userspace) to expose the Psion files to the Mac, isn't practical (or always possible) on modern macOS. Reconnect aims to make it possible to connect a Psion to modern macOS without any development experience or additional software.
+<img width="1078" src="images/screenshot@2x.png">
 
 ## License
 
