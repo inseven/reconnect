@@ -1,6 +1,7 @@
 ---
 title: Getting Started
 layout: documentation
+priority: 100
 ---
 
 # Hardware
@@ -12,7 +13,7 @@ In order to connect your Psion to your Mac, you'll need a couple of bits of hard
 RS232 adapters using an [FTDI](https://ftdichip.com) chipset are the most reliable on macOS and are recommended. [This one](https://www.amazon.com/dp/B09WJS26WX) from Amazon US seems to work well.
 
 > [!IMPORTANT]
-> [Prolific](https://www.prolific.com.tw/) adapters can be made to work, but the default drivers that ship by default with macOS are unreliable so you'll need to install the [official drivers](https://apps.apple.com/gb/app/pl2303-serial/id1624835354).
+> The RS232 adapter you select _must_ support the DSR/DTR hardware control signals to work with Reconnect and plptools. [Prolific](https://www.prolific.com.tw/) adapters can be made to work, but the default drivers that ship by default with macOS don't handle these correctly so you'll need to install the [official drivers](https://apps.apple.com/gb/app/pl2303-serial/id1624835354).
 
 [Alex Brown](https://oldbytes.space/@thelastpsion) has done some pretty rigorous testing of different adapters which you can find on his [Hackaday blog](https://hackaday.io/project/161291-the-last-psion/log/222358-usb-rs232-shenanigans-updated-2025-05-28).
 
