@@ -10,14 +10,6 @@ Reconnect is an attempt to recreate the original Psion PsiMac and MacConnect fun
 
 The rationale behind creating a new app is that the existing approach taken by plptools, using [FUSE](https://en.wikipedia.org/wiki/Filesystem_in_Userspace) to expose the Psion files to the Mac, isn't practical (or always possible) on modern macOS. Reconnect aims to make it possible to connect a Psion to modern macOS without any development experience or additional software.
 
-## Development
-
-Debugging Reconnect is a little more awkward than normal since plptools uses signals internally which are trapped by Xcode and lldb by default. Disable this automatic behavior by adding the following line to '~/.lldbinit-Xcode':
-
-```
-process handle SIGUSR1 -n true -p true -s false
-```
-
 ## License
 
 Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
