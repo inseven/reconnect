@@ -18,10 +18,6 @@ Debugging Reconnect is a little more awkward than normal since plptools uses sig
 process handle SIGUSR1 -n true -p true -s false
 ```
 
-## References
-
-- [Psion Link Protocol](https://thoukydides.github.io/riscos-psifs/plp.html)
-
 ## License
 
 Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
