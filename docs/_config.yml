@@ -29,12 +29,21 @@ footer:
     href: https://jbmorley.co.uk/software/
 
 plugins:
-  - jekyll-feed
   - jekyll-environment-variables
-  - jekyll-toc
+  - jekyll-feed
+  - jekyll-gfm-admonitions
   - jekyll-image-size
+  - jekyll-toc
 destination: ../_site
+
+toc:
+  ordered_list: true
 
 defaults:
   - values:
       layout: "page"
+  - scope:
+      path: "docs"
+    values:
+      layout: "documentation"
+      toc: true
