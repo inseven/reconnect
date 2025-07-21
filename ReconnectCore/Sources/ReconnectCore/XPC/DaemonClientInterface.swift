@@ -16,31 +16,15 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-import ReconnectCore
+// TODO: Doesn't need to be public.
 
-@Observable
-class StatusIconModel {
-
-}
-
-struct StatusIcon: View {
-
-    var daemonClient: DaemonClient
-
-    var body: some View {
-        if !daemonClient.isConnectedToDaemon {
-            Image("StatusUnknown")
-                .interpolation(.none)
-
-        } else if daemonClient.isConnected {
-            Image("StatusConnected")
-                .interpolation(.none)
-        } else {
-            Image("StatusDisconnected")
-                .interpolation(.none)
-        }
-    }
-
+@objc
+public protocol DaemonClientInterface {
+    func connectionStatusDidChange(to newStatus: Int)  // TODO: Rename or remove?
+    func setSerialDevices(_ devices: [String])  // TODO: Set?
+    func addSerialDevice(_ device: String)
+    func removeSerialDevice(_ device: String)
+    func setIsConnected(_ isConnected: Bool)
 }

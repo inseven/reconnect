@@ -31,7 +31,7 @@ struct ReconnectMenuApp: App {
             MainMenu()
                 .environment(applicationModel)
         } label: {
-            StatusIcon(daemonModel: applicationModel.daemonModel)
+            StatusIcon(daemonClient: applicationModel.daemonClient)
         }
 
     }

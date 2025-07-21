@@ -43,7 +43,7 @@ struct MainMenu: View {
         } label: {
             Text("Add/Remove Programs...")
         }
-        .disabled(!applicationModel.daemonModel.isConnected)
+        .disabled(!applicationModel.daemonClient.isConnected)
         Divider()
         Button {
             applicationModel.openReconnect(.about)

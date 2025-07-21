@@ -83,7 +83,7 @@ class ApplicationModel: NSObject {
                                                          updaterDelegate: nil,
                                                          userDriverDelegate: nil)
 
-    let daemonModel = DaemonModel()
+    let daemonClient = DaemonClient()
     let logger = Logger()
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
@@ -95,7 +95,7 @@ class ApplicationModel: NSObject {
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         super.init()
         enableDaemon()
-        daemonModel.connect()
+        daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
 

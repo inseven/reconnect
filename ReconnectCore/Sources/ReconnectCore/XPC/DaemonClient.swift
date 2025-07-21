@@ -8,23 +8,32 @@
 import Foundation
 import SwiftUI
 
+// Callbacks occur on main.
+public protocol DaemonClientDelegate: NSObject {
+
+    func daemonDidUpdateSerialDevices(devices: [SerialDevice])
+
+}
+
 @Observable
-public class DaemonModel {
+public class DaemonClient {
+
+    public weak var delegate: DaemonClientDelegate? = nil
 
     public var isConnectedToDaemon: Bool = false
     public var isConnected: Bool = false
     public var devices: Set<String> = []
 
     private let connection: NSXPCConnection
-    private var proxy: (any ConnectionInterface)?
+    private var proxy: (any DaemonInterface)?
 
     public init() {
         connection = NSXPCConnection(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon", options: [])
     }
 
     public func connect() {
-        connection.remoteObjectInterface = NSXPCInterface(with: ConnectionInterface.self)
-        connection.exportedInterface = NSXPCInterface(with: ConnectionStatusObserver.self)
+        connection.remoteObjectInterface = NSXPCInterface(with: DaemonInterface.self)
+        connection.exportedInterface = NSXPCInterface(with: DaemonClientInterface.self)
         connection.exportedObject = self
 
         // TODO: Retry logic?
@@ -46,7 +55,7 @@ public class DaemonModel {
 
         proxy = connection.remoteObjectProxyWithErrorHandler { error in
             print("XPC error: \(error)")
-        } as? ConnectionInterface
+        } as? DaemonInterface
         guard let proxy else {
             print("Unable to create proxy!")
             return
@@ -70,7 +79,7 @@ public class DaemonModel {
 }
 
 // TODO: Can we make this not pubic??
-extension DaemonModel: ConnectionStatusObserver {
+extension DaemonClient: DaemonClientInterface {
 
     public func setIsConnected(_ isConnected: Bool) {
         DispatchQueue.main.async {

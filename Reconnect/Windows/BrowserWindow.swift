@@ -39,7 +39,7 @@ struct BrowserWindow: Scene {
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            if applicationModel.daemonModel.isConnected {
+            if applicationModel.daemonClient.isConnected {
                 BrowserView(browserModel: browserModel)
             } else {
                 ContentUnavailableView {

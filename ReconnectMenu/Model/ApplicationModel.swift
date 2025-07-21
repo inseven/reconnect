@@ -41,7 +41,7 @@ class ApplicationModel: NSObject {
     }
 
     var devices: [SerialDevice] {  // Superset of available devices for the UI.
-        return daemonModel.devices.union(selectedDevices)
+        return daemonClient.devices.union(selectedDevices)
             .map { device in
                 let binding: Binding<Bool> = Binding {
                     return self.selectedDevices.contains(device)
@@ -53,7 +53,7 @@ class ApplicationModel: NSObject {
                     }
                 }
                 return SerialDevice(path: device,
-                                    available: daemonModel.devices.contains(device),
+                                    available: daemonClient.devices.contains(device),
                                     enabled: binding)
             }
             .sorted { device1, device2 in
@@ -61,7 +61,7 @@ class ApplicationModel: NSObject {
             }
     }
 
-    var daemonModel = DaemonModel()
+    var daemonClient = DaemonClient()
 
     private var selectedDevices: Set<String> {
         didSet {
@@ -80,8 +80,8 @@ class ApplicationModel: NSObject {
     }
 
     func start() {
-        daemonModel.connect()  // TODO: Handle errors here!
-        daemonModel.setSelectedDevices(Array(selectedDevices))
+        daemonClient.connect()  // TODO: Handle errors here!
+        daemonClient.setSelectedDevices(Array(selectedDevices))
     }
 
     @MainActor func quit() {
@@ -90,7 +90,7 @@ class ApplicationModel: NSObject {
 
     func update() {
         // TODO: I wonder if I could explicitly manage this in the daemon?
-        daemonModel.setSelectedDevices(Array(selectedDevices))
+        daemonClient.setSelectedDevices(Array(selectedDevices))
     }
 
     func openReconnect(_ url: URL) {

@@ -18,19 +18,8 @@
 
 import Foundation
 
-// TODO: Doesn't need to be public.
-
 @objc
-public protocol ConnectionStatusObserver {
-    func connectionStatusDidChange(to newStatus: Int)  // TODO: Rename or remove?
-    func setSerialDevices(_ devices: [String])  // TODO: Set?
-    func addSerialDevice(_ device: String)
-    func removeSerialDevice(_ device: String)
-    func setIsConnected(_ isConnected: Bool)
-}
-
-@objc
-public protocol ConnectionInterface {
+public protocol DaemonInterface {
 
     func doSomething(reply: @escaping (String) -> Void)
     func setSelectedSerialDevices(_ selectedSerialDevices: [String])  // TODO: Set?

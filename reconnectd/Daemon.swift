@@ -67,16 +67,16 @@ class Daemon: NSObject {
         }
         logger.notice("ping")
         for connection in connections {
-            guard let proxy = connection.remoteObjectProxy as? ConnectionStatusObserver else {
+            guard let proxy = connection.remoteObjectProxy as? DaemonClientInterface else {
                 continue
             }
             proxy.connectionStatusDidChange(to: count)
         }
     }
 
-    fileprivate func withConnections(perform: (_ proxy: ConnectionStatusObserver) -> Void) {
+    fileprivate func withConnections(perform: (_ proxy: DaemonClientInterface) -> Void) {
         for connection in connections {
-            guard let proxy = connection.remoteObjectProxy as? ConnectionStatusObserver else {
+            guard let proxy = connection.remoteObjectProxy as? DaemonClientInterface else {
                 continue
             }
             perform(proxy)
@@ -98,8 +98,8 @@ extension Daemon: NSXPCListenerDelegate {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
         logger.notice("incoming connection")
-        newConnection.exportedInterface = NSXPCInterface(with: ConnectionInterface.self)
-        newConnection.remoteObjectInterface = NSXPCInterface(with: ConnectionStatusObserver.self)
+        newConnection.exportedInterface = NSXPCInterface(with: DaemonInterface.self)
+        newConnection.remoteObjectInterface = NSXPCInterface(with: DaemonClientInterface.self)
         newConnection.exportedObject = self
         newConnection.invalidationHandler = { [weak self] in
             dispatchPrecondition(condition: .notOnQueue(.main))
@@ -113,7 +113,7 @@ extension Daemon: NSXPCListenerDelegate {
             self.connections.append(newConnection)
 
             // Send the initial state.
-            guard let proxy = newConnection.remoteObjectProxy as? ConnectionStatusObserver else {
+            guard let proxy = newConnection.remoteObjectProxy as? DaemonClientInterface else {
                 return
             }
             proxy.setSerialDevices(Array(connectedDevices))
@@ -160,7 +160,7 @@ extension Daemon: ServerDelegate {
 
 }
 
-extension Daemon: ConnectionInterface {
+extension Daemon: DaemonInterface {
 
     // TODO: Connect / start.
     public func doSomething(reply: @escaping (String) -> Void) {
