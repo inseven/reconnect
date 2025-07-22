@@ -16,4 +16,12 @@ plptools comprises the following components:
     - `plpprint`---print-server allowing you to print-to-files from your Psion
     - `sisinstall`---CLI for installing SIS installer files on EPOC32 devices
 
+```mermaid
+graph TD
+plpftp --> ncpd
+plpfuse --> ncpd
+plpprint --> ncpd
+sisinstall --> ncpd
+```
+
 Unfortunately, the evolving security architecture of macOS is increasingly hostile to services like FUSE (you need to [disable System Integrity Protection](https://developer.apple.com/documentation/security/disabling-and-enabling-system-integrity-protection)) to install the required kernel extensions, and having to manually run services like `ncpd` to manage your Psion connection is far from user-friendly, necessitating a different approach on macOS.
