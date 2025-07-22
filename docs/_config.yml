@@ -47,3 +47,4 @@ defaults:
     values:
       layout: "documentation"
       toc: true
+      shows_title: true

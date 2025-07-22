@@ -1,7 +1,7 @@
 ---
 title: Documentation
 layout: documentation
-toc: true
+shows_title: false
 ---
 
 Check out the [Getting Started](/docs/getting-started) documentation if you're new to Psions and Reconnect.
