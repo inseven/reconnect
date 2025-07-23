@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import Foundation
+import os
 import SwiftUI
 
 // Callbacks occur on main.
@@ -29,56 +30,70 @@ public protocol DaemonClientDelegate: NSObject {
 @Observable
 public class DaemonClient {
 
+    enum ConnectionState {
+        case idle
+        case connecting
+        case connected
+    }
+
     public weak var delegate: DaemonClientDelegate? = nil
 
+    // Synchornized on main.
+    // TODO: Ultimately this class shouldn't store state.
     public var isConnectedToDaemon: Bool = false
     public var isConnected: Bool = false
     public var devices: Set<String> = []
 
-    private let connection: NSXPCConnection
-    private var proxy: (any DaemonInterface)?
+    private let logger = Logger()
+    private let workQueue = DispatchQueue(label: "DaemonClient.workQueue")
+
+    // Synchronized on workQueue.
+    private let state: ConnectionState = .idle
+    private var connection: NSXPCConnection! // TODO: This is a bit gross
+    private var proxy: (any DaemonInterface)?  // TODO: I don't know if I should store this?
 
     public init() {
-        connection = NSXPCConnection(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon", options: [])
+        // TODO: Are NSXPCConnections reusable?
     }
 
     public func connect() {
-        connection.remoteObjectInterface = NSXPCInterface(with: DaemonInterface.self)
-        connection.exportedInterface = NSXPCInterface(with: DaemonClientInterface.self)
-        connection.exportedObject = self
-
-        // TODO: Retry logic?
-        connection.interruptionHandler = {
-            print("Connection interrupted")
-            DispatchQueue.main.async {
-                print("connection interrupted")
-                self.isConnectedToDaemon = false
+        workQueue.async { [self] in
+            logger.notice("Connecting...")
+            connection = NSXPCConnection(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon",
+                                         options: [])
+            connection.remoteObjectInterface = NSXPCInterface(with: DaemonInterface.self)
+            connection.exportedInterface = NSXPCInterface(with: DaemonClientInterface.self)
+            connection.exportedObject = self
+            connection.interruptionHandler = { [weak self] in
+                // TODO: What thread are we on here?
+                self?.logger.notice("Daemon connection interrupted.")
             }
-        }
-        connection.invalidationHandler = {
-            print("Connection invalidated")
-            DispatchQueue.main.async {
-                print("connection interrupted")
-                self.isConnectedToDaemon = false
+            connection.invalidationHandler = { [weak self] in
+                // TODO: What thread are we on here?
+                self?.logger.notice("Daemon connection invalidated; reconnecting...")
+                DispatchQueue.main.async {
+                    self?.isConnectedToDaemon = false
+                    self?.connect()
+                }
             }
-        }
-        connection.resume()
+            connection.resume()
 
-        proxy = connection.remoteObjectProxyWithErrorHandler { error in
-            print("XPC error: \(error)")
-        } as? DaemonInterface
-        guard let proxy else {
-            print("Unable to create proxy!")
-            return
-        }
-
-        // We're forcing a connection here; I seem to remember we always had to do this to force it to actually work.
-        proxy.doSomething { response in
-            DispatchQueue.main.async {
-                print("connected = true")
-                self.isConnectedToDaemon = true
+            proxy = connection.remoteObjectProxyWithErrorHandler { error in
+                print("XPC error: \(error)")
+            } as? DaemonInterface
+            guard let proxy else {
+                print("Unable to create proxy!")
+                return
             }
-            print("XPC: Response from service: \(response)")
+
+            // We're forcing a connection here; I seem to remember we always had to do this to force it to actually work.
+            proxy.doSomething { response in
+                DispatchQueue.main.async {
+                    print("connected = true")
+                    self.isConnectedToDaemon = true
+                }
+                print("XPC: Response from service: \(response)")
+            }
         }
     }
 

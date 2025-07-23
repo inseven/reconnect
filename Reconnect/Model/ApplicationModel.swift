@@ -94,22 +94,10 @@ class ApplicationModel: NSObject {
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         super.init()
-        enableDaemon()
         daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
 
-    }
-
-    func enableDaemon() {
-        let service = SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
-        do {
-            try service.register()
-            logger.notice("Successfully registered reconnectd")
-        } catch {
-            logger.error("Failed to register reconnectd with error '\(error)'")
-        }
-        print("\(service) has status \(service.status)")
     }
 
     func installGuestTools() {

@@ -103,7 +103,7 @@ public class Server {
             return
         }
 
-        print("Updating serial devices \(devices)")
+        logger.notice("Updating serial devices \(devices)")
 
         let needsRestart = lock.withLock {
             guard force || self.devices != devices else {
@@ -114,7 +114,7 @@ public class Server {
         }
 
         guard needsRestart else {
-            print("Serial devices haven't changed; ignoring.")
+            logger.notice("Serial devices haven't changed; ignoring.")
             return
         }
 

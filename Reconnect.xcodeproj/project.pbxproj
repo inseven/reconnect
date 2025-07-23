@@ -12,7 +12,6 @@
 		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
 		D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D851ED2D2E2C33C70067E0CD /* ReconnectCore */; };
-		D851ED322E2C49F70067E0CD /* reconnectd in Resources */ = {isa = PBXBuildFile; fileRef = D851ED232E2C31B60067E0CD /* reconnectd */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
 		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
@@ -22,6 +21,7 @@
 		D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */; };
 		D8B1AC5C2E0F6DAE0084BFD5 /* src in Resources */ = {isa = PBXBuildFile; fileRef = D8E8B4FD2D1529E800405445 /* src */; };
+		D8B2B2692E308DAF00F4B27E /* reconnectd in Resources */ = {isa = PBXBuildFile; fileRef = D851ED232E2C31B60067E0CD /* reconnectd */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
@@ -51,19 +51,19 @@
 			remoteGlobalIDString = D84964D52C1BFCB600405656;
 			remoteInfo = PsiMac;
 		};
-		D851ED2A2E2C32270067E0CD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D851ED222E2C31B60067E0CD;
-			remoteInfo = reconnectd;
-		};
 		D8B1AC502E0F4C220084BFD5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = D8B1AC422E0F4C220084BFD5;
 			remoteInfo = ReconnectPreviews;
+		};
+		D8B2B2612E307ADB00F4B27E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D851ED222E2C31B60067E0CD;
+			remoteInfo = reconnectd;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -124,6 +124,15 @@
 				D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B2B2632E307AFD00F4B27E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchAgents;
+			dstSubfolderSpec = 1;
+			files = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -204,10 +213,17 @@
 				uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist,
 			);
 		};
+		D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = D8B2B2632E307AFD00F4B27E /* CopyFiles */;
+			membershipExceptions = (
+				uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist,
+			);
+		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D851ED242E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D851ED312E2C37820067E0CD /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = reconnectd; sourceTree = "<group>"; };
+		D851ED242E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D851ED312E2C37820067E0CD /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = reconnectd; sourceTree = "<group>"; };
 		D891AE502E13722A009EC465 /* ReconnectTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectTests; sourceTree = "<group>"; };
 		D891AE562E137239009EC465 /* ReconnectUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectUITests; sourceTree = "<group>"; };
 		D891AE5D2E13724E009EC465 /* ScreenshotSIS */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ScreenshotSIS; sourceTree = "<group>"; };
@@ -345,7 +361,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				D851ED2B2E2C32270067E0CD /* PBXTargetDependency */,
 				D809546D2C4AAC7F00752BBC /* PBXTargetDependency */,
 				D8B1AC512E0F4C220084BFD5 /* PBXTargetDependency */,
 			);
@@ -488,10 +503,12 @@
 				D8F1A5972C4A4C9B00931C00 /* Sources */,
 				D8F1A5982C4A4C9B00931C00 /* Frameworks */,
 				D8F1A5992C4A4C9B00931C00 /* Resources */,
+				D8B2B2632E307AFD00F4B27E /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D8B2B2622E307ADB00F4B27E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D891AE6B2E13726F009EC465 /* ReconnectMenu */,
@@ -580,7 +597,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D851ED322E2C49F70067E0CD /* reconnectd in Resources */,
 				D8E8B4FE2D1529E800405445 /* src in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -611,6 +627,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8B2B2692E308DAF00F4B27E /* reconnectd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,15 +701,15 @@
 			target = D84964D52C1BFCB600405656 /* Reconnect */;
 			targetProxy = D84964F22C1BFCB700405656 /* PBXContainerItemProxy */;
 		};
-		D851ED2B2E2C32270067E0CD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D851ED222E2C31B60067E0CD /* reconnectd */;
-			targetProxy = D851ED2A2E2C32270067E0CD /* PBXContainerItemProxy */;
-		};
 		D8B1AC512E0F4C220084BFD5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
 			targetProxy = D8B1AC502E0F4C220084BFD5 /* PBXContainerItemProxy */;
+		};
+		D8B2B2622E307ADB00F4B27E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D851ED222E2C31B60067E0CD /* reconnectd */;
+			targetProxy = D8B2B2612E307ADB00F4B27E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -23,6 +23,8 @@ import ReconnectCore
 @main @MainActor
 struct ReconnectMenuApp: App {
 
+    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
+
     @State var applicationModel = ApplicationModel()
 
     var body: some Scene {
