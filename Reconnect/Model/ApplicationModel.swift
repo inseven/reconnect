@@ -88,7 +88,6 @@ class ApplicationModel: NSObject {
         updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: self,
                                                          userDriverDelegate: nil)
-        daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
     }
