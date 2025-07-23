@@ -75,9 +75,7 @@ class ApplicationModel: NSObject {
         }
     }
 
-    let updaterController = SPUStandardUpdaterController(startingUpdater: false,
-                                                         updaterDelegate: nil,
-                                                         userDriverDelegate: nil)
+    var updaterController: SPUStandardUpdaterController!
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -87,6 +85,9 @@ class ApplicationModel: NSObject {
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
         super.init()
+        updaterController = SPUStandardUpdaterController(startingUpdater: false,
+                                                         updaterDelegate: self,
+                                                         userDriverDelegate: nil)
         openMenuApplication()
         updaterController.startUpdater()
     }
@@ -118,6 +119,18 @@ class ApplicationModel: NSObject {
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguraiton)
     }
 
+    nonisolated func terminateRunningMenuApplications() {
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
+        for app in runningApps {
+            app.terminate()
+        }
+        for app in runningApps {
+            while !app.isTerminated {
+                RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            }
+        }
+    }
+
     func showInstallerWindow(url: URL) {
 
         // Ignore urls used for launching Reconnect from the menu bar.
@@ -142,6 +155,15 @@ class ApplicationModel: NSObject {
 
         // Foreground the window.
         window?.makeKeyAndOrderFront(nil)
+    }
+
+}
+
+extension ApplicationModel: SPUUpdaterDelegate {
+
+    nonisolated func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
+        // Shut down the menu bar app prior to relanuching the app.
+        terminateRunningMenuApplications()
     }
 
 }
