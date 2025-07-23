@@ -24,7 +24,7 @@ import ReconnectCore
 class Daemon: NSObject {
 
     private let logger = Logger()
-    private let listener = NSXPCListener(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon")
+    private let listener = NSXPCListener(machServiceName: .daemonSericeName)
     private let serialDeviceMonitor = SerialDeviceMonitor()
     private let server: Server = Server()
 
@@ -161,14 +161,6 @@ extension Daemon: ServerDelegate {
 }
 
 extension Daemon: DaemonInterface {
-
-    public func restart() {
-        logger.notice("Restarting ncp sessions...")
-        DispatchQueue.main.async {
-            self.server.setDevices(self.selectedDevices.intersection(self.connectedDevices).sorted(), force: true)
-        }
-
-    }
 
     // TODO: Connect / start.
     // TOOD: This could be a version message?

@@ -59,7 +59,7 @@ public class DaemonClient {
     public func connect() {
         workQueue.async { [self] in
             logger.notice("Connecting...")
-            connection = NSXPCConnection(machServiceName: "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon",
+            connection = NSXPCConnection(machServiceName: .daemonSericeName,
                                          options: [])
             connection.remoteObjectInterface = NSXPCInterface(with: DaemonInterface.self)
             connection.exportedInterface = NSXPCInterface(with: DaemonClientInterface.self)
@@ -102,16 +102,16 @@ public class DaemonClient {
         proxy?.setSelectedSerialDevices(devices)
     }
 
-    public func restart(completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let proxy = connection.remoteObjectProxyWithErrorHandler({ error in
-            completion(.failure(error))
-        }) as? DaemonInterface else {
-            completion(.failure(ReconnectError.unknown))  // TODO: Correct error!
-            return
-        }
-        proxy.restart()
-        completion(.success(()))
-    }
+//    public func restart(completion: @escaping (Result<Void, Error>) -> Void) {
+//        guard let proxy = connection.remoteObjectProxyWithErrorHandler({ error in
+//            completion(.failure(error))
+//        }) as? DaemonInterface else {
+//            completion(.failure(ReconnectError.unknown))  // TODO: Correct error!
+//            return
+//        }
+//        proxy.restart()
+//        completion(.success(()))
+//    }
 
 }
 

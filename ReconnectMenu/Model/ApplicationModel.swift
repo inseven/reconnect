@@ -115,12 +115,4 @@ class ApplicationModel: NSObject {
         }
     }
 
-    func restartConnection() {
-        daemonClient.restart { result in
-            if case .failure(let error) = result {
-                self.logger.error("Failed to restart connection with error '\(error)'.")
-            }
-        }
-    }
-
 }

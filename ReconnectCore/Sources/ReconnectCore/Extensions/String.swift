@@ -29,6 +29,8 @@ public extension String {
     static let browserApplicationBundleIdentifier = "uk.co.jbmorley.reconnect.apps.apple"
     static let menuApplicationBundleIdentifier = "uk.co.jbmorley.reconnect.apps.apple.menu"
 
+    static let daemonSericeName = "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon"
+
     var deletingLastWindowsPathComponent: String {
         return windowsPathComponents
             .dropLast()

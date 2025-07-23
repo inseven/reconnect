@@ -26,4 +26,5 @@ public protocol DaemonClientInterface {
     func addSerialDevice(_ device: String)
     func removeSerialDevice(_ device: String)
     func setIsConnected(_ isConnected: Bool)
+    
 }
