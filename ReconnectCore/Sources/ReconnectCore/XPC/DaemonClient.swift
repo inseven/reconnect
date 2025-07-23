@@ -102,17 +102,6 @@ public class DaemonClient {
         proxy?.setSelectedSerialDevices(devices)
     }
 
-//    public func restart(completion: @escaping (Result<Void, Error>) -> Void) {
-//        guard let proxy = connection.remoteObjectProxyWithErrorHandler({ error in
-//            completion(.failure(error))
-//        }) as? DaemonInterface else {
-//            completion(.failure(ReconnectError.unknown))  // TODO: Correct error!
-//            return
-//        }
-//        proxy.restart()
-//        completion(.success(()))
-//    }
-
 }
 
 // TODO: Can we make this not pubic??
