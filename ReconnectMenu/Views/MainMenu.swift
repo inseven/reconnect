@@ -61,12 +61,6 @@ struct MainMenu: View {
             Toggle("Open at Login", isOn: $application.openAtLogin)
         }
         Divider()
-        Menu("Debug") {
-            Button("Restart Connection") {
-                applicationModel.restartConnection()
-            }
-        }
-        Divider()
         Button("Check for Updates...") {
             applicationModel.openReconnect(.update)
         }
