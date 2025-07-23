@@ -113,28 +113,26 @@ class ApplicationModel: NSObject {
     }
 
     private func openMenuApplication() {
+#if !DEBUG
         terminateAnyIncompatibleMenuBarApplications()
+#else
+        // In debug, we always restart the menu bar applicaiton to ease development.
+        terminateRunningMenuApplications()
+#endif
         let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
-        let openConfiguraiton = NSWorkspace.OpenConfiguration()
-        NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguraiton)
+        let openConfiguration = NSWorkspace.OpenConfiguration()
+        openConfiguration.allowsRunningApplicationSubstitution = false
+        NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
     }
 
     nonisolated private func terminateRunningMenuApplications() {
-        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
-        for app in runningApps {
-            app.terminate()
-        }
-        for app in runningApps {
-            while !app.isTerminated {
-                RunLoop.current.run(until: Date().addingTimeInterval(0.1))
-            }
-        }
+        NSRunningApplication.terminateRunningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)
     }
 
     private func terminateAnyIncompatibleMenuBarApplications() {
         let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
         let expectedHash = getCDHashForBinary(at: embeddedAppURL)
-        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)
         for app in runningApps {
             let hash = getCDHashForPID(app.processIdentifier)
             guard hash != expectedHash else {
