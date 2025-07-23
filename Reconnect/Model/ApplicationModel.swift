@@ -20,6 +20,7 @@ import SwiftUI
 
 import Interact
 import Sparkle
+import Security
 
 @MainActor @Observable
 class ApplicationModel: NSObject {
@@ -111,15 +112,14 @@ class ApplicationModel: NSObject {
         }
     }
 
-    func openMenuApplication() {
-        guard let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app") else {
-            return
-        }
+    private func openMenuApplication() {
+        terminateAnyIncompatibleMenuBarApplications()
+        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
         let openConfiguraiton = NSWorkspace.OpenConfiguration()
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguraiton)
     }
 
-    nonisolated func terminateRunningMenuApplications() {
+    nonisolated private func terminateRunningMenuApplications() {
         let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
         for app in runningApps {
             app.terminate()
@@ -129,6 +129,58 @@ class ApplicationModel: NSObject {
                 RunLoop.current.run(until: Date().addingTimeInterval(0.1))
             }
         }
+    }
+
+    private func terminateAnyIncompatibleMenuBarApplications() {
+        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
+        let expectedHash = getCDHashForBinary(at: embeddedAppURL)
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
+        for app in runningApps {
+            let hash = getCDHashForPID(app.processIdentifier)
+            guard hash != expectedHash else {
+                continue
+            }
+            app.terminate()
+            while !app.isTerminated {
+                RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            }
+        }
+    }
+
+    private func getCDHashForBinary(at url: URL) -> Data? {
+        var staticCode: SecStaticCode?
+        var signingInfo: CFDictionary?
+        guard
+            SecStaticCodeCreateWithPath(url as CFURL, [], &staticCode) == errSecSuccess,
+            let staticCode,
+            SecCodeCopySigningInformation(staticCode, [], &signingInfo) == errSecSuccess,
+            let signingInfo = signingInfo as? [String: Any],
+            let hashes = signingInfo["cdhashes"] as? [Data]
+        else {
+            return nil
+        }
+        return hashes.first
+    }
+
+    private func getCDHashForPID(_ pid: pid_t) -> Data? {
+        let attributes = [kSecGuestAttributePid: pid] as CFDictionary
+        var code: SecCode?
+        var staticCode: SecStaticCode?
+        var signingInfo: CFDictionary?
+        guard
+            SecCodeCopyGuestWithAttributes(nil, attributes, [], &code) == errSecSuccess,
+            let code,
+            SecCodeCopyStaticCode(code, SecCSFlags(), &staticCode) == errSecSuccess,
+            let staticCode,
+            SecCodeCopySigningInformation(staticCode,
+                                          SecCSFlags(rawValue: kSecCSDynamicInformation),
+                                          &signingInfo) == errSecSuccess,
+            let signingInfo = signingInfo as? [String: Any],
+            let hashes = signingInfo["cdhashes"] as? [Data]
+        else {
+            return nil
+        }
+        return hashes.first
     }
 
     func showInstallerWindow(url: URL) {
