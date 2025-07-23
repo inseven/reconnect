@@ -26,6 +26,9 @@ public extension String {
     static let screenshotToolPath = "C:\\System\\Reconnect\\screenshot.exe"
     static let windowsPathSeparator = "\\"
 
+    static let browserApplicationBundleIdentifier = "uk.co.jbmorley.reconnect.apps.apple"
+    static let menuApplicationBundleIdentifier = "uk.co.jbmorley.reconnect.apps.apple.menu"
+
     var deletingLastWindowsPathComponent: String {
         return windowsPathComponents
             .dropLast()
