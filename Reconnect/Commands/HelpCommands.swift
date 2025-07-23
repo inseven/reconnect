@@ -34,11 +34,14 @@ public struct HelpCommands: Commands {
         }
 
         CommandGroup(before: .help) {
+            Button("Website") {
+                openURL(.website)
+            }
+            Button("Privacy Policy") {
+                openURL(.privacyPolicy)
+            }
             Button("GitHub") {
                 openURL(.gitHub)
-            }
-            Button("Discord") {
-                openURL(.discord)
             }
             Button("Support") {
                 openURL(.support)

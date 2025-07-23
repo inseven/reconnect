@@ -24,4 +24,4 @@ plpprint --> ncpd
 sisinstall --> ncpd
 ```
 
-Unfortunately, the evolving security architecture of macOS is increasingly hostile to services like FUSE (you need to [disable System Integrity Protection](https://developer.apple.com/documentation/security/disabling-and-enabling-system-integrity-protection)) to install the required kernel extensions, and having to manually run services like `ncpd` to manage your Psion connection is far from user-friendly, necessitating a different approach on macOS.
+Unfortunately, the evolving security architecture of macOS is increasingly hostile to services like FUSE (you need to [disable System Integrity Protection](https://developer.apple.com/documentation/security/disabling-and-enabling-system-integrity-protection) to install the required kernel extensions), and having to manually run services like `ncpd` to manage your Psion connection is far from user-friendly, necessitating a different approach on macOS.
