@@ -36,7 +36,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func enableDaemon() {
         do {
-            try service.register()
+            logger.notice("Registering reconnectd...")
+            try SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist").register()
             logger.notice("Successfully registered reconnectd")
         } catch {
             logger.error("Failed to register reconnectd with error '\(error)'")
@@ -45,7 +46,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func disableDaemon() {
         do {
-            try service.unregister()
+            logger.notice("Unregistering reconnectd...")
+            try SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist").unregister()
             logger.notice("Successfully unregistered reconnectd")
             // TODO: Wait for the daemon to disappear before continuing.
         } catch {
