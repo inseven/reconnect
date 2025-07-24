@@ -69,6 +69,12 @@ class ApplicationModel: NSObject {
         }
     }
 
+    var hasUsableSerialDevices: Bool {
+        return !serialDevices
+            .filter { $0.isUsable }
+            .isEmpty
+    }
+
     let logger = Logger()
     let daemonClient = DaemonClient()
     var updaterController: SPUStandardUpdaterController!

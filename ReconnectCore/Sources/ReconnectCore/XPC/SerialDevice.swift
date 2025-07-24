@@ -80,3 +80,11 @@ public class SerialDevice: NSObject, NSSecureCoding, Identifiable {
     }
 
 }
+
+extension SerialDevice {
+
+    public var isUsable: Bool {
+        return isAvailable && isEnabled
+    }
+
+}
