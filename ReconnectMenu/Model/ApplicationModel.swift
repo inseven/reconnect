@@ -26,40 +26,8 @@ import ReconnectCore
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
-    struct SerialDevice: Identifiable {
-
-        var id: String {
-            return path
-        }
-
-        var path: String
-        var available: Bool
-        var enabled: Binding<Bool>
-    }
-
     enum SettingsKey: String {
         case selectedDevices
-    }
-
-    var devices: [SerialDevice] {  // Superset of available devices for the UI.
-        return daemonClient.devices.union(selectedDevices)
-            .map { device in
-                let binding: Binding<Bool> = Binding {
-                    return self.selectedDevices.contains(device)
-                } set: { newValue in
-                    if newValue {
-                        self.selectedDevices.insert(device)
-                    } else {
-                        self.selectedDevices.remove(device)
-                    }
-                }
-                return SerialDevice(path: device,
-                                    available: daemonClient.devices.contains(device),
-                                    enabled: binding)
-            }
-            .sorted { device1, device2 in
-                return device1.path.localizedStandardCompare(device2.path) == .orderedAscending
-            }
     }
 
     var daemonClient = DaemonClient()
@@ -83,7 +51,6 @@ class ApplicationModel: NSObject {
 
     func start() {
         daemonClient.connect()  // TODO: Handle errors here!
-        daemonClient.setSelectedDevices(Array(selectedDevices))
     }
 
     @MainActor func quit() {
@@ -109,7 +76,7 @@ class ApplicationModel: NSObject {
             guard let app else {
                 return
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
                 app.activate()
             }
         }

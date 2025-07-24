@@ -23,10 +23,23 @@ import ReconnectCore
 
 class Daemon: NSObject {
 
-    private let logger = Logger()
+    private let logger = Logger(subsystem: "reconnectd", category: "Daemon")
     private let listener = NSXPCListener(machServiceName: .daemonSericeName)
     private let serialDeviceMonitor = SerialDeviceMonitor()
-    private let server: Server = Server()
+    private let sessionManager = Server()
+
+    // Dynamic property generating an array of SerialDevice instances that represent the union of available and
+    // previously enabled devices. Intended as a convenience for updating connected clients.
+    private var serialDevices: [SerialDevice] {
+        return selectedDevices
+            .union(connectedDevices)
+            .sorted()
+            .map { path in
+                return SerialDevice(path: path,
+                                    isAvailable: connectedDevices.contains(path),
+                                    isEnabled: selectedDevices.contains(path))
+            }
+    }
 
     // Synchronized on main thread.
     private var connections: [NSXPCConnection] = []
@@ -39,14 +52,14 @@ class Daemon: NSObject {
         super.init()
         listener.delegate = self
         serialDeviceMonitor.delegate = self
-        server.delegate = self
+        sessionManager.delegate = self
     }
 
     func start() {
         logger.notice("Starting reconnectd...")
         listener.resume()
         serialDeviceMonitor.start()
-        server.start()
+        sessionManager.start()
         ping()
     }
 
@@ -65,18 +78,19 @@ class Daemon: NSObject {
         guard !connections.isEmpty else {
             return
         }
-        logger.notice("ping")
+        logger.notice("Sending client keepalive (\(self.count))...")
         for connection in connections {
             guard let proxy = connection.remoteObjectProxy as? DaemonClientInterface else {
                 continue
             }
-            proxy.connectionStatusDidChange(to: count)
+            proxy.keepalive(count: count)
         }
     }
 
     fileprivate func withConnections(perform: (_ proxy: DaemonClientInterface) -> Void) {
         for connection in connections {
             guard let proxy = connection.remoteObjectProxy as? DaemonClientInterface else {
+                logger.error("Failed to get remote proxy for update.")
                 continue
             }
             perform(proxy)
@@ -85,10 +99,18 @@ class Daemon: NSObject {
 
     func updateConnectedDevices() {
         dispatchPrecondition(condition: .onQueue(.main))
+        let count = connections.count
+        logger.notice("Sending updated serial devices to \(count) clients...")
         withConnections { proxy in
-            proxy.setSerialDevices(Array(connectedDevices))
+            proxy.setSerialDevices(serialDevices)
         }
     }
+
+    func reconfigureSessionManager() {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.sessionManager.setDevices(self.selectedDevices.intersection(self.connectedDevices).sorted())
+    }
+
 }
 
 extension Daemon: NSXPCListenerDelegate {
@@ -97,7 +119,7 @@ extension Daemon: NSXPCListenerDelegate {
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection newConnection: NSXPCConnection) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
-        logger.notice("incoming connection")
+        logger.notice("New XPC connection...")
         newConnection.exportedInterface = NSXPCInterface(with: DaemonInterface.self)
         newConnection.remoteObjectInterface = NSXPCInterface(with: DaemonClientInterface.self)
         newConnection.exportedObject = self
@@ -112,11 +134,12 @@ extension Daemon: NSXPCListenerDelegate {
         DispatchQueue.main.sync {
             self.connections.append(newConnection)
 
-            // Send the initial state.
             guard let proxy = newConnection.remoteObjectProxy as? DaemonClientInterface else {
+                logger.error("Failed to get remote proxy for new connection.")
                 return
             }
-            proxy.setSerialDevices(Array(connectedDevices))
+            // Send the current state.
+            proxy.setSerialDevices(serialDevices)
             proxy.setIsConnected(isConnected)
         }
 
@@ -127,22 +150,20 @@ extension Daemon: NSXPCListenerDelegate {
 
 extension Daemon: SerialDeviceMonitorDelegate {
 
-    func serialDeviceMonitor(serialDeviceMonitor: ReconnectCore.SerialDeviceMonitor, didAddDevice device: String) {
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
         dispatchPrecondition(condition: .onQueue(.main))
-        logger.notice("add serial device '\(device)'")
-        self.connectedDevices.insert(device)
-        withConnections { proxy in
-            proxy.addSerialDevice(device)
-        }
+        logger.notice("Serial device added '\(device)'.")
+        connectedDevices.insert(device)
+        reconfigureSessionManager()
+        updateConnectedDevices()
     }
 
-    func serialDeviceMonitor(serialDeviceMonitor: ReconnectCore.SerialDeviceMonitor, didRemoveDevice device: String) {
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
         dispatchPrecondition(condition: .onQueue(.main))
-        logger.notice("remove serial device '\(device)'")
-        self.connectedDevices.remove(device)
-        withConnections { proxy in
-            proxy.removeSerialDevice(device)
-        }
+        logger.notice("Serial device removed '\(device)'")
+        connectedDevices.remove(device)
+        reconfigureSessionManager()
+        updateConnectedDevices()
     }
 
 }
@@ -162,18 +183,37 @@ extension Daemon: ServerDelegate {
 
 extension Daemon: DaemonInterface {
 
-    // TODO: Connect / start.
-    // TOOD: This could be a version message?
+    // TODO: Rename and return version and build.
     public func doSomething(reply: @escaping (String) -> Void) {
         print("Service received request!")
         reply("Hello from XPC Service!")
     }
 
+    // TODO: Remove this.
     public func setSelectedSerialDevices(_ selectedSerialDevices: [String]) {
         logger.notice("Updating selected serial devices...")
         DispatchQueue.main.async {
             self.selectedDevices = Set(selectedSerialDevices)
-            self.server.setDevices(self.selectedDevices.intersection(self.connectedDevices).sorted())
+            self.reconfigureSessionManager()
+            self.updateConnectedDevices()
+        }
+    }
+
+    func enableSerialDevice(_ path: String) {
+        logger.notice("Enabling serial device '\(path)'...")
+        DispatchQueue.main.async {
+            self.selectedDevices.insert(path)
+            self.reconfigureSessionManager()
+            self.updateConnectedDevices()
+        }
+    }
+
+    func disableSerialDevice(_ path: String) {
+        logger.notice("Disabling serial device '\(path)'...")
+        DispatchQueue.main.async {
+            self.selectedDevices.remove(path)
+            self.reconfigureSessionManager()
+            self.updateConnectedDevices()
         }
     }
 

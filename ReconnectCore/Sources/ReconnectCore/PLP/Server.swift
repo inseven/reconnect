@@ -34,7 +34,7 @@ public class Server {
     public weak var delegate: ServerDelegate? = nil
 
     private var lock = NSLock()
-    private var logger = Logger()
+    private var logger = Logger(subsystem: "PLP", category: "Server")
 
     private var threadID: pthread_t? = nil  // Synchronized with lock.
     private var devices: [String] = []  // Synchronized with lock.
@@ -96,7 +96,7 @@ public class Server {
         thread.start()
     }
 
-    public func setDevices(_ devices: [String], force: Bool = false) {
+    public func setDevices(_ devices: [String]) {
         guard let threadID = lock.withLock({
             return self.threadID
         }) else {
@@ -106,7 +106,7 @@ public class Server {
         logger.notice("Updating serial devices \(devices)")
 
         let needsRestart = lock.withLock {
-            guard force || self.devices != devices else {
+            guard self.devices != devices else {
                 return false
             }
             self.devices = devices

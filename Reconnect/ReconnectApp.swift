@@ -66,6 +66,7 @@ struct ReconnectApp: App {
         } acknowledgements: {
             Acknowledgements("Developers") {
                 Credit("Jason Morley", url: URL(string: "https://jbmorley.co.uk"))
+                Credit("Tom Sutcliffe", url: URL(string: "https://github.com/tomsci"))
             }
             Acknowledgements("Thanks") {
                 Credit("Alex Brown")
@@ -73,8 +74,11 @@ struct ReconnectApp: App {
                 Credit("George Wright")
                 Credit("Lukas Fittl")
                 Credit("Matt Sephton")
+                Credit("Pavlos Vinieratos")
                 Credit("Sarah Barbour")
-                Credit("Tom Sutcliffe")
+            }
+            Acknowledgements("Supporters") {
+                Credit("Joanne Wong")
             }
         } licenses: {
             (.reconnect)

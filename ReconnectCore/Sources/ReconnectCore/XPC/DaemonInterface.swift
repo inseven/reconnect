@@ -22,6 +22,17 @@ import Foundation
 public protocol DaemonInterface {
 
     func doSomething(reply: @escaping (String) -> Void)
-    func setSelectedSerialDevices(_ selectedSerialDevices: [String])  // TODO: Set?
+    func setSelectedSerialDevices(_ selectedSerialDevices: [String])
+    func enableSerialDevice(_ path: String)
+    func disableSerialDevice(_ path: String)
+
+}
+
+extension NSXPCInterface {
+
+    static var daemonInterface: NSXPCInterface {
+        let interface = NSXPCInterface(with: DaemonInterface.self)
+        return interface
+    }
 
 }

@@ -20,14 +20,43 @@ import SwiftUI
 
 import Interact
 
+import ReconnectCore
+
 struct SettingsView: View {
+
+    @State var error: Error? = nil
 
     var applicationModel: ApplicationModel
 
-    @ObservedObject var application = Application.shared
-
     init(applicationModel: ApplicationModel) {
         self.applicationModel = applicationModel
+    }
+
+    func isEnabledBinding(forSerialDevice serialDevice: SerialDevice) -> Binding<Bool> {
+        return Binding(get: {
+            return serialDevice.isEnabled
+        }, set: { isEnabled in
+            switch isEnabled {
+            case true:
+                applicationModel.daemonClient.enableSerialDevice(serialDevice.path) { result in
+                    guard case .failure(let error) = result else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self.error = error
+                    }
+                }
+            case false:
+                applicationModel.daemonClient.disableSerialDevice(serialDevice.path) { result in
+                    guard case .failure(let error) = result else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self.error = error
+                    }
+                }
+            }
+        })
     }
 
     var body: some View {
@@ -44,9 +73,18 @@ struct SettingsView: View {
                            options: [.canChooseDirectories, .canCreateDirectories])
                 Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
             }
+            Section("Serial Devices") {
+                ForEach(Array(applicationModel.daemonClient.devices)) { device in
+                    Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
+                    .foregroundStyle(device.isAvailable ? .primary : .secondary)
+                    .disabled(!device.isAvailable)
+                }
+            }
         }
         .formStyle(.grouped)
-        .frame(width: 400, height: 400)
+        .presents($error)
+        .frame(width: 500)
+        .frame(minHeight: 600)
     }
 
 }

@@ -29,17 +29,6 @@ import ReconnectCore
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
-    struct SerialDevice: Identifiable {
-
-        var id: String {
-            return path
-        }
-
-        var path: String
-        var available: Bool
-        var enabled: Binding<Bool>
-    }
-
     enum SettingsKey: String {
         case convertFiles
         case downloadsURL
@@ -80,6 +69,8 @@ class ApplicationModel: NSObject {
         }
     }
 
+    var serialDevices: [SerialDevice] = []
+
     var updaterController: SPUStandardUpdaterController!
 
     let daemonClient = DaemonClient()
@@ -96,6 +87,7 @@ class ApplicationModel: NSObject {
         updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: self,
                                                          userDriverDelegate: nil)
+        daemonClient.delegate = self
         daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
@@ -121,12 +113,12 @@ class ApplicationModel: NSObject {
     }
 
     private func openMenuApplication() {
-#if !DEBUG
+//#if !DEBUG
         terminateAnyIncompatibleMenuBarApplications()
-#else
-        // In debug, we always restart the menu bar applicaiton to ease development.
-        terminateRunningMenuApplications()
-#endif
+//#else
+//        // In debug, we always restart the menu bar applicaiton to ease development.
+//        terminateRunningMenuApplications()
+//#endif
         let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
         let openConfiguration = NSWorkspace.OpenConfiguration()
         openConfiguration.allowsRunningApplicationSubstitution = false
@@ -222,6 +214,17 @@ extension ApplicationModel: SPUUpdaterDelegate {
     nonisolated func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
         // Shut down the menu bar app prior to relanuching the app.
         terminateRunningMenuApplications()
+    }
+
+}
+
+extension ApplicationModel: DaemonClientDelegate {
+
+    func daemonClient(_ daemonClient: ReconnectCore.DaemonClient,
+                      didUpdateSerialDevices devices: [SerialDevice]) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        print("daemon(didUpdateSerialDevices:)")
+        self.serialDevices = serialDevices
     }
 
 }

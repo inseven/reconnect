@@ -21,9 +21,11 @@ import os
 import SwiftUI
 
 // Callbacks occur on main.
+@MainActor
 public protocol DaemonClientDelegate: NSObject {
 
-    func daemonDidUpdateSerialDevices(devices: [SerialDevice])
+//    func daemonClient(_ daemonClient: DaemonClient, didUpdateConnectionState isConnected: Bool)  // TODO: Devices details?
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices devices: [SerialDevice])
 
 }
 
@@ -42,7 +44,7 @@ public class DaemonClient {
     // TODO: Ultimately this class shouldn't store state.
     public var isConnectedToDaemon: Bool = false
     public var isConnected: Bool = false
-    public var devices: Set<String> = []
+    public var devices: [SerialDevice] = []
 
     private let logger = Logger()
     private let workQueue = DispatchQueue(label: "DaemonClient.workQueue")
@@ -61,8 +63,8 @@ public class DaemonClient {
             logger.notice("Connecting...")
             connection = NSXPCConnection(machServiceName: .daemonSericeName,
                                          options: [])
-            connection.remoteObjectInterface = NSXPCInterface(with: DaemonInterface.self)
-            connection.exportedInterface = NSXPCInterface(with: DaemonClientInterface.self)
+            connection.remoteObjectInterface = .daemonInterface
+            connection.exportedInterface = .daemonClientInterface
             connection.exportedObject = self
             connection.interruptionHandler = { [weak self] in
                 // TODO: What thread are we on here?
@@ -98,8 +100,33 @@ public class DaemonClient {
     }
 
     // TODO: Set and unset?
+    // TODO: Remove this!
     public func setSelectedDevices(_ devices: [String]) {
         proxy?.setSelectedSerialDevices(devices)
+    }
+
+    private func withProxy<T>(completion: @escaping (Result<T, Error>) -> Void, perform: (any DaemonInterface) -> T) {
+        proxy = connection.remoteObjectProxyWithErrorHandler { error in
+            completion(.failure(error))
+        } as? DaemonInterface
+        guard let proxy else {
+            completion(.failure(ReconnectError.unknown))  // TODO: Better error.
+            return
+        }
+        let result = perform(proxy)
+        completion(.success(result))
+    }
+
+    public func enableSerialDevice(_ path: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        withProxy(completion: completion) { proxy in
+            proxy.enableSerialDevice(path)
+        }
+    }
+
+    public func disableSerialDevice(_ path: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        withProxy(completion: completion) { proxy in
+            proxy.disableSerialDevice(path)
+        }
     }
 
 }
@@ -113,29 +140,16 @@ extension DaemonClient: DaemonClientInterface {
         }
     }
 
-    public func setSerialDevices(_ devices: [String]) {
+    public func setSerialDevices(_ devices: [SerialDevice]) {
         print("set serial devices \(devices)")
         DispatchQueue.main.async {
-            self.devices = Set(devices)
+            self.devices = devices
+            self.delegate?.daemonClient(self, didUpdateSerialDevices: devices)
         }
     }
 
-    public func addSerialDevice(_ device: String) {
-        print("add serial device \(device)")
-        DispatchQueue.main.async {
-            self.devices.insert(device)
-        }
-    }
-    
-    public func removeSerialDevice(_ device: String) {
-        print("remove serial device \(device)")
-        DispatchQueue.main.async {
-            self.devices.remove(device)
-        }
-    }
-
-    public func connectionStatusDidChange(to newStatus: Int) {
-        print("status -> \(newStatus)")
+    public func keepalive(count: Int) {
+        logger.notice("Received daemon keepalive (\(count)).")
     }
 
 }

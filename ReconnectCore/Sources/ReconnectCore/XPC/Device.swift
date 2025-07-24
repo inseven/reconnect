@@ -18,25 +18,14 @@
 
 import Foundation
 
-@objc
-public protocol DaemonClientInterface {
+public class Device: NSObject, NSSecureCoding {
 
-    func keepalive(count: Int)
-    func setSerialDevices(_ devices: [SerialDevice])  // TODO: Set?
-    func setIsConnected(_ isConnected: Bool)
-    
-}
+    public static var supportsSecureCoding = true
 
-extension NSXPCInterface {
+    public required init?(coder: NSCoder) {
+    }
 
-    static var daemonClientInterface: NSXPCInterface {
-        let interface = NSXPCInterface(with: DaemonClientInterface.self)
-        let allowedClasses = [NSArray.self, SerialDevice.self] as NSSet as Set
-        interface.setClasses(allowedClasses,
-                             for: #selector(DaemonClientInterface.setSerialDevices(_:)),
-                             argumentIndex: 0,
-                             ofReply: false)
-        return interface
+    public func encode(with coder: NSCoder) {
     }
 
 }

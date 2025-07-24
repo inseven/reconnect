@@ -30,6 +30,35 @@ struct MainMenu: View {
 
     @ObservedObject var application = Application.shared
 
+    func isEnabledBinding(forSerialDevice serialDevice: SerialDevice) -> Binding<Bool> {
+        return Binding(get: {
+            return serialDevice.isEnabled
+        }, set: { isEnabled in
+            switch isEnabled {
+            case true:
+                applicationModel.daemonClient.enableSerialDevice(serialDevice.path) { result in
+                    guard case .failure(let error) = result else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        // TODO: Handle this error.
+//                        self.error = error
+                    }
+                }
+            case false:
+                applicationModel.daemonClient.disableSerialDevice(serialDevice.path) { result in
+                    guard case .failure(let error) = result else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        // TODO: Handle this error.
+//                        self.error = error
+                    }
+                }
+            }
+        })
+    }
+
     var body: some View {
         @Bindable var applicationModel = applicationModel
         Button {
@@ -51,10 +80,10 @@ struct MainMenu: View {
             Text("About...")
         }
         Menu("Settings") {
-            ForEach(applicationModel.devices) { device in
-                Toggle(isOn: device.enabled) {
+            ForEach(applicationModel.daemonClient.devices) { device in
+                Toggle(isOn: isEnabledBinding(forSerialDevice: device)) {
                     Text(device.path)
-                        .foregroundStyle(device.available ? .primary : .secondary)
+                        .foregroundStyle(device.isAvailable ? .primary : .secondary)
                 }
             }
             Divider()
