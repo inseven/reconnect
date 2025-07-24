@@ -18,24 +18,22 @@
 
 import SwiftUI
 
-import ReconnectCore
+struct ProgressAnimation: View {
 
-@main @MainActor
-struct ReconnectMenuApp: App {
-
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
-
-    @State var applicationModel = ApplicationModel()
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            StatusIcon()
-                .environment(applicationModel)
-        }
-
+    struct LayoutMetrics {
+        static let width: CGFloat = 240
+        static let height: CGFloat = 70
     }
+
+    private let name: String
+
+    init(_ name: String) {
+        self.name = name
+    }
+
+    var body: some View {
+        AnimatedImage(named: name)
+            .frame(width: LayoutMetrics.width, height: LayoutMetrics.height)
+    }
+
 }

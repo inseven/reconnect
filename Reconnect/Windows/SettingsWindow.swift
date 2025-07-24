@@ -18,24 +18,16 @@
 
 import SwiftUI
 
-import ReconnectCore
+struct SettingsWindow: Scene {
 
-@main @MainActor
-struct ReconnectMenuApp: App {
-
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
-
-    @State var applicationModel = ApplicationModel()
+    static let id = "settings"
 
     var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            StatusIcon()
-                .environment(applicationModel)
+        Window("Settings", id: Self.id) {
+            SettingsView()
         }
-
+        .handlesExternalEvents(matching: [.settings])
+        .windowResizability(.contentSize)
     }
+
 }

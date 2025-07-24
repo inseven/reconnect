@@ -70,10 +70,15 @@ struct SettingsView: View {
                 Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
             }
             Section("Serial Devices") {
-                ForEach(Array(applicationModel.serialDevices)) { device in
-                    Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
-                    .foregroundStyle(device.isAvailable ? .primary : .secondary)
-                    .disabled(!device.isAvailable)
+                if applicationModel.isDaemonConnected {
+                    ForEach(Array(applicationModel.serialDevices)) { device in
+                        Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
+                            .foregroundStyle(device.isAvailable ? .primary : .secondary)
+                            .disabled(!device.isAvailable)
+                    }
+                } else {
+                    Text("Unable to connect to reconnectd.")
+                        .foregroundStyle(.secondary)
                 }
             }
         }

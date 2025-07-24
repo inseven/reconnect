@@ -42,23 +42,35 @@ struct BrowserWindow: Scene {
             if applicationModel.isDeviceConnected {
                 BrowserView(browserModel: browserModel)
             } else {
-                ContentUnavailableView {
-                    Label {
-                        Text("Connecting...")
-                    } icon: {
-                        AnimatedImage(named: "cnt")
-                            .frame(width: 240, height: 70)
+                if !applicationModel.isDaemonConnected {
+                    ContentUnavailableView {
+                        Label("Daemon Not Running", systemImage: "exclamationmark.octagon")
+                    } description: {
+                        Text("Reconnect is unable to connect to reconnectd. This manages the serial connection and allows both the main Reconnect and menu bar apps to talk to your Psion. Restarting your computer might help.")
                     }
-                } description: {
-                    Text("Make sure you have selected a serial port.")
-                } actions: {
-                    SettingsLink {
-                        Text("Open Settings...")
+                } else if !applicationModel.hasUsableSerialDevices {
+                    ContentUnavailableView {
+                        Label("Not Connected", systemImage: "cable.connector.slash")
+                    } description: {
+                        Text("No serial devices available. Make sure you have connected and enabled a serial adapter.")
+                    } actions: {
+                        SettingsButton()
+                    }
+                } else {
+                    ContentUnavailableView {
+                        Label {
+                            Text("Connecting...")
+                        } icon: {
+                            ProgressAnimation("cnt")
+                        }
+                    } actions: {
+                        SettingsButton()
                     }
                 }
             }
         }
         .commands {
+            SettingsCommands()
             SparkleCommands(applicationModel: applicationModel)
             HelpCommands()
             FileCommands(browserModel: browserModel)

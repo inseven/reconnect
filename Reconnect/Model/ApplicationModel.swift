@@ -80,8 +80,9 @@ class ApplicationModel: NSObject {
     var updaterController: SPUStandardUpdaterController!
 
     // Daemon state; synchronized on main.
-    var serialDevices: [SerialDevice] = []
-    var isDeviceConnected: Bool = false
+    var isDaemonConnected = false
+    var serialDevices = [SerialDevice]()
+    var isDeviceConnected = false
 
     // Client servers; synchronized on main.
     // In the future when we support multiple connected devices, these should be accessed via a thread-safe pool.
@@ -230,6 +231,16 @@ extension ApplicationModel: SPUUpdaterDelegate {
 }
 
 extension ApplicationModel: DaemonClientDelegate {
+
+    func daemonClientDidConnect(_ daemonClient: DaemonClient) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDaemonConnected = true
+    }
+
+    func daemonClientDidDisconnect(_ daemonClient: DaemonClient) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDaemonConnected = false
+    }
 
     func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))

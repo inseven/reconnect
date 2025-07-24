@@ -27,6 +27,7 @@ extension URL {
     public static let transfers = URL(string: "x-reconnect://transfers")!
     public static let programManager = URL(string: "x-reconnect://program-manager")!
     public static let psionSoftwareIndex = URL(string: "x-reconnect://psion-software-index")!
+    public static let settings = URL(string: "x-reconnect://settings")!
     public static let update = URL(string: "x-reconnect://update")!
 
     public static let donate = URL(string: "https://jbmorley.co.uk/support")!

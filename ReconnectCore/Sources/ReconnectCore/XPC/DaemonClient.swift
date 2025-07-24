@@ -24,6 +24,8 @@ import SwiftUI
 @MainActor
 public protocol DaemonClientDelegate: NSObject {
 
+    func daemonClientDidConnect(_ daemonClient: DaemonClient)
+    func daemonClientDidDisconnect(_ daemonClient: DaemonClient)
     func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool)
     func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice])
 
@@ -32,23 +34,13 @@ public protocol DaemonClientDelegate: NSObject {
 @Observable
 public class DaemonClient {
 
-    enum ConnectionState {
-        case idle
-        case connecting
-        case connected
-    }
-
+    // Synchronized on main.
     public weak var delegate: DaemonClientDelegate? = nil
-
-    // Synchornized on main.
-    // TODO: Ultimately this class shouldn't store state.
-    public var isConnectedToDaemon: Bool = false
 
     private let logger = Logger()
     private let workQueue = DispatchQueue(label: "DaemonClient.workQueue")
 
     // Synchronized on workQueue.
-    private let state: ConnectionState = .idle
     private var connection: NSXPCConnection! // TODO: This is a bit gross
     private var proxy: (any DaemonInterface)?  // TODO: I don't know if I should store this?
 
@@ -72,9 +64,12 @@ public class DaemonClient {
                 // TODO: What thread are we on here?
                 self?.logger.notice("Daemon connection invalidated; reconnecting...")
                 DispatchQueue.main.async {
-                    self?.isConnectedToDaemon = false
+                    guard let self else {
+                        return
+                    }
+                    self.delegate?.daemonClientDidDisconnect(self)
                     // TODO: Track this in some class state and implement some kind of exponential backoff.
-                    self?.connect()
+                    self.connect()
                 }
             }
             connection.resume()
@@ -90,8 +85,7 @@ public class DaemonClient {
             // We're forcing a connection here; I seem to remember we always had to do this to force it to actually work.
             proxy.doSomething { response in
                 DispatchQueue.main.async {
-                    print("connected = true")
-                    self.isConnectedToDaemon = true
+                    self.delegate?.daemonClientDidConnect(self)
                 }
                 print("XPC: Response from service: \(response)")
             }

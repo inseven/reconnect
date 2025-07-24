@@ -24,10 +24,8 @@ struct StatusIcon: View {
 
     @Environment(ApplicationModel.self) var applicationModel
 
-    var daemonClient: DaemonClient
-
     var body: some View {
-        if !daemonClient.isConnectedToDaemon {
+        if !applicationModel.isDaemonConnected {
             Image("StatusUnknown")
                 .interpolation(.none)
 

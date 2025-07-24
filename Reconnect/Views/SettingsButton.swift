@@ -18,24 +18,19 @@
 
 import SwiftUI
 
-import ReconnectCore
+import Diligence
+import Interact
 
-@main @MainActor
-struct ReconnectMenuApp: App {
+struct SettingsButton: View {
 
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    @Environment(\.openWindow) private var openWindow
 
-    @State var applicationModel = ApplicationModel()
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
+    var body: some View {
+        Button {
+            openWindow(id: SettingsWindow.id)
         } label: {
-            StatusIcon()
-                .environment(applicationModel)
+            Text("Open Settings...")
         }
-
     }
+
 }

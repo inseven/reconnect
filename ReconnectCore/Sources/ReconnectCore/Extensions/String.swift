@@ -31,6 +31,8 @@ public extension String {
 
     static let daemonSericeName = "uk.co.jbmorley.reconnect.apps.apple.xpc.daemon"
 
+    static let settingsWindowIdentifier = "settings"
+
     var deletingLastWindowsPathComponent: String {
         return windowsPathComponents
             .dropLast()
