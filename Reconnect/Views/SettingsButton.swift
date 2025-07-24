@@ -21,15 +21,36 @@ import SwiftUI
 import Diligence
 import Interact
 
-struct SettingsButton: View {
+struct SettingsButton<Label: View>: View {
+
+    @Environment(ApplicationModel.self) private var applicationModel
 
     @Environment(\.openWindow) private var openWindow
 
+    let label: Label
+    let section: SettingsView.SettingsSection
+
+    init(section: SettingsView.SettingsSection = .general, @ViewBuilder label: () -> Label) {
+        self.label = label()
+        self.section = section
+    }
+
     var body: some View {
         Button {
+            applicationModel.activeSettingsSection = section
             openWindow(id: SettingsWindow.id)
         } label: {
-            Text("Open Settings...")
+            label
+        }
+    }
+
+}
+
+extension SettingsButton where Label == Text {
+
+    init(_ title: LocalizedStringKey = "Open Settings...", section: SettingsView.SettingsSection = .general) {
+        self.init(section: section) {
+            Text(title)
         }
     }
 

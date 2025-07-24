@@ -26,8 +26,9 @@ struct SettingsWindow: Scene {
         Window("Settings", id: Self.id) {
             SettingsView()
         }
-        .handlesExternalEvents(matching: [.settings])
+        .handlesExternalEvents(matching: [.settings, .settingsGeneral, .settingsConnections])
         .windowResizability(.contentSize)
+        // TODO: Window resize etc.
     }
 
 }

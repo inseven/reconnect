@@ -24,6 +24,11 @@ import ReconnectCore
 
 struct SettingsView: View {
 
+    enum SettingsSection {
+        case general
+        case connections
+    }
+
     @Environment(ApplicationModel.self) private var applicationModel
 
     @State var error: Error? = nil
@@ -57,34 +62,62 @@ struct SettingsView: View {
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
-        Form {
-            Section("Downloads") {
-                FilePicker("Destination",
-                           url: $applicationModel.downloadsURL,
-                           options: [.canChooseDirectories, .canCreateDirectories])
+        NavigationSplitView {
+            List(selection: $applicationModel.activeSettingsSection) {
+                Label("General", systemImage: "gear")
+                    .tag(SettingsSection.general)
+                Label("Connections", systemImage: "cable.connector")
+                    .tag(SettingsSection.connections)
             }
-            Section("Screenshots") {
-                FilePicker("Destination",
-                           url: $applicationModel.screenshotsURL,
-                           options: [.canChooseDirectories, .canCreateDirectories])
-                Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
-            }
-            Section("Serial Devices") {
-                if applicationModel.isDaemonConnected {
-                    ForEach(Array(applicationModel.serialDevices)) { device in
-                        Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
-                            .foregroundStyle(device.isAvailable ? .primary : .secondary)
-                            .disabled(!device.isAvailable)
+        } detail: {
+            switch applicationModel.activeSettingsSection {
+            case .general:
+                Form {
+                    Section {
+                        Toggle("Run in Background", isOn: Binding.constant(true))
+                    } footer: {
+                        HStack {
+                            Text("Keep Reconnect running in the menu bar and start at login to automatically connect to your Psion and perform housekeeping tasks.")
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                                .font(.callout)
+                            Spacer()
+                        }
                     }
-                } else {
-                    Text("Unable to connect to reconnectd.")
-                        .foregroundStyle(.secondary)
+                    Section("Downloads") {
+                        FilePicker("Destination",
+                                   url: $applicationModel.downloadsURL,
+                                   options: [.canChooseDirectories, .canCreateDirectories])
+                    }
+                    Section("Screenshots") {
+                        FilePicker("Destination",
+                                   url: $applicationModel.screenshotsURL,
+                                   options: [.canChooseDirectories, .canCreateDirectories])
+                        Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
+                    }
                 }
+                .navigationTitle("General")
+            case .connections:
+                Form {
+                    Section("Serial Devices") {
+                        if applicationModel.isDaemonConnected {
+                            ForEach(Array(applicationModel.serialDevices)) { device in
+                                Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
+                                    .foregroundStyle(device.isAvailable ? .primary : .secondary)
+                                    .disabled(!device.isAvailable)
+                            }
+                        } else {
+                            Text("Unable to connect to reconnectd.")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .navigationTitle("Connections")
             }
         }
         .formStyle(.grouped)
         .presents($error)
-        .frame(width: 500)
+        .frame(width: 600)
         .frame(minHeight: 600)
     }
 

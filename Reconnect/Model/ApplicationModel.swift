@@ -79,6 +79,8 @@ class ApplicationModel: NSObject {
     let daemonClient = DaemonClient()
     var updaterController: SPUStandardUpdaterController!
 
+    var activeSettingsSection: SettingsView.SettingsSection = .general
+
     // Daemon state; synchronized on main.
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()

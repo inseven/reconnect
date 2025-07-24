@@ -28,8 +28,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         for url in urls {
             if url.isFileURL {
                 applicationModel.showInstallerWindow(url: url)
-            } else if url == URL.update {
+            } else if url == .update {
                 applicationModel.updaterController.updater.checkForUpdates()
+            } else if url == .settings || url == .settingsGeneral {
+                applicationModel.activeSettingsSection = .general
+            } else if url == .settingsConnections {
+                applicationModel.activeSettingsSection = .connections
             } else {
                 print("Ignoring URL '\(url.absoluteString)'...")
             }
