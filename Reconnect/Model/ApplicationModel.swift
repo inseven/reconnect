@@ -69,12 +69,17 @@ class ApplicationModel: NSObject {
         }
     }
 
-    var serialDevices: [SerialDevice] = []
-
+    let logger = Logger()
+    let daemonClient = DaemonClient()
     var updaterController: SPUStandardUpdaterController!
 
-    let daemonClient = DaemonClient()
-    let logger = Logger()
+    // Daemon state; synchronized on main.
+    var serialDevices: [SerialDevice] = []
+    var isDeviceConnected: Bool = false
+
+    // Client servers; synchronized on main.
+    // In the future when we support multiple connected devices, these should be accessed via a thread-safe pool.
+    var fileServer = FileServer()
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -220,10 +225,17 @@ extension ApplicationModel: SPUUpdaterDelegate {
 
 extension ApplicationModel: DaemonClientDelegate {
 
-    func daemonClient(_ daemonClient: ReconnectCore.DaemonClient,
-                      didUpdateSerialDevices devices: [SerialDevice]) {
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
-        print("daemon(didUpdateSerialDevices:)")
+        // We recreate the file-server here as it doesn't appear to be resilient to ncpd restarts.
+        // In future implementations we might wish to think about using this moment to clear a pool of available clients
+        // and allow them to be created lazily.
+        self.fileServer = FileServer()
+        self.isDeviceConnected = isDeviceConnected
+    }
+
+    func daemonClient(_ daemonClient: ReconnectCore.DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
+        dispatchPrecondition(condition: .onQueue(.main))
         self.serialDevices = serialDevices
     }
 

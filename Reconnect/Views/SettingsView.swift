@@ -24,13 +24,9 @@ import ReconnectCore
 
 struct SettingsView: View {
 
+    @Environment(ApplicationModel.self) private var applicationModel
+
     @State var error: Error? = nil
-
-    var applicationModel: ApplicationModel
-
-    init(applicationModel: ApplicationModel) {
-        self.applicationModel = applicationModel
-    }
 
     func isEnabledBinding(forSerialDevice serialDevice: SerialDevice) -> Binding<Bool> {
         return Binding(get: {
@@ -74,7 +70,7 @@ struct SettingsView: View {
                 Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
             }
             Section("Serial Devices") {
-                ForEach(Array(applicationModel.daemonClient.devices)) { device in
+                ForEach(Array(applicationModel.serialDevices)) { device in
                     Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
                     .foregroundStyle(device.isAvailable ? .primary : .secondary)
                     .disabled(!device.isAvailable)

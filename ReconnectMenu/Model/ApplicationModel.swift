@@ -43,9 +43,14 @@ class ApplicationModel: NSObject {
     private let logger = Logger()
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
+    // Daemon state; synchronized on main.
+    var serialDevices: [SerialDevice] = []
+    var isDeviceConnected: Bool = false
+
     override init() {
         selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
         super.init()
+        daemonClient.delegate = self
         start()
     }
 
@@ -80,6 +85,21 @@ class ApplicationModel: NSObject {
                 app.activate()
             }
         }
+    }
+
+}
+
+extension ApplicationModel: DaemonClientDelegate {
+
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDeviceConnected = isDeviceConnected
+
+    }
+    
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.serialDevices = serialDevices
     }
 
 }

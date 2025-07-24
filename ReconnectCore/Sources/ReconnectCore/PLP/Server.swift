@@ -77,12 +77,12 @@ public class Server {
 
         while true {
             let device = self.device()
-            print("Using device \(device)...")
+            logger.notice("Starting NCP for device '\(device)'...")
             ncpd(7501, 115200, "127.0.0.1", device, 0x0000, callback, context)
             DispatchQueue.main.async {
                 self.delegate?.server(server: self, didChangeConnectionState: false)
             }
-            print("ncpd ended")
+            logger.notice("NCP session ended.")
         }
     }
 

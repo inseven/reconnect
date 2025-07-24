@@ -24,8 +24,8 @@ import SwiftUI
 @MainActor
 public protocol DaemonClientDelegate: NSObject {
 
-//    func daemonClient(_ daemonClient: DaemonClient, didUpdateConnectionState isConnected: Bool)  // TODO: Devices details?
-    func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices devices: [SerialDevice])
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool)
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice])
 
 }
 
@@ -43,8 +43,6 @@ public class DaemonClient {
     // Synchornized on main.
     // TODO: Ultimately this class shouldn't store state.
     public var isConnectedToDaemon: Bool = false
-    public var isConnected: Bool = false
-    public var devices: [SerialDevice] = []
 
     private let logger = Logger()
     private let workQueue = DispatchQueue(label: "DaemonClient.workQueue")
@@ -75,6 +73,7 @@ public class DaemonClient {
                 self?.logger.notice("Daemon connection invalidated; reconnecting...")
                 DispatchQueue.main.async {
                     self?.isConnectedToDaemon = false
+                    // TODO: Track this in some class state and implement some kind of exponential backoff.
                     self?.connect()
                 }
             }
@@ -136,14 +135,12 @@ extension DaemonClient: DaemonClientInterface {
 
     public func setIsConnected(_ isConnected: Bool) {
         DispatchQueue.main.async {
-            self.isConnected = isConnected
+            self.delegate?.daemonClient(self, didUpdateDeviceConnectionState: isConnected)
         }
     }
 
     public func setSerialDevices(_ devices: [SerialDevice]) {
-        print("set serial devices \(devices)")
         DispatchQueue.main.async {
-            self.devices = devices
             self.delegate?.daemonClient(self, didUpdateSerialDevices: devices)
         }
     }

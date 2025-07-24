@@ -22,6 +22,8 @@ import ReconnectCore
 
 struct StatusIcon: View {
 
+    @Environment(ApplicationModel.self) var applicationModel
+
     var daemonClient: DaemonClient
 
     var body: some View {
@@ -29,7 +31,7 @@ struct StatusIcon: View {
             Image("StatusUnknown")
                 .interpolation(.none)
 
-        } else if daemonClient.isConnected {
+        } else if applicationModel.isDeviceConnected {
             Image("StatusConnected")
                 .interpolation(.none)
         } else {

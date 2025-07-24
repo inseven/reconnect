@@ -72,7 +72,7 @@ struct MainMenu: View {
         } label: {
             Text("Add/Remove Programs...")
         }
-        .disabled(!applicationModel.daemonClient.isConnected)
+        .disabled(!applicationModel.isDeviceConnected)
         Divider()
         Button {
             applicationModel.openReconnect(.about)
@@ -80,7 +80,7 @@ struct MainMenu: View {
             Text("About...")
         }
         Menu("Settings") {
-            ForEach(applicationModel.daemonClient.devices) { device in
+            ForEach(applicationModel.serialDevices) { device in
                 Toggle(isOn: isEnabledBinding(forSerialDevice: device)) {
                     Text(device.path)
                         .foregroundStyle(device.isAvailable ? .primary : .secondary)
