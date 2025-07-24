@@ -26,7 +26,7 @@ class Daemon: NSObject {
     private let logger = Logger(subsystem: "reconnectd", category: "Daemon")
     private let listener = NSXPCListener(machServiceName: .daemonSericeName)
     private let serialDeviceMonitor = SerialDeviceMonitor()
-    private let sessionManager = Server()
+    private let sessionManager = NCPSessionManager()
 
     // Dynamic property generating an array of SerialDevice instances that represent the union of available and
     // previously enabled devices. Intended as a convenience for updating connected clients.
@@ -168,11 +168,11 @@ extension Daemon: SerialDeviceMonitorDelegate {
 
 }
 
-extension Daemon: ServerDelegate {
+extension Daemon: NCPSessionManagerDelegate {
 
-    func server(server: ReconnectCore.Server, didChangeConnectionState isConnected: Bool) {
+    func sessionManager(_ sessionManager: NCPSessionManager, didChangeConnectionState isConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
-        logger.notice("isConnected = \(isConnected)")
+        logger.notice("Device connection state changed (isConnected = \(isConnected)).")
         self.isConnected = isConnected
         withConnections { proxy in
             proxy.setIsConnected(isConnected)

@@ -22,16 +22,15 @@ import Foundation
 import ncp
 
 // Callbacks on main.
-public protocol ServerDelegate: NSObject {
+public protocol NCPSessionManagerDelegate: NSObject {
 
-    func server(server: Server, didChangeConnectionState isConnected: Bool)
+    func sessionManager(_ sessionManager: NCPSessionManager, didChangeConnectionState isConnected: Bool)
 
 }
 
-// TODO: Rename this?
-public class Server {
+public class NCPSessionManager {
 
-    public weak var delegate: ServerDelegate? = nil
+    public weak var delegate: NCPSessionManagerDelegate? = nil
 
     private var lock = NSLock()
     private var logger = Logger(subsystem: "PLP", category: "Server")
@@ -68,10 +67,10 @@ public class Server {
                 return
             }
             print("status = \(status)")
-            let server = Unmanaged<Server>.fromOpaque(context).takeUnretainedValue()
+            let sessionManager = Unmanaged<NCPSessionManager>.fromOpaque(context).takeUnretainedValue()
             DispatchQueue.main.sync {
                 let isConnected = status == 1 ? true : false
-                server.delegate?.server(server: server, didChangeConnectionState: isConnected)
+                sessionManager.delegate?.sessionManager(sessionManager, didChangeConnectionState: isConnected)
             }
         }
 
@@ -80,7 +79,7 @@ public class Server {
             logger.notice("Starting NCP for device '\(device)'...")
             ncpd(7501, 115200, "127.0.0.1", device, 0x0000, callback, context)
             DispatchQueue.main.async {
-                self.delegate?.server(server: self, didChangeConnectionState: false)
+                self.delegate?.sessionManager(self, didChangeConnectionState: false)
             }
             logger.notice("NCP session ended.")
         }
