@@ -23,7 +23,7 @@ import SwiftUI
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
-    private let logger = Logger()
+//    private let logger = Logger()
     private let service = SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -36,22 +36,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func enableDaemon() {
         do {
-            logger.notice("Registering reconnectd...")
+//            logger.notice("Registering reconnectd...")
             try SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist").register()
-            logger.notice("Successfully registered reconnectd")
+//            logger.notice("Successfully registered reconnectd")
         } catch {
-            logger.error("Failed to register reconnectd with error '\(error)'")
+//            logger.error("Failed to register reconnectd with error '\(error)'")
         }
     }
 
     func disableDaemon() {
         do {
-            logger.notice("Unregistering reconnectd...")
+//            logger.notice("Unregistering reconnectd...")
             try SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist").unregister()
-            logger.notice("Successfully unregistered reconnectd")
+//            logger.notice("Successfully unregistered reconnectd")
             // TODO: Wait for the daemon to disappear before continuing.
         } catch {
-            logger.error("Failed to unregister reconnectd with error '\(error)'")
+//            logger.error("Failed to unregister reconnectd with error '\(error)'")
         }
     }
 

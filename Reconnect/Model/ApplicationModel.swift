@@ -48,7 +48,7 @@ class ApplicationModel: NSObject {
             do {
                 try keyedDefaults.set(securityScopedURL: downloadsURL, forKey: .downloadsURL)
             } catch {
-                logger.error("Failed to save downloads path with error '\(error)'")
+//                logger.error("Failed to save downloads path with error '\(error)'")
             }
         }
     }
@@ -64,7 +64,7 @@ class ApplicationModel: NSObject {
             do {
                 try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .screenshotsURL)
             } catch {
-                logger.error("Failed to save screenshots path with error '\(error)'")
+//                logger.error("Failed to save screenshots path with error '\(error)'")
             }
         }
     }
@@ -75,7 +75,7 @@ class ApplicationModel: NSObject {
             .isEmpty
     }
 
-    let logger = Logger()
+//    let logger = Logger()
     let daemonClient = DaemonClient()
     var updaterController: SPUStandardUpdaterController!
 
@@ -212,7 +212,7 @@ class ApplicationModel: NSObject {
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            logger.debug("Creating new installer window for '\(url)'...")
+//            logger.debug("Creating new installer window for '\(url)'...")
             window = NSInstallerWindow(url: url)
             window?.center()
         }
