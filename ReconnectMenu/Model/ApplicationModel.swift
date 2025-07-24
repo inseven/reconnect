@@ -30,25 +30,15 @@ class ApplicationModel: NSObject {
         case selectedDevices
     }
 
-    var daemonClient = DaemonClient()
-
-    private var selectedDevices: Set<String> {
-        didSet {
-            // TODO: Can I read these from the group?
-            keyedDefaults.set(Array(selectedDevices), forKey: .selectedDevices)
-            update()
-        }
-    }
+    let daemonClient = DaemonClient()
 
     private let logger = Logger()
-    private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
     // Daemon state; synchronized on main.
     var serialDevices: [SerialDevice] = []
     var isDeviceConnected: Bool = false
 
     override init() {
-        selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
         super.init()
         daemonClient.delegate = self
         start()
@@ -65,11 +55,6 @@ class ApplicationModel: NSObject {
         // the parent.
         NSRunningApplication.terminateRunningApplications(withBundleIdentifier: .browserApplicationBundleIdentifier)
         NSApplication.shared.terminate(nil)
-    }
-
-    func update() {
-        // TODO: I wonder if I could explicitly manage this in the daemon?
-        daemonClient.setSelectedDevices(Array(selectedDevices))
     }
 
     func openReconnect(_ url: URL) {

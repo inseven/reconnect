@@ -98,12 +98,6 @@ public class DaemonClient {
         }
     }
 
-    // TODO: Set and unset?
-    // TODO: Remove this!
-    public func setSelectedDevices(_ devices: [String]) {
-        proxy?.setSelectedSerialDevices(devices)
-    }
-
     private func withProxy<T>(completion: @escaping (Result<T, Error>) -> Void, perform: (any DaemonInterface) -> T) {
         proxy = connection.remoteObjectProxyWithErrorHandler { error in
             completion(.failure(error))

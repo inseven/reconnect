@@ -189,16 +189,6 @@ extension Daemon: DaemonInterface {
         reply("Hello from XPC Service!")
     }
 
-    // TODO: Remove this.
-    public func setSelectedSerialDevices(_ selectedSerialDevices: [String]) {
-        logger.notice("Updating selected serial devices...")
-        DispatchQueue.main.async {
-            self.selectedDevices = Set(selectedSerialDevices)
-            self.reconfigureSessionManager()
-            self.updateConnectedDevices()
-        }
-    }
-
     func enableSerialDevice(_ path: String) {
         logger.notice("Enabling serial device '\(path)'...")
         DispatchQueue.main.async {
