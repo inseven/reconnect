@@ -33,7 +33,7 @@ public class NCPSessionManager {
     public weak var delegate: NCPSessionManagerDelegate? = nil
 
     private var lock = NSLock()
-//    private var logger = Logger(subsystem: "PLP", category: "Server")
+    private var logger = Logger(subsystem: "PLP", category: "Server")
 
     private var threadID: pthread_t? = nil  // Synchronized with lock.
     private var devices: [String] = []  // Synchronized with lock.
@@ -76,12 +76,12 @@ public class NCPSessionManager {
 
         while true {
             let device = self.device()
-//            logger.notice("Starting NCP for device '\(device)'...")
+            logger.notice("Starting NCP for device '\(device)'...")
             ncpd(7501, 115200, "127.0.0.1", device, 0x0000, callback, context)
             DispatchQueue.main.async {
                 self.delegate?.sessionManager(self, didChangeConnectionState: false)
             }
-//            logger.notice("NCP session ended.")
+            logger.notice("NCP session ended.")
         }
     }
 
@@ -102,7 +102,7 @@ public class NCPSessionManager {
             return
         }
 
-//        logger.notice("Updating serial devices \(devices)")
+        logger.notice("Updating serial devices \(devices)")
 
         let needsRestart = lock.withLock {
             guard self.devices != devices else {
@@ -113,11 +113,11 @@ public class NCPSessionManager {
         }
 
         guard needsRestart else {
-//            logger.notice("Serial devices haven't changed; ignoring.")
+            logger.notice("Serial devices haven't changed; ignoring.")
             return
         }
 
-//        logger.notice("Restarting ncpd...")
+        logger.notice("Restarting ncpd...")
         // TODO: Would it be better to use SIGHUP here?
         pthread_kill(threadID, SIGINT)
     }

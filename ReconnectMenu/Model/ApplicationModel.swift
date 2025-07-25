@@ -32,7 +32,7 @@ class ApplicationModel: NSObject {
 
     let daemonClient = DaemonClient()
 
-//    private let logger = Logger()
+    private let logger = Logger()
 
     // Daemon state; synchronized on main.
     var isDaemonConnected = false

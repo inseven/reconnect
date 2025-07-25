@@ -37,7 +37,7 @@ public class DaemonClient {
     // Synchronized on main.
     public weak var delegate: DaemonClientDelegate? = nil
 
-//    private let logger = Logger()
+    private let logger = Logger()
     private let workQueue = DispatchQueue(label: "DaemonClient.workQueue")
 
     // Synchronized on workQueue.
@@ -50,7 +50,7 @@ public class DaemonClient {
 
     public func connect() {
         workQueue.async { [self] in
-//            logger.notice("Connecting...")
+            logger.notice("Connecting...")
             connection = NSXPCConnection(machServiceName: .daemonSericeName,
                                          options: [])
             connection.remoteObjectInterface = .daemonInterface
@@ -58,11 +58,11 @@ public class DaemonClient {
             connection.exportedObject = self
             connection.interruptionHandler = { [weak self] in
                 // TODO: What thread are we on here?
-//                self?.logger.notice("Daemon connection interrupted.")
+                self?.logger.notice("Daemon connection interrupted.")
             }
             connection.invalidationHandler = { [weak self] in
                 // TODO: What thread are we on here?
-//                self?.logger.notice("Daemon connection invalidated; reconnecting...")
+                self?.logger.notice("Daemon connection invalidated; reconnecting...")
                 DispatchQueue.main.async {
                     guard let self else {
                         return
@@ -134,7 +134,7 @@ extension DaemonClient: DaemonClientInterface {
     }
 
     public func keepalive(count: Int) {
-//        logger.notice("Received daemon keepalive (\(count)).")
+        logger.notice("Received daemon keepalive (\(count)).")
     }
 
 }
