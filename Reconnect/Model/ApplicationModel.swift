@@ -72,12 +72,12 @@ class ApplicationModel: NSObject {
 
     public var openAtLogin: Bool {
         get {
-            let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu-login-item.plist")
+            let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
             return service.status == .enabled
         }
         set {
             withMutation(keyPath: \.openAtLogin) {
-                let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu-login-item.plist")
+                let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
                 do {
                     if newValue {
                         if service.status == .enabled {
@@ -158,9 +158,11 @@ class ApplicationModel: NSObject {
 //        // In debug, we always restart the menu bar applicaiton to ease development.
 //        terminateRunningMenuApplications()
 //#endif
-        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
+        let embeddedAppURL = Bundle.main.bundleURL.appendingPathComponents(["Contents", "Library", "LoginItems", "Reconnect Menu.app"])
+
+//        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
         let openConfiguration = NSWorkspace.OpenConfiguration()
-        openConfiguration.allowsRunningApplicationSubstitution = false
+//        openConfiguration.allowsRunningApplicationSubstitution = false
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
     }
 
@@ -169,7 +171,8 @@ class ApplicationModel: NSObject {
     }
 
     private func terminateAnyIncompatibleMenuBarApplications() {
-        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
+//        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
+        let embeddedAppURL = Bundle.main.bundleURL.appendingPathComponents(["Contents", "Library", "LoginItems", "Reconnect Menu.app"])
         let expectedHash = getCDHashForBinary(at: embeddedAppURL)
         let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)
         for app in runningApps {

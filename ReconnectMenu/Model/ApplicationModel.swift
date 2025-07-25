@@ -59,7 +59,8 @@ class ApplicationModel: NSObject {
     }
 
     func openReconnect(_ url: URL) {
-        let reconnectURL = Bundle.main.bundleURL.deletingLastPathComponents(3)
+        // Our app is at in Reconnect.app/Contents/Library/LoginItems/Reconnect Menu.app.
+        let reconnectURL = Bundle.main.bundleURL.deletingLastPathComponents(4)
         let openConfiguration = NSWorkspace.OpenConfiguration()
         openConfiguration.allowsRunningApplicationSubstitution = false
         openConfiguration.activates = true
