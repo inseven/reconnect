@@ -96,9 +96,10 @@ class ApplicationModel: NSObject {
     @MainActor func quit() {
         // We terminate any running instances of the main Reconnect app as it doesn't make sense for them to run
         // standalone if there's nothing running the PLP sessions.
-        // In the future, we should look to inverting our bundle and process architecture and making the menu bar app
-        // the parent.
-        NSRunningApplication.terminateRunningApplications(withBundleIdentifier: .browserApplicationBundleIdentifier)
+        // quitting, and the main app will also attempt to quit the menu bar (if running in the background is disabled)
+        // which can lead to livelock.
+        NSRunningApplication.terminateRunningApplications(bundleIdentifier: .browserApplicationBundleIdentifier,
+                                                          waitForCompletion: false)
         NSApplication.shared.terminate(nil)
     }
 
