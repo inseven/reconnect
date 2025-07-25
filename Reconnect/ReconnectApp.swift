@@ -76,7 +76,9 @@ struct ReconnectApp: App {
                 Credit("Matt Sephton")
                 Credit("Pavlos Vinieratos")
                 Credit("Sarah Barbour")
-                Credit("Tom Sutcliffe")
+            }
+            Acknowledgements("Supporters") {
+                Credit("Joanne Wong")
             }
         } licenses: {
             (.reconnect)
