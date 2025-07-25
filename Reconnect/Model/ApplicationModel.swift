@@ -70,22 +70,26 @@ class ApplicationModel: NSObject {
         }
     }
 
+    let menuApplicationLoginService = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
+
     public var openAtLogin: Bool {
         get {
-            let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
-            return service.status == .enabled
+            access(keyPath: \.openAtLogin)
+            return menuApplicationLoginService.status == .enabled
         }
         set {
             withMutation(keyPath: \.openAtLogin) {
-                let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
+                print("Login item status = \(menuApplicationLoginService.status == .enabled)")
                 do {
                     if newValue {
-                        if service.status == .enabled {
-                            try? service.unregister()
+                        if menuApplicationLoginService.status == .enabled {
+                            try? menuApplicationLoginService.unregister()
                         }
-                        try service.register()
+                        print("Registering login item...")
+                        try menuApplicationLoginService.register()
                     } else {
-                        try service.unregister()
+                        print("Unregistering login item...")
+                        try menuApplicationLoginService.unregister()
                     }
                 } catch {
                     print("Failed to update service with error \(error).")
@@ -166,7 +170,7 @@ class ApplicationModel: NSObject {
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
     }
 
-    nonisolated private func terminateRunningMenuApplications() {
+    nonisolated func terminateRunningMenuApplications() {
         NSRunningApplication.terminateRunningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)
     }
 

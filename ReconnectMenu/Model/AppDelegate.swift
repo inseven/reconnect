@@ -25,8 +25,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let logger = Logger()
     private let service = SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist")
+    private var ownsDaemon = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        let runningInstances = NSRunningApplication.runningApplications(withBundleIdentifier: Bundle.main.bundleIdentifier!)
+        let otherInstances = runningInstances.filter { $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }
+        guard otherInstances.isEmpty else {
+            NSApp.terminate(nil)
+            return
+        }
         enableDaemon()
     }
 
@@ -35,6 +42,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func enableDaemon() {
+        ownsDaemon = true
         do {
             logger.notice("Registering reconnectd...")
             try SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist").register()
@@ -45,6 +53,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func disableDaemon() {
+        guard ownsDaemon else {
+            return
+        }
         do {
             logger.notice("Unregistering reconnectd...")
             try SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist").unregister()
