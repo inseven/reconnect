@@ -90,7 +90,6 @@ struct MainMenu: View {
             Button("All Settings...") {
                 applicationModel.openReconnect(.settings)
             }
-            Toggle("Open at Login", isOn: $application.openAtLogin)
         }
         Divider()
         Button("Check for Updates...") {
