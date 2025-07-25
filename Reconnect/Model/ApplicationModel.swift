@@ -125,8 +125,9 @@ class ApplicationModel: NSObject {
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
     }
 
-    nonisolated private func terminateRunningMenuApplications() {
-        NSRunningApplication.terminateRunningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)
+    nonisolated func terminateRunningMenuApplications() {
+        NSRunningApplication.terminateRunningApplications(bundleIdentifier: .menuApplicationBundleIdentifier,
+                                                          waitForCompletion: true)
     }
 
     private func terminateAnyIncompatibleMenuBarApplications() {
