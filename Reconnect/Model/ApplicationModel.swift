@@ -171,7 +171,8 @@ class ApplicationModel: NSObject {
     }
 
     nonisolated func terminateRunningMenuApplications() {
-        NSRunningApplication.terminateRunningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)
+        NSRunningApplication.terminateRunningApplications(bundleIdentifier: .menuApplicationBundleIdentifier,
+                                                          waitForCompletion: true)
     }
 
     private func terminateAnyIncompatibleMenuBarApplications() {

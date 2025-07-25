@@ -20,10 +20,13 @@ import AppKit
 
 extension NSRunningApplication {
 
-    public static func terminateRunningApplications(withBundleIdentifier bundleIdentifier: String) {
+    public static func terminateRunningApplications(bundleIdentifier: String, waitForCompletion: Bool) {
         let runningApps = runningApplications(withBundleIdentifier: bundleIdentifier)
         for app in runningApps {
             app.terminate()
+        }
+        guard waitForCompletion else {
+            return
         }
         for app in runningApps {
             while !app.isTerminated {
