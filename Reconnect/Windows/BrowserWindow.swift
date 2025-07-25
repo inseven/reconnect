@@ -54,7 +54,7 @@ struct BrowserWindow: Scene {
                     } description: {
                         Text("No serial devices available. Make sure you have connected and enabled a serial adapter.")
                     } actions: {
-                        SettingsButton("Open Connection Settings...", section: .connections)
+                        SettingsButton("Open Connection Settings...", section: .connection)
                     }
                 } else {
                     ContentUnavailableView {

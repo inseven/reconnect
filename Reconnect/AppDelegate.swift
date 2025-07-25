@@ -33,7 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             } else if url == .settings || url == .settingsGeneral {
                 applicationModel.activeSettingsSection = .general
             } else if url == .settingsConnections {
-                applicationModel.activeSettingsSection = .connections
+                applicationModel.activeSettingsSection = .connection
             } else {
                 print("Ignoring URL '\(url.absoluteString)'...")
             }

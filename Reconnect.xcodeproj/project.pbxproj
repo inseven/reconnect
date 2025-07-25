@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
-		D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
+		D84271C22E33209F006224FE /* Reconnect Menu.app in Resources */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; };
 		D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D851ED2D2E2C33C70067E0CD /* ReconnectCore */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
@@ -68,16 +68,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D809546A2C4AAA4A00752BBC /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
-			files = (
-				D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D851ED192E2C30E80067E0CD /* Embed XPC Services */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -100,7 +90,7 @@
 		D851ED2F2E2C37760067E0CD /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = Contents/Library/LaunchAgents;
+			dstPath = Contents/Library/LoginItems;
 			dstSubfolderSpec = 1;
 			files = (
 			);
@@ -157,6 +147,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+				"uk.co.jbmorley.reconnect.apps.apple.menu-login-item.plist",
 			);
 			target = D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */;
 		};
@@ -201,16 +192,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		D851ED312E2C37820067E0CD /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+		D84271C12E331FF1006224FE /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist = (
-					CodeSignOnCopy,
-				);
-			};
 			buildPhase = D851ED2F2E2C37760067E0CD /* CopyFiles */;
 			membershipExceptions = (
-				uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist,
+				"uk.co.jbmorley.reconnect.apps.apple.menu-login-item.plist",
 			);
 		};
 		D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
@@ -223,11 +209,11 @@
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D851ED242E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D851ED312E2C37820067E0CD /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = reconnectd; sourceTree = "<group>"; };
+		D851ED242E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = reconnectd; sourceTree = "<group>"; };
 		D891AE502E13722A009EC465 /* ReconnectTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectTests; sourceTree = "<group>"; };
 		D891AE562E137239009EC465 /* ReconnectUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectUITests; sourceTree = "<group>"; };
 		D891AE5D2E13724E009EC465 /* ScreenshotSIS */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ScreenshotSIS; sourceTree = "<group>"; };
-		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
+		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D84271C12E331FF1006224FE /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
 		D891AE922E1373CE009EC465 /* ReconnectPreviews */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectPreviews; sourceTree = "<group>"; };
 		D891AEDA2E13741B009EC465 /* Reconnect */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AF102E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D891AF112E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Reconnect; sourceTree = "<group>"; };
 		D8A75B552E18AF8A007B6DBA /* tools */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8A75B5C2E18AFA2007B6DBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D85414062E29A5E9009DEC42 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = tools; sourceTree = "<group>"; };
@@ -352,7 +338,6 @@
 			buildPhases = (
 				D84964D22C1BFCB600405656 /* Sources */,
 				D84964D32C1BFCB600405656 /* Frameworks */,
-				D809546A2C4AAA4A00752BBC /* CopyFiles */,
 				D84964D42C1BFCB600405656 /* Resources */,
 				D8B1AC522E0F4C220084BFD5 /* Embed Foundation Extensions */,
 				D851ED192E2C30E80067E0CD /* Embed XPC Services */,
@@ -597,6 +582,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D84271C22E33209F006224FE /* Reconnect Menu.app in Resources */,
 				D8E8B4FE2D1529E800405445 /* src in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -862,6 +848,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -898,6 +885,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import Observation
 import os
 import ServiceManagement
 import SwiftUI
@@ -65,6 +66,30 @@ class ApplicationModel: NSObject {
                 try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .screenshotsURL)
             } catch {
                 logger.error("Failed to save screenshots path with error '\(error)'")
+            }
+        }
+    }
+
+    public var openAtLogin: Bool {
+        get {
+            let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu-login-item.plist")
+            return service.status == .enabled
+        }
+        set {
+            withMutation(keyPath: \.openAtLogin) {
+                let service = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu-login-item.plist")
+                do {
+                    if newValue {
+                        if service.status == .enabled {
+                            try? service.unregister()
+                        }
+                        try service.register()
+                    } else {
+                        try service.unregister()
+                    }
+                } catch {
+                    print("Failed to update service with error \(error).")
+                }
             }
         }
     }

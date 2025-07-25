@@ -26,7 +26,7 @@ struct SettingsView: View {
 
     enum SettingsSection {
         case general
-        case connections
+        case connection
     }
 
     @Environment(ApplicationModel.self) private var applicationModel
@@ -64,17 +64,18 @@ struct SettingsView: View {
         @Bindable var applicationModel = applicationModel
         NavigationSplitView {
             List(selection: $applicationModel.activeSettingsSection) {
-                Label("General", systemImage: "gear")
+                Label("General", image: "Extras16")
                     .tag(SettingsSection.general)
-                Label("Connections", systemImage: "cable.connector")
-                    .tag(SettingsSection.connections)
+                Label("Connection", image: "Connected16")
+                    .tag(SettingsSection.connection)
             }
+            .toolbar(removing: .sidebarToggle)
         } detail: {
             switch applicationModel.activeSettingsSection {
             case .general:
                 Form {
                     Section {
-                        Toggle("Run in Background", isOn: Binding.constant(true))
+                        Toggle("Run in Background", isOn: $applicationModel.openAtLogin)
                     } footer: {
                         HStack {
                             Text("Keep Reconnect running in the menu bar and start at login to automatically connect to your Psion and perform housekeeping tasks.")
@@ -97,7 +98,7 @@ struct SettingsView: View {
                     }
                 }
                 .navigationTitle("General")
-            case .connections:
+            case .connection:
                 Form {
                     Section("Serial Devices") {
                         if applicationModel.isDaemonConnected {
