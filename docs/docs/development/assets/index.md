@@ -4,9 +4,9 @@ title: Assets
 
 # Introduction
 
-Reconnect includes assets extracted from the original PsiWin and PsiMac software to try to maintain the original 90s feel of using these devices. They remain the copyright of Psion PLC.
+Reconnect includes assets extracted from the original PsiWin and PsiMac software to try to maintain the original 90s feel of using these devices. Extraction was performed using a combination of [7-Zip](https://www.7-zip.org), [FFmpeg](https://ffmpeg.org), and [ImageMagick](https://imagemagick.org).
 
-Extracting these animations was performed using a combination of 7-Zip, FFmpeg, and ImageMagick.
+*These images remain the copyright of Psion PLC.*
 
 # Extraction
 
