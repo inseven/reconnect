@@ -67,13 +67,25 @@ The complete set of extracted files is displayed here for reference and to ease 
 
 ### Animations
 
+#### BACK.AVI
+
+![BACK.AVI](images/back.gif)
+
 #### CNT.AVI
 
 ![CNT.AVI](images/cnt.gif)
 
+#### CONV.AVI
+
+![CONV.AVI](images/conv.gif)
+
 #### INSTALL.AVI
 
 ![INSTALL.AVI](images/install.gif)
+
+#### REST.AVI
+
+![REST.AVI](images/rest.gif)
 
 #### SYNC.AVI
 
