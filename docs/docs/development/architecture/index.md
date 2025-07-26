@@ -2,7 +2,7 @@
 title: Architecture
 ---
 
-# Introduction
+# Background
 
 Psions communicate using the [Psion Link Protocol](https://thoukydides.github.io/riscos-psifs/plp.html) (PLP). Reconnect builds on top of [plptools](https://github.com/plptools/plptools), a tried-and-tested open source implementation of PLP for posix-friendly systems.
 
