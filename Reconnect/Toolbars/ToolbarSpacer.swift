@@ -20,8 +20,10 @@ import SwiftUI
 
 struct ToolbarSpacer: CustomizableToolbarContent {
 
+    let id: String
+
     var body: some CustomizableToolbarContent {
-        ToolbarItem(id: "spacer") {
+        ToolbarItem(id: id) {
             Spacer()
         }
     }

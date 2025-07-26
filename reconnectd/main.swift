@@ -16,26 +16,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-import ReconnectCore
-
-@main @MainActor
-struct ReconnectMenuApp: App {
-
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
-
-    @State var applicationModel = ApplicationModel()
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            StatusIcon()
-                .environment(applicationModel)
-        }
-
-    }
-}
+let daemon = Daemon()
+daemon.start()
+RunLoop.main.run()

@@ -18,24 +18,17 @@
 
 import SwiftUI
 
-import ReconnectCore
+public struct SettingsCommands: Commands {
 
-@main @MainActor
-struct ReconnectMenuApp: App {
+    @Environment(\.openWindow) private var openWindow
 
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
-
-    @State var applicationModel = ApplicationModel()
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            StatusIcon()
-                .environment(applicationModel)
+    public var body: some Commands {
+        CommandGroup(replacing: .appSettings) {
+            Button("Settings...") {
+                openWindow(id: SettingsWindow.id)
+            }
+            .keyboardShortcut(",", modifiers: [.command])
         }
-
     }
+
 }

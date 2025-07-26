@@ -16,25 +16,19 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import Observation
+import os
+import ServiceManagement
 import SwiftUI
 
 import Interact
 import Sparkle
 import Security
 
+import ReconnectCore
+
 @MainActor @Observable
 class ApplicationModel: NSObject {
-
-    struct SerialDevice: Identifiable {
-
-        var id: String {
-            return path
-        }
-
-        var path: String
-        var available: Bool
-        var enabled: Binding<Bool>
-    }
 
     enum SettingsKey: String {
         case convertFiles
@@ -55,7 +49,7 @@ class ApplicationModel: NSObject {
             do {
                 try keyedDefaults.set(securityScopedURL: downloadsURL, forKey: .downloadsURL)
             } catch {
-                print("Failed to save downloads path with error \(error).")
+                logger.error("Failed to save downloads path with error '\(error)'")
             }
         }
     }
@@ -71,12 +65,59 @@ class ApplicationModel: NSObject {
             do {
                 try keyedDefaults.set(securityScopedURL: screenshotsURL, forKey: .screenshotsURL)
             } catch {
-                print("Failed to save screenshots path with error \(error).")
+                logger.error("Failed to save screenshots path with error '\(error)'")
             }
         }
     }
 
+    let menuApplicationLoginService = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
+
+    public var openAtLogin: Bool {
+        get {
+            access(keyPath: \.openAtLogin)
+            return menuApplicationLoginService.status == .enabled
+        }
+        set {
+            withMutation(keyPath: \.openAtLogin) {
+                print("Login item status = \(menuApplicationLoginService.status == .enabled)")
+                do {
+                    if newValue {
+                        if menuApplicationLoginService.status == .enabled {
+                            try? menuApplicationLoginService.unregister()
+                        }
+                        print("Registering login item...")
+                        try menuApplicationLoginService.register()
+                    } else {
+                        print("Unregistering login item...")
+                        try menuApplicationLoginService.unregister()
+                    }
+                } catch {
+                    print("Failed to update service with error \(error).")
+                }
+            }
+        }
+    }
+
+    var hasUsableSerialDevices: Bool {
+        return !serialDevices
+            .filter { $0.isUsable }
+            .isEmpty
+    }
+
+    let logger = Logger()
+    let daemonClient = DaemonClient()
     var updaterController: SPUStandardUpdaterController!
+
+    var activeSettingsSection: SettingsView.SettingsSection = .general
+
+    // Daemon state; synchronized on main.
+    var isDaemonConnected = false
+    var serialDevices = [SerialDevice]()
+    var isDeviceConnected = false
+
+    // Client servers; synchronized on main.
+    // In the future when we support multiple connected devices, these should be accessed via a thread-safe pool.
+    var fileServer = FileServer()
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -89,6 +130,8 @@ class ApplicationModel: NSObject {
         updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: self,
                                                          userDriverDelegate: nil)
+        daemonClient.delegate = self
+        daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
     }
@@ -113,15 +156,17 @@ class ApplicationModel: NSObject {
     }
 
     private func openMenuApplication() {
-#if !DEBUG
+//#if !DEBUG
         terminateAnyIncompatibleMenuBarApplications()
-#else
-        // In debug, we always restart the menu bar applicaiton to ease development.
-        terminateRunningMenuApplications()
-#endif
-        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
+//#else
+//        // In debug, we always restart the menu bar applicaiton to ease development.
+//        terminateRunningMenuApplications()
+//#endif
+        let embeddedAppURL = Bundle.main.bundleURL.appendingPathComponents(["Contents", "Library", "LoginItems", "Reconnect Menu.app"])
+
+//        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
         let openConfiguration = NSWorkspace.OpenConfiguration()
-        openConfiguration.allowsRunningApplicationSubstitution = false
+//        openConfiguration.allowsRunningApplicationSubstitution = false
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
     }
 
@@ -131,7 +176,8 @@ class ApplicationModel: NSObject {
     }
 
     private func terminateAnyIncompatibleMenuBarApplications() {
-        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
+//        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
+        let embeddedAppURL = Bundle.main.bundleURL.appendingPathComponents(["Contents", "Library", "LoginItems", "Reconnect Menu.app"])
         let expectedHash = getCDHashForBinary(at: embeddedAppURL)
         let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)
         for app in runningApps {
@@ -199,7 +245,7 @@ class ApplicationModel: NSObject {
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            print("Creating new installer window for '\(url)'...")
+            logger.debug("Creating new installer window for '\(url)'...")
             window = NSInstallerWindow(url: url)
             window?.center()
         }
@@ -215,6 +261,34 @@ extension ApplicationModel: SPUUpdaterDelegate {
     nonisolated func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
         // Shut down the menu bar app prior to relanuching the app.
         terminateRunningMenuApplications()
+    }
+
+}
+
+extension ApplicationModel: DaemonClientDelegate {
+
+    func daemonClientDidConnect(_ daemonClient: DaemonClient) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDaemonConnected = true
+    }
+
+    func daemonClientDidDisconnect(_ daemonClient: DaemonClient) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDaemonConnected = false
+    }
+
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        // We recreate the file-server here as it doesn't appear to be resilient to ncpd restarts.
+        // In future implementations we might wish to think about using this moment to clear a pool of available clients
+        // and allow them to be created lazily.
+        self.fileServer = FileServer()
+        self.isDeviceConnected = isDeviceConnected
+    }
+
+    func daemonClient(_ daemonClient: ReconnectCore.DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.serialDevices = serialDevices
     }
 
 }

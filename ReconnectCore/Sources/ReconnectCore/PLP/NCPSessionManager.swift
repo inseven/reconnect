@@ -16,23 +16,27 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import os
 import Foundation
 
 import ncp
 
-public protocol ServerDelegate: NSObject {
+// Callbacks on main.
+public protocol NCPSessionManagerDelegate: NSObject {
 
-    func server(server: Server, didChangeConnectionState isConnected: Bool)
+    func sessionManager(_ sessionManager: NCPSessionManager, didChangeConnectionState isConnected: Bool)
 
 }
 
-public class Server {
+public class NCPSessionManager {
 
-    public weak var delegate: ServerDelegate? = nil
+    public weak var delegate: NCPSessionManagerDelegate? = nil
 
     private var lock = NSLock()
-    var threadID: pthread_t? = nil  // Synchronized with lock.
-    var devices: [String] = []  // Synchronized with lock.
+    private var logger = Logger(subsystem: "PLP", category: "Server")
+
+    private var threadID: pthread_t? = nil  // Synchronized with lock.
+    private var devices: [String] = []  // Synchronized with lock.
 
     func device() -> String {
         print("Getting device...")
@@ -63,21 +67,21 @@ public class Server {
                 return
             }
             print("status = \(status)")
-            let server = Unmanaged<Server>.fromOpaque(context).takeUnretainedValue()
+            let sessionManager = Unmanaged<NCPSessionManager>.fromOpaque(context).takeUnretainedValue()
             DispatchQueue.main.sync {
                 let isConnected = status == 1 ? true : false
-                server.delegate?.server(server: server, didChangeConnectionState: isConnected)
+                sessionManager.delegate?.sessionManager(sessionManager, didChangeConnectionState: isConnected)
             }
         }
 
         while true {
             let device = self.device()
-            print("Using device \(device)...")
+            logger.notice("Starting NCP for device '\(device)'...")
             ncpd(7501, 115200, "127.0.0.1", device, 0x0000, callback, context)
             DispatchQueue.main.async {
-                self.delegate?.server(server: self, didChangeConnectionState: false)
+                self.delegate?.sessionManager(self, didChangeConnectionState: false)
             }
-            print("ncpd ended")
+            logger.notice("NCP session ended.")
         }
     }
 
@@ -89,19 +93,16 @@ public class Server {
         // TODO: ONLY DO THIS ONCE!
         let thread = Thread(block: threadEntryPoint)
         thread.start()
-
-        // TODO: This should probably block until we're ready??
     }
 
     public func setDevices(_ devices: [String]) {
-        // SIGHUP?
         guard let threadID = lock.withLock({
             return self.threadID
         }) else {
             return
         }
 
-        print("Updating serial devices \(devices)")
+        logger.notice("Updating serial devices \(devices)")
 
         let needsRestart = lock.withLock {
             guard self.devices != devices else {
@@ -112,11 +113,12 @@ public class Server {
         }
 
         guard needsRestart else {
-            print("Serial devices haven't changed; ignoring.")
+            logger.notice("Serial devices haven't changed; ignoring.")
             return
         }
 
-        print("Restarting ncpd...")
+        logger.notice("Restarting ncpd...")
+        // TODO: Would it be better to use SIGHUP here?
         pthread_kill(threadID, SIGINT)
     }
 

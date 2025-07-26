@@ -98,8 +98,7 @@ struct InstallerView: View {
                         default:
                             Text(operation.path)
                         }
-                        AnimatedImage(named: "install")
-                            .frame(width: 240, height: 70)
+                        ProgressAnimation("install")
                         ProgressView(value: progress.fractionCompleted)
                     }
                     .padding()

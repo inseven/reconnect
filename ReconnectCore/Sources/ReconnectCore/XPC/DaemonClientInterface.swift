@@ -16,26 +16,27 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-import ReconnectCore
+@objc
+public protocol DaemonClientInterface {
 
-@main @MainActor
-struct ReconnectMenuApp: App {
+    func keepalive(count: Int)
+    func setSerialDevices(_ devices: [SerialDevice])  // TODO: Set?
+    func setIsConnected(_ isConnected: Bool)
+    
+}
 
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
+extension NSXPCInterface {
 
-    @State var applicationModel = ApplicationModel()
-
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            StatusIcon()
-                .environment(applicationModel)
-        }
-
+    static var daemonClientInterface: NSXPCInterface {
+        let interface = NSXPCInterface(with: DaemonClientInterface.self)
+        let allowedClasses = [NSArray.self, SerialDevice.self] as NSSet as Set
+        interface.setClasses(allowedClasses,
+                             for: #selector(DaemonClientInterface.setSerialDevices(_:)),
+                             argumentIndex: 0,
+                             ofReply: false)
+        return interface
     }
+
 }

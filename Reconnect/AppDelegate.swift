@@ -28,11 +28,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         for url in urls {
             if url.isFileURL {
                 applicationModel.showInstallerWindow(url: url)
-            } else if url == URL.update {
+            } else if url == .update {
                 applicationModel.updaterController.updater.checkForUpdates()
+            } else if url == .settings || url == .settingsGeneral {
+                applicationModel.activeSettingsSection = .general
+            } else if url == .settingsConnections {
+                applicationModel.activeSettingsSection = .connection
             } else {
                 print("Ignoring URL '\(url.absoluteString)'...")
             }
+        }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        // TODO: Push into the model?
+        if !applicationModel.openAtLogin {
+            applicationModel.terminateRunningMenuApplications()
         }
     }
 

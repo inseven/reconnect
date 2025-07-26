@@ -20,22 +20,22 @@ import SwiftUI
 
 import ReconnectCore
 
-@main @MainActor
-struct ReconnectMenuApp: App {
+struct StatusIcon: View {
 
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    @Environment(ApplicationModel.self) var applicationModel
 
-    @State var applicationModel = ApplicationModel()
+    var body: some View {
+        if !applicationModel.isDaemonConnected {
+            Image("StatusUnknown")
+                .interpolation(.none)
 
-    var body: some Scene {
-
-        MenuBarExtra {
-            MainMenu()
-                .environment(applicationModel)
-        } label: {
-            StatusIcon()
-                .environment(applicationModel)
+        } else if applicationModel.isDeviceConnected {
+            Image("StatusConnected")
+                .interpolation(.none)
+        } else {
+            Image("StatusDisconnected")
+                .interpolation(.none)
         }
-
     }
+
 }

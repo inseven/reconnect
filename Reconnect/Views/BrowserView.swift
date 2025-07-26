@@ -47,9 +47,9 @@ struct BrowserView: View {
             NavigationToolbar(browserModel: browserModel)
 
             ToolsToolbar(browserModel: browserModel)
-            ToolbarSpacer()
+            ToolbarSpacer(id: "spacer-1")
             FileToolbar(browserModel: browserModel)
-            ToolbarSpacer()
+            ToolbarSpacer(id: "spacer-2")
 
             ToolbarItem(id: "add") {
                 Menu {
@@ -63,7 +63,7 @@ struct BrowserView: View {
                 }
             }
 
-            ToolbarSpacer()
+            ToolbarSpacer(id: "spacer-3")
             BrowserToolbar(browserModel: browserModel)
 
         }

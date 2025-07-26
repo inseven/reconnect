@@ -20,33 +20,106 @@ import SwiftUI
 
 import Interact
 
+import ReconnectCore
+
 struct SettingsView: View {
 
-    var applicationModel: ApplicationModel
+    enum SettingsSection {
+        case general
+        case connection
+    }
 
-    @ObservedObject var application = Application.shared
+    @Environment(ApplicationModel.self) private var applicationModel
 
-    init(applicationModel: ApplicationModel) {
-        self.applicationModel = applicationModel
+    @State var error: Error? = nil
+
+    func isEnabledBinding(forSerialDevice serialDevice: SerialDevice) -> Binding<Bool> {
+        return Binding(get: {
+            return serialDevice.isEnabled
+        }, set: { isEnabled in
+            switch isEnabled {
+            case true:
+                applicationModel.daemonClient.enableSerialDevice(serialDevice.path) { result in
+                    guard case .failure(let error) = result else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self.error = error
+                    }
+                }
+            case false:
+                applicationModel.daemonClient.disableSerialDevice(serialDevice.path) { result in
+                    guard case .failure(let error) = result else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self.error = error
+                    }
+                }
+            }
+        })
     }
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
-        Form {
-            Section("Downloads") {
-                FilePicker("Destination",
-                           url: $applicationModel.downloadsURL,
-                           options: [.canChooseDirectories, .canCreateDirectories])
+        NavigationSplitView {
+            List(selection: $applicationModel.activeSettingsSection) {
+                Label("General", image: "Extras16")
+                    .tag(SettingsSection.general)
+                Label("Connection", image: "Connected16")
+                    .tag(SettingsSection.connection)
             }
-            Section("Screenshots") {
-                FilePicker("Destination",
-                           url: $applicationModel.screenshotsURL,
-                           options: [.canChooseDirectories, .canCreateDirectories])
-                Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
+            .toolbar(removing: .sidebarToggle)
+        } detail: {
+            switch applicationModel.activeSettingsSection {
+            case .general:
+                Form {
+                    Section {
+                        Toggle("Run in Background", isOn: $applicationModel.openAtLogin)
+                    } footer: {
+                        HStack {
+                            Text("Keep Reconnect running in the menu bar and start at login to automatically connect to your Psion and perform housekeeping tasks.")
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                                .font(.callout)
+                            Spacer()
+                        }
+                    }
+                    Section("Downloads") {
+                        FilePicker("Destination",
+                                   url: $applicationModel.downloadsURL,
+                                   options: [.canChooseDirectories, .canCreateDirectories])
+                    }
+                    Section("Screenshots") {
+                        FilePicker("Destination",
+                                   url: $applicationModel.screenshotsURL,
+                                   options: [.canChooseDirectories, .canCreateDirectories])
+                        Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
+                    }
+                }
+                .navigationTitle("General")
+            case .connection:
+                Form {
+                    Section("Serial Devices") {
+                        if applicationModel.isDaemonConnected {
+                            ForEach(Array(applicationModel.serialDevices)) { device in
+                                Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
+                                    .foregroundStyle(device.isAvailable ? .primary : .secondary)
+                                    .disabled(!device.isAvailable)
+                            }
+                        } else {
+                            Text("Unable to connect to reconnectd.")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .navigationTitle("Connections")
             }
         }
         .formStyle(.grouped)
-        .frame(width: 400, height: 400)
+        .presents($error)
+        .frame(width: 600)
+        .frame(minHeight: 600)
     }
 
 }
