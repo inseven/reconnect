@@ -69,24 +69,24 @@ The complete set of extracted files is displayed here for reference and to ease 
 
 #### BACK.AVI
 
-![BACK.AVI](images/back.gif)
+<img title="BACK.AVI" src="images/back.gif" srcset="images/back@2x.gif 2x" />
 
 #### CNT.AVI
 
-![CNT.AVI](images/cnt.gif)
+<img title="CNT.AVI" src="images/cnt.gif" srcset="images/cnt@2x.gif 2x" />
 
 #### CONV.AVI
 
-![CONV.AVI](images/conv.gif)
+<img title="CONV.AVI" src="images/conv.gif" srcset="images/conv@2x.gif 2x" />
 
 #### INSTALL.AVI
 
-![INSTALL.AVI](images/install.gif)
+<img title="INSTALL.AVI" src="images/install.gif" srcset="images/install@2x.gif 2x" />
 
 #### REST.AVI
 
-![REST.AVI](images/rest.gif)
+<img title="REST.AVI" src="images/rest.gif" srcset="images/rest@2x.gif 2x" />
 
 #### SYNC.AVI
 
-![SYNC.AVI](images/sync.gif)
+<img title="SYNC.AVI" src="images/sync.gif" srcset="images/sync@2x.gif 2x" />
