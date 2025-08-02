@@ -194,14 +194,13 @@ extension Daemon: DaemonInterface {
         reply("Hello from XPC Service!")
     }
 
-    // TODO: Accept the configuration.
-    func configureSerialDevice(path: String, baudRate: Int32) {
-        logger.notice("Configure serial device '\(path)', baud rate \(baudRate)...")
+    func configureSerialDevice(path: String, configuration: SerialDeviceConfiguration) {
+        logger.notice("Configure serial device '\(path)', baud rate \(configuration.baudRate)...")
         DispatchQueue.main.async {
-            if baudRate == 0 {
+            if configuration.baudRate == 0 {
                 self.selectedDevices.removeValue(forKey: path)
             } else {
-                self.selectedDevices[path] = SerialDeviceConfiguration(baudRate: baudRate)
+                self.selectedDevices[path] = configuration
             }
             self.reconfigureSessionManager()
             self.updateConnectedDevices()

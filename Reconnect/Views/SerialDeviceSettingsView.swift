@@ -40,22 +40,20 @@ struct SerialDeviceSettingsView: View {
         }
     }
 
-    func setBaudRate(_ baudRate: Int32) {
-        applicationModel.daemonClient.configureSerialDevice(path: device.path, baudRate: baudRate) { result in
-            guard case .failure(let error) = result else {
-                return
-            }
-            DispatchQueue.main.async {
-                self.error = error
-            }
-        }
-    }
-
     func binding() -> Binding<Int32> {
         return Binding {
             return device.configuration.baudRate
         } set: { baudRate in
-            setBaudRate(baudRate)
+            let configuration = SerialDeviceConfiguration(baudRate: baudRate)
+            applicationModel.daemonClient.configureSerialDevice(path: device.path,
+                                                                configuration: configuration) { result in
+                guard case .failure(let error) = result else {
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.error = error
+                }
+            }
         }
     }
 
