@@ -39,38 +39,40 @@ struct BrowserWindow: Scene {
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            if applicationModel.isDeviceConnected {
-                BrowserView(browserModel: browserModel)
-            } else {
-                if !applicationModel.isDaemonConnected {
-                    ContentUnavailableView {
-                        Label("Daemon Not Running", systemImage: "exclamationmark.octagon")
-                    } description: {
-                        Text("Reconnect is unable to connect to reconnectd. This manages the serial connection and allows both the main Reconnect and menu bar apps to talk to your Psion. Restarting your computer might help.")
-                    }
-                } else if !applicationModel.hasUsableSerialDevices {
-                    ContentUnavailableView {
-                        Label("Not Connected", systemImage: "cable.connector.slash")
-                    } description: {
-                        Text("No serial devices available. Make sure you have connected and enabled a serial adapter.")
-                    } actions: {
-                        SettingsButton("Open Connection Settings...", section: .connection)
-                    }
+            VStack {
+                if applicationModel.isDeviceConnected {
+                    BrowserView(browserModel: browserModel)
                 } else {
-                    ContentUnavailableView {
-                        Label {
-                            Text("Connecting...")
-                        } icon: {
-                            ProgressAnimation("cnt")
+                    if !applicationModel.isDaemonConnected {
+                        ContentUnavailableView {
+                            Label("Daemon Not Running", systemImage: "exclamationmark.octagon")
+                        } description: {
+                            Text("Reconnect is unable to connect to reconnectd. This manages the serial connection and allows both the main Reconnect and menu bar apps to talk to your Psion. Restarting your computer might help.")
                         }
-                    } actions: {
-                        SettingsButton()
+                    } else if !applicationModel.hasUsableSerialDevices {
+                        ContentUnavailableView {
+                            Label("Not Connected", systemImage: "cable.connector.slash")
+                        } description: {
+                            Text("No serial devices available. Make sure you have connected and enabled a serial adapter.")
+                        } actions: {
+                            SettingsButton("Open Connection Settings...", section: .devices)
+                        }
+                    } else {
+                        ContentUnavailableView {
+                            Label {
+                                Text("Connecting...")
+                            } icon: {
+                                ProgressAnimation("cnt")
+                            }
+                        } actions: {
+                            SettingsButton()
+                        }
                     }
                 }
             }
+            .opensSettings()
         }
         .commands {
-            SettingsCommands()
             SparkleCommands(applicationModel: applicationModel)
             HelpCommands()
             FileCommands(browserModel: browserModel)
@@ -82,7 +84,7 @@ struct BrowserWindow: Scene {
         .environment(applicationModel)
         .environment(transfersModel)
         .environment(browserModel)
-        .handlesExternalEvents(matching: [.browser])
+        .handlesExternalEvents(matching: [.browser, .settings, .settingsGeneral, .settingsDevices])
     }
 
 }

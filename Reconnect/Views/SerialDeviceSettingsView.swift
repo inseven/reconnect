@@ -65,6 +65,7 @@ struct SerialDeviceSettingsView: View {
                         .tag(baudRate)
                 }
             }
+            .fixedSize(horizontal: true, vertical: false)
             .foregroundStyle(device.isAvailable ? .primary : .secondary)
             .disabled(!device.isAvailable)
         }

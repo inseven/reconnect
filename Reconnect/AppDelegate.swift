@@ -30,10 +30,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 applicationModel.showInstallerWindow(url: url)
             } else if url == .update {
                 applicationModel.updaterController.updater.checkForUpdates()
-            } else if url == .settings || url == .settingsGeneral {
-                applicationModel.activeSettingsSection = .general
-            } else if url == .settingsConnections {
-                applicationModel.activeSettingsSection = .connection
             } else {
                 print("Ignoring URL '\(url.absoluteString)'...")
             }

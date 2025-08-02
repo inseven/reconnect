@@ -122,6 +122,13 @@ class BrowserModel {
     }
 
     func refresh() {
+        self.run {
+            do {
+                self.drives = try self.applicationModel.fileServer.drivesSync()
+            } catch {
+                self.lastError = error
+            }
+        }
         update()
     }
 

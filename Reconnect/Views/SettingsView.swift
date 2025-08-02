@@ -26,68 +26,77 @@ struct SettingsView: View {
 
     enum SettingsSection {
         case general
-        case connection
+        case devices
     }
 
     @Environment(ApplicationModel.self) private var applicationModel
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
-        NavigationSplitView {
-            List(selection: $applicationModel.activeSettingsSection) {
-                Label("General", image: "Extras16")
-                    .tag(SettingsSection.general)
-                Label("Connection", image: "Connected16")
-                    .tag(SettingsSection.connection)
+        TabView(selection: $applicationModel.activeSettingsSection) {
+
+            Form {
+                LabeledContent {
+                    VStack(alignment: .leading) {
+                        Toggle("Run in background", isOn: $applicationModel.openAtLogin)
+                        Text("Keep Reconnect running in the menu bar and start at login to automatically connect to your Psion and perform housekeeping tasks.")
+                            .multilineTextAlignment(.leading)
+                            .font(.footnote)
+                            .frame(width: 300, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                } label: {
+                    Text("Reconnect Menu:")
+                        .font(.headline)
+                }
+
+                LabeledContent {
+                    FilePicker(url: $applicationModel.downloadsURL,
+                               options: [.canChooseDirectories, .canCreateDirectories])
+                } label: {
+                    Text("Downloads:")
+                        .font(.headline)
+                }
+
+                LabeledContent {
+                    VStack(alignment: .leading) {
+                        FilePicker(url: $applicationModel.screenshotsURL,
+                                   options: [.canChooseDirectories, .canCreateDirectories])
+                        Toggle("Reveal in Finder", isOn: $applicationModel.revealScreenshots)
+                    }
+                } label: {
+                    Text("Screenshots:")
+                        .font(.headline)
+                }
             }
-            .toolbar(removing: .sidebarToggle)
-        } detail: {
-            switch applicationModel.activeSettingsSection {
-            case .general:
-                Form {
-                    Section {
-                        Toggle("Run in Background", isOn: $applicationModel.openAtLogin)
-                    } footer: {
-                        HStack {
-                            Text("Keep Reconnect running in the menu bar and start at login to automatically connect to your Psion and perform housekeeping tasks.")
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.leading)
-                                .font(.callout)
-                            Spacer()
+            .scenePadding()
+            .tabItem {
+                Label("General", systemImage: "gear")
+            }
+            .tag(SettingsSection.general)
+
+            Form {
+                if applicationModel.isDaemonConnected {
+                    if applicationModel.serialDevices.isEmpty {
+                        Text("No serial devices connected.")
+                    } else {
+                        ForEach(Array(applicationModel.serialDevices)) { device in
+                            SerialDeviceSettingsView(device: device)
                         }
                     }
-                    Section("Downloads") {
-                        FilePicker("Destination",
-                                   url: $applicationModel.downloadsURL,
-                                   options: [.canChooseDirectories, .canCreateDirectories])
-                    }
-                    Section("Screenshots") {
-                        FilePicker("Destination",
-                                   url: $applicationModel.screenshotsURL,
-                                   options: [.canChooseDirectories, .canCreateDirectories])
-                        Toggle("Reveal Screnshots", isOn: $applicationModel.revealScreenshots)
-                    }
+                } else {
+                    Text("Unable to connect to reconnectd.")
+                        .foregroundStyle(.secondary)
                 }
-                .navigationTitle("General")
-            case .connection:
-                Form {
-                    Section("Serial Devices") {
-                        if applicationModel.isDaemonConnected {
-                            ForEach(Array(applicationModel.serialDevices)) { device in
-                                SerialDeviceSettingsView(device: device)
-                            }
-                        } else {
-                            Text("Unable to connect to reconnectd.")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                }
-                .navigationTitle("Connections")
             }
+            .scenePadding()
+            .tabItem {
+                Label("Serial Devices", systemImage: "cable.connector.horizontal")
+            }
+            .tag(SettingsSection.devices)
+
         }
-        .formStyle(.grouped)
         .frame(width: 600)
-        .frame(minHeight: 600)
     }
 
 }

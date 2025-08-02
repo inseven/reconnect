@@ -25,7 +25,7 @@ struct SettingsButton<Label: View>: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
 
-    @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
 
     let label: Label
     let section: SettingsView.SettingsSection
@@ -38,7 +38,7 @@ struct SettingsButton<Label: View>: View {
     var body: some View {
         Button {
             applicationModel.activeSettingsSection = section
-            openWindow(id: SettingsWindow.id)
+            openSettings()
         } label: {
             label
         }

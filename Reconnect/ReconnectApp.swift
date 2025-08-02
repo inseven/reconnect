@@ -54,8 +54,10 @@ struct ReconnectApp: App {
             .environment(appDelegate.transfersModel)
             .handlesExternalEvents(matching: [.programManager])
 
-        SettingsWindow()
-            .environment(appDelegate.applicationModel)
+        Settings {
+            SettingsView()
+        }
+        .environment(appDelegate.applicationModel)
 
         About(repository: "inseven/reconnect", copyright: "Copyright © 2024-2025 Jason Morley") {
             Action("Website", url: .website)
