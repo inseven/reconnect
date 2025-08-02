@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
+		D815EC862E3D9F04000A26B1 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D815EC852E3D9F04000A26B1 /* Interact */; };
 		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
 		D84271C32E332731006224FE /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -246,6 +247,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D815EC862E3D9F04000A26B1 /* Interact in Frameworks */,
 				D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -421,6 +423,7 @@
 			name = reconnectd;
 			packageProductDependencies = (
 				D851ED2D2E2C33C70067E0CD /* ReconnectCore */,
+				D815EC852E3D9F04000A26B1 /* Interact */,
 			);
 			productName = reconnectd;
 			productReference = D851ED232E2C31B60067E0CD /* reconnectd */;
@@ -1271,6 +1274,11 @@
 		D8068F6E2C4AFCF4004177F6 /* ReconnectCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
+		};
+		D815EC852E3D9F04000A26B1 /* Interact */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
+			productName = Interact;
 		};
 		D83BD9652DE862AB0075902D /* SwiftyGif */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class SerialDeviceConfiguration: NSObject, NSSecureCoding {
+public class SerialDeviceConfiguration: NSObject, NSSecureCoding, Codable {
 
     public static let availableBaudRates: [Int32] = [
         0,
@@ -34,7 +34,7 @@ public class SerialDeviceConfiguration: NSObject, NSSecureCoding {
         115200,
     ]
 
-    enum CodingKeys: String {
+    enum CodingKeys: String, CodingKey {
         case baudRate
     }
 

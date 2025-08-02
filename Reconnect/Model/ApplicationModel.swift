@@ -34,7 +34,6 @@ class ApplicationModel: NSObject {
         case convertFiles
         case downloadsURL
         case screenshotsURL
-        case selectedDevices
         case revealScreenshots
     }
 
@@ -163,10 +162,7 @@ class ApplicationModel: NSObject {
 //        terminateRunningMenuApplications()
 //#endif
         let embeddedAppURL = Bundle.main.bundleURL.appendingPathComponents(["Contents", "Library", "LoginItems", "Reconnect Menu.app"])
-
-//        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
         let openConfiguration = NSWorkspace.OpenConfiguration()
-//        openConfiguration.allowsRunningApplicationSubstitution = false
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
     }
 
@@ -176,7 +172,6 @@ class ApplicationModel: NSObject {
     }
 
     private func terminateAnyIncompatibleMenuBarApplications() {
-//        let embeddedAppURL = Bundle.main.url(forResource: "Reconnect Menu", withExtension: "app")!
         let embeddedAppURL = Bundle.main.bundleURL.appendingPathComponents(["Contents", "Library", "LoginItems", "Reconnect Menu.app"])
         let expectedHash = getCDHashForBinary(at: embeddedAppURL)
         let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: .menuApplicationBundleIdentifier)

@@ -19,11 +19,18 @@
 import Foundation
 import os
 
+import Interact
+
 import ReconnectCore
 
 class Daemon: NSObject {
 
+    enum SettingsKey: String {
+        case selectedDevices
+    }
+
     private let logger = Logger(subsystem: "reconnectd", category: "Daemon")
+    private let settings = KeyedDefaults<SettingsKey>()
     private let listener = NSXPCListener(machServiceName: .daemonSericeName)
     private let serialDeviceMonitor = SerialDeviceMonitor()
     private let sessionManager = NCPSessionManager()
@@ -45,7 +52,15 @@ class Daemon: NSObject {
     private var connections: [NSXPCConnection] = []
     private var count: Int = 0
     private var connectedDevices: Set<String> = []
-    private var selectedDevices: [String: SerialDeviceConfiguration] = [:]
+    private var selectedDevices: [String: SerialDeviceConfiguration] = [:] {
+        didSet {
+            do {
+                try settings.set(codable: selectedDevices, forKey: .selectedDevices)
+            } catch {
+                logger.error("Failed to save selected serial devices with error \(error).")
+            }
+        }
+    }
     private var isConnected: Bool = false
 
     override init() {
@@ -53,6 +68,12 @@ class Daemon: NSObject {
         listener.delegate = self
         serialDeviceMonitor.delegate = self
         sessionManager.delegate = self
+        do {
+            selectedDevices = try settings.codable(forKey: .selectedDevices, default: [:])
+        } catch {
+            logger.error("Failed to load selected serial devices with error \(error).")
+            selectedDevices = [:]
+        }
     }
 
     func start() {
