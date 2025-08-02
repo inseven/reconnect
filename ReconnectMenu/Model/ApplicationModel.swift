@@ -26,17 +26,12 @@ import ReconnectCore
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
-    enum SettingsKey: String {
-        case selectedDevices
-    }
-
     let daemonClient = DaemonClient()
 
     private let logger = Logger()
 
     // Daemon state; synchronized on main.
     var isDaemonConnected = false
-    var serialDevices = [SerialDevice]()
     var isDeviceConnected = false
 
     override init() {
@@ -98,7 +93,6 @@ extension ApplicationModel: DaemonClientDelegate {
     
     func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.serialDevices = serialDevices
     }
 
 }

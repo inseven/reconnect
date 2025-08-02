@@ -22,8 +22,7 @@ import Foundation
 public protocol DaemonInterface {
 
     func doSomething(reply: @escaping (String) -> Void)
-    func enableSerialDevice(_ path: String)
-    func disableSerialDevice(_ path: String)
+    func configureSerialDevice(path: String, baudRate: Int32)
 
 }
 

@@ -31,35 +31,6 @@ struct SettingsView: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
 
-    @State var error: Error? = nil
-
-    func isEnabledBinding(forSerialDevice serialDevice: SerialDevice) -> Binding<Bool> {
-        return Binding(get: {
-            return serialDevice.isEnabled
-        }, set: { isEnabled in
-            switch isEnabled {
-            case true:
-                applicationModel.daemonClient.enableSerialDevice(serialDevice.path) { result in
-                    guard case .failure(let error) = result else {
-                        return
-                    }
-                    DispatchQueue.main.async {
-                        self.error = error
-                    }
-                }
-            case false:
-                applicationModel.daemonClient.disableSerialDevice(serialDevice.path) { result in
-                    guard case .failure(let error) = result else {
-                        return
-                    }
-                    DispatchQueue.main.async {
-                        self.error = error
-                    }
-                }
-            }
-        })
-    }
-
     var body: some View {
         @Bindable var applicationModel = applicationModel
         NavigationSplitView {
@@ -103,9 +74,7 @@ struct SettingsView: View {
                     Section("Serial Devices") {
                         if applicationModel.isDaemonConnected {
                             ForEach(Array(applicationModel.serialDevices)) { device in
-                                Toggle(device.path, isOn: isEnabledBinding(forSerialDevice: device))
-                                    .foregroundStyle(device.isAvailable ? .primary : .secondary)
-                                    .disabled(!device.isAvailable)
+                                SerialDeviceSettingsView(device: device)
                             }
                         } else {
                             Text("Unable to connect to reconnectd.")
@@ -117,7 +86,6 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .presents($error)
         .frame(width: 600)
         .frame(minHeight: 600)
     }

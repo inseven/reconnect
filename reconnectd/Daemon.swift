@@ -31,13 +31,13 @@ class Daemon: NSObject {
     // Dynamic property generating an array of SerialDevice instances that represent the union of available and
     // previously enabled devices. Intended as a convenience for updating connected clients.
     private var serialDevices: [SerialDevice] {
-        return selectedDevices
+        return Set(selectedDevices.keys)
             .union(connectedDevices)
             .sorted()
             .map { path in
                 return SerialDevice(path: path,
                                     isAvailable: connectedDevices.contains(path),
-                                    isEnabled: selectedDevices.contains(path))
+                                    configuration: selectedDevices[path] ?? SerialDeviceConfiguration())
             }
     }
 
@@ -45,7 +45,7 @@ class Daemon: NSObject {
     private var connections: [NSXPCConnection] = []
     private var count: Int = 0
     private var connectedDevices: Set<String> = []
-    private var selectedDevices: Set<String> = []
+    private var selectedDevices: [String: SerialDeviceConfiguration] = [:]
     private var isConnected: Bool = false
 
     override init() {
@@ -108,7 +108,12 @@ class Daemon: NSObject {
 
     func reconfigureSessionManager() {
         dispatchPrecondition(condition: .onQueue(.main))
-        self.sessionManager.setDevices(self.selectedDevices.intersection(self.connectedDevices).sorted())
+        let devices = self.selectedDevices.map { path, configuration in
+            NCPSessionManager.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
+        }.filter { configuration in
+            return self.connectedDevices.contains(configuration.path)
+        }
+        self.sessionManager.setDevices(devices)
     }
 
 }
@@ -189,19 +194,15 @@ extension Daemon: DaemonInterface {
         reply("Hello from XPC Service!")
     }
 
-    func enableSerialDevice(_ path: String) {
-        logger.notice("Enabling serial device '\(path)'...")
+    // TODO: Accept the configuration.
+    func configureSerialDevice(path: String, baudRate: Int32) {
+        logger.notice("Configure serial device '\(path)', baud rate \(baudRate)...")
         DispatchQueue.main.async {
-            self.selectedDevices.insert(path)
-            self.reconfigureSessionManager()
-            self.updateConnectedDevices()
-        }
-    }
-
-    func disableSerialDevice(_ path: String) {
-        logger.notice("Disabling serial device '\(path)'...")
-        DispatchQueue.main.async {
-            self.selectedDevices.remove(path)
+            if baudRate == 0 {
+                self.selectedDevices.removeValue(forKey: path)
+            } else {
+                self.selectedDevices[path] = SerialDeviceConfiguration(baudRate: baudRate)
+            }
             self.reconfigureSessionManager()
             self.updateConnectedDevices()
         }

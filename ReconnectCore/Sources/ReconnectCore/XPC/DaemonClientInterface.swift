@@ -22,7 +22,7 @@ import Foundation
 public protocol DaemonClientInterface {
 
     func keepalive(count: Int)
-    func setSerialDevices(_ devices: [SerialDevice])  // TODO: Set?
+    func setSerialDevices(_ devices: [SerialDevice])
     func setIsConnected(_ isConnected: Bool)
     
 }
@@ -31,7 +31,7 @@ extension NSXPCInterface {
 
     static var daemonClientInterface: NSXPCInterface {
         let interface = NSXPCInterface(with: DaemonClientInterface.self)
-        let allowedClasses = [NSArray.self, SerialDevice.self] as NSSet as Set
+        let allowedClasses = [NSArray.self, SerialDevice.self, SerialDeviceConfiguration.self] as NSSet as Set
         interface.setClasses(allowedClasses,
                              for: #selector(DaemonClientInterface.setSerialDevices(_:)),
                              argumentIndex: 0,

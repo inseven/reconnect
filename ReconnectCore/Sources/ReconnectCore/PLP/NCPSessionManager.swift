@@ -30,20 +30,33 @@ public protocol NCPSessionManagerDelegate: NSObject {
 
 public class NCPSessionManager {
 
+    public struct DeviceConfiguration: Equatable, Hashable {
+
+        public let path: String
+        public let baudRate: Int32
+
+        public init(path: String, baudRate: Int32) {
+            self.path = path
+            self.baudRate = baudRate
+        }
+
+    }
+
     public weak var delegate: NCPSessionManagerDelegate? = nil
 
     private var lock = NSLock()
     private var logger = Logger(subsystem: "PLP", category: "Server")
 
     private var threadID: pthread_t? = nil  // Synchronized with lock.
-    private var devices: [String] = []  // Synchronized with lock.
+    private var devices: [DeviceConfiguration] = []  // Synchronized with lock.
 
-    func device() -> String {
+    func device() -> DeviceConfiguration {
         print("Getting device...")
         while true {
             let devices = lock.withLock {
                 return self.devices
             }
+            // `devices` is sorted when we set it, so this is guaranteed to yield available serial devices predictably.
             if let device = devices.first {
                 return device
             }
@@ -76,8 +89,8 @@ public class NCPSessionManager {
 
         while true {
             let device = self.device()
-            logger.notice("Starting NCP for device '\(device)'...")
-            ncpd(7501, 115200, "127.0.0.1", device, 0x0000, callback, context)
+            logger.notice("Starting NCP for device '\(device.path)' baud rate \(device.baudRate)...")
+            ncpd(7501, device.baudRate, "127.0.0.1", device.path, 0x0000, callback, context)
             DispatchQueue.main.async {
                 self.delegate?.sessionManager(self, didChangeConnectionState: false)
             }
@@ -95,11 +108,17 @@ public class NCPSessionManager {
         thread.start()
     }
 
-    public func setDevices(_ devices: [String]) {
+    public func setDevices(_ devices: any Sequence<DeviceConfiguration>) {
         guard let threadID = lock.withLock({
             return self.threadID
         }) else {
             return
+        }
+
+        // Sort the devices to ensure we always select them in a stable ordering.
+        // Future implementations will hopefully spin up new NCP instances for each active serial port.
+        let devices = devices.sorted { lhs, rhs in
+            return lhs.path.caseInsensitiveCompare(rhs.path) == .orderedAscending
         }
 
         logger.notice("Updating serial devices \(devices)")

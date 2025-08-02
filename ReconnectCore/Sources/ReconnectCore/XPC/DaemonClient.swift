@@ -104,15 +104,9 @@ public class DaemonClient {
         completion(.success(result))
     }
 
-    public func enableSerialDevice(_ path: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    public func configureSerialDevice(path: String, baudRate: Int32, completion: @escaping (Result<Void, Error>) -> Void) {
         withProxy(completion: completion) { proxy in
-            proxy.enableSerialDevice(path)
-        }
-    }
-
-    public func disableSerialDevice(_ path: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        withProxy(completion: completion) { proxy in
-            proxy.disableSerialDevice(path)
+            proxy.configureSerialDevice(path: path, baudRate: baudRate)
         }
     }
 
