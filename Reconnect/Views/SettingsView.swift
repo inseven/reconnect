@@ -75,13 +75,24 @@ struct SettingsView: View {
             }
             .tag(SettingsSection.general)
 
-            Form {
+            VStack {
                 if applicationModel.isDaemonConnected {
                     if applicationModel.serialDevices.isEmpty {
                         Text("No serial devices connected.")
                     } else {
-                        ForEach(Array(applicationModel.serialDevices)) { device in
-                            SerialDeviceSettingsView(device: device)
+                        Table(applicationModel.serialDevices) {
+                            TableColumn("Name") { device in
+                                Text(device.path)
+                                    .foregroundStyle(device.isAvailable ? .primary : .secondary)
+                            }
+                            TableColumn("Enabled") { device in
+                                Toggle(isOn: Binding.constant(device.configuration.baudRate != 0)) {
+                                    EmptyView()
+                                }
+                            }
+                            TableColumn("Baud Rate") { device in
+                                BaudRatePicker(device: device)
+                            }
                         }
                     }
                 } else {

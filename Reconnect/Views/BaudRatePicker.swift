@@ -20,7 +20,7 @@ import SwiftUI
 
 import ReconnectCore
 
-struct SerialDeviceSettingsView: View {
+struct BaudRatePicker: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
 
@@ -58,17 +58,17 @@ struct SerialDeviceSettingsView: View {
     }
 
     var body: some View {
-        VStack {
-            Picker(device.path, selection: binding()) {
-                ForEach(SerialDeviceConfiguration.availableBaudRates, id: \.self) { baudRate in
-                    Text(name(baudRate: baudRate))
-                        .tag(baudRate)
-                }
+        Picker(selection: binding()) {
+            ForEach(SerialDeviceConfiguration.availableBaudRates, id: \.self) { baudRate in
+                Text(name(baudRate: baudRate))
+                    .tag(baudRate)
             }
-            .fixedSize(horizontal: true, vertical: false)
-            .foregroundStyle(device.isAvailable ? .primary : .secondary)
-            .disabled(!device.isAvailable)
+        } label: {
+            EmptyView()
         }
+        .fixedSize(horizontal: true, vertical: false)
+        .foregroundStyle(device.isAvailable ? .primary : .secondary)
+        .disabled(!device.isAvailable)
     }
 
 }
