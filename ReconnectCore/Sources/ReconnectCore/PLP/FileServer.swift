@@ -229,29 +229,35 @@ public class FileServer: @unchecked Sendable {
     private func workQueue_exists(path: String) throws(PLPToolsError) -> Bool {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        if path.isRoot {
-            do {
-                // Check to see if we can get the drive info; if we can then it exists.
-                _ = try workQueue_devinfo(drive: String(path.prefix(1)))
-                return true
-            } catch {
-                // Drive not ready indicates the drive doesn't exist instead of a hard failure.
-                guard error == .driveNotReady else {
-                    throw error
-                }
-                return false
+        do {
+            if path.isWindowsDirectory {
+                // If the path is a directory (trailing forward slash) then this call will throw if the path is
+                // invalid (which we interpret below), and succeed if the directory path is valid and exists on the
+                // system.
+                try client.pathtest(path).check()
+            } else {
+                // Similarly to the directory case we treat a successful call to get file attributes as an
+                // indication that the file exists and massage any error returned into a meaningful response.
+                // Under the hood (in plptools), this uses `RFSV16_FINFO` on EPOC16 and `RFSV32_ATT` on EPOC32.
+                _ = try workQueue_getAttributes(path: path)
             }
-        } else {
-            do {
-                _ = try workQueue_getExtendedAttributes(path: path)
-                return true
-            } catch {
-                guard case .noSuchFile = error else {
-                    throw error
-                }
+            return true
+        } catch {
+            switch error {
+            case .noSuchFile, .noSuchDirectory, .driveNotReady, .noSuchDevice:
                 return false
+            default:
+                throw error
             }
         }
+    }
+
+    private func workQueue_getAttributes(path: String) throws(PLPToolsError) -> UInt32 {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        var attributes: UInt32 = 0
+        try client.fgetattr(path, &attributes).check()
+        return attributes
     }
 
     private func workQueue_getExtendedAttributes(path: String) throws(PLPToolsError) -> DirectoryEntry {
@@ -438,7 +444,6 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         return try performSync { () throws(PLPToolsError) in
             let result = try self.workQueue_exists(path: path)
-            print("'\(path)' exists = \(result)")
             return result
         }
     }
