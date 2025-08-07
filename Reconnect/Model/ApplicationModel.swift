@@ -165,12 +165,7 @@ class ApplicationModel: NSObject {
     }
 
     private func openMenuApplication() {
-//#if !DEBUG
         terminateAnyIncompatibleMenuBarApplications()
-//#else
-//        // In debug, we always restart the menu bar applicaiton to ease development.
-//        terminateRunningMenuApplications()
-//#endif
         let embeddedAppURL = Bundle.main.bundleURL.appendingPathComponents(["Contents", "Library", "LoginItems", "Reconnect Menu.app"])
         let openConfiguration = NSWorkspace.OpenConfiguration()
         NSWorkspace.shared.openApplication(at: embeddedAppURL, configuration: openConfiguration)
