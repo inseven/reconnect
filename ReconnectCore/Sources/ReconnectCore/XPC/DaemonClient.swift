@@ -41,12 +41,9 @@ public class DaemonClient {
     private let workQueue = DispatchQueue(label: "DaemonClient.workQueue")
 
     // Synchronized on workQueue.
-    private var connection: NSXPCConnection! // TODO: This is a bit gross
-    private var proxy: (any DaemonInterface)?  // TODO: I don't know if I should store this?
+    private var connection: NSXPCConnection!
 
-    public init() {
-        // TODO: Are NSXPCConnections reusable?
-    }
+    public init() {}
 
     public func connect() {
         workQueue.async { [self] in
@@ -57,11 +54,9 @@ public class DaemonClient {
             connection.exportedInterface = .daemonClientInterface
             connection.exportedObject = self
             connection.interruptionHandler = { [weak self] in
-                // TODO: What thread are we on here?
                 self?.logger.notice("Daemon connection interrupted.")
             }
             connection.invalidationHandler = { [weak self] in
-                // TODO: What thread are we on here?
                 self?.logger.notice("Daemon connection invalidated; reconnecting...")
                 DispatchQueue.main.async {
                     guard let self else {
@@ -74,30 +69,31 @@ public class DaemonClient {
             }
             connection.resume()
 
-            proxy = connection.remoteObjectProxyWithErrorHandler { error in
-                print("XPC error: \(error)")
+            let proxy = connection.remoteObjectProxyWithErrorHandler { [logger] error in
+                logger.error("Connection to daemon failed with error \(error).")
             } as? DaemonInterface
+
             guard let proxy else {
-                print("Unable to create proxy!")
+                logger.error("Failed to get daemon proxy.")
                 return
             }
 
-            // We're forcing a connection here; I seem to remember we always had to do this to force it to actually work.
-            proxy.doSomething { response in
+            // Force an immediate connection to the daemon.
+            proxy.connect { [logger] info in
                 DispatchQueue.main.async {
                     self.delegate?.daemonClientDidConnect(self)
                 }
-                print("XPC: Response from service: \(response)")
+                logger.info("Connected to daemon \(info)")
             }
         }
     }
 
     private func withProxy<T>(completion: @escaping (Result<T, Error>) -> Void, perform: (any DaemonInterface) -> T) {
-        proxy = connection.remoteObjectProxyWithErrorHandler { error in
+        let proxy = connection.remoteObjectProxyWithErrorHandler { error in
             completion(.failure(error))
         } as? DaemonInterface
         guard let proxy else {
-            completion(.failure(ReconnectError.unknown))  // TODO: Better error.
+            completion(.failure(ReconnectError.invalidDaemonProxy))
             return
         }
         let result = perform(proxy)
@@ -114,7 +110,6 @@ public class DaemonClient {
 
 }
 
-// TODO: Can we make this not pubic??
 extension DaemonClient: DaemonClientInterface {
 
     public func setIsConnected(_ isConnected: Bool) {

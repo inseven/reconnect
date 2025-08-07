@@ -21,7 +21,7 @@ import Foundation
 @objc
 public protocol DaemonInterface {
 
-    func doSomething(reply: @escaping (String) -> Void)
+    func connect(reply: @escaping (DaemonInfo) -> Void)
     func configureSerialDevice(path: String, configuration: SerialDeviceConfiguration)
 
 }
@@ -30,8 +30,12 @@ extension NSXPCInterface {
 
     static var daemonInterface: NSXPCInterface {
         let interface = NSXPCInterface(with: DaemonInterface.self)
-        let allowedClasses = [SerialDeviceConfiguration.self] as NSSet as Set
-        interface.setClasses(allowedClasses,
+
+        interface.setClasses([DaemonInfo.self] as NSSet as Set,
+                             for: #selector(DaemonInterface.connect(reply:)),
+                             argumentIndex: 0,
+                             ofReply: true)
+        interface.setClasses([SerialDeviceConfiguration.self] as NSSet as Set,
                              for: #selector(DaemonInterface.configureSerialDevice(path:configuration:)),
                              argumentIndex: 1,
                              ofReply: false)

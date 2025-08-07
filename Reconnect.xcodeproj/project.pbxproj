@@ -966,8 +966,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = reconnectd/Info.plist;
+				MARKETING_VERSION = 0.0.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -979,9 +983,13 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
 				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = reconnectd/Info.plist;
+				MARKETING_VERSION = 0.0.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;

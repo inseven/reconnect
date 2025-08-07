@@ -212,10 +212,11 @@ extension Daemon: NCPSessionManagerDelegate {
 
 extension Daemon: DaemonInterface {
 
-    // TODO: Rename and return version and build.
-    public func doSomething(reply: @escaping (String) -> Void) {
-        print("Service received request!")
-        reply("Hello from XPC Service!")
+    public func connect(reply: @escaping (DaemonInfo) -> Void) {
+        logger.notice("Received connection message from client.")
+        let info = DaemonInfo(version: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+                              buildNumber: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
+        reply(info)
     }
 
     func configureSerialDevice(path: String, configuration: SerialDeviceConfiguration) {

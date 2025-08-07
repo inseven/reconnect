@@ -48,17 +48,18 @@ public class SerialDevice: NSObject, NSSecureCoding, Identifiable {
     public let isAvailable: Bool
     public let configuration: SerialDeviceConfiguration
 
-    public func encode(with coder: NSCoder) {
-        coder.encode(path, forKey: CodingKeys.path.rawValue)
-        coder.encode(isAvailable, forKey: CodingKeys.isAvailable.rawValue)
-        coder.encode(configuration, forKey: CodingKeys.configuration.rawValue)
+    public init(path: String, isAvailable: Bool, configuration: SerialDeviceConfiguration) {
+        self.path = path
+        self.isAvailable = isAvailable
+        self.configuration = configuration
     }
-    
+
     public required init?(coder: NSCoder) {
         guard
             let path = coder.decodeObject(of: NSString.self, forKey: CodingKeys.path.rawValue) as String?,
             coder.containsValue(forKey: CodingKeys.isAvailable.rawValue),
-            let configuration = coder.decodeObject(of: SerialDeviceConfiguration.self, forKey: CodingKeys.configuration.rawValue)
+            let configuration = coder.decodeObject(of: SerialDeviceConfiguration.self,
+                                                   forKey: CodingKeys.configuration.rawValue)
         else {
             return nil
         }
@@ -68,10 +69,10 @@ public class SerialDevice: NSObject, NSSecureCoding, Identifiable {
         self.configuration = configuration
     }
 
-    public init(path: String, isAvailable: Bool, configuration: SerialDeviceConfiguration) {
-        self.path = path
-        self.isAvailable = isAvailable
-        self.configuration = configuration
+    public func encode(with coder: NSCoder) {
+        coder.encode(path, forKey: CodingKeys.path.rawValue)
+        coder.encode(isAvailable, forKey: CodingKeys.isAvailable.rawValue)
+        coder.encode(configuration, forKey: CodingKeys.configuration.rawValue)
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
