@@ -89,7 +89,7 @@ public class SerialDevice: NSObject, NSSecureCoding, Identifiable {
 extension SerialDevice {
 
     public var isUsable: Bool {
-        return isAvailable && configuration.baudRate != 0
+        return isAvailable && configuration.isEnabled
     }
 
 }
