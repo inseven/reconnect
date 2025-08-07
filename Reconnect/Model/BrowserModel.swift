@@ -50,8 +50,6 @@ class BrowserModel {
         return navigationHistory.previousItems.reversed()
     }
 
-    let fileServer = FileServer()
-
     let applicationModel: ApplicationModel
     let transfersModel: TransfersModel
 
@@ -81,7 +79,7 @@ class BrowserModel {
 
     func start() async {
         do {
-            drives = try await fileServer.drives()
+            drives = try await applicationModel.fileServer.drives()
         } catch {
             lastError = error
         }
@@ -124,6 +122,13 @@ class BrowserModel {
     }
 
     func refresh() {
+        self.run {
+            do {
+                self.drives = try self.applicationModel.fileServer.drivesSync()
+            } catch {
+                self.lastError = error
+            }
+        }
         update()
     }
 
@@ -133,7 +138,7 @@ class BrowserModel {
         }
         self.files = []
         self.run {
-            let files = try self.fileServer.dirSync(path: path)
+            let files = try self.applicationModel.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
             DispatchQueue.main.sync {
                 self.files = files
@@ -202,7 +207,7 @@ class BrowserModel {
             }
 
             // Get the names of the files and folders in the current path.
-            let names = try self.fileServer
+            let names = try self.applicationModel.fileServer
                 .dirSync(path: path)
                 .map { $0.name }
                 .reduce(into: Set()) { $0.insert($1) }
@@ -217,8 +222,8 @@ class BrowserModel {
 
             // Create the folder.
             let folderPath = path + name
-            try self.fileServer.mkdir(path: folderPath)
-            let files = try self.fileServer.dirSync(path: path)
+            try self.applicationModel.fileServer.mkdir(path: folderPath)
+            let files = try self.applicationModel.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
             // Update the model state.
@@ -241,9 +246,9 @@ class BrowserModel {
         run {
             for path in selection {
                 if path.isWindowsDirectory {
-                    try self.fileServer.rmdir(path: path)
+                    try self.applicationModel.fileServer.rmdir(path: path)
                 } else {
-                    try self.fileServer.remove(path: path)
+                    try self.applicationModel.fileServer.remove(path: path)
                 }
                 DispatchQueue.main.sync {
                     self.files.removeAll { $0.path == path }
@@ -259,7 +264,7 @@ class BrowserModel {
                 .deletingLastWindowsPathComponent
                 .appendingWindowsPathComponent(newName, isDirectory: file.isDirectory)
             do {
-                try self.fileServer.rename(from: file.path, to: newPath)
+                try self.applicationModel.fileServer.rename(from: file.path, to: newPath)
             } catch {
                 self.refresh()
                 throw error

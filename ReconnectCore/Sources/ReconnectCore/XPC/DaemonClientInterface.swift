@@ -16,30 +16,27 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-@MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+@objc
+public protocol DaemonClientInterface {
 
-    let applicationModel = ApplicationModel()
-    let transfersModel = TransfersModel()
+    func keepalive(count: Int)
+    func setSerialDevices(_ devices: [SerialDevice])
+    func setIsConnected(_ isConnected: Bool)
+    
+}
 
-    func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            if url.isFileURL {
-                applicationModel.showInstallerWindow(url: url)
-            } else if url == .update {
-                applicationModel.updaterController.updater.checkForUpdates()
-            } else {
-                print("Ignoring URL '\(url.absoluteString)'...")
-            }
-        }
-    }
+extension NSXPCInterface {
 
-    func applicationWillTerminate(_ notification: Notification) {
-        if !applicationModel.openAtLogin {
-            applicationModel.terminateRunningMenuApplications()
-        }
+    static var daemonClientInterface: NSXPCInterface {
+        let interface = NSXPCInterface(with: DaemonClientInterface.self)
+        let allowedClasses = [NSArray.self, SerialDevice.self, SerialDeviceConfiguration.self] as NSSet as Set
+        interface.setClasses(allowedClasses,
+                             for: #selector(DaemonClientInterface.setSerialDevices(_:)),
+                             argumentIndex: 0,
+                             ofReply: false)
+        return interface
     }
 
 }

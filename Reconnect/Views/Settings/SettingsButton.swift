@@ -18,27 +18,39 @@
 
 import SwiftUI
 
-@MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+import Diligence
+import Interact
 
-    let applicationModel = ApplicationModel()
-    let transfersModel = TransfersModel()
+struct SettingsButton<Label: View>: View {
 
-    func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            if url.isFileURL {
-                applicationModel.showInstallerWindow(url: url)
-            } else if url == .update {
-                applicationModel.updaterController.updater.checkForUpdates()
-            } else {
-                print("Ignoring URL '\(url.absoluteString)'...")
-            }
+    @Environment(ApplicationModel.self) private var applicationModel
+
+    @Environment(\.openSettings) private var openSettings
+
+    let label: Label
+    let section: SettingsView.SettingsSection
+
+    init(section: SettingsView.SettingsSection = .general, @ViewBuilder label: () -> Label) {
+        self.label = label()
+        self.section = section
+    }
+
+    var body: some View {
+        Button {
+            applicationModel.activeSettingsSection = section
+            openSettings()
+        } label: {
+            label
         }
     }
 
-    func applicationWillTerminate(_ notification: Notification) {
-        if !applicationModel.openAtLogin {
-            applicationModel.terminateRunningMenuApplications()
+}
+
+extension SettingsButton where Label == Text {
+
+    init(_ title: LocalizedStringKey = "Open Settings...", section: SettingsView.SettingsSection = .general) {
+        self.init(section: section) {
+            Text(title)
         }
     }
 

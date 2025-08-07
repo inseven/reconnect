@@ -18,27 +18,23 @@
 
 import SwiftUI
 
-@MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+import ReconnectCore
 
-    let applicationModel = ApplicationModel()
-    let transfersModel = TransfersModel()
+struct StatusIcon: View {
 
-    func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            if url.isFileURL {
-                applicationModel.showInstallerWindow(url: url)
-            } else if url == .update {
-                applicationModel.updaterController.updater.checkForUpdates()
-            } else {
-                print("Ignoring URL '\(url.absoluteString)'...")
-            }
-        }
-    }
+    @Environment(ApplicationModel.self) var applicationModel
 
-    func applicationWillTerminate(_ notification: Notification) {
-        if !applicationModel.openAtLogin {
-            applicationModel.terminateRunningMenuApplications()
+    var body: some View {
+        if !applicationModel.isDaemonConnected {
+            Image("StatusUnknown")
+                .interpolation(.none)
+
+        } else if applicationModel.isDeviceConnected {
+            Image("StatusConnected")
+                .interpolation(.none)
+        } else {
+            Image("StatusDisconnected")
+                .interpolation(.none)
         }
     }
 

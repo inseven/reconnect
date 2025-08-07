@@ -8,9 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
-		D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D815EC862E3D9F04000A26B1 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D815EC852E3D9F04000A26B1 /* Interact */; };
 		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
+		D84271C32E332731006224FE /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D851ED2D2E2C33C70067E0CD /* ReconnectCore */; };
 		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
 		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
@@ -20,6 +22,7 @@
 		D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */; };
 		D8B1AC5C2E0F6DAE0084BFD5 /* src in Resources */ = {isa = PBXBuildFile; fileRef = D8E8B4FD2D1529E800405445 /* src */; };
+		D8B2B2692E308DAF00F4B27E /* reconnectd in Resources */ = {isa = PBXBuildFile; fileRef = D851ED232E2C31B60067E0CD /* reconnectd */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
@@ -56,16 +59,42 @@
 			remoteGlobalIDString = D8B1AC422E0F4C220084BFD5;
 			remoteInfo = ReconnectPreviews;
 		};
+		D8B2B2612E307ADB00F4B27E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D851ED222E2C31B60067E0CD;
+			remoteInfo = reconnectd;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		D809546A2C4AAA4A00752BBC /* CopyFiles */ = {
+		D851ED192E2C30E80067E0CD /* Embed XPC Services */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
 			files = (
-				D809546E2C4AACF100752BBC /* Reconnect Menu.app in CopyFiles */,
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D851ED212E2C31B60067E0CD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D851ED2F2E2C37760067E0CD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				D84271C32E332731006224FE /* Reconnect Menu.app in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +118,15 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D8B2B2632E307AFD00F4B27E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchAgents;
+			dstSubfolderSpec = 1;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -96,6 +134,7 @@
 		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964E72C1BFCB700405656 /* ReconnectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D851ED232E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reconnectd; sourceTree = BUILT_PRODUCTS_DIR; };
 		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
 		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
 		D89071882C4B01FC00C11DE8 /* screenshot-sis */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "screenshot-sis"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,6 +145,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */;
+		};
 		D85414062E29A5E9009DEC42 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -146,11 +192,22 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = D8B2B2632E307AFD00F4B27E /* CopyFiles */;
+			membershipExceptions = (
+				uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		D851ED242E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = reconnectd; sourceTree = "<group>"; };
 		D891AE502E13722A009EC465 /* ReconnectTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectTests; sourceTree = "<group>"; };
 		D891AE562E137239009EC465 /* ReconnectUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectUITests; sourceTree = "<group>"; };
 		D891AE5D2E13724E009EC465 /* ScreenshotSIS */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ScreenshotSIS; sourceTree = "<group>"; };
-		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
+		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
 		D891AE922E1373CE009EC465 /* ReconnectPreviews */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectPreviews; sourceTree = "<group>"; };
 		D891AEDA2E13741B009EC465 /* Reconnect */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AF102E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D891AF112E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Reconnect; sourceTree = "<group>"; };
 		D8A75B552E18AF8A007B6DBA /* tools */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8A75B5C2E18AFA2007B6DBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D85414062E29A5E9009DEC42 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = tools; sourceTree = "<group>"; };
@@ -183,6 +240,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D851ED202E2C31B60067E0CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D815EC862E3D9F04000A26B1 /* Interact in Frameworks */,
+				D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,6 +294,7 @@
 				D891AE6B2E13726F009EC465 /* ReconnectMenu */,
 				D891AE5D2E13724E009EC465 /* ScreenshotSIS */,
 				D891AE922E1373CE009EC465 /* ReconnectPreviews */,
+				D851ED242E2C31B60067E0CD /* reconnectd */,
 				D84964D72C1BFCB600405656 /* Products */,
 				D84965332C1C30E500405656 /* Frameworks */,
 			);
@@ -242,6 +309,7 @@
 				D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */,
 				D89071882C4B01FC00C11DE8 /* screenshot-sis */,
 				D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */,
+				D851ED232E2C31B60067E0CD /* reconnectd */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -265,9 +333,10 @@
 			buildPhases = (
 				D84964D22C1BFCB600405656 /* Sources */,
 				D84964D32C1BFCB600405656 /* Frameworks */,
-				D809546A2C4AAA4A00752BBC /* CopyFiles */,
 				D84964D42C1BFCB600405656 /* Resources */,
 				D8B1AC522E0F4C220084BFD5 /* Embed Foundation Extensions */,
+				D851ED192E2C30E80067E0CD /* Embed XPC Services */,
+				D851ED2F2E2C37760067E0CD /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -336,6 +405,30 @@
 			productReference = D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		D851ED222E2C31B60067E0CD /* reconnectd */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D851ED272E2C31B60067E0CD /* Build configuration list for PBXNativeTarget "reconnectd" */;
+			buildPhases = (
+				D851ED1F2E2C31B60067E0CD /* Sources */,
+				D851ED202E2C31B60067E0CD /* Frameworks */,
+				D851ED212E2C31B60067E0CD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D851ED242E2C31B60067E0CD /* reconnectd */,
+			);
+			name = reconnectd;
+			packageProductDependencies = (
+				D851ED2D2E2C33C70067E0CD /* ReconnectCore */,
+				D815EC852E3D9F04000A26B1 /* Interact */,
+			);
+			productName = reconnectd;
+			productReference = D851ED232E2C31B60067E0CD /* reconnectd */;
+			productType = "com.apple.product-type.tool";
+		};
 		D89071872C4B01FC00C11DE8 /* screenshot-sis */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D890718E2C4B01FC00C11DE8 /* Build configuration list for PBXNativeTarget "screenshot-sis" */;
@@ -391,10 +484,12 @@
 				D8F1A5972C4A4C9B00931C00 /* Sources */,
 				D8F1A5982C4A4C9B00931C00 /* Frameworks */,
 				D8F1A5992C4A4C9B00931C00 /* Resources */,
+				D8B2B2632E307AFD00F4B27E /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D8B2B2622E307ADB00F4B27E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D891AE6B2E13726F009EC465 /* ReconnectMenu */,
@@ -429,6 +524,9 @@
 					D84964F02C1BFCB700405656 = {
 						CreatedOnToolsVersion = 15.4;
 						TestTargetID = D84964D52C1BFCB600405656;
+					};
+					D851ED222E2C31B60067E0CD = {
+						CreatedOnToolsVersion = 16.4;
 					};
 					D89071872C4B01FC00C11DE8 = {
 						CreatedOnToolsVersion = 15.4;
@@ -470,6 +568,7 @@
 				D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */,
 				D89071872C4B01FC00C11DE8 /* screenshot-sis */,
 				D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */,
+				D851ED222E2C31B60067E0CD /* reconnectd */,
 			);
 		};
 /* End PBXProject section */
@@ -509,6 +608,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8B2B2692E308DAF00F4B27E /* reconnectd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,6 +630,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D84964ED2C1BFCB700405656 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D851ED1F2E2C31B60067E0CD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -579,6 +686,11 @@
 			isa = PBXTargetDependency;
 			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
 			targetProxy = D8B1AC502E0F4C220084BFD5 /* PBXContainerItemProxy */;
+		};
+		D8B2B2622E307ADB00F4B27E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D851ED222E2C31B60067E0CD /* reconnectd */;
+			targetProxy = D8B2B2612E307ADB00F4B27E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -731,6 +843,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -767,6 +880,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
 				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -845,6 +959,41 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = Reconnect;
+			};
+			name = Release;
+		};
+		D851ED282E2C31B60067E0CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 0;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = reconnectd/Info.plist;
+				MARKETING_VERSION = 0.0.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D851ED292E2C31B60067E0CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 0;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = reconnectd/Info.plist;
+				MARKETING_VERSION = 0.0.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -943,6 +1092,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectMenu/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -975,6 +1125,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectMenu/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1027,6 +1178,15 @@
 			buildConfigurations = (
 				D84965022C1BFCB700405656 /* Debug */,
 				D84965032C1BFCB700405656 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D851ED272E2C31B60067E0CD /* Build configuration list for PBXNativeTarget "reconnectd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D851ED282E2C31B60067E0CD /* Debug */,
+				D851ED292E2C31B60067E0CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1123,6 +1283,11 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
 		};
+		D815EC852E3D9F04000A26B1 /* Interact */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
+			productName = Interact;
+		};
 		D83BD9652DE862AB0075902D /* SwiftyGif */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */;
@@ -1132,6 +1297,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */;
 			productName = SSSwiftUIGIFView;
+		};
+		D851ED2D2E2C33C70067E0CD /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
 		};
 		D88FA14D2C2CE0FA00805DBD /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;

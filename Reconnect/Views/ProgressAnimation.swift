@@ -18,28 +18,22 @@
 
 import SwiftUI
 
-@MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
+struct ProgressAnimation: View {
 
-    let applicationModel = ApplicationModel()
-    let transfersModel = TransfersModel()
-
-    func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            if url.isFileURL {
-                applicationModel.showInstallerWindow(url: url)
-            } else if url == .update {
-                applicationModel.updaterController.updater.checkForUpdates()
-            } else {
-                print("Ignoring URL '\(url.absoluteString)'...")
-            }
-        }
+    struct LayoutMetrics {
+        static let width: CGFloat = 240
+        static let height: CGFloat = 70
     }
 
-    func applicationWillTerminate(_ notification: Notification) {
-        if !applicationModel.openAtLogin {
-            applicationModel.terminateRunningMenuApplications()
-        }
+    private let name: String
+
+    init(_ name: String) {
+        self.name = name
+    }
+
+    var body: some View {
+        AnimatedImage(named: name)
+            .frame(width: LayoutMetrics.width, height: LayoutMetrics.height)
     }
 
 }

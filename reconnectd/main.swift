@@ -16,30 +16,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-@MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
-
-    let applicationModel = ApplicationModel()
-    let transfersModel = TransfersModel()
-
-    func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls {
-            if url.isFileURL {
-                applicationModel.showInstallerWindow(url: url)
-            } else if url == .update {
-                applicationModel.updaterController.updater.checkForUpdates()
-            } else {
-                print("Ignoring URL '\(url.absoluteString)'...")
-            }
-        }
-    }
-
-    func applicationWillTerminate(_ notification: Notification) {
-        if !applicationModel.openAtLogin {
-            applicationModel.terminateRunningMenuApplications()
-        }
-    }
-
-}
+let daemon = Daemon()
+daemon.start()
+RunLoop.main.run()

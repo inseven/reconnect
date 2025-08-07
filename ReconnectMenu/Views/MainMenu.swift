@@ -37,29 +37,21 @@ struct MainMenu: View {
         } label: {
             Text("My Psion...")
         }
-        .disabled(!applicationModel.isConnected)
         Divider()
         Button {
             applicationModel.openReconnect(.programManager)
         } label: {
             Text("Add/Remove Programs...")
         }
-        .disabled(!applicationModel.isConnected)
+        .disabled(!applicationModel.isDeviceConnected)
         Divider()
         Button {
             applicationModel.openReconnect(.about)
         } label: {
             Text("About...")
         }
-        Menu("Settings") {
-            ForEach(applicationModel.devices) { device in
-                Toggle(isOn: device.enabled) {
-                    Text(device.path)
-                        .foregroundStyle(device.available ? .primary : .secondary)
-                }
-            }
-            Divider()
-            Toggle("Open at Login", isOn: $application.openAtLogin)
+        Button("Settings...") {
+            applicationModel.openReconnect(.settings)
         }
         Divider()
         Button("Check for Updates...") {

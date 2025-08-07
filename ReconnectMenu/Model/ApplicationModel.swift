@@ -16,6 +16,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+import os
 import SwiftUI
 
 import Interact
@@ -25,111 +26,43 @@ import ReconnectCore
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
-    struct SerialDevice: Identifiable {
+    let daemonClient = DaemonClient()
 
-        var id: String {
-            return path
-        }
+    private let logger = Logger()
 
-        var path: String
-        var available: Bool
-        var enabled: Binding<Bool>
-    }
-
-    enum SettingsKey: String {
-        case selectedDevices
-    }
-
-    var isConnected: Bool = false
-
-    var devices: [SerialDevice] {
-        return connectedDevices.union(selectedDevices)
-            .map { device in
-                let binding: Binding<Bool> = Binding {
-                    return self.selectedDevices.contains(device)
-                } set: { newValue in
-                    if newValue {
-                        self.selectedDevices.insert(device)
-                    } else {
-                        self.selectedDevices.remove(device)
-                    }
-                }
-                return SerialDevice(path: device,
-                                    available: connectedDevices.contains(device),
-                                    enabled: binding)
-            }
-            .sorted { device1, device2 in
-                return device1.path.localizedStandardCompare(device2.path) == .orderedAscending
-            }
-    }
-
-    private var selectedDevices: Set<String> {
-        didSet {
-            keyedDefaults.set(Array(selectedDevices), forKey: .selectedDevices)
-            update()
-        }
-    }
-
-    private var connectedDevices: Set<String> = [] {
-        didSet {
-            update()
-        }
-    }
-
-    private let keyedDefaults = KeyedDefaults<SettingsKey>()
-    private let server: Server = Server()
-    private let serialDeviceMonitor = SerialDeviceMonitor()
+    // Daemon state; synchronized on main.
+    var isDaemonConnected = false
+    var isDeviceConnected = false
 
     override init() {
-        selectedDevices = Set(keyedDefaults.object(forKey: .selectedDevices) as? Array<String> ?? [])
         super.init()
-        server.delegate = self
-        serialDeviceMonitor.delegate = self
+        daemonClient.delegate = self
         start()
     }
 
     func start() {
-        server.start()
-        serialDeviceMonitor.start()
+        daemonClient.connect()
     }
 
     @MainActor func quit() {
+
+        // Disconnect from the daemon.
+        daemonClient.disconnect()
+
         // We terminate any running instances of the main Reconnect app as it doesn't make sense for them to run
         // standalone if there's nothing running the PLP sessions.
+        // Note that we don't wait for the main Reconnect browser app to quit here as it's sufficient to trust that it's
         // quitting, and the main app will also attempt to quit the menu bar (if running in the background is disabled)
         // which can lead to livelock.
         NSRunningApplication.terminateRunningApplications(bundleIdentifier: .browserApplicationBundleIdentifier,
                                                           waitForCompletion: false)
+
         NSApplication.shared.terminate(nil)
     }
 
-    func update() {
-        server.setDevices(selectedDevices.intersection(connectedDevices).sorted())
-    }
-
-}
-
-extension ApplicationModel: ServerDelegate {
-
-    func server(server: Server, didChangeConnectionState isConnected: Bool) {
-        self.isConnected = isConnected
-    }
-
-}
-
-extension ApplicationModel: SerialDeviceMonitorDelegate {
-
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
-        connectedDevices.insert(device)
-
-    }
-
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
-        connectedDevices.remove(device)
-    }
-
     func openReconnect(_ url: URL) {
-        let reconnectURL = Bundle.main.bundleURL.deletingLastPathComponents(3)
+        // Our app is at in Reconnect.app/Contents/Library/LoginItems/Reconnect Menu.app.
+        let reconnectURL = Bundle.main.bundleURL.deletingLastPathComponents(4)
         let openConfiguration = NSWorkspace.OpenConfiguration()
         openConfiguration.allowsRunningApplicationSubstitution = false
         openConfiguration.activates = true
@@ -137,10 +70,34 @@ extension ApplicationModel: SerialDeviceMonitorDelegate {
             guard let app else {
                 return
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) {
                 app.activate()
             }
         }
+    }
+
+}
+
+extension ApplicationModel: DaemonClientDelegate {
+
+    func daemonClientDidConnect(_ daemonClient: DaemonClient) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDaemonConnected = true
+    }
+    
+    func daemonClientDidDisconnect(_ daemonClient: DaemonClient) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDaemonConnected = false
+    }
+
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        self.isDeviceConnected = isDeviceConnected
+
+    }
+    
+    func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
+        dispatchPrecondition(condition: .onQueue(.main))
     }
 
 }

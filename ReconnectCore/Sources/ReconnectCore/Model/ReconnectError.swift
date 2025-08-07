@@ -29,6 +29,7 @@ public enum ReconnectError: Error {
     case invalidSisFile
     case invalidFileReference
     case missingTools
+    case invalidDaemonProxy
 }
 
 extension ReconnectError: LocalizedError {
@@ -51,6 +52,8 @@ extension ReconnectError: LocalizedError {
             return "Invalid file reference."
         case .missingTools:
             return "The Reconnect Tools are not installed on your Psion."
+        case .invalidDaemonProxy:
+            return "Failed to get daemon proxy."
         }
     }
 
