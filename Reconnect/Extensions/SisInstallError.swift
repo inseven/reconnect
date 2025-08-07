@@ -31,6 +31,8 @@ extension Sis.InstallError: @retroactive LocalizedError {
              return LocalizedEpoc32ErrorCode(code)
          case .internalError(let message):
              return message
+         case .isStub:
+             return "Invalid SIS file"
          }
      }
 
