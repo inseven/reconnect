@@ -107,6 +107,8 @@ class ApplicationModel: NSObject {
 
     var updaterController: SPUStandardUpdaterController!
 
+    // General applicaiton state.
+    var launching: Bool = true
     var activeSettingsSection: SettingsView.SettingsSection = .general
 
     // Daemon state; synchronized on main.
@@ -133,6 +135,14 @@ class ApplicationModel: NSObject {
         daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
+
+        // Clear the launching flag after an acceptable timeout.
+        // This is used in the UI to select between whether we should show a spinner while waiting to connect to the
+        // daemon or a connection failure. This is intended as a short term work around in lieu of an improved view
+        // and view model hierarchy around managing multiple connected devices.
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
+            self.launching = false
+        }
     }
 
     func installGuestTools() {

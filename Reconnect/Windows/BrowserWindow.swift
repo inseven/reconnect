@@ -43,10 +43,14 @@ struct BrowserWindow: Scene {
                     BrowserView(browserModel: browserModel)
                 } else {
                     if !applicationModel.isDaemonConnected {
-                        ContentUnavailableView {
-                            Label("Daemon Not Running", systemImage: "exclamationmark.octagon")
-                        } description: {
-                            Text("Reconnect is unable to connect to reconnectd. This manages the serial connection and allows both the main Reconnect and menu bar apps to talk to your Psion. Restarting your computer might help.")
+                        if applicationModel.launching {
+                            ProgressView()
+                        } else {
+                            ContentUnavailableView {
+                                Label("Daemon Not Running", systemImage: "exclamationmark.octagon")
+                            } description: {
+                                Text("Reconnect is unable to connect to reconnectd. This manages the serial connection and allows both the main Reconnect and menu bar apps to talk to your Psion. Restarting your computer might help.")
+                            }
                         }
                     } else if !applicationModel.hasUsableSerialDevices {
                         ContentUnavailableView {
