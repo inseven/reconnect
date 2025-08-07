@@ -103,7 +103,6 @@ public class NCPSessionManager {
     }
 
     public func start() {
-        // TODO: ONLY DO THIS ONCE!
         let thread = Thread(block: threadEntryPoint)
         thread.start()
     }

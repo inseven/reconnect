@@ -53,7 +53,7 @@ extension ReconnectError: LocalizedError {
         case .missingTools:
             return "The Reconnect Tools are not installed on your Psion."
         case .invalidDaemonProxy:
-            return "Failed to get proxy to daemon."
+            return "Failed to get daemon proxy."
         }
     }
 

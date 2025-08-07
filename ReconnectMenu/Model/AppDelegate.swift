@@ -60,7 +60,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             logger.notice("Unregistering reconnectd...")
             try SMAppService.agent(plistName: "uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist").unregister()
             logger.notice("Successfully unregistered reconnectd")
-            // TODO: Wait for the daemon to disappear before continuing.
         } catch {
             logger.error("Failed to unregister reconnectd with error '\(error)'")
         }

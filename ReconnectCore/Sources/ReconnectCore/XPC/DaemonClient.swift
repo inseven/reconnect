@@ -43,49 +43,94 @@ public class DaemonClient {
     // Synchronized on workQueue.
     private var connection: NSXPCConnection!
 
+    // Synchronized on main.
+    private var wantsConnection: Bool = false  // Indicates if we should be trying to maintain a daemon connection (are we running?).
+
     public init() {}
 
     public func connect() {
+        guard !wantsConnection else {
+            return
+        }
+        wantsConnection = true
         workQueue.async { [self] in
-            logger.notice("Connecting...")
-            connection = NSXPCConnection(machServiceName: .daemonSericeName,
-                                         options: [])
-            connection.remoteObjectInterface = .daemonInterface
-            connection.exportedInterface = .daemonClientInterface
-            connection.exportedObject = self
-            connection.interruptionHandler = { [weak self] in
-                self?.logger.notice("Daemon connection interrupted.")
-            }
-            connection.invalidationHandler = { [weak self] in
-                self?.logger.notice("Daemon connection invalidated; reconnecting...")
-                DispatchQueue.main.async {
-                    guard let self else {
-                        return
-                    }
-                    self.delegate?.daemonClientDidDisconnect(self)
-                    // TODO: Track this in some class state and implement some kind of exponential backoff.
-                    self.connect()
+            workQueue_connect()
+        }
+    }
+
+    public func disconnect() {
+        guard wantsConnection else {
+            return
+        }
+        wantsConnection = false
+        workQueue.sync { [self] in
+            workQueue_disconnect()
+        }
+    }
+
+    private func workQueue_connect() {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+
+        let shouldConnect = DispatchQueue.main.sync {
+            return wantsConnection
+        }
+
+        guard shouldConnect else {
+            logger.notice("Disconnect requested; not attempting to reconnect.")
+            return
+        }
+
+        logger.notice("Connecting...")
+        connection = NSXPCConnection(machServiceName: .daemonSericeName,
+                                     options: [])
+        connection.remoteObjectInterface = .daemonInterface
+        connection.exportedInterface = .daemonClientInterface
+        connection.exportedObject = self
+        connection.interruptionHandler = { [weak self] in
+            self?.logger.notice("Daemon connection interrupted.")
+        }
+
+        // The interruption handler will always attempt to to reconnect to the daemon.
+        connection.invalidationHandler = { [weak self] in
+            self?.logger.notice("Daemon connection invalidated; reconnecting...")
+            DispatchQueue.main.async {
+                guard let self else {
+                    return
                 }
+                self.delegate?.daemonClientDidDisconnect(self)
             }
-            connection.resume()
-
-            let proxy = connection.remoteObjectProxyWithErrorHandler { [logger] error in
-                logger.error("Connection to daemon failed with error \(error).")
-            } as? DaemonInterface
-
-            guard let proxy else {
-                logger.error("Failed to get daemon proxy.")
-                return
-            }
-
-            // Force an immediate connection to the daemon.
-            proxy.connect { [logger] info in
-                DispatchQueue.main.async {
-                    self.delegate?.daemonClientDidConnect(self)
-                }
-                logger.info("Connected to daemon \(info)")
+            self?.workQueue.asyncAfter(deadline: .now() + .seconds(1)) {
+                self?.workQueue_connect()
             }
         }
+        connection.resume()
+
+        let proxy = connection.remoteObjectProxyWithErrorHandler { [logger] error in
+            logger.error("Connection to daemon failed with error \(error).")
+        } as? DaemonInterface
+
+        guard let proxy else {
+            logger.error("Failed to get daemon proxy.")
+            return
+        }
+
+        // Force an immediate connection to the daemon.
+        proxy.connect { [logger] info in
+            DispatchQueue.main.async {
+                self.delegate?.daemonClientDidConnect(self)
+            }
+            logger.info("Connected to daemon \(info)")
+        }
+    }
+
+    private func workQueue_disconnect() {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        connection.invalidate()
+    }
+
+    // Reconnect to the daemon following a failed connection.
+    private func retryConnection(after deadline: DispatchTime) {
+
     }
 
     private func withProxy<T>(completion: @escaping (Result<T, Error>) -> Void, perform: (any DaemonInterface) -> T) {

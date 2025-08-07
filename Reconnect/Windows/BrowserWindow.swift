@@ -18,7 +18,6 @@
 
 import SwiftUI
 
-import Diligence
 import Interact
 
 struct BrowserWindow: Scene {

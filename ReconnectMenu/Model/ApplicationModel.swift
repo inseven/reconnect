@@ -41,10 +41,14 @@ class ApplicationModel: NSObject {
     }
 
     func start() {
-        daemonClient.connect()  // TODO: Handle errors here!
+        daemonClient.connect()
     }
 
     @MainActor func quit() {
+
+        // Disconnect from the daemon.
+        daemonClient.disconnect()
+
         // We terminate any running instances of the main Reconnect app as it doesn't make sense for them to run
         // standalone if there's nothing running the PLP sessions.
         // Note that we don't wait for the main Reconnect browser app to quit here as it's sufficient to trust that it's
@@ -52,6 +56,7 @@ class ApplicationModel: NSObject {
         // which can lead to livelock.
         NSRunningApplication.terminateRunningApplications(bundleIdentifier: .browserApplicationBundleIdentifier,
                                                           waitForCompletion: false)
+
         NSApplication.shared.terminate(nil)
     }
 

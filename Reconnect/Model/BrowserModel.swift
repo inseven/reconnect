@@ -132,7 +132,6 @@ class BrowserModel {
         update()
     }
 
-    // TODO: Check path
     private func update() {
         guard let path = navigationHistory.path else {
             return

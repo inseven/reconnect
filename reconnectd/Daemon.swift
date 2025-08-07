@@ -129,15 +129,19 @@ class Daemon: NSObject {
 
     func reconfigureSessionManager() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let devices = self.knownDevices.compactMap { path, configuration -> NCPSessionManager.DeviceConfiguration? in
-            guard configuration.isEnabled else {  // Remove disabled devices.
-                return nil
+        if connectedDevices.isEmpty {
+            self.sessionManager.setDevices([])
+        } else {
+            let devices = self.knownDevices.compactMap { path, configuration -> NCPSessionManager.DeviceConfiguration? in
+                guard configuration.isEnabled else {  // Remove disabled devices.
+                    return nil
+                }
+                return NCPSessionManager.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
+            }.filter { configuration in
+                return self.connectedDevices.contains(configuration.path)
             }
-            return NCPSessionManager.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
-        }.filter { configuration in
-            return self.connectedDevices.contains(configuration.path)
+            self.sessionManager.setDevices(devices)
         }
-        self.sessionManager.setDevices(devices)
     }
 
 }
@@ -156,20 +160,24 @@ extension Daemon: NSXPCListenerDelegate {
             dispatchPrecondition(condition: .notOnQueue(.main))
             DispatchQueue.main.sync {
                 self?.connections.removeAll { $0.isEqual(newConnection) }
+                self?.reconfigureSessionManager()
             }
         }
         newConnection.resume()
 
         DispatchQueue.main.sync {
             self.connections.append(newConnection)
-
             guard let proxy = newConnection.remoteObjectProxy as? DaemonClientInterface else {
                 logger.error("Failed to get remote proxy for new connection.")
                 return
             }
+
             // Send the current state.
             proxy.setSerialDevices(serialDevices)
             proxy.setIsConnected(isConnected)
+
+            // Update the session manager state.
+            reconfigureSessionManager()
         }
 
         return true

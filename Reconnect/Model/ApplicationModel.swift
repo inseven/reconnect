@@ -16,7 +16,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Observation
 import os
 import ServiceManagement
 import SwiftUI
@@ -69,7 +68,7 @@ class ApplicationModel: NSObject {
         }
     }
 
-    let menuApplicationLoginService = SMAppService.loginItem(identifier: "uk.co.jbmorley.reconnect.apps.apple.menu")
+    let menuApplicationLoginService = SMAppService.loginItem(identifier: .menuApplicationBundleIdentifier)
 
     public var openAtLogin: Bool {
         get {
@@ -103,8 +102,9 @@ class ApplicationModel: NSObject {
             .isEmpty
     }
 
-    let logger = Logger()
-    let daemonClient = DaemonClient()
+    nonisolated let logger = Logger()
+    nonisolated let daemonClient = DaemonClient()
+
     var updaterController: SPUStandardUpdaterController!
 
     var activeSettingsSection: SettingsView.SettingsSection = .general
@@ -254,7 +254,8 @@ class ApplicationModel: NSObject {
 extension ApplicationModel: SPUUpdaterDelegate {
 
     nonisolated func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
-        // Shut down the menu bar app prior to relanuching the app.
+        // Disconnect from the daemon and shut down the menu bar app prior to relanuching the app.
+        daemonClient.disconnect()
         terminateRunningMenuApplications()
     }
 

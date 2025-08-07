@@ -37,7 +37,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        // TODO: Push into the model?
         if !applicationModel.openAtLogin {
             applicationModel.terminateRunningMenuApplications()
         }
