@@ -20,7 +20,7 @@ import SwiftUI
 
 import ReconnectCore
 
-struct BaudRatePicker: View {
+struct SerialDeviceBaudRatePicker: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
 
@@ -33,9 +33,10 @@ struct BaudRatePicker: View {
     }
 
     func name(baudRate: Int32) -> String {
-        if baudRate == 0 {
-            return "Disabled"
-        } else {
+        switch baudRate {
+        case -1:
+            return "Auto"
+        default:
             return String(format: "%d", baudRate)
         }
     }
@@ -44,7 +45,8 @@ struct BaudRatePicker: View {
         return Binding {
             return device.configuration.baudRate
         } set: { baudRate in
-            let configuration = SerialDeviceConfiguration(baudRate: baudRate)
+            let configuration = device
+                .configuration.setting(baudRate: baudRate)
             applicationModel.daemonClient.configureSerialDevice(path: device.path,
                                                                 configuration: configuration) { result in
                 guard case .failure(let error) = result else {
@@ -67,8 +69,6 @@ struct BaudRatePicker: View {
             EmptyView()
         }
         .fixedSize(horizontal: true, vertical: false)
-        .foregroundStyle(device.isAvailable ? .primary : .secondary)
-        .disabled(!device.isAvailable)
     }
 
 }

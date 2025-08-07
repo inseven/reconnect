@@ -26,7 +26,7 @@ import ReconnectCore
 class Daemon: NSObject {
 
     enum SettingsKey: String {
-        case selectedDevices
+        case knownDevices
     }
 
     private let logger = Logger(subsystem: "reconnectd", category: "Daemon")
@@ -38,13 +38,13 @@ class Daemon: NSObject {
     // Dynamic property generating an array of SerialDevice instances that represent the union of available and
     // previously enabled devices. Intended as a convenience for updating connected clients.
     private var serialDevices: [SerialDevice] {
-        return Set(selectedDevices.keys)
+        return Set(knownDevices.keys)
             .union(connectedDevices)
             .sorted()
             .map { path in
                 return SerialDevice(path: path,
                                     isAvailable: connectedDevices.contains(path),
-                                    configuration: selectedDevices[path] ?? SerialDeviceConfiguration())
+                                    configuration: knownDevices[path] ?? SerialDeviceConfiguration())
             }
     }
 
@@ -52,12 +52,12 @@ class Daemon: NSObject {
     private var connections: [NSXPCConnection] = []
     private var count: Int = 0
     private var connectedDevices: Set<String> = []
-    private var selectedDevices: [String: SerialDeviceConfiguration] = [:] {
+    private var knownDevices: [String: SerialDeviceConfiguration] = [:] {
         didSet {
             do {
-                try settings.set(codable: selectedDevices, forKey: .selectedDevices)
+                try settings.set(codable: knownDevices, forKey: .knownDevices)
             } catch {
-                logger.error("Failed to save selected serial devices with error \(error).")
+                logger.error("Failed to save known serial devices with error \(error).")
             }
         }
     }
@@ -69,10 +69,10 @@ class Daemon: NSObject {
         serialDeviceMonitor.delegate = self
         sessionManager.delegate = self
         do {
-            selectedDevices = try settings.codable(forKey: .selectedDevices, default: [:])
+            knownDevices = try settings.codable(forKey: .knownDevices, default: [:])
         } catch {
-            logger.error("Failed to load selected serial devices with error \(error).")
-            selectedDevices = [:]
+            logger.error("Failed to load known serial devices with error \(error).")
+            knownDevices = [:]
         }
     }
 
@@ -129,8 +129,11 @@ class Daemon: NSObject {
 
     func reconfigureSessionManager() {
         dispatchPrecondition(condition: .onQueue(.main))
-        let devices = self.selectedDevices.map { path, configuration in
-            NCPSessionManager.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
+        let devices = self.knownDevices.compactMap { path, configuration -> NCPSessionManager.DeviceConfiguration? in
+            guard configuration.isEnabled else {  // Remove disabled devices.
+                return nil
+            }
+            return NCPSessionManager.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
         }.filter { configuration in
             return self.connectedDevices.contains(configuration.path)
         }
@@ -216,13 +219,9 @@ extension Daemon: DaemonInterface {
     }
 
     func configureSerialDevice(path: String, configuration: SerialDeviceConfiguration) {
-        logger.notice("Configure serial device '\(path)', baud rate \(configuration.baudRate)...")
+        logger.notice("Configure serial device (path = '\(path)', configuration = \(configuration))...")
         DispatchQueue.main.async {
-            if configuration.baudRate == 0 {
-                self.selectedDevices.removeValue(forKey: path)
-            } else {
-                self.selectedDevices[path] = configuration
-            }
+            self.knownDevices[path] = configuration
             self.reconfigureSessionManager()
             self.updateConnectedDevices()
         }

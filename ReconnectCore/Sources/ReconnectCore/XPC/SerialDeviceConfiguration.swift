@@ -21,27 +21,28 @@ import Foundation
 public class SerialDeviceConfiguration: NSObject, NSSecureCoding, Codable {
 
     public static let availableBaudRates: [Int32] = [
-        0,
-        300,
-        600,
-        1200,
-        2400,
-        4800,
-        9600,
-        19200,
-        38400,
-        57600,
-        115200,
+        -1,
+         300,
+         600,
+         1200,
+         2400,
+         4800,
+         9600,
+         19200,
+         38400,
+         57600,
+         115200,
     ]
 
     enum CodingKeys: String, CodingKey {
+        case isEnabled
         case baudRate
     }
 
     public static let supportsSecureCoding: Bool = true
 
     public override var debugDescription: String {
-        return "{baudRate = \(baudRate)}"
+        return "{isEnabled = \(isEnabled), baudRate = \(baudRate)}"
     }
 
     public override var hash: Int {
@@ -50,17 +51,21 @@ public class SerialDeviceConfiguration: NSObject, NSSecureCoding, Codable {
         return hasher.finalize()
     }
 
+    public let isEnabled: Bool
     public let baudRate: Int32
 
-    public init(baudRate: Int32 = 0) {
+    public init(isEnabled: Bool = false, baudRate: Int32 = -1) {
+        self.isEnabled = isEnabled
         self.baudRate = baudRate
     }
 
     public required init?(coder: NSCoder) {
+        self.isEnabled = coder.decodeBool(forKey: CodingKeys.isEnabled.rawValue)
         self.baudRate = coder.decodeInt32(forKey: CodingKeys.baudRate.rawValue)
     }
 
     public func encode(with coder: NSCoder) {
+        coder.encode(isEnabled, forKey: CodingKeys.isEnabled.rawValue)
         coder.encode(baudRate, forKey: CodingKeys.baudRate.rawValue)
     }
 
@@ -68,7 +73,16 @@ public class SerialDeviceConfiguration: NSObject, NSSecureCoding, Codable {
         guard let object = object as? SerialDeviceConfiguration else {
             return false
         }
-        return (object.baudRate == baudRate)
+        return (object.isEnabled == isEnabled &&
+                object.baudRate == baudRate)
+    }
+
+    public func setting(isEnabled: Bool) -> SerialDeviceConfiguration {
+        return SerialDeviceConfiguration(isEnabled: isEnabled, baudRate: baudRate)
+    }
+
+    public func setting(baudRate: Int32) -> SerialDeviceConfiguration {
+        return SerialDeviceConfiguration(isEnabled: isEnabled, baudRate: baudRate)
     }
 
 }

@@ -85,15 +85,17 @@ struct SettingsView: View {
                                 Text(device.path)
                                     .foregroundStyle(device.isAvailable ? .primary : .secondary)
                             }
+                            .width(ideal: 300)
                             TableColumn("Enabled") { device in
-                                Toggle(isOn: Binding.constant(device.configuration.baudRate != 0)) {
-                                    EmptyView()
-                                }
+                                SerialDeviceEnableToggle(device: device)
+                                    .environment(applicationModel)
                             }
                             TableColumn("Baud Rate") { device in
-                                BaudRatePicker(device: device)
+                                SerialDeviceBaudRatePicker(device: device)
+                                    .environment(applicationModel)
                             }
                         }
+                        .frame(minHeight: 300)
                     }
                 } else {
                     Text("Unable to connect to reconnectd.")
