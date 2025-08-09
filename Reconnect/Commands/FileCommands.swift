@@ -20,39 +20,41 @@ import SwiftUI
 
 public struct FileCommands: Commands {
 
-    private let browserModel: BrowserModel
-
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
-    }
+    @FocusedObject private var fileManageableProxy: FileManageableProxy?
 
     public var body: some Commands {
 
         CommandGroup(replacing: .newItem) {
 
             Button("New Folder") {
-                browserModel.newFolder()
+                fileManageableProxy?.createNewFolder()
             }
             .keyboardShortcut("N", modifiers: [.command, .shift])
+            .disabled(!(fileManageableProxy?.canCreateNewFolder ?? false))
 
             Button("Open") {
-                browserModel.openSelection()
+                fileManageableProxy?.openSelection()
             }
             .keyboardShortcut("O", modifiers: [.command])
-            .disabled(!browserModel.canOpenSelection)
+            .disabled(!(fileManageableProxy?.canOpenSelection ?? false))
 
             Divider()
 
-        }
-
-        CommandGroup(before: .newItem) {
-
-            Button("Refresh") {
-                browserModel.refresh()
+            Button("Download") {
+                fileManageableProxy?.download()
             }
-            .keyboardShortcut("R")
+            .disabled(!(fileManageableProxy?.canDownload ?? false))
 
             Divider()
+
+            Button("Delete") {
+                fileManageableProxy?.delete()
+            }
+            .keyboardShortcut(.delete, modifiers: [.command])
+            .disabled(!(fileManageableProxy?.canDelete ?? false))
+
+            Divider()
+
         }
 
     }

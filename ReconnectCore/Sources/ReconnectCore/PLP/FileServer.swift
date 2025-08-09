@@ -72,15 +72,42 @@ public class FileServer: @unchecked Sendable {
 
     }
 
-    public struct DriveInfo: Identifiable {
+    public struct DriveInfo: Identifiable, Hashable {
 
         public var id: String {
             return drive
         }
 
+        public var isWriteable: Bool {
+            switch self.mediaType {
+            case .notPresent:
+                return false
+            case .unknown:
+                return false
+            case .floppy:
+                return true
+            case .disk:
+                return true
+            case .compactDisc:
+                return false
+            case .ram:
+                return true
+            case .flashDisk:
+                return true
+            case .rom:
+                return false
+            case .remote:
+                return true
+            }
+        }
+
         public let drive: String
         public let mediaType: MediaType
         public let name: String?
+
+        public var path: String {
+            return "\(drive):\\"
+        }
     }
 
     public struct DirectoryEntry: Identifiable, Hashable {

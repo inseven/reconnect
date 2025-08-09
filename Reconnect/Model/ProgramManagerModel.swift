@@ -45,17 +45,9 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
     var state: State = .checkingInstalledPackages(Progress())
     var stubs: [Sis.Stub] = []
     var installedPrograms: [ProgramDetails] = []
-    var selection: ProgramDetails.ID?
 
     let syncQueue = DispatchQueue(label: "ProgramManagerModel.syncQueue")
     let fileServer = FileServer()
-
-    var canRemove: Bool {
-        guard case .ready = state else {
-            return false
-        }
-        return selection != nil
-    }
 
     var isReady: Bool {
         guard case .ready = state else {
@@ -64,10 +56,7 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
         return true
     }
 
-    func remove(uid: UInt32? = nil) {
-        guard let uid = uid ?? installedPrograms.first(where: { $0.id == selection })?.sis.uid else {
-            return
-        }
+    func remove(uid: UInt32) {
         syncQueue.async { [stubs] in
             do {
                 let interpreter = PsiLuaEnv()

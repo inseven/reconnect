@@ -18,25 +18,22 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+struct DeviceDriveGroup: View {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    @State var isShowingDrives = true
 
-    init() {
-    }
+    let deviceModel: DeviceModel
 
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
+    var body: some View {
+        DisclosureGroup(isExpanded: $isShowingDrives) {
+            ForEach(deviceModel.drives) { driveInfo in
+                Label(driveInfo.displayName, image: driveInfo.image)
+                    .tag(BrowserSection.drive(driveInfo))
             }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+        } label: {
+            Label("My Psion", image: "Psion16")
         }
-
+        .tag(BrowserSection.device)
     }
 
 }

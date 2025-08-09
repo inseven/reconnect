@@ -16,27 +16,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-struct ToolsToolbar: CustomizableToolbarContent {
+protocol Refreshable {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    @MainActor
+    var canRefresh: Bool { get }
 
-    init() {
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
-
-    }
+    @MainActor
+    func refresh()
 
 }

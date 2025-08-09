@@ -18,16 +18,28 @@
 
 import SwiftUI
 
-struct HistoryItemView: View {
+// This is somewhat of a hack to ensure we focus the connected in advance of a full rework to ensure the device is
+// correctly injected into the view hierarchy.
+struct FocusesDevice: ViewModifier {
 
-    @Environment(BrowserModel.self) var browserModel
-    
-    let item: NavigationHistory.Item
+    @Environment(ApplicationModel.self) private var applicationModel
 
-    var body: some View {
-        HStack {
-            Image(browserModel.image(for: item.path))
-            Text(browserModel.name(for: item.path) ?? "Unknown")
+    func body(content: Content) -> some View {
+        if let deviceModel = applicationModel.devices.first {
+            content
+                .environment(deviceModel)
+                .focusedSceneObject(DeviceModelProxy(deviceModel: deviceModel))
+        } else {
+            EmptyView()
         }
     }
+
+}
+
+extension View {
+
+    func focusesDevice() -> some View {
+        return modifier(FocusesDevice())
+    }
+
 }

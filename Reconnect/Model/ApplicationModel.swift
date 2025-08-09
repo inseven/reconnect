@@ -110,14 +110,16 @@ class ApplicationModel: NSObject {
     // General applicaiton state.
     var launching: Bool = true
     var activeSettingsSection: SettingsView.SettingsSection = .general
-
-    // Daemon state; synchronized on main.
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
+    var devices: [DeviceModel] = []
     var isDeviceConnected = false
+
+    let transfersModel = TransfersModel()
 
     // Client servers; synchronized on main.
     // In the future when we support multiple connected devices, these should be accessed via a thread-safe pool.
+    // TODO: REMOVE THIS!
     var fileServer = FileServer()
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
@@ -276,6 +278,7 @@ extension ApplicationModel: DaemonClientDelegate {
     func daemonClientDidDisconnect(_ daemonClient: DaemonClient) {
         dispatchPrecondition(condition: .onQueue(.main))
         self.isDaemonConnected = false
+        self.devices = []
     }
 
     func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
@@ -285,6 +288,13 @@ extension ApplicationModel: DaemonClientDelegate {
         // and allow them to be created lazily.
         self.fileServer = FileServer()
         self.isDeviceConnected = isDeviceConnected
+        if isDeviceConnected {
+            let deviceModel = DeviceModel(applicationModel: self)
+            self.devices = [deviceModel]
+            deviceModel.start()
+        } else {
+            self.devices = []
+        }
     }
 
     func daemonClient(_ daemonClient: ReconnectCore.DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {

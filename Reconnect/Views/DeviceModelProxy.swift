@@ -18,25 +18,12 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+class DeviceModelProxy: ObservableObject {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    let deviceModel: DeviceModel
 
-    init() {
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
-
+    init(deviceModel: DeviceModel) {
+        self.deviceModel = deviceModel
     }
 
 }

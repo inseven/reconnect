@@ -18,25 +18,26 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+class RefreshableProxy: ObservableObject, Refreshable {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
-
-    init() {
+    var canRefresh: Bool {
+        return _canRefresh()
     }
 
-    var body: some CustomizableToolbarContent {
+    private let _canRefresh: @MainActor () -> Bool
+    private let _refresh: @MainActor () -> Void
 
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+    init(_ refreshable: Refreshable) {
+        self._canRefresh = {
+            refreshable.canRefresh
         }
+        self._refresh = {
+            refreshable.refresh()
+        }
+    }
 
+    func refresh() {
+        _refresh()
     }
 
 }

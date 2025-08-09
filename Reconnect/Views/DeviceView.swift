@@ -18,25 +18,28 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+struct DeviceView: View {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    @Environment(DeviceModel.self) private var deviceModel
 
-    init() {
-    }
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 32) {
 
-    var body: some CustomizableToolbarContent {
+                DetailsGroup("Installed Programs") {
+                    ProgramManagerView()
+                        .frame(height: 300)
+                        .border(.quaternary)
+                }
 
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
             }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .scenePadding()
         }
-
+        .background(.textBackgroundColor)
+        .navigationTitle("My Psion")
+        .showsDeviceProgress()
     }
 
 }

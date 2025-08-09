@@ -18,25 +18,22 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+struct MachineDetailsGroup: View {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
-
-    init() {
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
+    var body: some View {
+        DetailsGroup {
+            VStack(alignment: .leading) {
+                LabeledContent("Type:", value: "Series 7")
+                LabeledContent("Software Version:", value: "1.05(254)")
+                LabeledContent("Language:", value: "English (UK)")
+                LabeledContent("Unique Id:", value: "0908-0001-006F-1FBD")
             }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+            .labeledContentStyle(.details)
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } label: {
+            Text("Machine")
         }
-
     }
 
 }

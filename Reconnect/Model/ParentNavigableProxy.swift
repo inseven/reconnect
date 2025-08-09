@@ -18,25 +18,26 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+class ParentNavigableProxy: ObservableObject, ParentNavigable {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
-
-    init() {
+    var canNavigateToParent: Bool {
+        return _canNavigateToParent()
     }
 
-    var body: some CustomizableToolbarContent {
+    let _canNavigateToParent: @MainActor () -> Bool
+    let _navigateToParent: @MainActor () -> Void
 
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+    init(_ parentNavigable: ParentNavigable) {
+        _canNavigateToParent = {
+            return parentNavigable.canNavigateToParent
         }
+        _navigateToParent = {
+            parentNavigable.navigateToParent()
+        }
+    }
 
+    func navigateToParent() {
+        _navigateToParent()
     }
 
 }

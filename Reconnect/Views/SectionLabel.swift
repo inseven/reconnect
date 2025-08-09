@@ -18,25 +18,16 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+struct SectionLabel: View {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    let section: BrowserSection
 
-    init() {
+    init(section: BrowserSection) {
+        self.section = section
     }
 
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
-
+    var body: some View {
+        Label(section.title, image: section.image)
     }
 
 }

@@ -20,13 +20,26 @@ import SwiftUI
 
 import ReconnectCore
 
-struct BrowserDetailView: View {
+struct DirectoryView: View {
 
-    @Environment(ApplicationModel.self) var applicationModel
+    @State private var directoryModel: DirectoryModel
+    @State private var isTargeted = false
 
-    @State var isTargeted = false
+    private var applicationModel: ApplicationModel
 
-    var browserModel: BrowserModel
+    init(applicationModel: ApplicationModel,
+         transfersModel: TransfersModel,
+         navigationHistory: NavigationHistory,
+         driveInfo: FileServer.DriveInfo,
+         path: String) {
+        self.applicationModel = applicationModel
+        _directoryModel = State(initialValue: DirectoryModel(applicationModel: applicationModel,
+                                                             transfersModel: transfersModel,
+                                                             navigationHistory: navigationHistory,
+                                                             driveInfo: driveInfo,
+                                                             path: path))
+
+    }
 
     func itemProvider(for file: FileServer.DirectoryEntry) -> NSItemProvider? {
         let provider = NSItemProvider()
@@ -36,7 +49,7 @@ struct BrowserDetailView: View {
                 do {
                     let fileManager = FileManager.default
                     let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
-                    self.browserModel.download(Set([file.id]), to: temporaryDirectoryURL, convertFiles: true) { result in
+                    self.directoryModel.download(Set([file.id]), to: temporaryDirectoryURL, convertFiles: true) { result in
                         switch result {
                         case .success(let urls):
                             completion(urls.first!, false, nil)
@@ -56,16 +69,16 @@ struct BrowserDetailView: View {
     }
 
     var body: some View {
-        @Bindable var browserModel = browserModel
+        @Bindable var directoryModel = directoryModel
         ZStack {
-            Table(of: FileServer.DirectoryEntry.self, selection: $browserModel.fileSelection) {
+            Table(of: FileServer.DirectoryEntry.self, selection: $directoryModel.fileSelection) {
                 TableColumn("") { file in
                     Image(file.fileType.image)
                 }
                 .width(16.0)
                 TableColumn("Name") { file in
                     EditableText(initialValue: file.name) { text in
-                        browserModel.rename(file: file, to: text)
+                        directoryModel.rename(file: file, to: text)
                     }
                 }
                 TableColumn("Date Modified") { file in
@@ -86,7 +99,7 @@ struct BrowserDetailView: View {
                         .foregroundStyle(.secondary)
                 }
             } rows: {
-                ForEach(browserModel.files) { file in
+                ForEach(directoryModel.files) { file in
                     TableRow(file)
                         .itemProvider {
                             itemProvider(for: file)
@@ -95,7 +108,7 @@ struct BrowserDetailView: View {
             }
             .onKeyPress { keyPress in
                 if keyPress.key == .downArrow && keyPress.modifiers.contains(.command) {
-                    browserModel.openSelection()
+                    directoryModel.openSelection()
                     return .handled
                 }
                 return .ignored
@@ -103,14 +116,14 @@ struct BrowserDetailView: View {
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
 
                 Button("Open") {
-                    browserModel.navigate(to: items.first!)
+                    directoryModel.navigate(to: items.first!)
                 }
                 .disabled(items.count != 1 || !(items.first?.isWindowsDirectory ?? false))
 
                 Divider()
 
                 Button("Download") {
-                    browserModel.download(items,
+                    directoryModel.download(items,
                                           to: FileManager.default.downloadsDirectory,
                                           convertFiles: applicationModel.convertFiles,
                                           completion: { _ in })
@@ -119,7 +132,7 @@ struct BrowserDetailView: View {
                 Divider()
 
                 Button("Delete") {
-                    browserModel.delete(items)
+                    directoryModel.delete(items)
                 }
 
             } primaryAction: { items in
@@ -130,36 +143,19 @@ struct BrowserDetailView: View {
                 else {
                     return
                 }
-                browserModel.navigate(to: item)
+                directoryModel.navigate(to: item)
             }
             .onDeleteCommand {
-                browserModel.delete()
+                directoryModel.delete()
             }
             .contextMenu {
                 Button("New Folder") {
-                    browserModel.newFolder()
+                    directoryModel.createNewFolder()
                 }
             }
             if isTargeted {
                 Rectangle()
                     .stroke(.blue, lineWidth: 4)
-            }
-        }
-        .safeAreaInset(edge: .bottom) {
-            if browserModel.isCapturingScreenshot {
-                VStack(spacing: 0) {
-                    Divider()
-                    HStack {
-                        ProgressView()
-                            .progressViewStyle(.circular)
-                            .controlSize(.small)
-                        Text("Capturing screenshot...")
-                    }
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .padding()
-                }
-                .background(Color(nsColor: .textBackgroundColor))
             }
         }
         .onDrop(of: [.fileURL], isTargeted: $isTargeted) { providers in
@@ -169,12 +165,23 @@ struct BrowserDetailView: View {
                         return
                     }
                     DispatchQueue.main.sync {
-                        browserModel.upload(url: url)
+                        directoryModel.upload(url: url)
                     }
                 }
             }
             return true
         }
+        .navigationTitle(directoryModel.navigationTitle ?? "My Psion")
+        .presents($directoryModel.lastError)
+        .task {
+            await directoryModel.start()
+        }
+        .showsDeviceProgress()
+        .focusedSceneObject(FileManageableProxy(directoryModel))
+        .focusedSceneObject(ParentNavigableProxy(directoryModel))
+        .focusedSceneObject(RefreshableProxy(directoryModel))
+        .focusesDevice()
+
     }
 
 }

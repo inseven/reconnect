@@ -18,18 +18,19 @@
 
 import Foundation
 
-struct NavigationHistory {
+@Observable
+class NavigationHistory {
 
     struct Item: Identifiable, Equatable {
         let id = UUID()
-        let path: String
+        let section: BrowserSection
     }
 
-    var path: String? {
+    var currentItem: Item? {
         guard let index else {
             return nil
         }
-        return items[index].path
+        return items[index]
     }
 
     var previousItems: [Item] {
@@ -49,14 +50,14 @@ struct NavigationHistory {
     private var items: [Item] = []
     private var index: Int? = nil
 
-    mutating func back() {
+    func back() {
         guard let index else {
             return
         }
         self.index = index - 1
     }
 
-    mutating func forward() {
+    func forward() {
         assert(canGoForward())
         guard let index else {
             return
@@ -78,19 +79,19 @@ struct NavigationHistory {
         return index < items.count - 1
     }
 
-    mutating func navigate(_ path: String) {
+    func navigate(_ section: BrowserSection) {
         guard let index else {
             assert(items.count == 0)
             index = 0
-            self.items = [Item(path: path)]
+            self.items = [Item(section: section)]
             return
         }
         assert(index < items.count)
-        self.items = items[0...index] + [Item(path: path)]
+        self.items = items[0...index] + [Item(section: section)]
         self.index = index + 1
     }
 
-    mutating func navigate(_ item: Item) {
+    func navigate(_ item: Item) {
         guard let index = items.firstIndex(where: { $0 == item }) else {
             return
         }
