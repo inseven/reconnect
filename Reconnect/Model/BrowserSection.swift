@@ -26,6 +26,7 @@ enum BrowserSection: Hashable {
     case directory(FileServer.DriveInfo, String)
     case device
     case softwareIndex
+    case program(Program)
 }
 
 extension BrowserSection {
@@ -43,6 +44,8 @@ extension BrowserSection {
             return "My Psion"
         case .softwareIndex:
             return "Software Index"
+        case .program(let program):
+            return program.name
         }
     }
 
@@ -58,6 +61,8 @@ extension BrowserSection {
             return "Psion16"
         case .softwareIndex:
             return "Install16"
+        case .program:
+            return "Folder16"
         }
     }
 

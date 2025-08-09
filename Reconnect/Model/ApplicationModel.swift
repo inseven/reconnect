@@ -300,3 +300,21 @@ extension ApplicationModel: DaemonClientDelegate {
     }
 
 }
+
+extension ApplicationModel: LibraryModelDelegate {
+
+    func libraryModelDidCancel(libraryModel: LibraryModel) {
+
+    }
+
+    func libraryModel(libraryModel: LibraryModel, didSelectItem item: PsionSoftwareIndexView.Item) {
+        do {
+            let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
+            showInstallerWindow(url: url)
+        } catch {
+            // TODO: Handle these errors!
+            print("Failed to handle download with error \(error).")
+        }
+    }
+
+}

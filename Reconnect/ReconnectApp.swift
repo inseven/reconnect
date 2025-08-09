@@ -19,7 +19,6 @@
 import SwiftUI
 
 import Diligence
-import PsionSoftwareIndex
 
 @main @MainActor
 struct ReconnectApp: App {

@@ -50,6 +50,11 @@ class NavigationHistory {
     private var items: [Item] = []
     private var index: Int? = nil
 
+    init(section: BrowserSection) {
+        index = 0
+        self.items = [Item(section: section)]
+    }
+
     func back() {
         guard let index else {
             return

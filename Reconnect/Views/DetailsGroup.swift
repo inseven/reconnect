@@ -18,8 +18,6 @@
 
 import SwiftUI
 
-import PsionSoftwareIndex
-
 struct DetailsGroup<Content: View, Label: View>: View {
 
     let content: Content
