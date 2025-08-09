@@ -81,16 +81,13 @@ struct BrowserView: View {
         }
         .frame(minWidth: 800, minHeight: 600)
         .onChange(of: sceneModel.section) { oldValue, newValue in
-            // TODO: Move this into the scene model itself.
-            // TODO: Support empty items.
-            // Ignore sidebar-items that match the current section.
-            // TODO: Not sure this is working??
-            guard let section = newValue, navigationHistory.currentItem?.section != section else {
+            guard navigationHistory.currentItem?.section != newValue else {
                 return
             }
-            navigationHistory.navigate(section)
+            navigationHistory.navigate(newValue)
         }
         .onChange(of: navigationHistory.currentItem) { oldValue, newValue in
+            // TODO: This is messy; tidy it up.
             guard sceneModel.section != newValue?.section else {
                 return
             }
@@ -103,6 +100,9 @@ struct BrowserView: View {
             guard sceneModel.section != newSection else {
                 return
             }
+            guard let newSection else {
+                return
+            }
             sceneModel.section = newSection
         }
         .onChange(of: applicationModel.devices) { oldValue, newValue in
@@ -110,7 +110,7 @@ struct BrowserView: View {
                 switch sceneModel.section {
                 case .connecting, .softwareIndex:
                     break
-                case .device, .directory, .drive, .none:
+                case .device, .directory, .drive:
                     sceneModel.section = .connecting
                 }
             } else {
