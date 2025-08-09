@@ -31,8 +31,17 @@ class DirectoryModel {
         return name(for: path)
     }
 
+    @ObservationIgnored
     let applicationModel: ApplicationModel
+
+    @ObservationIgnored
     let transfersModel: TransfersModel
+
+    @ObservationIgnored
+    private let navigationHistory: NavigationHistory
+
+    @ObservationIgnored
+    private let deviceModel: DeviceModel
 
     var files: [FileServer.DirectoryEntry] = []
 
@@ -43,17 +52,16 @@ class DirectoryModel {
     
     var lastError: Error? = nil
 
-    @ObservationIgnored
-    private let navigationHistory: NavigationHistory
-
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
          navigationHistory: NavigationHistory,
+         deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
         self.navigationHistory = navigationHistory
+        self.deviceModel = deviceModel
         self.driveInfo = driveInfo
         self.path = path
     }
@@ -89,8 +97,8 @@ class DirectoryModel {
 
     private func update() {
         self.files = []
-        self.run { [path] in
-            let files = try self.applicationModel.fileServer.dirSync(path: path)
+        self.run { [path, deviceModel] in
+            let files = try deviceModel.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
             DispatchQueue.main.sync {
                 self.files = files
@@ -100,12 +108,12 @@ class DirectoryModel {
     }
 
     func delete(_ selection: Set<FileServer.DirectoryEntry.ID>) {
-        run {
+        run { [deviceModel] in
             for path in selection {
                 if path.isWindowsDirectory {
-                    try self.applicationModel.fileServer.rmdir(path: path)
+                    try deviceModel.fileServer.rmdir(path: path)
                 } else {
-                    try self.applicationModel.fileServer.remove(path: path)
+                    try deviceModel.fileServer.remove(path: path)
                 }
                 DispatchQueue.main.sync {
                     self.files.removeAll { $0.path == path }
@@ -116,12 +124,12 @@ class DirectoryModel {
     }
 
     func rename(file: FileServer.DirectoryEntry, to newName: String) {
-        run {
+        run { [deviceModel] in
             let newPath = file.path
                 .deletingLastWindowsPathComponent
                 .appendingWindowsPathComponent(newName, isDirectory: file.isDirectory)
             do {
-                try self.applicationModel.fileServer.rename(from: file.path, to: newPath)
+                try deviceModel.fileServer.rename(from: file.path, to: newPath)
             } catch {
                 self.refresh()
                 throw error
@@ -221,10 +229,10 @@ extension DirectoryModel: FileManageable {
     }
 
     func createNewFolder() {
-        run { [path] in
+        run { [path, deviceModel] in
 
             // Get the names of the files and folders in the current path.
-            let names = try self.applicationModel.fileServer
+            let names = try deviceModel.fileServer
                 .dirSync(path: path)
                 .map { $0.name }
                 .reduce(into: Set()) { $0.insert($1) }
@@ -239,8 +247,8 @@ extension DirectoryModel: FileManageable {
 
             // Create the folder.
             let folderPath = path + name
-            try self.applicationModel.fileServer.mkdir(path: folderPath)
-            let files = try self.applicationModel.fileServer.dirSync(path: path)
+            try deviceModel.fileServer.mkdir(path: folderPath)
+            let files = try deviceModel.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
             // Update the model state.

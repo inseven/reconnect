@@ -33,6 +33,16 @@ struct BrowserView: View {
     init() {
     }
 
+    @ViewBuilder func withDeviceModel(@ViewBuilder content: (DeviceModel) -> some View) -> some View {
+        if let deviceModel = applicationModel.devices.first {
+            content(deviceModel)
+                .environment(deviceModel)
+                .focusedSceneObject(DeviceModelProxy(deviceModel: deviceModel))
+        } else {
+            EmptyView()
+        }
+    }
+
     var body: some View {
 
         NavigationSplitView {
@@ -42,22 +52,29 @@ struct BrowserView: View {
             case .connecting:
                 DisconnectedView()
             case .drive(let driveInfo):
-                DirectoryView(applicationModel: applicationModel,
-                              transfersModel: transfersModel,
-                              navigationHistory: navigationHistory,
-                              driveInfo: driveInfo,
-                              path: driveInfo.path)
-                .id(driveInfo.path)
+                withDeviceModel { deviceModel in
+                    DirectoryView(applicationModel: applicationModel,
+                                  transfersModel: transfersModel,
+                                  navigationHistory: navigationHistory,
+                                  deviceModel: deviceModel,
+                                  driveInfo: driveInfo,
+                                  path: driveInfo.path)
+                    .id(driveInfo.path)
+                }
             case .directory(let driveInfo, let path):
-                DirectoryView(applicationModel: applicationModel,
-                              transfersModel: transfersModel,
-                              navigationHistory: navigationHistory,
-                              driveInfo: driveInfo,
-                              path: path)
-                .id(path)
+                withDeviceModel { deviceModel in
+                    DirectoryView(applicationModel: applicationModel,
+                                  transfersModel: transfersModel,
+                                  navigationHistory: navigationHistory,
+                                  deviceModel: deviceModel,
+                                  driveInfo: driveInfo,
+                                  path: path)
+                    .id(path)
+                }
             case .device:
-                DeviceView()
-                    .focusesDevice()
+                withDeviceModel { _ in
+                    DeviceView()
+                }
             case .softwareIndex:
                 PsionSoftwareIndexView { release in
                     return release.kind == .installer
@@ -66,18 +83,14 @@ struct BrowserView: View {
             case .none:
                 Text("Nothing selected!")
             }
-
         }
         .toolbar(id: "main") {
-
             NavigationToolbar()
-
             ToolsToolbar()
             ToolbarSpacer(id: "spacer-1")
             FileToolbar()
             ToolbarSpacer(id: "spacer-2")
             RefreshToolbar()
-
         }
         .frame(minWidth: 800, minHeight: 600)
         .onChange(of: sceneModel.section) { oldValue, newValue in
@@ -105,16 +118,27 @@ struct BrowserView: View {
             }
             sceneModel.section = newSection
         }
-        .onChange(of: applicationModel.devices) { oldValue, newValue in
-            if newValue.isEmpty {
+        .onChange(of: applicationModel.devices) { oldValue, newDevices in
+            // When the set of available devices changes, we check to see if we need to update the UI accordingly.
+            if let device = newDevices.first {
+                // If we're currently displaying the connecting screen, then we want to instead display the new device.
+                guard sceneModel.section == .connecting else {
+                    return
+                }
+                // When selecting the new device, we prefer the internal RAM drive if available.
+                let section: BrowserSection = if let drive = device.internalDrive {
+                    BrowserSection.drive(drive)
+                } else {
+                    BrowserSection.device
+                }
+                sceneModel.section = section
+            } else {
                 switch sceneModel.section {
                 case .connecting, .softwareIndex:
                     break
                 case .device, .directory, .drive:
                     sceneModel.section = .connecting
                 }
-            } else {
-                navigationHistory.navigate(.device)
             }
         }
     }

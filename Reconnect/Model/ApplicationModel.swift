@@ -113,14 +113,8 @@ class ApplicationModel: NSObject {
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
     var devices: [DeviceModel] = []
-    var isDeviceConnected = false
 
     let transfersModel = TransfersModel()
-
-    // Client servers; synchronized on main.
-    // In the future when we support multiple connected devices, these should be accessed via a thread-safe pool.
-    // TODO: REMOVE THIS!
-    var fileServer = FileServer()
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -283,15 +277,19 @@ extension ApplicationModel: DaemonClientDelegate {
 
     func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
-        // We recreate the file-server here as it doesn't appear to be resilient to ncpd restarts.
-        // In future implementations we might wish to think about using this moment to clear a pool of available clients
-        // and allow them to be created lazily.
-        self.fileServer = FileServer()
-        self.isDeviceConnected = isDeviceConnected
         if isDeviceConnected {
+            // Create a new `DeviceModel` that encapsulates all PLP sessions with the newly attached Psion.
+            // We pre-warm the model before adding it into the UI to ensure that the UI can immediately select a
+            // suitable drive to display.
+            // TODO: This is currently racy.
             let deviceModel = DeviceModel(applicationModel: self)
-            self.devices = [deviceModel]
-            deviceModel.start()
+//            self.devices = [deviceModel]
+            deviceModel.start { error in
+                // TODO: Do something with the error??
+                DispatchQueue.main.async {
+                    self.devices = [deviceModel]
+                }
+            }
         } else {
             self.devices = []
         }
