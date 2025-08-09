@@ -24,7 +24,6 @@ struct BrowserView: View {
     @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(SceneModel.self) private var sceneModel
     @Environment(TransfersModel.self) private var transfersModel
     @Environment(NavigationHistory.self) private var navigationHistory
 
@@ -56,7 +55,7 @@ struct BrowserView: View {
             switch navigationHistory.currentItem?.section {
             case .connecting:
                 DisconnectedView()
-            case .drive(let driveInfo):
+            case .drive(let deviceId, let driveInfo):
                 withDeviceModel { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
                                   transfersModel: transfersModel,
@@ -64,9 +63,9 @@ struct BrowserView: View {
                                   deviceModel: deviceModel,
                                   driveInfo: driveInfo,
                                   path: driveInfo.path)
-                    .id(driveInfo.path)
                 }
-            case .directory(let driveInfo, let path):
+                .id("\(deviceId)\(driveInfo.path)")
+            case .directory(let deviceId, let driveInfo, let path):
                 withDeviceModel { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
                                   transfersModel: transfersModel,
@@ -74,8 +73,8 @@ struct BrowserView: View {
                                   deviceModel: deviceModel,
                                   driveInfo: driveInfo,
                                   path: path)
-                    .id(path)
                 }
+                .id("\(deviceId)\(driveInfo.path)\(path)")
             case .device:
                 withDeviceModel { _ in
                     DeviceView()
@@ -99,51 +98,26 @@ struct BrowserView: View {
             RefreshToolbar()
         }
         .frame(minWidth: 800, minHeight: 600)
-        .onChange(of: sceneModel.section) { oldValue, newValue in
-            guard navigationHistory.currentItem?.section != newValue else {
-                return
-            }
-            navigationHistory.navigate(newValue)
-        }
-        .onChange(of: navigationHistory.currentItem) { oldValue, newValue in
-            // TODO: This is messy; tidy it up.
-            guard sceneModel.section != newValue?.section else {
-                return
-            }
-            // Remap `.directory` to `.drive` for the sidebar entries.
-            let newSection = if case let .directory(driveInfo, _) = newValue?.section {
-                BrowserSection.drive(driveInfo)
-            } else {
-                newValue?.section
-            }
-            guard sceneModel.section != newSection else {
-                return
-            }
-            guard let newSection else {
-                return
-            }
-            sceneModel.section = newSection
-        }
         .onChange(of: applicationModel.devices) { oldValue, newDevices in
             // When the set of available devices changes, we check to see if we need to update the UI accordingly.
             if let device = newDevices.first {
                 // If we're currently displaying the connecting screen, then we want to instead display the new device.
-                guard sceneModel.section == .connecting else {
+                guard navigationHistory.currentItem?.section == .connecting else {
                     return
                 }
                 // When selecting the new device, we prefer the internal RAM drive if available.
                 let section: BrowserSection = if let drive = device.internalDrive {
-                    BrowserSection.drive(drive)
+                    BrowserSection.drive(device.id, drive)
                 } else {
-                    BrowserSection.device
+                    BrowserSection.device(device.id)
                 }
-                sceneModel.section = section
+                navigationHistory.navigate(section)
             } else {
-                switch sceneModel.section {
+                switch navigationHistory.currentItem?.section {
                 case .connecting, .softwareIndex, .program:
                     break
-                case .device, .directory, .drive:
-                    sceneModel.section = .connecting
+                case .device, .directory, .drive, .none:
+                    navigationHistory.navigate(.connecting)
                 }
             }
         }

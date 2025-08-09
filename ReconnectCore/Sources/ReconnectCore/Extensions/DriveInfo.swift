@@ -22,7 +22,7 @@ extension FileServer.DriveInfo {
 
     public var displayName: String {
         if let name {
-            return name
+            return "\(name) (\(drive))"
         } else {
             return "\(drive):"
         }

@@ -28,12 +28,14 @@ struct DeviceDriveGroup: View {
         DisclosureGroup(isExpanded: $isShowingDrives) {
             ForEach(deviceModel.drives) { driveInfo in
                 Label(driveInfo.displayName, image: driveInfo.image)
-                    .tag(BrowserSection.drive(driveInfo))
+                    .tag(BrowserSection.drive(deviceModel.id, driveInfo))
+                    .id(BrowserSection.drive(deviceModel.id, driveInfo))
             }
         } label: {
             Label("My Psion", image: "Psion16")
         }
-        .tag(BrowserSection.device)
+        .tag(BrowserSection.device(deviceModel.id))
+        .id(BrowserSection.device(deviceModel.id))
     }
 
 }
