@@ -283,7 +283,6 @@ extension ApplicationModel: DaemonClientDelegate {
             // suitable drive to display.
             // TODO: This is currently racy.
             let deviceModel = DeviceModel(applicationModel: self)
-//            self.devices = [deviceModel]
             deviceModel.start { error in
                 // TODO: Do something with the error??
                 DispatchQueue.main.async {
