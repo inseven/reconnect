@@ -31,6 +31,8 @@ class DeviceModel: Identifiable, Equatable {
 
     let id = UUID()
 
+    var machineInfo = RemoteCommandServicesClient.MachineInfo()
+    var ownerInfo: String = ""
     var drives: [FileServer.DriveInfo] = []
     var isCapturingScreenshot: Bool = false
 
@@ -40,9 +42,10 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
-    // TODO: !!!!!! WHERE DO I SHOW THESE ERRORS??
+    // TODO: WHERE DO I SHOW ERRORS FROM HERE?
 
     let fileServer = FileServer()
+    let remoteCommandServicesClient = RemoteCommandServicesClient()
 
     @ObservationIgnored
     private weak var applicationModel: ApplicationModel?  // TODO: Might be cleaner to inject a separate settings model?
@@ -57,7 +60,14 @@ class DeviceModel: Identifiable, Equatable {
     func start(completion: @escaping (Error?) -> Void) {
         workQueue.async { [self] in
             do {
-                drives = try fileServer.drivesSync()
+                let machineInfo = try remoteCommandServicesClient.getMachineInfo()
+                let ownerInfo = try remoteCommandServicesClient.getOwnerInfo()
+                let drives = try fileServer.drivesSync()
+                DispatchQueue.main.sync {
+                    self.machineInfo = machineInfo
+                    self.ownerInfo = ownerInfo.joined(separator: "\n")
+                    self.drives = drives
+                }
                 completion(nil)
             } catch {
                 // TODO: Work out where to save this!

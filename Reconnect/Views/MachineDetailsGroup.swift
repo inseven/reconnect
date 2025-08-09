@@ -18,21 +18,58 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct MachineDetailsGroup: View {
 
+    @Environment(DeviceModel.self) private var deviceModel
+
+    var machineInfo: RemoteCommandServicesClient.MachineInfo {
+        return deviceModel.machineInfo
+    }
+
+    var type: String {
+        return String(machineInfo.machineType.toString())
+    }
+
+    var softwareVersion: String {
+        return String(format: "%d.%02d(%d)", machineInfo.romMajor, machineInfo.romMinor, machineInfo.romBuild)
+    }
+
+    var language: String {
+        return String(machineInfo.uiLanguage.toString())
+    }
+
+    var machineUID: String {
+        let s = String(format: "%llX", deviceModel.machineInfo.machineUID)
+        let chunks = stride(from: 0, to: s.count, by: 4).map { i -> String in
+            let start = s.index(s.startIndex, offsetBy: i)
+            let end = s.index(start, offsetBy: 4, limitedBy: s.endIndex) ?? s.endIndex
+            return String(s[start..<end])
+        }
+        return chunks.joined(separator: "-")
+    }
+
+    var resolution: String {
+        return String(format: "%dx%d", machineInfo.displayWidth, machineInfo.displayHeight)
+    }
+
     var body: some View {
-        DetailsGroup {
-            VStack(alignment: .leading) {
-                LabeledContent("Type:", value: "Series 7")
-                LabeledContent("Software Version:", value: "1.05(254)")
-                LabeledContent("Language:", value: "English (UK)")
-                LabeledContent("Unique Id:", value: "0908-0001-006F-1FBD")
+        DetailsGroup("Machine Information") {
+            Form {
+
+                LabeledContent("Type:", value: type)
+                LabeledContent("Software Version:", value: softwareVersion)
+                LabeledContent("Language:", value: language)
+                LabeledContent("Unique Id:", value: machineUID)
+
+                Spacer()
+
+                LabeledContent("Resolution:", value: resolution)
+
             }
-            .labeledContentStyle(.details)
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-        } label: {
-            Text("Machine")
         }
     }
 

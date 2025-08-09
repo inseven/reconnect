@@ -26,6 +26,13 @@ struct DeviceView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 32) {
 
+                MachineDetailsGroup()
+
+//                DetailsGroup("Owner") {
+//                    Text(deviceModel.ownerInfo)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                }
+
                 DetailsGroup("Installed Programs") {
                     ProgramManagerView()
                         .frame(height: 300)
