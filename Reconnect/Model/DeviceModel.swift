@@ -32,7 +32,6 @@ class DeviceModel: Identifiable, Equatable {
     let id = UUID()
 
     var machineInfo = RemoteCommandServicesClient.MachineInfo()
-    var ownerInfo: String = ""
     var drives: [FileServer.DriveInfo] = []
     var isCapturingScreenshot: Bool = false
 
@@ -60,12 +59,10 @@ class DeviceModel: Identifiable, Equatable {
     func start(completion: @escaping (Error?) -> Void) {
         workQueue.async { [self] in
             do {
-                let machineInfo = try remoteCommandServicesClient.getMachineInfo()
-                let ownerInfo = try remoteCommandServicesClient.getOwnerInfo()
+//                let machineInfo = try remoteCommandServicesClient.getMachineInfo()
                 let drives = try fileServer.drivesSync()
                 DispatchQueue.main.sync {
-                    self.machineInfo = machineInfo
-                    self.ownerInfo = ownerInfo.joined(separator: "\n")
+//                    self.machineInfo = machineInfo
                     self.drives = drives
                 }
                 completion(nil)

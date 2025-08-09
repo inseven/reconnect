@@ -24,7 +24,6 @@ struct BrowserWindow: Scene {
 
     static let id = "browser"
 
-    @State private var sceneModel = SceneModel()
     @State private var navigationHistory: NavigationHistory
 
     private let applicationModel: ApplicationModel
@@ -54,7 +53,6 @@ struct BrowserWindow: Scene {
         }
         .environment(applicationModel)
         .environment(transfersModel)
-        .environment(sceneModel)
         .environment(navigationHistory)
         .handlesExternalEvents(matching: [.browser, .settings, .settingsGeneral, .settingsDevices])
     }

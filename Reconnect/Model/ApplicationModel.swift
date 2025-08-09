@@ -113,6 +113,7 @@ class ApplicationModel: NSObject {
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
     var devices: [DeviceModel] = []
+    var sidebarDevices: [FileItem] = []
 
     let transfersModel = TransfersModel()
 
@@ -287,10 +288,12 @@ extension ApplicationModel: DaemonClientDelegate {
                 // TODO: Do something with the error??
                 DispatchQueue.main.async {
                     self.devices = [deviceModel]
+                    self.sidebarDevices = [FileItem(section: .device(deviceModel.id), name: "My Psion", children: deviceModel.drives.map { FileItem(section: .drive(deviceModel.id, $0), name: $0.displayName) })]
                 }
             }
         } else {
             self.devices = []
+            self.sidebarDevices = [FileItem(section: .connecting, name: "Connecting...")]
         }
     }
 

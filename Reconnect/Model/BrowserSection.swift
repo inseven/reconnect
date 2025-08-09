@@ -22,9 +22,9 @@ import ReconnectCore
 
 enum BrowserSection: Hashable {
     case connecting
-    case drive(FileServer.DriveInfo)  // TODO: Differentiate between these?
-    case directory(FileServer.DriveInfo, String)
-    case device
+    case drive(UUID, FileServer.DriveInfo)  // TODO: Differentiate between these?
+    case directory(UUID, FileServer.DriveInfo, String)
+    case device(UUID)
     case softwareIndex
     case program(Program)
 }
@@ -35,9 +35,9 @@ extension BrowserSection {
         switch self {
         case .connecting:
             return "Connecting..."
-        case .drive(let driveInfo):
+        case .drive(_, let driveInfo):
             return driveInfo.displayName
-        case .directory(_, let path):
+        case .directory(_, _, let path):
             // TODO: Make this right.
             return path
         case .device:
@@ -53,7 +53,7 @@ extension BrowserSection {
         switch self {
         case .connecting:
             return "Disconnected16"
-        case .drive(let driveInfo):
+        case .drive(_, let driveInfo):
             return driveInfo.image
         case .directory:
             return "Folder16"
