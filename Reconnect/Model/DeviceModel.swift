@@ -22,6 +22,18 @@ import OpoLua
 
 import ReconnectCore
 
+extension RemoteCommandServicesClient.MachineType {
+
+    var isEpoc32: Bool {
+        switch self {
+        case .unknown, .pc, .mc, .hc, .series3, .series3acmx, .workabout, .siena, .series3c:
+            return false
+        case .series5, .winC:
+            return true
+        }
+    }
+}
+
 @Observable
 class DeviceModel: Identifiable, Equatable {
 
@@ -29,9 +41,8 @@ class DeviceModel: Identifiable, Equatable {
         return lhs.id != rhs.id
     }
 
-    let id = UUID()
-
-    var machineInfo = RemoteCommandServicesClient.MachineInfo()
+    var machineType: RemoteCommandServicesClient.MachineType = .unknown
+    var machineInfo: RemoteCommandServicesClient.MachineInfo? = nil
     var drives: [FileServer.DriveInfo] = []
     var isCapturingScreenshot: Bool = false
 
@@ -41,7 +52,20 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
+    var installDirectory: String? {
+        switch machineType {
+        case .unknown, .pc, .mc, .hc, .winC:
+            return nil
+        case .series3, .series3acmx, .workabout, .siena, .series3c:
+            return .epoc16InstallDirectory
+        case .series5:
+            return .epoc32InstallDirectory
+        }
+    }
+
     // TODO: WHERE DO I SHOW ERRORS FROM HERE?
+
+    let id = UUID()
 
     let fileServer = FileServer()
     let remoteCommandServicesClient = RemoteCommandServicesClient()
@@ -59,10 +83,16 @@ class DeviceModel: Identifiable, Equatable {
     func start(completion: @escaping (Error?) -> Void) {
         workQueue.async { [self] in
             do {
-//                let machineInfo = try remoteCommandServicesClient.getMachineInfo()
+                let machineType = try remoteCommandServicesClient.getMachineType()
+                let machineInfo: RemoteCommandServicesClient.MachineInfo? = if machineType.isEpoc32 {
+                    try remoteCommandServicesClient.getMachineInfo()
+                } else {
+                    nil
+                }
                 let drives = try fileServer.drivesSync()
                 DispatchQueue.main.sync {
-//                    self.machineInfo = machineInfo
+                    self.machineType = machineType
+                    self.machineInfo = machineInfo
                     self.drives = drives
                 }
                 completion(nil)

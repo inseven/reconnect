@@ -46,8 +46,8 @@ struct InstallerView: View {
 
     @State var installerModel: InstallerModel
 
-    init(url: URL) {
-        _installerModel = State(initialValue: InstallerModel(url: url))
+    init(applicationModel: ApplicationModel, url: URL) {
+        _installerModel = State(initialValue: InstallerModel(applicationModel: applicationModel, url: url))
     }
 
     var body: some View {

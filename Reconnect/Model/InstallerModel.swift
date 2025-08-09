@@ -122,6 +122,7 @@ class InstallerModel: Runnable {
         case text(TextQuery)
     }
 
+    private let applicationModel: ApplicationModel
     private let fileServer = FileServer()
     private let url: URL
 
@@ -129,7 +130,8 @@ class InstallerModel: Runnable {
     var page: Page = .loading
     var query: Query?
 
-    init(url: URL) {
+    init(applicationModel: ApplicationModel, url: URL) {
+        self.applicationModel = applicationModel
         self.url = url
     }
 
@@ -255,13 +257,18 @@ extension InstallerModel: SisInstallIoHandler {
     func sisGetStubs() -> Sis.GetStubsResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
+            // TODO: Use the application model to get the device.
+
+            // TODO: Determine this based on the device connected.
+            let installDirectory: String = .epoc32InstallDirectory
+
             // Ensure the install directory exists on the Psion.
-            if !(try fileServer.exists(path: .installDirectory)) {
-                try fileServer.mkdir(path: .installDirectory)
+            if !(try fileServer.exists(path: installDirectory)) {
+                try fileServer.mkdir(path: installDirectory)
             }
 
             // Index the existing stubs.
-            let stubs = try fileServer.getStubs { progress in
+            let stubs = try fileServer.getStubs(installDirectory: installDirectory) { progress in
                 DispatchQueue.main.sync {
                     self.page = .checkingInstalledPackages(progress.fractionCompleted)
                 }

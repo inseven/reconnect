@@ -113,7 +113,7 @@ class ApplicationModel: NSObject {
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
     var devices: [DeviceModel] = []
-    var sidebarDevices: [FileItem] = []
+    var sidebarDevices: [FileItem] = [FileItem(section: .connecting, name: "Connecting...")]
 
     let transfersModel = TransfersModel()
 
@@ -243,7 +243,7 @@ class ApplicationModel: NSObject {
         // Create a new window and center if one doesn't exist.
         if window == nil {
             logger.debug("Creating new installer window for '\(url)'...")
-            window = NSInstallerWindow(url: url)
+            window = NSInstallerWindow(applicationModel: self, url: url)
             window?.center()
         }
 
@@ -285,10 +285,20 @@ extension ApplicationModel: DaemonClientDelegate {
             // TODO: This is currently racy.
             let deviceModel = DeviceModel(applicationModel: self)
             deviceModel.start { error in
-                // TODO: Do something with the error??
+                if let error {
+                    // TODO: Surface this error somewhere in the UI.
+                    print("Failed to initialize device with error \(error).")
+                    return
+                }
                 DispatchQueue.main.async {
                     self.devices = [deviceModel]
-                    self.sidebarDevices = [FileItem(section: .device(deviceModel.id), name: "My Psion", children: deviceModel.drives.map { FileItem(section: .drive(deviceModel.id, $0), name: $0.displayName) })]
+
+                    let drives = deviceModel.drives.map { driveInfo in
+                        FileItem(section: .drive(deviceModel.id, driveInfo), name: driveInfo.displayName)
+                    }
+                    self.sidebarDevices = [FileItem(section: .device(deviceModel.id),
+                                                    name: "My Psion",
+                                                    children: drives)]
                 }
             }
         } else {

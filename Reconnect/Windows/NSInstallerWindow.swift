@@ -22,9 +22,9 @@ class NSInstallerWindow: NSWindow {
 
     var url: URL?
 
-    convenience init(url: URL) {
+    convenience init(applicationModel: ApplicationModel, url: URL) {
         let windowProxy = WindowProxy()
-        let rootView = InstallerView(url: url)
+        let rootView = InstallerView(applicationModel: applicationModel, url: url)
             .environment(\.window, windowProxy)
         self.init(contentViewController: NSHostingController(rootView: rootView))
         self.url = url

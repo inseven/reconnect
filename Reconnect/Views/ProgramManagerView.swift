@@ -22,7 +22,11 @@ struct ProgramManagerView: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
 
-    @State private var programManagerModel = ProgramManagerModel()
+    @State private var programManagerModel: ProgramManagerModel
+
+    init(deviceModel: DeviceModel) {
+        _programManagerModel = State(initialValue: ProgramManagerModel(deviceModel: deviceModel))
+    }
 
     var body: some View {
         VStack(spacing: 0) {

@@ -20,28 +20,18 @@ import SwiftUI
 
 import ReconnectCore
 
-struct MachineDetailsGroup: View {
-
-    @Environment(DeviceModel.self) private var deviceModel
-
-    var machineInfo: RemoteCommandServicesClient.MachineInfo {
-        return deviceModel.machineInfo
-    }
-
-    var type: String {
-        return String(machineInfo.machineType.toString())
-    }
+extension RemoteCommandServicesClient.MachineInfo {
 
     var softwareVersion: String {
-        return String(format: "%d.%02d(%d)", machineInfo.romMajor, machineInfo.romMinor, machineInfo.romBuild)
+        return String(format: "%d.%02d(%d)", romMajor, romMinor, romBuild)
     }
 
     var language: String {
-        return String(machineInfo.uiLanguage.toString())
+        return String(uiLanguage.toString())
     }
 
-    var machineUID: String {
-        let s = String(format: "%llX", deviceModel.machineInfo.machineUID)
+    var machineUIDString: String {
+        let s = String(format: "%llX", machineUID)
         let chunks = stride(from: 0, to: s.count, by: 4).map { i -> String in
             let start = s.index(s.startIndex, offsetBy: i)
             let end = s.index(start, offsetBy: 4, limitedBy: s.endIndex) ?? s.endIndex
@@ -51,21 +41,39 @@ struct MachineDetailsGroup: View {
     }
 
     var resolution: String {
-        return String(format: "%dx%d", machineInfo.displayWidth, machineInfo.displayHeight)
+        return String(format: "%dx%d", displayWidth, displayHeight)
+    }
+
+}
+
+struct MachineDetailsGroup: View {
+
+    @Environment(DeviceModel.self) private var deviceModel
+
+    var machineInfo: RemoteCommandServicesClient.MachineInfo?
+
+    var type: String {
+        return String("\(deviceModel.machineType)")
     }
 
     var body: some View {
         DetailsGroup("Machine Information") {
             Form {
 
-                LabeledContent("Type:", value: type)
-                LabeledContent("Software Version:", value: softwareVersion)
-                LabeledContent("Language:", value: language)
-                LabeledContent("Unique Id:", value: machineUID)
+                LabeledContent {
+                    Text(deviceModel.machineType.localizedNameKey)
+                } label: {
+                    Text("Type:")
+                }
 
-                Spacer()
-
-                LabeledContent("Resolution:", value: resolution)
+                if let machineInfo {
+                    Spacer()
+                    LabeledContent("Software Version:", value: machineInfo.softwareVersion)
+                    LabeledContent("Language:", value: machineInfo.language)
+                    LabeledContent("Unique Id:", value: machineInfo.machineUIDString)
+                    Spacer()
+                    LabeledContent("Resolution:", value: machineInfo.resolution)
+                }
 
             }
             .padding()

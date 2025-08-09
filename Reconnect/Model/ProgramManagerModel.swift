@@ -47,13 +47,17 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
     var installedPrograms: [ProgramDetails] = []
 
     let syncQueue = DispatchQueue(label: "ProgramManagerModel.syncQueue")
-    let fileServer = FileServer()
+    let deviceModel: DeviceModel
 
     var isReady: Bool {
         guard case .ready = state else {
             return false
         }
         return true
+    }
+
+    init(deviceModel: DeviceModel) {
+        self.deviceModel = deviceModel
     }
 
     func remove(uid: UInt32) {
@@ -73,8 +77,13 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
     private func syncQueue_reload() {
         dispatchPrecondition(condition: .onQueue(syncQueue))
         do {
+            guard let installDirectory = deviceModel.installDirectory else {
+                // TODO: Think about handling this state?
+                return
+            }
+
             // Get the installed stubs.
-            let stubs = try self.fileServer.getStubs { progress in
+            let stubs = try deviceModel.fileServer.getStubs(installDirectory: installDirectory) { progress in
                 DispatchQueue.main.sync {
                     self.state = .checkingInstalledPackages(progress)
                 }
@@ -125,7 +134,7 @@ extension ProgramManagerModel: OpoLua.FileSystemIoHandler {
 
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        return fileServer.fsop(operation) { progress in
+        return deviceModel.fileServer.fsop(operation) { progress in
             DispatchQueue.main.sync {
                 print("\(operation): \(progress)")
             }
