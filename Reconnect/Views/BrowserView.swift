@@ -83,7 +83,7 @@ struct BrowserView: View {
                 ProgramsView()
                     .environmentObject(libraryModel)
             case .program(let program):
-                ProgramView(program: program)
+                ProgramView(navigationHistory: navigationHistory, program: program)
                     .environmentObject(libraryModel)
             case .none:
                 Text("Nothing selected!")
