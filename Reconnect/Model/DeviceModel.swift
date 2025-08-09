@@ -23,7 +23,11 @@ import OpoLua
 import ReconnectCore
 
 @Observable
-class DeviceModel: Identifiable {
+class DeviceModel: Identifiable, Equatable {
+
+    static func == (lhs: DeviceModel, rhs: DeviceModel) -> Bool {
+        return lhs.id != rhs.id
+    }
 
     // TODO: Work queue!
 

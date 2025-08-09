@@ -105,6 +105,18 @@ struct BrowserView: View {
             }
             sceneModel.section = newSection
         }
+        .onChange(of: applicationModel.devices) { oldValue, newValue in
+            if newValue.isEmpty {
+                switch sceneModel.section {
+                case .connecting, .softwareIndex:
+                    break
+                case .device, .directory, .drive, .none:
+                    sceneModel.section = .connecting
+                }
+            } else {
+                navigationHistory.navigate(.device)
+            }
+        }
     }
 
 }
