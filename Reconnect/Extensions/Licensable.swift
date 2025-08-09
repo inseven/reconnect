@@ -21,7 +21,6 @@ import Foundation
 import Interact
 import Licensable
 import OpoLua
-import PsionSoftwareIndex
 
 fileprivate let plptoolsLicense = License(id: "https://github.com/rrthomas/plptools",
                                           name: "plptools",
@@ -89,7 +88,6 @@ fileprivate let reconnectLicense = License(id: "https://github.com/inseven/recon
                                                .licensable,
                                                .opolua,
                                                .plptools,
-                                               .psionSoftwareIndex,
                                                .sparkle,
                                                .swiftAlgorithms,
                                                .swiftArgumentParser,

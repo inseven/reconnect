@@ -39,13 +39,6 @@ struct MainMenu: View {
         }
         Divider()
         Button {
-            applicationModel.openReconnect(.programManager)
-        } label: {
-            Text("Add/Remove Programs...")
-        }
-        .disabled(!applicationModel.isDeviceConnected)
-        Divider()
-        Button {
             applicationModel.openReconnect(.about)
         } label: {
             Text("About...")

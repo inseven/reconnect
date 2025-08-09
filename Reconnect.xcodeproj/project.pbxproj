@@ -17,7 +17,6 @@
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
 		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
 		D8A8A8082DE19312007A657B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = D8A8A8072DE19312007A657B /* Algorithms */; };
-		D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */ = {isa = PBXBuildFile; productRef = D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */; };
 		D8B1AC452E0F4C220084BFD5 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8B1AC442E0F4C220084BFD5 /* Quartz.framework */; };
 		D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */; };
@@ -224,7 +223,6 @@
 				D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
 				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
-				D8AE29A82CA25A9800116439 /* PsionSoftwareIndex in Frameworks */,
 				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -354,7 +352,6 @@
 				D8E31EB22C26E09500350082 /* Diligence */,
 				D88FA14D2C2CE0FA00805DBD /* Sparkle */,
 				D8CBAC642C4A02580035FC3D /* ReconnectCore */,
-				D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */,
 				D8A8A8072DE19312007A657B /* Algorithms */,
 				D83BD9652DE862AB0075902D /* SwiftyGif */,
 				D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */,
@@ -552,7 +549,6 @@
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
 				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
-				D8AE29A62CA25A9800116439 /* XCLocalSwiftPackageReference "dependencies/PsionSoftwareIndexSwift" */,
 				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 				D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */,
@@ -1221,10 +1217,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		D8AE29A62CA25A9800116439 /* XCLocalSwiftPackageReference "dependencies/PsionSoftwareIndexSwift" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/PsionSoftwareIndexSwift;
-		};
 		D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/interact;
@@ -1320,10 +1312,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */;
 			productName = Algorithms;
-		};
-		D8AE29A72CA25A9800116439 /* PsionSoftwareIndex */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PsionSoftwareIndex;
 		};
 		D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */ = {
 			isa = XCSwiftPackageProductDependency;

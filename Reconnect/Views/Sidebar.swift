@@ -20,20 +20,30 @@ import SwiftUI
 
 struct Sidebar: View {
 
-    var model: BrowserModel
+    @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(SceneModel.self) private var sceneModel
 
     var body: some View {
-        @Bindable var model = model
-        List(selection: $model.driveSelection) {
-            Section("Drives") {
-                ForEach(model.drives) { driveInfo in
-                    Label {
-                        Text(driveInfo.displayName)
-                    } icon: {
-                        Image(driveInfo.image)
+        @Bindable var sceneModel = sceneModel
+        List(selection: $sceneModel.section) {
+
+            Section("Devices") {
+                if applicationModel.devices.isEmpty {
+                    SectionLabel(section: .connecting)
+                        .tag(BrowserSection.connecting)
+
+                } else {
+                    ForEach(applicationModel.devices) { deviceModel in
+                        DeviceDriveGroup(deviceModel: deviceModel)
                     }
                 }
             }
+
+            Section("Library") {
+                SectionLabel(section: .softwareIndex)
+                    .tag(BrowserSection.softwareIndex)
+            }
+
         }
 
     }

@@ -18,16 +18,26 @@
 
 import SwiftUI
 
-struct HistoryItemView: View {
+public struct RefreshCommands: Commands {
 
-    @Environment(BrowserModel.self) var browserModel
-    
-    let item: NavigationHistory.Item
+    @FocusedObject private var refreshableProxy: RefreshableProxy?
 
-    var body: some View {
-        HStack {
-            Image(browserModel.image(for: item.path))
-            Text(browserModel.name(for: item.path) ?? "Unknown")
-        }
+    init() {
     }
+
+    public var body: some Commands {
+
+        CommandGroup(before: .newItem) {
+
+            Button("Refresh") {
+                refreshableProxy?.refresh()
+            }
+            .keyboardShortcut("R")
+            .disabled(!(refreshableProxy?.canRefresh ?? false))
+
+            Divider()
+        }
+
+    }
+
 }

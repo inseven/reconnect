@@ -20,29 +20,31 @@ import SwiftUI
 
 public struct NavigationCommands: Commands {
 
-    let browserModel: BrowserModel
+    @Environment(NavigationHistory.self) private var navigationHistory
+
+    @FocusedObject private var parentNavigableProxy: ParentNavigableProxy?
 
     public var body: some Commands {
 
         CommandMenu("Go") {
 
             Button("Back") {
-                browserModel.back()
+                navigationHistory.back()
             }
             .keyboardShortcut("[", modifiers: [.command])
-            .disabled(!browserModel.canGoBack)
+            .disabled(!navigationHistory.canGoBack())
 
             Button("Forward") {
-                browserModel.forward()
+                navigationHistory.forward()
             }
             .keyboardShortcut("]", modifiers: [.command])
-            .disabled(!browserModel.canGoForward)
+            .disabled(!navigationHistory.canGoForward())
 
             Button("Enclosing Folder") {
-                browserModel.openEnclosingFolder()
+                parentNavigableProxy?.navigateToParent()
             }
             .keyboardShortcut(.upArrow, modifiers: [.command])
-            .disabled(!browserModel.canOpenEnclosingFolder)
+            .disabled(!(parentNavigableProxy?.canNavigateToParent ?? false))
         }
 
     }

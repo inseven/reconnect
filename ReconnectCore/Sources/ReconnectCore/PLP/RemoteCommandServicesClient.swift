@@ -22,6 +22,8 @@ import ncp
 
 public class RemoteCommandServicesClient {
 
+    public typealias MachineInfo = rpcs.machineInfo
+
     private let host: String
     private let port: Int32
 
@@ -48,6 +50,31 @@ public class RemoteCommandServicesClient {
         }
     }
 
+    public func getMachineInfo() throws -> MachineInfo {
+        return try withClient { client in
+            var machineInfo = rpcs.machineInfo()
+            client.getMachineInfo(&machineInfo)
+            return machineInfo
+        }
+    }
+
+    // TODO: Inject the code page?
+    public func getOwnerInfo() throws -> [String] {
+        return try withClient { client in
+            var buf: bufferArray = bufferArray()
+            try client.getOwnerInfo(&buf).check()
+            var ownerInfo = [String]()
+            while !buf.empty() {
+                let data = Data(store: buf.pop())
+                let line = data.withUnsafeBytes { bytes in
+                    return String(cString: bytes.bindMemory(to: CChar.self).baseAddress!, encoding: .windowsCP1252)!
+                }
+                ownerInfo.append(line)
+            }
+            return ownerInfo
+        }
+    }
+
     public func execProgram(program: String, args: String = "") throws {
         return try withClient { client in
             try client.execProgram(program, args).check()
@@ -58,6 +85,19 @@ public class RemoteCommandServicesClient {
         return try withClient { client in
             try client.stopPrograms().check()
         }
+    }
+
+}
+
+
+extension Data {
+
+    init(store: bufferStore) {
+        var bytes: [UInt8] = []
+        for i in 0..<store.getLen() {
+            bytes.append(store.getByte(Int(i)))
+        }
+        self.init(bytes)
     }
 
 }

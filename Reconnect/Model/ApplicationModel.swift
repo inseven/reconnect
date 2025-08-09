@@ -110,15 +110,11 @@ class ApplicationModel: NSObject {
     // General applicaiton state.
     var launching: Bool = true
     var activeSettingsSection: SettingsView.SettingsSection = .general
-
-    // Daemon state; synchronized on main.
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
-    var isDeviceConnected = false
+    var devices: [DeviceModel] = []
 
-    // Client servers; synchronized on main.
-    // In the future when we support multiple connected devices, these should be accessed via a thread-safe pool.
-    var fileServer = FileServer()
+    let transfersModel = TransfersModel()
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -276,20 +272,49 @@ extension ApplicationModel: DaemonClientDelegate {
     func daemonClientDidDisconnect(_ daemonClient: DaemonClient) {
         dispatchPrecondition(condition: .onQueue(.main))
         self.isDaemonConnected = false
+        self.devices = []
     }
 
     func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
-        // We recreate the file-server here as it doesn't appear to be resilient to ncpd restarts.
-        // In future implementations we might wish to think about using this moment to clear a pool of available clients
-        // and allow them to be created lazily.
-        self.fileServer = FileServer()
-        self.isDeviceConnected = isDeviceConnected
+        if isDeviceConnected {
+            // Create a new `DeviceModel` that encapsulates all PLP sessions with the newly attached Psion.
+            // We pre-warm the model before adding it into the UI to ensure that the UI can immediately select a
+            // suitable drive to display.
+            // TODO: This is currently racy.
+            let deviceModel = DeviceModel(applicationModel: self)
+            deviceModel.start { error in
+                // TODO: Do something with the error??
+                DispatchQueue.main.async {
+                    self.devices = [deviceModel]
+                }
+            }
+        } else {
+            self.devices = []
+        }
     }
 
     func daemonClient(_ daemonClient: ReconnectCore.DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
         dispatchPrecondition(condition: .onQueue(.main))
         self.serialDevices = serialDevices
+    }
+
+}
+
+extension ApplicationModel: LibraryModelDelegate {
+
+    func libraryModelDidCancel(libraryModel: LibraryModel) {
+
+    }
+
+    func libraryModel(libraryModel: LibraryModel, didSelectItem item: PsionSoftwareIndexView.Item) {
+        do {
+            let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
+            showInstallerWindow(url: url)
+        } catch {
+            // TODO: Handle these errors!
+            print("Failed to handle download with error \(error).")
+        }
     }
 
 }

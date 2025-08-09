@@ -26,73 +26,38 @@ struct ProgramManagerView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Table(of: ProgramManagerModel.ProgramDetails.self, selection: $programManagerModel.selection) {
-                TableColumn("Program") { programDetails in
-                    Text(programDetails.sis.localizedDisplayName)
-                }
-                TableColumn("Version") { programDetails in
-                    Text("\(programDetails.sis.version.major).\(programDetails.sis.version.minor)")
-                }
-            } rows: {
-                ForEach(programManagerModel.installedPrograms, id: \.self) { programDetails in
-                    TableRow(programDetails)
-                        .contextMenu {
-                            Button("Remove") {
-                                programManagerModel.remove(uid: programDetails.sis.uid)
-                            }
-                        }
-                }
-            }
-
-            Divider()
-
             if case ProgramManagerModel.State.checkingInstalledPackages(let progress) = programManagerModel.state {
-                HStack {
-                    ProgressView(value: progress.fractionCompleted)
-                        .progressViewStyle(.circular)
-                        .controlSize(.small)
+                VStack {
                     Text("Checking installed packages...")
+                    ProgressView(value: progress.fractionCompleted)
                 }
-                .foregroundStyle(.secondary)
                 .padding()
+                .frame(maxWidth: InstallerView.LayoutMetrics.maximumContentWidth)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                Text("\(programManagerModel.installedPrograms.count) Programs")
-                    .foregroundStyle(.secondary)
-                    .padding()
+                Table(of: ProgramManagerModel.ProgramDetails.self) {
+                    TableColumn("Program") { programDetails in
+                        Text(programDetails.sis.localizedDisplayName)
+                    }
+                    TableColumn("Version") { programDetails in
+                        Text("\(programDetails.sis.version.major).\(programDetails.sis.version.minor)")
+                    }
+                    TableColumn("") { programDetails in
+                        Button("Remove") {
+                            programManagerModel.remove(uid: programDetails.sis.uid)
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                } rows: {
+                    ForEach(programManagerModel.installedPrograms, id: \.self) { programDetails in
+                        TableRow(programDetails)
+                    }
+                }
             }
-
         }
-        .toolbar {
-
-            ToolbarItem {
-                Button {
-                    programManagerModel.reload()
-                } label: {
-                    Label("Refresh", systemImage: "arrow.clockwise")
-                }
-            }
-
-            ToolbarItem {
-                Button {
-                    programManagerModel.remove()
-                } label: {
-                    Label("Remove", systemImage: "trash")
-                }
-                .disabled(!programManagerModel.canRemove)
-            }
-
-            ToolbarItem {
-                Button {
-                    applicationModel.openInstaller()
-                } label: {
-                    Label("Add...", systemImage: "plus")
-                }
-            }
-
-        }
+        .background(.textBackgroundColor)
         .disabled(!programManagerModel.isReady)
         .runs(programManagerModel)
-        .frame(minWidth: 640, minHeight: 480)
     }
 
 }

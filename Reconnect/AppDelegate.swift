@@ -22,7 +22,6 @@ import SwiftUI
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
     let applicationModel = ApplicationModel()
-    let transfersModel = TransfersModel()
 
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {

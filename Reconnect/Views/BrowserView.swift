@@ -18,62 +18,134 @@
 
 import SwiftUI
 
-import PsionSoftwareIndex
-
 @MainActor
 struct BrowserView: View {
 
     @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(SceneModel.self) private var sceneModel
+    @Environment(TransfersModel.self) private var transfersModel
+    @Environment(NavigationHistory.self) private var navigationHistory
 
-    private var browserModel: BrowserModel
+    @StateObject var libraryModel: LibraryModel
 
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
+    init(applicationModel: ApplicationModel) {
+        let libraryModel = LibraryModel { release in
+            return release.kind == .installer
+        }
+        _libraryModel = StateObject(wrappedValue: libraryModel)
+        libraryModel.delegate = applicationModel
+    }
+
+    @ViewBuilder func withDeviceModel(@ViewBuilder content: (DeviceModel) -> some View) -> some View {
+        if let deviceModel = applicationModel.devices.first {
+            content(deviceModel)
+                .environment(deviceModel)
+                .focusedSceneObject(DeviceModelProxy(deviceModel: deviceModel))
+        } else {
+            EmptyView()
+        }
     }
 
     var body: some View {
 
-        @Bindable var browserModel = browserModel
-
         NavigationSplitView {
-            Sidebar(model: browserModel)
+            Sidebar()
         } detail: {
-            BrowserDetailView(browserModel: browserModel)
+            switch navigationHistory.currentItem?.section {
+            case .connecting:
+                DisconnectedView()
+            case .drive(let driveInfo):
+                withDeviceModel { deviceModel in
+                    DirectoryView(applicationModel: applicationModel,
+                                  transfersModel: transfersModel,
+                                  navigationHistory: navigationHistory,
+                                  deviceModel: deviceModel,
+                                  driveInfo: driveInfo,
+                                  path: driveInfo.path)
+                    .id(driveInfo.path)
+                }
+            case .directory(let driveInfo, let path):
+                withDeviceModel { deviceModel in
+                    DirectoryView(applicationModel: applicationModel,
+                                  transfersModel: transfersModel,
+                                  navigationHistory: navigationHistory,
+                                  deviceModel: deviceModel,
+                                  driveInfo: driveInfo,
+                                  path: path)
+                    .id(path)
+                }
+            case .device:
+                withDeviceModel { _ in
+                    DeviceView()
+                }
+            case .softwareIndex:
+                ProgramsView()
+                    .environmentObject(libraryModel)
+            case .program(let program):
+                ProgramView(program: program)
+                    .environmentObject(libraryModel)
+            case .none:
+                Text("Nothing selected!")
+            }
         }
         .toolbar(id: "main") {
-
-            NavigationToolbar(browserModel: browserModel)
-
-            ToolsToolbar(browserModel: browserModel)
+            NavigationToolbar()
+            ToolsToolbar()
             ToolbarSpacer(id: "spacer-1")
-            FileToolbar(browserModel: browserModel)
+            FileToolbar()
             ToolbarSpacer(id: "spacer-2")
-
-            ToolbarItem(id: "add") {
-                Menu {
-                    Button("Install...") {
-                        applicationModel.openInstaller()
-                    }
-                    Divider()
-                    PsionSoftwareIndexLink()
-                } label: {
-                    Label("Add", systemImage: "plus")
+            RefreshToolbar()
+        }
+        .frame(minWidth: 800, minHeight: 600)
+        .onChange(of: sceneModel.section) { oldValue, newValue in
+            guard navigationHistory.currentItem?.section != newValue else {
+                return
+            }
+            navigationHistory.navigate(newValue)
+        }
+        .onChange(of: navigationHistory.currentItem) { oldValue, newValue in
+            // TODO: This is messy; tidy it up.
+            guard sceneModel.section != newValue?.section else {
+                return
+            }
+            // Remap `.directory` to `.drive` for the sidebar entries.
+            let newSection = if case let .directory(driveInfo, _) = newValue?.section {
+                BrowserSection.drive(driveInfo)
+            } else {
+                newValue?.section
+            }
+            guard sceneModel.section != newSection else {
+                return
+            }
+            guard let newSection else {
+                return
+            }
+            sceneModel.section = newSection
+        }
+        .onChange(of: applicationModel.devices) { oldValue, newDevices in
+            // When the set of available devices changes, we check to see if we need to update the UI accordingly.
+            if let device = newDevices.first {
+                // If we're currently displaying the connecting screen, then we want to instead display the new device.
+                guard sceneModel.section == .connecting else {
+                    return
+                }
+                // When selecting the new device, we prefer the internal RAM drive if available.
+                let section: BrowserSection = if let drive = device.internalDrive {
+                    BrowserSection.drive(drive)
+                } else {
+                    BrowserSection.device
+                }
+                sceneModel.section = section
+            } else {
+                switch sceneModel.section {
+                case .connecting, .softwareIndex, .program:
+                    break
+                case .device, .directory, .drive:
+                    sceneModel.section = .connecting
                 }
             }
-
-            ToolbarSpacer(id: "spacer-3")
-            BrowserToolbar(browserModel: browserModel)
-
-        }
-        .navigationTitle(browserModel.navigationTitle ?? "My Psion")
-        .presents($browserModel.lastError)
-        .onAppear {
-            browserModel.navigate(to: "C:\\")
-        }
-        .task {
-            await browserModel.start()
         }
     }
 

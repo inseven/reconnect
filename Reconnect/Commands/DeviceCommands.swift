@@ -20,29 +20,26 @@ import SwiftUI
 
 public struct DeviceCommands: Commands {
 
-    @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(ApplicationModel.self) private var applicationModel: ApplicationModel
 
-    private let browserModel: BrowserModel
-
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
-    }
+    @FocusedObject private var deviceProxy: DeviceModelProxy?
 
     public var body: some Commands {
 
         CommandMenu("Device") {
 
             Button("Capture Screenshot") {
-                browserModel.captureScreenshot()
+                deviceProxy?.deviceModel.captureScreenshot()
             }
             .keyboardShortcut("S", modifiers: [.command, .shift])
-            .disabled(browserModel.isCapturingScreenshot)
+            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
 
             Divider()
 
             Button("Install Reconnect Tools...") {
                 applicationModel.installGuestTools()
             }
+            .disabled(deviceProxy == nil)
 
         }
 

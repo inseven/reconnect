@@ -18,22 +18,19 @@
 
 import SwiftUI
 
-struct BrowserToolbar: CustomizableToolbarContent {
+struct RefreshToolbar: CustomizableToolbarContent {
 
-    private var browserModel: BrowserModel
-
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
-    }
+    @FocusedObject private var refreshableProxy: RefreshableProxy?
 
     var body: some CustomizableToolbarContent {
 
         ToolbarItem(id: "refresh") {
             Button {
-                browserModel.refresh()
+                refreshableProxy?.refresh()
             } label: {
                 Label("Refresh", systemImage: "arrow.clockwise")
             }
+            .disabled(!(refreshableProxy?.canRefresh ?? false))
         }
 
     }

@@ -21,22 +21,22 @@ import SwiftUI
 struct NavigationToolbar: CustomizableToolbarContent {
 
     @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(NavigationHistory.self) private var navigationHistory
 
-    private var browserModel: BrowserModel
+    @FocusedObject private var parentNavigable: ParentNavigableProxy?
 
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
+    init() {
     }
 
     var body: some CustomizableToolbarContent {
 
         ToolbarItem(id: "open-enclosing-folder", placement: .navigation) {
             Button {
-                browserModel.openEnclosingFolder()
+                parentNavigable?.navigateToParent()
             } label: {
                 Label("Enclosing Folder", systemImage: "arrow.turn.left.up")
             }
-            .disabled(!browserModel.canOpenEnclosingFolder)
+            .disabled(!(parentNavigable?.canNavigateToParent ?? false))
         }
 
         ToolbarItem(id: "navigation", placement: .navigation) {
@@ -44,36 +44,38 @@ struct NavigationToolbar: CustomizableToolbarContent {
                 HStack(spacing: 8) {
 
                     Menu {
-                        ForEach(browserModel.previousItems) { item in
+                        ForEach(navigationHistory.previousItems.reversed()) { item in
                             Button {
-                                browserModel.navigate(to: item)
+                                navigationHistory.navigate(item)
                             } label: {
-                                HistoryItemView(item: item)
+                                SectionLabel(section: item.section)
                             }
                         }
+                        .labelStyle(.titleAndIcon)
                     } label: {
                         Label("Back", systemImage: "chevron.backward")
                     } primaryAction: {
-                        browserModel.back()
+                        navigationHistory.back()
                     }
                     .menuIndicator(.hidden)
-                    .disabled(!browserModel.canGoBack)
+                    .disabled(!navigationHistory.canGoBack())
 
                     Menu {
-                        ForEach(browserModel.nextItems) { item in
+                        ForEach(navigationHistory.nextItems) { item in
                             Button {
-                                browserModel.navigate(to: item)
+                                navigationHistory.navigate(item)
                             } label: {
-                                HistoryItemView(item: item)
+                                SectionLabel(section: item.section)
                             }
                         }
+                        .labelStyle(.titleAndIcon)
                     } label: {
                         Label("Forward", systemImage: "chevron.forward")
                     } primaryAction: {
-                        browserModel.forward()
+                        navigationHistory.forward()
                     }
                     .menuIndicator(.hidden)
-                    .disabled(!browserModel.canGoForward)
+                    .disabled(!navigationHistory.canGoForward())
 
                 }
                 .help("See folders you viewed previously")

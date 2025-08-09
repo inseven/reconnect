@@ -19,7 +19,6 @@
 import SwiftUI
 
 import Diligence
-import PsionSoftwareIndex
 
 @main @MainActor
 struct ReconnectApp: App {
@@ -30,29 +29,12 @@ struct ReconnectApp: App {
 
     var body: some Scene {
 
-        BrowserWindow(applicationModel: appDelegate.applicationModel, transfersModel: appDelegate.transfersModel)
+        BrowserWindow(applicationModel: appDelegate.applicationModel,
+                      transfersModel: appDelegate.applicationModel.transfersModel)
 
         TransfersWindow()
             .environment(appDelegate.applicationModel)
-            .environment(appDelegate.transfersModel)
-
-        PsionSoftwareIndexWindow()
-            .environment(appDelegate.applicationModel)
-            .environment(appDelegate.transfersModel)
-            .handlesExternalEvents(matching: [.psionSoftwareIndex])
-            .onDownloadItem { item in
-                do {
-                    let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
-                    appDelegate.applicationModel.showInstallerWindow(url: url)
-                } catch {
-                    print("Failed to handle download with error \(error).")
-                }
-            }
-
-        ProgramManagerWindow()
-            .environment(appDelegate.applicationModel)
-            .environment(appDelegate.transfersModel)
-            .handlesExternalEvents(matching: [.programManager])
+            .environment(appDelegate.applicationModel.transfersModel)
 
         Settings {
             SettingsView()
