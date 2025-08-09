@@ -29,28 +29,40 @@ class DeviceModel: Identifiable, Equatable {
         return lhs.id != rhs.id
     }
 
-    // TODO: Work queue!
-
     let id = UUID()
 
     var drives: [FileServer.DriveInfo] = []
     var isCapturingScreenshot: Bool = false
 
+    var internalDrive: FileServer.DriveInfo? {
+        return drives.first { driveInfo in
+            return driveInfo.mediaType == .ram
+        }
+    }
+
+    // TODO: !!!!!! WHERE DO I SHOW THESE ERRORS??
+
+    let fileServer = FileServer()
+
+    @ObservationIgnored
     private weak var applicationModel: ApplicationModel?  // TODO: Might be cleaner to inject a separate settings model?
-    let fileServer = FileServer()  // TODO: Use this.
+
+    private let workQueue = DispatchQueue(label: "DeviceModel.workQueue")
 
     init(applicationModel: ApplicationModel) {
         self.applicationModel = applicationModel
     }
 
-    func start() {
-        Task {
+    // TODO: Cancellable??
+    func start(completion: @escaping (Error?) -> Void) {
+        workQueue.async { [self] in
             do {
-                // TODO: Sync.
-                drives = try await fileServer.drives()
+                drives = try fileServer.drivesSync()
+                completion(nil)
             } catch {
                 // TODO: Work out where to save this!
                 //            lastError = error
+                completion(error)
             }
         }
     }

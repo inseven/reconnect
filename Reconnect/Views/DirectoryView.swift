@@ -30,12 +30,14 @@ struct DirectoryView: View {
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
          navigationHistory: NavigationHistory,
+         deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {
         self.applicationModel = applicationModel
         _directoryModel = State(initialValue: DirectoryModel(applicationModel: applicationModel,
                                                              transfersModel: transfersModel,
                                                              navigationHistory: navigationHistory,
+                                                             deviceModel: deviceModel,
                                                              driveInfo: driveInfo,
                                                              path: path))
 
@@ -180,8 +182,6 @@ struct DirectoryView: View {
         .focusedSceneObject(FileManageableProxy(directoryModel))
         .focusedSceneObject(ParentNavigableProxy(directoryModel))
         .focusedSceneObject(RefreshableProxy(directoryModel))
-        .focusesDevice()
-
     }
 
 }
