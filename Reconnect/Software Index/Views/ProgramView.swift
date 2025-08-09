@@ -20,11 +20,35 @@
 
 import SwiftUI
 
+@Observable
+class ProgramViewModel: ParentNavigable {
+
+    let canNavigateToParent = true
+
+    private let navigationHistory: NavigationHistory
+
+    init(navigationHistory: NavigationHistory) {
+        self.navigationHistory = navigationHistory
+    }
+
+    func navigateToParent() {
+        self.navigationHistory.navigate(.softwareIndex)
+    }
+
+}
+
 struct ProgramView: View {
 
     @EnvironmentObject private var libraryModel: LibraryModel
 
-    var program: Program
+    @State private var programViewModel: ProgramViewModel
+
+    let program: Program
+
+    init(navigationHistory: NavigationHistory, program: Program) {
+        _programViewModel = State(initialValue: ProgramViewModel(navigationHistory: navigationHistory))
+        self.program = program
+    }
 
     var body: some View {
         List {
@@ -94,6 +118,7 @@ struct ProgramView: View {
         }
         .listStyle(.plain)
         .navigationTitle(program.name)
+        .focusedSceneObject(ParentNavigableProxy(programViewModel))
     }
 
 }
