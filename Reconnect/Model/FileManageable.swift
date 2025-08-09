@@ -16,27 +16,32 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-struct ToolsToolbar: CustomizableToolbarContent {
+protocol FileManageable {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    @MainActor
+    var canOpenSelection: Bool { get }
 
-    init() {
-    }
+    @MainActor
+    func openSelection()
 
-    var body: some CustomizableToolbarContent {
+    @MainActor
+    var canCreateNewFolder: Bool { get }
 
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
+    @MainActor
+    func createNewFolder()
 
-    }
+    @MainActor
+    var canDelete: Bool { get }
+
+    @MainActor
+    func delete()
+
+    @MainActor
+    var canDownload: Bool { get }
+
+    @MainActor
+    func download()
 
 }

@@ -26,54 +26,84 @@ struct BrowserView: View {
     @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(SceneModel.self) private var sceneModel
+    @Environment(TransfersModel.self) private var transfersModel
+    @Environment(NavigationHistory.self) private var navigationHistory
 
-    private var browserModel: BrowserModel
-
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
+    init() {
     }
 
     var body: some View {
 
-        @Bindable var browserModel = browserModel
-
         NavigationSplitView {
-            Sidebar(model: browserModel)
+            Sidebar()
         } detail: {
-            BrowserDetailView(browserModel: browserModel)
+            switch navigationHistory.currentItem?.section {
+            case .connecting:
+                DisconnectedView()
+            case .drive(let driveInfo):
+                DirectoryView(applicationModel: applicationModel,
+                              transfersModel: transfersModel,
+                              navigationHistory: navigationHistory,
+                              driveInfo: driveInfo,
+                              path: driveInfo.path)
+                .id(driveInfo.path)
+            case .directory(let driveInfo, let path):
+                DirectoryView(applicationModel: applicationModel,
+                              transfersModel: transfersModel,
+                              navigationHistory: navigationHistory,
+                              driveInfo: driveInfo,
+                              path: path)
+                .id(path)
+            case .device:
+                DeviceView()
+                    .focusesDevice()
+            case .softwareIndex:
+                PsionSoftwareIndexView { release in
+                    return release.kind == .installer
+                } completion: { item in
+                }
+            case .none:
+                Text("Nothing selected!")
+            }
+
         }
         .toolbar(id: "main") {
 
-            NavigationToolbar(browserModel: browserModel)
+            NavigationToolbar()
 
-            ToolsToolbar(browserModel: browserModel)
+            ToolsToolbar()
             ToolbarSpacer(id: "spacer-1")
-            FileToolbar(browserModel: browserModel)
+            FileToolbar()
             ToolbarSpacer(id: "spacer-2")
+            RefreshToolbar()
 
-            ToolbarItem(id: "add") {
-                Menu {
-                    Button("Install...") {
-                        applicationModel.openInstaller()
-                    }
-                    Divider()
-                    PsionSoftwareIndexLink()
-                } label: {
-                    Label("Add", systemImage: "plus")
-                }
+        }
+        .frame(minWidth: 800, minHeight: 600)
+        .onChange(of: sceneModel.section) { oldValue, newValue in
+            // TODO: Move this into the scene model itself.
+            // TODO: Support empty items.
+            // Ignore sidebar-items that match the current section.
+            // TODO: Not sure this is working??
+            guard let section = newValue, navigationHistory.currentItem?.section != section else {
+                return
             }
-
-            ToolbarSpacer(id: "spacer-3")
-            BrowserToolbar(browserModel: browserModel)
-
+            navigationHistory.navigate(section)
         }
-        .navigationTitle(browserModel.navigationTitle ?? "My Psion")
-        .presents($browserModel.lastError)
-        .onAppear {
-            browserModel.navigate(to: "C:\\")
-        }
-        .task {
-            await browserModel.start()
+        .onChange(of: navigationHistory.currentItem) { oldValue, newValue in
+            guard sceneModel.section != newValue?.section else {
+                return
+            }
+            // Remap `.directory` to `.drive` for the sidebar entries.
+            let newSection = if case let .directory(driveInfo, _) = newValue?.section {
+                BrowserSection.drive(driveInfo)
+            } else {
+                newValue?.section
+            }
+            guard sceneModel.section != newSection else {
+                return
+            }
+            sceneModel.section = newSection
         }
     }
 

@@ -18,34 +18,37 @@
 
 import SwiftUI
 
-struct Sidebar: View {
+struct ShowsDeviceProgress: ViewModifier {
 
-    @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(SceneModel.self) private var sceneModel
+    @Environment(DeviceModel.self) private var deviceModel: DeviceModel
 
-    var body: some View {
-        @Bindable var sceneModel = sceneModel
-        List(selection: $sceneModel.section) {
-
-            Section("Devices") {
-                if applicationModel.devices.isEmpty {
-                    SectionLabel(section: .connecting)
-                        .tag(BrowserSection.connecting)
-
-                } else {
-                    ForEach(applicationModel.devices) { deviceModel in
-                        DeviceDriveGroup(deviceModel: deviceModel)
+    func body(content: Content) -> some View {
+        content
+        .safeAreaInset(edge: .bottom) {
+            if deviceModel.isCapturingScreenshot {
+                VStack(spacing: 0) {
+                    Divider()
+                    HStack {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .controlSize(.small)
+                        Text("Capturing screenshot...")
                     }
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .padding()
                 }
+                .background(Color(nsColor: .textBackgroundColor))
             }
-
-            Section("Library") {
-                SectionLabel(section: .softwareIndex)
-                    .tag(BrowserSection.softwareIndex)
-            }
-
         }
+    }
 
+}
+
+extension View {
+
+    func showsDeviceProgress() -> some View {
+        return modifier(ShowsDeviceProgress())
     }
 
 }

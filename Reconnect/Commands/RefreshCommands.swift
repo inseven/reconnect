@@ -18,23 +18,24 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+public struct RefreshCommands: Commands {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    @FocusedObject private var refreshableProxy: RefreshableProxy?
 
     init() {
     }
 
-    var body: some CustomizableToolbarContent {
+    public var body: some Commands {
 
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
+        CommandGroup(before: .newItem) {
+
+            Button("Refresh") {
+                refreshableProxy?.refresh()
             }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+            .keyboardShortcut("R")
+            .disabled(!(refreshableProxy?.canRefresh ?? false))
+
+            Divider()
         }
 
     }

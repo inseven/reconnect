@@ -18,25 +18,11 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+import ReconnectCore
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+@Observable
+class SceneModel {
 
-    init() {
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
-
-    }
+    var section: BrowserSection? = .connecting
 
 }

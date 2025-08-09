@@ -18,25 +18,22 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+struct DetailsLabeledContentStyle: LabeledContentStyle {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
-
-    init() {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+                .bold()
+            configuration.content
+        }
     }
 
-    var body: some CustomizableToolbarContent {
+}
 
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
+extension LabeledContentStyle where Self == DetailsLabeledContentStyle {
 
+    static var details: Self {
+        return DetailsLabeledContentStyle()
     }
 
 }

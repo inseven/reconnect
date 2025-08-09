@@ -1,3 +1,11 @@
+//
+//  ParentNavigable.swift
+//  Reconnect
+//
+//  Created by Jason Barrie Morley on 08/08/2025.
+//
+
+
 // Reconnect -- Psion connectivity for macOS
 //
 // Copyright (C) 2024-2025 Jason Morley
@@ -16,27 +24,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-struct ToolsToolbar: CustomizableToolbarContent {
+protocol ParentNavigable {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
+    @MainActor
+    var canNavigateToParent: Bool { get }
 
-    init() {
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
-
-    }
+    @MainActor
+    func navigateToParent()
 
 }

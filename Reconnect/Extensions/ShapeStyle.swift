@@ -18,25 +18,10 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+extension ShapeStyle where Self == Color {
 
-    @FocusedObject private var deviceProxy: DeviceModelProxy?
-
-    init() {
-    }
-
-    var body: some CustomizableToolbarContent {
-
-        ToolbarItem(id: "screenshot") {
-            Button {
-                deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Screenshot", systemImage: "camera.viewfinder")
-            }
-            .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
-        }
-
+    static var textBackgroundColor: Self {
+        return Color(nsColor: .textBackgroundColor)
     }
 
 }

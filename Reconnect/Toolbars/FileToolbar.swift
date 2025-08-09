@@ -20,42 +20,35 @@ import SwiftUI
 
 struct FileToolbar: CustomizableToolbarContent {
 
-    @Environment(ApplicationModel.self) private var applicationModel
-
-    private var browserModel: BrowserModel
-
-    init(browserModel: BrowserModel) {
-        self.browserModel = browserModel
-    }
+    @FocusedObject private var fileManageableProxy: FileManageableProxy?
 
     var body: some CustomizableToolbarContent {
 
         ToolbarItem(id: "new-folder") {
             Button {
-                browserModel.newFolder()
+                fileManageableProxy?.createNewFolder()
             } label: {
                 Label("New Folder", systemImage: "folder.badge.plus")
             }
+            .disabled(!(fileManageableProxy?.canCreateNewFolder ?? false))
         }
 
         ToolbarItem(id: "download") {
             Button {
-                browserModel.download(to: applicationModel.downloadsURL,
-                                      convertFiles: applicationModel.convertFiles,
-                                      completion: { _ in })
+                fileManageableProxy?.download()
             } label: {
-                Label("New Folder", systemImage: "square.and.arrow.down")
+                Label("Download", systemImage: "square.and.arrow.down")
             }
-            .disabled(browserModel.isSelectionEmpty)
+            .disabled(!(fileManageableProxy?.canDownload ?? false))
         }
 
         ToolbarItem(id: "delete") {
             Button {
-                browserModel.delete()
+                fileManageableProxy?.delete()
             } label: {
                 Label("Delete", systemImage: "trash")
             }
-            .disabled(browserModel.isSelectionEmpty)
+            .disabled(!(fileManageableProxy?.canDelete ?? false))
         }
 
     }

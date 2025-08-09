@@ -24,7 +24,8 @@ struct BrowserWindow: Scene {
 
     static let id = "browser"
 
-    @State private var browserModel: BrowserModel
+    @State private var sceneModel = SceneModel()
+    @State private var navigationHistory: NavigationHistory
 
     private let applicationModel: ApplicationModel
     private let transfersModel: TransfersModel
@@ -32,61 +33,29 @@ struct BrowserWindow: Scene {
     init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
-        _browserModel = State(initialValue: BrowserModel(applicationModel: applicationModel,
-                                                         transfersModel: transfersModel))
+        let navigationHistory = NavigationHistory()
+        self.navigationHistory = navigationHistory
     }
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            VStack {
-                if applicationModel.isDeviceConnected {
-                    BrowserView(browserModel: browserModel)
-                } else {
-                    if !applicationModel.isDaemonConnected {
-                        if applicationModel.launching {
-                            ProgressView()
-                        } else {
-                            ContentUnavailableView {
-                                Label("Daemon Not Running", systemImage: "exclamationmark.octagon")
-                            } description: {
-                                Text("Reconnect is unable to connect to reconnectd. This manages the serial connection and allows both the main Reconnect and menu bar apps to talk to your Psion. Restarting your computer might help.")
-                            }
-                        }
-                    } else if !applicationModel.hasUsableSerialDevices {
-                        ContentUnavailableView {
-                            Label("Not Connected", systemImage: "cable.connector.slash")
-                        } description: {
-                            Text("No serial devices available. Make sure you have connected and enabled a serial adapter.")
-                        } actions: {
-                            SettingsButton("Open Connection Settings...", section: .devices)
-                        }
-                    } else {
-                        ContentUnavailableView {
-                            Label {
-                                Text("Connecting...")
-                            } icon: {
-                                ProgressAnimation("cnt")
-                            }
-                        } actions: {
-                            SettingsButton()
-                        }
-                    }
-                }
-            }
-            .opensSettings()
+            BrowserView()
+                .opensSettings()
         }
         .commands {
             SparkleCommands(applicationModel: applicationModel)
             HelpCommands()
-            FileCommands(browserModel: browserModel)
+            FileCommands()
+            RefreshCommands()
             SidebarCommands()
             ToolbarCommands()
-            NavigationCommands(browserModel: browserModel)
-            DeviceCommands(browserModel: browserModel)
+            NavigationCommands()
+            DeviceCommands()
         }
         .environment(applicationModel)
         .environment(transfersModel)
-        .environment(browserModel)
+        .environment(sceneModel)
+        .environment(navigationHistory)
         .handlesExternalEvents(matching: [.browser, .settings, .settingsGeneral, .settingsDevices])
     }
 
