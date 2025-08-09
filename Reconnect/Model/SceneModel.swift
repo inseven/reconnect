@@ -23,6 +23,6 @@ import ReconnectCore
 @Observable
 class SceneModel {
 
-    var section: BrowserSection? = .connecting
+    var section: BrowserSection = .connecting
 
 }
