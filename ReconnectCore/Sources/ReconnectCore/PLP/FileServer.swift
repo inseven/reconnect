@@ -605,12 +605,12 @@ extension FileServer {
         }
     }
 
-    public func getStubs(callback: (Progress) -> ProgressResponse) throws -> [Sis.Stub] {
-        guard try exists(path: .installDirectory) else {
+    public func getStubs(installDirectory: String, callback: (Progress) -> ProgressResponse) throws -> [Sis.Stub] {
+        guard try exists(path: installDirectory) else {
             return []
         }
         let fileManager = FileManager.default
-        let paths = try dirSync(path: .installDirectory)
+        let paths = try dirSync(path: installDirectory)
             .filter { $0.pathExtension.lowercased() == "sis" }
         var stubs: [Sis.Stub] = []
         let progress = Progress(totalUnitCount: Int64(paths.count))

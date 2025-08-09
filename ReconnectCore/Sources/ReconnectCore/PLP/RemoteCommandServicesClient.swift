@@ -22,6 +22,20 @@ import ncp
 
 public class RemoteCommandServicesClient {
 
+    public enum MachineType: UInt32 {
+        case unknown = 0x00
+        case pc = 0x01
+        case mc = 0x02
+        case hc = 0x03
+        case series3 = 0x04
+        case series3acmx = 0x05
+        case workabout = 0x06
+        case siena = 0x07
+        case series3c = 0x08
+        case series5 = 0x20
+        case winC = 0x21
+    }
+
     public typealias MachineInfo = rpcs.machineInfo
 
     private let host: String
@@ -50,10 +64,18 @@ public class RemoteCommandServicesClient {
         }
     }
 
+    public func getMachineType() throws -> MachineType {
+        return try withClient { client in
+            var machs = rpcs.machs(0)
+            try client.getMachineType(&machs).check()
+            return MachineType(rawValue: machs.rawValue) ?? .unknown
+        }
+    }
+
     public func getMachineInfo() throws -> MachineInfo {
         return try withClient { client in
             var machineInfo = rpcs.machineInfo()
-            client.getMachineInfo(&machineInfo)
+            try client.getMachineInfo(&machineInfo).check()
             return machineInfo
         }
     }
