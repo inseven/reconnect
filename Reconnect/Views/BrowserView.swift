@@ -18,8 +18,6 @@
 
 import SwiftUI
 
-import PsionSoftwareIndex
-
 @MainActor
 struct BrowserView: View {
 
@@ -30,7 +28,14 @@ struct BrowserView: View {
     @Environment(TransfersModel.self) private var transfersModel
     @Environment(NavigationHistory.self) private var navigationHistory
 
-    init() {
+    @StateObject var libraryModel: LibraryModel
+
+    init(applicationModel: ApplicationModel) {
+        let libraryModel = LibraryModel { release in
+            return release.kind == .installer
+        }
+        _libraryModel = StateObject(wrappedValue: libraryModel)
+        libraryModel.delegate = applicationModel
     }
 
     @ViewBuilder func withDeviceModel(@ViewBuilder content: (DeviceModel) -> some View) -> some View {
@@ -76,10 +81,11 @@ struct BrowserView: View {
                     DeviceView()
                 }
             case .softwareIndex:
-                PsionSoftwareIndexView { release in
-                    return release.kind == .installer
-                } completion: { item in
-                }
+                ProgramsView()
+                    .environmentObject(libraryModel)
+            case .program(let program):
+                ProgramView(program: program)
+                    .environmentObject(libraryModel)
             case .none:
                 Text("Nothing selected!")
             }
@@ -134,7 +140,7 @@ struct BrowserView: View {
                 sceneModel.section = section
             } else {
                 switch sceneModel.section {
-                case .connecting, .softwareIndex:
+                case .connecting, .softwareIndex, .program:
                     break
                 case .device, .directory, .drive:
                     sceneModel.section = .connecting

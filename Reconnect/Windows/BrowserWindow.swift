@@ -33,13 +33,13 @@ struct BrowserWindow: Scene {
     init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
-        let navigationHistory = NavigationHistory()
+        let navigationHistory = NavigationHistory(section: .connecting)
         self.navigationHistory = navigationHistory
     }
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            BrowserView()
+            BrowserView(applicationModel: applicationModel)
                 .opensSettings()
         }
         .commands {
