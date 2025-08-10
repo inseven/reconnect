@@ -33,7 +33,7 @@ extension RemoteCommandServicesClient.MachineType {
         case .series3:
             return "Series 3"
         case .series3acmx:
-            return "Series 3a/3c/3mx"
+            return "Series 3a / Series 3c / Series 3mx"
         case .workabout:
             return "Workabout"
         case .siena:
@@ -41,7 +41,7 @@ extension RemoteCommandServicesClient.MachineType {
         case .series3c:
             return "Series 3c"
         case .series5:
-            return "Series 5"
+            return "Series 5 / Series 5mx / Series 7 / netBook"
         case .winC:
             return "WinC"
         }
