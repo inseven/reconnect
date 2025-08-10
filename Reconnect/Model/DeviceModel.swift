@@ -83,13 +83,40 @@ class DeviceModel: Identifiable, Equatable {
     func start(completion: @escaping (Error?) -> Void) {
         workQueue.async { [self] in
             do {
+
+                // Bootstrap the connection to the Psion, inferring the type of the deivce we're connected to and its
+                // limitations as we go. There are probably better appraoches to this, but this at least gets things
+                // working, and we can revisit them in the future.
+
+                // 1) Perform a drive listing. We know we can always safely do this.
+                let drives = try fileServer.drivesSync()
+
+                // 2) Once we have a drive list, we can infer that we're talking to an EPOC16 device by the presence of
+                //    a RAM-drive labeled M.
+                let epoc16 = drives.first(where: { driveInfo in
+                    return driveInfo.mediaType == .ram && driveInfo.drive == "M"
+                }) != nil
+
+                // 3) If we're EPOC16, we need to ensure the RPCS server is installed on the Psion, copying it if not.
+                if try (epoc16 && !fileServer.exists(path: "M:\\SYS$RPCS.IMG")) {
+                    let rpcsServer = Bundle.main.url(forResource: "SYS$RPCS", withExtension: ".IMG")!
+                    try fileServer.copyFileSync(fromLocalPath: rpcsServer.path, toRemotePath: "M:\\SYS$RPCS.IMG") { _, _ in return .continue }
+                }
+
+                // 4) Once we've made sure the RPCS server is present irrespective of the machine we're using, we can
+                //    fetch the machine type.
                 let machineType = try remoteCommandServicesClient.getMachineType()
+
+                // 5) We then use the machine type as a more fine-grained way to determine if it's safe to fetch the
+                //    full machine info.
                 let machineInfo: RemoteCommandServicesClient.MachineInfo? = if machineType.isEpoc32 {
                     try remoteCommandServicesClient.getMachineInfo()
                 } else {
                     nil
                 }
-                let drives = try fileServer.drivesSync()
+
+                // 6) And with all that done, it's safe to hand back to the UI with enough information to allow things
+                //    to continue and conditionally display things correctly. 😬
                 DispatchQueue.main.sync {
                     self.machineType = machineType
                     self.machineInfo = machineInfo
