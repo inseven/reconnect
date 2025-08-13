@@ -18,51 +18,6 @@
 
 import SwiftUI
 
-struct FileItem: Hashable, Identifiable, CustomStringConvertible {
-    var id: Self { self }
-    var section: BrowserSection
-    var name: String
-    var children: [FileItem]? = nil
-    var description: String {
-        switch children {
-        case nil:
-            return "📄 \(name)"
-        case .some(let children):
-            return children.isEmpty ? "📂 \(name)" : "📁 \(name)"
-        }
-    }
-}
-
-struct ExpandedOutlineGroup<Label: View>: View {
-
-    let items: [FileItem]
-
-    let label: (FileItem) -> Label
-
-    init(items: [FileItem], @ViewBuilder label: @escaping (FileItem) -> Label) {
-        self.items = items
-        self.label = label
-    }
-
-    var body: some View {
-        ForEach(items) { item in
-            if let children = item.children {
-                DisclosureGroup(isExpanded: Binding.constant(true)) {
-                    ExpandedOutlineGroup(items: children, label: label)
-                } label: {
-                    label(item)
-                }
-
-            } else {
-                label(item)
-            }
-        }
-    }
-
-
-
-}
-
 struct Sidebar: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
@@ -97,23 +52,8 @@ struct Sidebar: View {
             Section("Devices") {
                 OutlineGroup(applicationModel.sidebarDevices, children: \.children) { item in
                     Label(item.section.title, image: item.section.image)
-//                    Text("\(item.description)")
                         .tag(item.section)
                 }
-//                ExpandedOutlineGroup(items: applicationModel.sidebarDevices) { item in
-//                    Text(item.description)
-//                        .tag(item.section)
-//                }
-//                if applicationModel.devices.isEmpty {
-//                    SectionLabel(section: .connecting)
-//                        .tag(BrowserSection.connecting)
-//
-//                } else {
-//                    ForEach(applicationModel.devices) { deviceModel in
-//                        DeviceDriveGroup(deviceModel: deviceModel)
-//                            .id(deviceModel.id)
-//                    }
-//                }
             }
 
             Section("Library") {
