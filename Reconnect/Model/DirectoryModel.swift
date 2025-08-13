@@ -70,8 +70,6 @@ class DirectoryModel {
         update()
     }
 
-    // TODO: I think this is for the history and should probably live in that?
-    // TODO: Push tuples onto the navigation history with a label as well?
     func name(for path: String) -> String? {
         if path.isRoot {
             return driveInfo.displayName

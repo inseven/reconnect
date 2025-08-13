@@ -63,15 +63,13 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
-    // TODO: WHERE DO I SHOW ERRORS FROM HERE?
-
     let id = UUID()
 
     let fileServer = FileServer()
     let remoteCommandServicesClient = RemoteCommandServicesClient()
 
     @ObservationIgnored
-    private weak var applicationModel: ApplicationModel?  // TODO: Might be cleaner to inject a separate settings model?
+    private weak var applicationModel: ApplicationModel?
 
     private let workQueue = DispatchQueue(label: "DeviceModel.workQueue")
 
@@ -79,7 +77,6 @@ class DeviceModel: Identifiable, Equatable {
         self.applicationModel = applicationModel
     }
 
-    // TODO: Cancellable??
     func start(completion: @escaping (Error?) -> Void) {
         workQueue.async { [self] in
             do {
@@ -124,23 +121,18 @@ class DeviceModel: Identifiable, Equatable {
                 }
                 completion(nil)
             } catch {
-                // TODO: Work out where to save this!
-                //            lastError = error
                 completion(error)
             }
         }
     }
 
-    // TODO: This is a hack.
-    private func run(task: @escaping () throws -> Void) {
+    private func runInBackground(perform: @escaping () throws -> Void) {
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                try task()
+                try perform()
             } catch {
-                DispatchQueue.main.sync {
-                    // TODO: Store the error somewhere!
-//                    self.lastError = error
-                }
+                // TODO: Surface these errors to the user.
+                print("Failed to perform background operation with error \(error).")
             }
         }
     }
@@ -158,7 +150,7 @@ class DeviceModel: Identifiable, Equatable {
 
         let transfersModel = applicationModel.transfersModel
 
-        run { [transfersModel] in
+        runInBackground { [transfersModel] in
 
             defer {
                 DispatchQueue.main.async {
@@ -193,9 +185,8 @@ class DeviceModel: Identifiable, Equatable {
             // Rename the screenshot before transferring it to allow us to defer renaming to the transfers model.
             let name = nameFormatter.string(from: timestamp)
             let screenshotPath = "C:\\\(name).mbm"
-            try fileServer.rename(from: .screenshotPath, to: screenshotPath)  // TODO: Sync version of this?
+            try fileServer.rename(from: .screenshotPath, to: screenshotPath)
 
-            // TODO: This feels like overkill as a way to synthesize a directory entry.
             // Perhaps the transfer model can use some paired down reference which includes the type?
             let screenshotDetails = try fileServer.getExtendedAttributesSync(path: screenshotPath)
 
