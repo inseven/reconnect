@@ -26,7 +26,7 @@ struct Program: Codable, Identifiable, Hashable {
         return uid
     }
 
-    let uid: String  // TODO: Rename to 'identifier'
+    let uid: String
     let name: String
     let icon: SoftwareIndexImage?
     let versions: [Version]

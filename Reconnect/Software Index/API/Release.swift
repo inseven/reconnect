@@ -26,7 +26,7 @@ public struct Release: Codable, Identifiable, Hashable {
         return uid + referenceString
     }
 
-    public let uid: String  // TODO: Rename to 'identifier'
+    public let uid: String
     public let kind: Kind
     public let name: String
     let icon: SoftwareIndexImage?

@@ -113,7 +113,7 @@ class ApplicationModel: NSObject {
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
     var devices: [DeviceModel] = []
-    var sidebarDevices: [SidebarItem] = [SidebarItem(section: .connecting, name: "Connecting...")]
+    var sidebarDevices: [SidebarItem] = [SidebarItem(section: .connecting)]
 
     let transfersModel = TransfersModel()
 
@@ -282,11 +282,9 @@ extension ApplicationModel: DaemonClientDelegate {
             // Create a new `DeviceModel` that encapsulates all PLP sessions with the newly attached Psion.
             // We pre-warm the model before adding it into the UI to ensure that the UI can immediately select a
             // suitable drive to display.
-            // TODO: This is currently racy.
             let deviceModel = DeviceModel(applicationModel: self)
             deviceModel.start { error in
                 if let error {
-                    // TODO: Surface this error somewhere in the UI.
                     print("Failed to initialize device with error \(error).")
                     return
                 }
@@ -294,16 +292,14 @@ extension ApplicationModel: DaemonClientDelegate {
                     self.devices = [deviceModel]
 
                     let drives = deviceModel.drives.map { driveInfo in
-                        SidebarItem(section: .drive(deviceModel.id, driveInfo), name: driveInfo.displayName)
+                        SidebarItem(section: .drive(deviceModel.id, driveInfo))
                     }
-                    self.sidebarDevices = [SidebarItem(section: .device(deviceModel.id),
-                                                    name: "My Psion",
-                                                    children: drives)]
+                    self.sidebarDevices = [SidebarItem(section: .device(deviceModel.id), children: drives)]
                 }
             }
         } else {
             self.devices = []
-            self.sidebarDevices = [SidebarItem(section: .connecting, name: "Connecting...")]
+            self.sidebarDevices = [SidebarItem(section: .connecting)]
         }
     }
 

@@ -257,9 +257,6 @@ extension InstallerModel: SisInstallIoHandler {
     func sisGetStubs() -> Sis.GetStubsResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
-            // TODO: Use the application model to get the device.
-
-            // TODO: Determine this based on the device connected.
             let installDirectory: String = .epoc32InstallDirectory
 
             // Ensure the install directory exists on the Psion.

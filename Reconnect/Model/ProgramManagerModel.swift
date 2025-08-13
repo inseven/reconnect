@@ -78,7 +78,7 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(syncQueue))
         do {
             guard let installDirectory = deviceModel.installDirectory else {
-                // TODO: Think about handling this state?
+                print("Unable to determine device install directory.")
                 return
             }
 

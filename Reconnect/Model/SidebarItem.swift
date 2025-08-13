@@ -18,17 +18,10 @@
 
 import SwiftUI
 
-struct SidebarItem: Hashable, Identifiable, CustomStringConvertible {
+struct SidebarItem: Hashable, Identifiable {
+
     var id: Self { self }
     var section: BrowserSection
-    var name: String
     var children: [SidebarItem]? = nil
-    var description: String {
-        switch children {
-        case nil:
-            return "📄 \(name)"
-        case .some(let children):
-            return children.isEmpty ? "📂 \(name)" : "📁 \(name)"
-        }
-    }
+
 }
