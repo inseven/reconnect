@@ -113,7 +113,7 @@ class ApplicationModel: NSObject {
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
     var devices: [DeviceModel] = []
-    var sidebarDevices: [FileItem] = [FileItem(section: .connecting, name: "Connecting...")]
+    var sidebarDevices: [SidebarItem] = [SidebarItem(section: .connecting, name: "Connecting...")]
 
     let transfersModel = TransfersModel()
 
@@ -294,16 +294,16 @@ extension ApplicationModel: DaemonClientDelegate {
                     self.devices = [deviceModel]
 
                     let drives = deviceModel.drives.map { driveInfo in
-                        FileItem(section: .drive(deviceModel.id, driveInfo), name: driveInfo.displayName)
+                        SidebarItem(section: .drive(deviceModel.id, driveInfo), name: driveInfo.displayName)
                     }
-                    self.sidebarDevices = [FileItem(section: .device(deviceModel.id),
+                    self.sidebarDevices = [SidebarItem(section: .device(deviceModel.id),
                                                     name: "My Psion",
                                                     children: drives)]
                 }
             }
         } else {
             self.devices = []
-            self.sidebarDevices = [FileItem(section: .connecting, name: "Connecting...")]
+            self.sidebarDevices = [SidebarItem(section: .connecting, name: "Connecting...")]
         }
     }
 

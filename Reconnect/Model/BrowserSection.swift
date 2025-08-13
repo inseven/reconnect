@@ -22,7 +22,7 @@ import ReconnectCore
 
 enum BrowserSection: Hashable {
     case connecting
-    case drive(UUID, FileServer.DriveInfo)  // TODO: Differentiate between these?
+    case drive(UUID, FileServer.DriveInfo)
     case directory(UUID, FileServer.DriveInfo, String)
     case device(UUID)
     case softwareIndex
@@ -38,8 +38,7 @@ extension BrowserSection {
         case .drive(_, let driveInfo):
             return driveInfo.displayName
         case .directory(_, _, let path):
-            // TODO: Make this right.
-            return path
+            return path.lastWindowsPathComponent
         case .device:
             return "My Psion"
         case .softwareIndex:
