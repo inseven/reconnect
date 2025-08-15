@@ -37,7 +37,7 @@ struct FileToolbar: CustomizableToolbarContent {
             Button {
                 fileManageableProxy?.download()
             } label: {
-                Label("Download", systemImage: "square.and.arrow.down")
+                Label("Download", systemImage: "display.and.arrow.down")
             }
             .disabled(!(fileManageableProxy?.canDownload ?? false))
         }
