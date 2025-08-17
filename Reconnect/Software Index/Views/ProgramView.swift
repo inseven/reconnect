@@ -87,7 +87,7 @@ struct ProgramView: View {
                             HStack(alignment: .center) {
                                 IconView(url: item.iconURL)
                                 VStack(alignment: .leading) {
-                                    Text(item.filename)
+                                    Text(item.name)
                                     Text(item.referenceString)
                                         .font(.footnote)
                                 }
