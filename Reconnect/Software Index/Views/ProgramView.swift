@@ -51,76 +51,88 @@ struct ProgramView: View {
     }
 
     var body: some View {
-        List {
-            if !(program.screenshots ?? []).isEmpty {
-                Section {
-                    ScrollView(.horizontal) {
-                        LazyHStack(alignment: .bottom) {
-                            ForEach(program.screenshots ?? [], id: \.path) { screenshot in
-                                AsyncImage(url: URL.softwareIndexAPIV1.appendingPathComponent(screenshot.path)) { image in
-                                    image
-                                        .resizable()
-                                        .frame(width: CGFloat(screenshot.width), height: CGFloat(screenshot.height))
-                                        .transition(.opacity.animation(.easeInOut))
-                                } placeholder: {
-                                    Rectangle()
-                                        .fill(.tertiary)
-                                        .frame(width: CGFloat(screenshot.width), height: CGFloat(screenshot.height))
-                                        .transition(.opacity.animation(.easeInOut))
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                if !(program.screenshots ?? []).isEmpty {
+                    Section {
+                        ScrollView(.horizontal) {
+                            LazyHStack(alignment: .bottom) {
+                                ForEach(program.screenshots ?? [], id: \.path) { screenshot in
+                                    AsyncImage(url: URL.softwareIndexAPIV1.appendingPathComponent(screenshot.path)) { image in
+                                        image
+                                            .resizable()
+                                            .frame(width: CGFloat(screenshot.width), height: CGFloat(screenshot.height))
+                                            .transition(.opacity.animation(.easeInOut))
+                                    } placeholder: {
+                                        Rectangle()
+                                            .fill(.tertiary)
+                                            .frame(width: CGFloat(screenshot.width), height: CGFloat(screenshot.height))
+                                            .transition(.opacity.animation(.easeInOut))
+                                    }
+                                    .border(.tertiary)
                                 }
-                                .border(.tertiary)
                             }
+                            .scrollTargetLayout()
                         }
-                        .scrollTargetLayout()
+                        .scrollTargetBehavior(.viewAligned)
                     }
-                    .scrollTargetBehavior(.viewAligned)
                 }
-                .padding()
-            }
-            if let description = program.description {
-                Text(description)
-                    .padding()
-            }
-            ForEach(program.versions) { version in
-                Section(version.id) {
-                    ForEach(version.variants) { variant in
-                        ForEach(variant.items) { item in
-                            HStack(alignment: .center) {
-                                IconView(url: item.iconURL)
-                                VStack(alignment: .leading) {
-                                    Text(item.name)
-                                    Text(item.referenceString)
-                                        .font(.footnote)
-                                }
-                                Spacer()
-                                Text(item.size.formatted(.byteCount(style: .file)))
-                                    .foregroundStyle(.secondary)
-                                if let task = libraryModel.downloads[item.downloadURL] {
-                                    HStack {
-                                        ProgressView(task.progress)
-                                            .progressViewStyle(.unadornedCircular)
-                                            .controlSize(.small)
-                                        Button("Cancel") {
-                                            libraryModel.downloads[item.downloadURL]?.cancel()
+                if let description = program.description {
+                    Text(description)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                Text("Releases")
+                    .font(.title)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                ForEach(program.versions) { version in
+                    Section {
+                        ForEach(version.variants) { variant in
+                            ForEach(variant.items) { item in
+                                HStack(alignment: .center) {
+                                    IconView(url: item.iconURL)
+                                    VStack(alignment: .leading) {
+                                        Text(item.name)
+                                        Text(String(item.sha256.prefix(8)))
+                                            .foregroundStyle(.secondary)
+                                            .font(.caption)
+                                            .monospaced()
+                                    }
+                                    Spacer()
+                                    Text(item.size.formatted(.byteCount(style: .file)))
+                                        .foregroundStyle(.secondary)
+                                    if let task = libraryModel.downloads[item.downloadURL] {
+                                        HStack {
+                                            ProgressView(task.progress)
+                                                .progressViewStyle(.unadornedCircular)
+                                                .controlSize(.small)
+                                            Button("Cancel") {
+                                                libraryModel.downloads[item.downloadURL]?.cancel()
+                                            }
                                         }
+                                    } else {
+                                        Button {
+                                            libraryModel.download(item)
+                                        } label: {
+                                            Text("Install")
+                                        }
+                                        .buttonStyle(.bordered)
+                                        .buttonBorderShape(.capsule)
                                     }
-                                } else {
-                                    Button {
-                                        libraryModel.download(item)
-                                    } label: {
-                                        Text("Install")
-                                    }
-                                    .buttonStyle(.bordered)
-                                    .buttonBorderShape(.capsule)
                                 }
+                                Divider()
                             }
                         }
+                    } header: {
+                        Text(version.id)
+                            .font(.title2)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
-                .padding()
             }
+            .padding(32)
         }
-        .listStyle(.plain)
+        .background(Color(nsColor: .textBackgroundColor))
         .navigationTitle(program.name)
         .optionalNavigationSubtitle(program.subtitle)
         .focusedSceneObject(ParentNavigableProxy(programViewModel))
