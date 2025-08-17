@@ -55,7 +55,7 @@ struct ProgramView: View {
             if !(program.screenshots ?? []).isEmpty {
                 Section {
                     ScrollView(.horizontal) {
-                        LazyHStack {
+                        LazyHStack(alignment: .bottom) {
                             ForEach(program.screenshots ?? [], id: \.path) { screenshot in
                                 AsyncImage(url: URL.softwareIndexAPIV1.appendingPathComponent(screenshot.path)) { image in
                                     image
@@ -68,6 +68,7 @@ struct ProgramView: View {
                                         .frame(width: CGFloat(screenshot.width), height: CGFloat(screenshot.height))
                                         .transition(.opacity.animation(.easeInOut))
                                 }
+                                .border(.tertiary)
                             }
                         }
                         .scrollTargetLayout()
