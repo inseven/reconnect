@@ -30,15 +30,6 @@ struct NavigationToolbar: CustomizableToolbarContent {
 
     var body: some CustomizableToolbarContent {
 
-        ToolbarItem(id: "open-enclosing-folder", placement: .navigation) {
-            Button {
-                parentNavigable?.navigateToParent()
-            } label: {
-                Label("Enclosing Folder", systemImage: "arrow.turn.left.up")
-            }
-            .disabled(!(parentNavigable?.canNavigateToParent ?? false))
-        }
-
         ToolbarItem(id: "navigation", placement: .navigation) {
             LabeledContent {
                 HStack(spacing: 8) {
@@ -84,6 +75,15 @@ struct NavigationToolbar: CustomizableToolbarContent {
                 Text("Back/Forward")
             }
 
+        }
+
+        ToolbarItem(id: "open-enclosing-folder", placement: .navigation) {
+            Button {
+                parentNavigable?.navigateToParent()
+            } label: {
+                Label("Enclosing Folder", systemImage: "arrow.turn.left.up")
+            }
+            .disabled(!(parentNavigable?.canNavigateToParent ?? false))
         }
 
     }
