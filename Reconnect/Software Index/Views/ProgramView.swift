@@ -55,27 +55,24 @@ struct ProgramView: View {
             if !(program.screenshots ?? []).isEmpty {
                 Section {
                     ScrollView(.horizontal) {
-                        HStack {
+                        LazyHStack {
                             ForEach(program.screenshots ?? [], id: \.path) { screenshot in
                                 AsyncImage(url: URL.softwareIndexAPIV1.appendingPathComponent(screenshot.path)) { image in
                                     image
                                         .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(maxHeight: 200)
-                                        .cornerRadius(8)
+                                        .frame(width: CGFloat(screenshot.width), height: CGFloat(screenshot.height))
                                         .transition(.opacity.animation(.easeInOut))
                                 } placeholder: {
                                     Rectangle()
                                         .fill(.tertiary)
-                                        .aspectRatio(CGFloat(screenshot.width) / CGFloat(screenshot.height),
-                                                     contentMode: .fit)
-                                        .frame(maxHeight: 200)
-                                        .cornerRadius(8)
+                                        .frame(width: CGFloat(screenshot.width), height: CGFloat(screenshot.height))
                                         .transition(.opacity.animation(.easeInOut))
                                 }
                             }
                         }
+                        .scrollTargetLayout()
                     }
+                    .scrollTargetBehavior(.viewAligned)
                 }
                 .padding()
             }
