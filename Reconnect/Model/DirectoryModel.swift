@@ -43,8 +43,8 @@ class DirectoryModel {
     @ObservationIgnored
     private let deviceModel: DeviceModel
 
+    var isLoading: Bool = true
     var files: [FileServer.DirectoryEntry] = []
-
     var fileSelection = Set<FileServer.DirectoryEntry.ID>()
 
     nonisolated let driveInfo: FileServer.DriveInfo
@@ -84,6 +84,7 @@ class DirectoryModel {
             } catch {
                 DispatchQueue.main.sync {
                     self.lastError = error
+                    self.isLoading = false
                 }
             }
         }
@@ -94,6 +95,7 @@ class DirectoryModel {
     }
 
     private func update() {
+        self.isLoading = true
         self.files = []
         self.run { [path, deviceModel] in
             let files = try deviceModel.fileServer.dirSync(path: path)
@@ -101,6 +103,7 @@ class DirectoryModel {
             DispatchQueue.main.sync {
                 self.files = files
                 self.fileSelection = self.fileSelection.intersection(files.map({ $0.id }))
+                self.isLoading = false
             }
         }
     }
@@ -300,6 +303,10 @@ extension DirectoryModel: Refreshable {
     var canRefresh: Bool {
         // TODO: Gate on whether we're refreshing already.
         return true
+    }
+
+    var isRefreshing: Bool {
+        return isLoading
     }
 
     func refresh() {

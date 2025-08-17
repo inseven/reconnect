@@ -24,6 +24,13 @@ struct RefreshToolbar: CustomizableToolbarContent {
 
     var body: some CustomizableToolbarContent {
 
+        if refreshableProxy?.isRefreshing ?? false {
+            ToolbarItem(id: "refresh-indicator", placement: .navigation) {
+                ProgressView()
+                    .controlSize(.small)
+            }
+        }
+
         ToolbarItem(id: "refresh") {
             Button {
                 refreshableProxy?.refresh()
