@@ -24,6 +24,9 @@ protocol Refreshable {
     var canRefresh: Bool { get }
 
     @MainActor
+    var isRefreshing: Bool { get }
+
+    @MainActor
     func refresh()
 
 }

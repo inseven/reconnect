@@ -24,12 +24,20 @@ class RefreshableProxy: ObservableObject, Refreshable {
         return _canRefresh()
     }
 
+    var isRefreshing: Bool {
+        return _isRefreshing()
+    }
+
     private let _canRefresh: @MainActor () -> Bool
+    private let _isRefreshing: @MainActor () -> Bool
     private let _refresh: @MainActor () -> Void
 
     init(_ refreshable: Refreshable) {
         self._canRefresh = {
             refreshable.canRefresh
+        }
+        self._isRefreshing = {
+            refreshable.isRefreshing
         }
         self._refresh = {
             refreshable.refresh()
