@@ -85,14 +85,7 @@ protocol LibraryModelDelegate: AnyObject {
                             guard filter(release) else {
                                 return nil
                             }
-                            return Release(uid: release.uid,
-                                           kind: release.kind,
-                                           name: release.name,
-                                           icon: release.icon,
-                                           filename: release.filename,
-                                           sha256: release.sha256,
-                                           reference: release.reference,
-                                           tags: release.tags)
+                            return release
                         }
 
                         guard let release = items.first else {

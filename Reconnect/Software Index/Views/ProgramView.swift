@@ -93,6 +93,8 @@ struct ProgramView: View {
                                         .font(.footnote)
                                 }
                                 Spacer()
+                                Text(item.size.formatted(.byteCount(style: .file)))
+                                    .foregroundStyle(.secondary)
                                 if let task = libraryModel.downloads[item.downloadURL] {
                                     HStack {
                                         ProgressView(task.progress)
