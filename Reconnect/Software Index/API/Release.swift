@@ -31,6 +31,7 @@ public struct Release: Codable, Identifiable, Hashable {
     public let name: String
     let icon: SoftwareIndexImage?
     let filename: String
+    let size: Int
     let sha256: String
     let reference: [ReferenceItem]
     public let tags: [String]
