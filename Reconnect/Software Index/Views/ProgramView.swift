@@ -119,6 +119,7 @@ struct ProgramView: View {
         }
         .listStyle(.plain)
         .navigationTitle(program.name)
+        .optionalNavigationSubtitle(program.subtitle)
         .focusedSceneObject(ParentNavigableProxy(programViewModel))
     }
 

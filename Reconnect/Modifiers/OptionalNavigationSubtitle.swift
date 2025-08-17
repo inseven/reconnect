@@ -18,28 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Foundation
+import SwiftUI
 
-struct Program: Codable, Identifiable, Hashable {
+struct OptionalNavigationSubtitle: ViewModifier {
 
-    var id: String {
-        return uid
+    let subtitle: String?
+
+    func body(content: Content) -> some View {
+        if let subtitle {
+            content
+                .navigationSubtitle(subtitle)
+        } else {
+            content
+        }
     }
 
-    let uid: String
-    let name: String
-    let icon: SoftwareIndexImage?
-    let versions: [Version]
-    let subtitle: String?
-    let description: String?
-    let tags: [String]
-    var screenshots: [SoftwareIndexImage]?
+}
 
-    var iconURL: URL? {
-        guard let icon else {
-            return nil
-        }
-        return URL.softwareIndexAPIV1.appendingPathComponent(icon.path)
+extension View {
+
+    func optionalNavigationSubtitle(_ subtitle: String?) -> some View {
+        return self.modifier(OptionalNavigationSubtitle(subtitle: subtitle))
     }
 
 }
