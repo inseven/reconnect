@@ -30,6 +30,7 @@ struct Program: Codable, Identifiable, Hashable {
     let name: String
     let icon: SoftwareIndexImage?
     let versions: [Version]
+    let description: String?
     let tags: [String]
     var screenshots: [SoftwareIndexImage]?
 

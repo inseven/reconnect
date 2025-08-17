@@ -119,6 +119,7 @@ protocol LibraryModelDelegate: AnyObject {
                                name: program.name,
                                icon: program.icon,
                                versions: versions,
+                               description: program.description,
                                tags: program.tags,
                                screenshots: program.screenshots)
             }

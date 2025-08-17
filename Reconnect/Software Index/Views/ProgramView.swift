@@ -76,6 +76,10 @@ struct ProgramView: View {
                 }
                 .padding()
             }
+            if let description = program.description {
+                Text(description)
+                    .padding()
+            }
             ForEach(program.versions) { version in
                 Section(version.id) {
                     ForEach(version.variants) { variant in
