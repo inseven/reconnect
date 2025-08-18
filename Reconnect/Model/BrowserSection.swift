@@ -61,7 +61,7 @@ extension BrowserSection {
         case .softwareIndex:
             return "Install16"
         case .program:
-            return "Folder16"
+            return "FileUnknown16"
         }
     }
 
