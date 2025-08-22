@@ -20,13 +20,14 @@
 
 import Foundation
 
-public struct Release: Codable, Identifiable, Hashable {
+public struct Release: Codable, Hashable {
 
-    public var id: String {
-        return uid + referenceString
+    public var uniqueId: String {
+        return id + referenceString
     }
 
-    public let uid: String
+    public let id: String
+    public let uid: String?
     public let kind: Kind
     public let name: String
     let icon: SoftwareIndexImage?

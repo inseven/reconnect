@@ -88,7 +88,7 @@ struct ProgramView: View {
                 ForEach(program.versions) { version in
                     Section {
                         ForEach(version.variants) { variant in
-                            ForEach(variant.items) { item in
+                            ForEach(variant.items, id: \.uniqueId) { item in
                                 HStack(alignment: .center) {
                                     IconView(url: item.iconURL)
                                     VStack(alignment: .leading) {
