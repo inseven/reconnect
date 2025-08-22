@@ -35,6 +35,7 @@ protocol LibraryModelDelegate: AnyObject {
 
 @MainActor class LibraryModel: ObservableObject {
 
+    @Published var isLoading: Bool = true
     @Published var programs: [Program] = []
     @Published var searchFilter: String = ""
     @Published var filteredPrograms: [Program] = []
@@ -71,43 +72,35 @@ protocol LibraryModelDelegate: AnyObject {
     }
 
     @MainActor private func fetch() async {
+        isLoading = true
         let url = URL.softwareIndexAPIV1.appendingPathComponent("programs")
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             let decoder = JSONDecoder()
+
+            // Filter the list to include only SIS files.
             let programs = try decoder.decode([Program].self, from: data).compactMap { program -> Program? in
-
                 let versions: [Version] = program.versions.compactMap { version in
-
                     let variants: [Collection] = version.variants.compactMap { collection in
-
                         let items: [Release] = collection.items.compactMap { release -> Release? in
                             guard filter(release) else {
                                 return nil
                             }
                             return release
                         }
-
                         guard let release = items.first else {
                             return nil
                         }
-
                         return Collection(identifier: collection.identifier, items: [release])
-
                     }
-
                     guard variants.count > 0 else {
                         return nil
                     }
-
                     return Version(version: version.version, variants: variants)
-
                 }
-
                 guard versions.count > 0 else {
                     return nil
                 }
-
                 return Program(uid: program.uid,
                                name: program.name,
                                icon: program.icon,
@@ -116,12 +109,16 @@ protocol LibraryModelDelegate: AnyObject {
                                description: program.description,
                                tags: program.tags,
                                screenshots: program.screenshots)
+            }.sorted { lhs, rhs in
+                lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
             }
 
             await MainActor.run {
+                self.isLoading = false
                 self.programs = programs
             }
         } catch {
+            self.isLoading = false
             print("Failed to fetch data with error \(error).")
         }
     }
