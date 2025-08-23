@@ -22,11 +22,7 @@ import Foundation
 
 struct Program: Codable, Identifiable, Hashable {
 
-    var id: String {
-        return uid
-    }
-
-    let uid: String
+    let id: String
     let name: String
     let icon: SoftwareIndexImage?
     let versions: [Version]

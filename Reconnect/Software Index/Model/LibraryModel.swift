@@ -101,7 +101,7 @@ protocol LibraryModelDelegate: AnyObject {
                 guard versions.count > 0 else {
                     return nil
                 }
-                return Program(uid: program.uid,
+                return Program(id: program.id,
                                name: program.name,
                                icon: program.icon,
                                versions: versions,
