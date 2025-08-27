@@ -14,4 +14,5 @@
 
 img.icon {
     image-rendering: pixelated;
+    scale: 1.5;
 }
