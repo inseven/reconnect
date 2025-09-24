@@ -25,24 +25,24 @@ set -u
 
 SCRIPTS_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-ROOT_DIRECTORY="${SCRIPTS_DIRECTORY}/.."
-BUILD_DIRECTORY="${ROOT_DIRECTORY}/build"
-TEMPORARY_DIRECTORY="${ROOT_DIRECTORY}/temp"
-ARCHIVES_DIRECTORY="${ROOT_DIRECTORY}/archives"
-SPARKLE_DIRECTORY="${SCRIPTS_DIRECTORY}/Sparkle"
+ROOT_DIRECTORY="$SCRIPTS_DIRECTORY/.."
+BUILD_DIRECTORY="$ROOT_DIRECTORY/build"
+ARCHIVES_DIRECTORY="$ROOT_DIRECTORY/archives"
+TEMPORARY_DIRECTORY="$ROOT_DIRECTORY/temp"
+SPARKLE_DIRECTORY="$SCRIPTS_DIRECTORY/Sparkle"
 
-KEYCHAIN_PATH="${TEMPORARY_DIRECTORY}/temporary.keychain"
-ARCHIVE_PATH="${BUILD_DIRECTORY}/Reconnect.xcarchive"
-ENV_PATH="${ROOT_DIRECTORY}/.env"
+KEYCHAIN_PATH="$TEMPORARY_DIRECTORY/temporary.keychain"
+ARCHIVE_PATH="$BUILD_DIRECTORY/Reconnect.xcarchive"
+ENV_PATH="$ROOT_DIRECTORY/.env"
 
-RELEASE_SCRIPT_PATH="${SCRIPTS_DIRECTORY}/release.sh"
+RELEASE_NOTES_TEMPLATE_PATH="$SCRIPTS_DIRECTORY/release-notes.html"
 
-RELEASE_NOTES_TEMPLATE_PATH="${SCRIPTS_DIRECTORY}/release-notes.html"
+RELEASE_SCRIPT_PATH="$SCRIPTS_DIRECTORY/release.sh"
 
 IOS_XCODE_PATH=${IOS_XCODE_PATH:-/Applications/Xcode.app}
 MACOS_XCODE_PATH=${MACOS_XCODE_PATH:-/Applications/Xcode.app}
 
-source "${SCRIPTS_DIRECTORY}/environment.sh"
+source "$SCRIPTS_DIRECTORY/environment.sh"
 
 # Check that the GitHub command is available on the path.
 which gh || (echo "GitHub cli (gh) not available on the path." && exit 1)
@@ -74,28 +74,15 @@ if [ -f "$ENV_PATH" ] ; then
     source "$ENV_PATH"
 fi
 
-# TODO: Remove this
-function xcode_project {
-    xcodebuild \
-        -project Reconnect.xcodeproj "$@"
-}
-
-function build_scheme {
-    # Disable code signing for the build server.
-    xcode_project \
-        -scheme "$1" \
-        CODE_SIGN_IDENTITY="" \
-        CODE_SIGNING_REQUIRED=NO \
-        CODE_SIGNING_ALLOWED=NO "${@:2}"
-}
-
 cd "$ROOT_DIRECTORY"
 
 # Select the correct Xcode.
 sudo xcode-select --switch "$MACOS_XCODE_PATH"
 
 # List the available schemes.
-xcode_project -list
+xcodebuild \
+    -project Reconnect.xcodeproj \
+    -list
 
 # Clean up and recreate the output directories.
 
@@ -141,7 +128,8 @@ build-tools install-provisioning-profile "profiles/Reconnect_Previews_Developer_
 
 # Build and archive the macOS project.
 sudo xcode-select --switch "$MACOS_XCODE_PATH"
-xcode_project \
+xcodebuild \
+    -project Reconnect.xcodeproj \
     -scheme "Reconnect" \
     -config Release \
     -archivePath "$ARCHIVE_PATH" \
@@ -162,13 +150,15 @@ RELEASE_ZIP_BASENAME="$RELEASE_BASENAME.zip"
 RELEASE_ZIP_PATH="$BUILD_DIRECTORY/$RELEASE_ZIP_BASENAME"
 pushd "$BUILD_DIRECTORY"
 /usr/bin/ditto -c -k --keepParent "Reconnect.app" "$RELEASE_ZIP_BASENAME"
-rm -r "Reconnect.app"
 popd
 
 # Install the private key.
 mkdir -p ~/.appstoreconnect/private_keys/
 API_KEY_PATH=~/".appstoreconnect/private_keys/AuthKey_${APPLE_API_KEY_ID}.p8"
 echo -n "$APPLE_API_KEY_BASE64" | base64 --decode -o "$API_KEY_PATH"
+
+# Validate the app before going any further.
+codesign --verify --deep --strict --verbose=2 "$BUILD_DIRECTORY/Reconnect.app"
 
 # Notarize the app.
 xcrun notarytool submit "$RELEASE_ZIP_PATH" \
@@ -180,10 +170,36 @@ xcrun notarytool submit "$RELEASE_ZIP_PATH" \
 NOTARIZATION_ID=`cat command-notarization-response.json | jq -r ".id"`
 NOTARIZATION_RESPONSE=`cat command-notarization-response.json | jq -r ".status"`
 
+xcrun notarytool log \
+    --key "$API_KEY_PATH" \
+    --key-id "$APPLE_API_KEY_ID" \
+    --issuer "$APPLE_API_KEY_ISSUER_ID" \
+    "$NOTARIZATION_ID" | tee "$BUILD_DIRECTORY/notarization-log.json"
+
 if [ "$NOTARIZATION_RESPONSE" != "Accepted" ] ; then
-    echo "Failed to notarize command."
+    echo "Failed to notarize app."
     exit 1
 fi
+
+# Remove the zip file used for notarization.
+rm "$RELEASE_ZIP_PATH"
+
+# Staple and validate the app; this bakes the notarization into the app in case the device trying to run it can't do an
+# online check with Apple's servers for some reason.
+xcrun stapler staple "$BUILD_DIRECTORY/Reconnect.app"
+xcrun stapler validate "$BUILD_DIRECTORY/Reconnect.app"
+
+# Next up, we perform a belt-and-braces check that the app validates after stapling.
+codesign --verify --deep --strict --verbose=2 "$BUILD_DIRECTORY/Reconnect.app"
+
+# Compress the stapled app and package it for release.
+# Curiously, ditto, which Apple recommends for compressing app bundles only seems to create valid zip files when using
+# Sequoia and subsequently notarizing the zip file. Since we need to recompress the stapled app package, we instead use
+# `zip --symlinks` which, thankfully, seems to work just fine.
+pushd "$BUILD_DIRECTORY"
+zip --symlinks -r "$RELEASE_ZIP_BASENAME" "Reconnect.app"
+rm -r "Reconnect.app"
+popd
 
 # Build Sparkle.
 cd "$SPARKLE_DIRECTORY"
@@ -203,10 +219,10 @@ cp "$APPCAST_PATH" "$BUILD_DIRECTORY"
 
 # Archive the build directory.
 cd "$ROOT_DIRECTORY"
-ZIP_BASENAME="build-${VERSION_NUMBER}-${BUILD_NUMBER}.zip"
-ZIP_PATH="${BUILD_DIRECTORY}/${ZIP_BASENAME}"
-pushd "${BUILD_DIRECTORY}"
-zip -r "${ZIP_BASENAME}" .
+ZIP_BASENAME="build-$VERSION_NUMBER-$BUILD_NUMBER.zip"
+ZIP_PATH="$BUILD_DIRECTORY/$ZIP_BASENAME"
+pushd "$BUILD_DIRECTORY"
+zip -r "$ZIP_BASENAME" .
 popd
 
 if $RELEASE ; then
