@@ -91,7 +91,7 @@ struct BrowserView: View {
         }
         .toolbar(id: "main") {
             NavigationToolbar()
-            ToolsToolbar()
+            DeviceToolbar()
             ToolbarSpacer(id: "spacer-1")
             FileToolbar()
             ToolbarSpacer(id: "spacer-2")

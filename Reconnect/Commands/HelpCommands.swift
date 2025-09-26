@@ -25,27 +25,47 @@ public struct HelpCommands: Commands {
     public var body: some Commands {
 
         CommandGroup(replacing: .help) {
-            Button("Donate") {
+
+            Button {
                 openURL(.donate)
+            } label: {
+                Label("Donate", systemImage: "globe")
             }
-            Button("More Software by Jason Morley") {
+
+            Button {
                 openURL(.software)
+            } label: {
+                Label("More Software by Jason Morley", systemImage: "globe")
             }
+
         }
 
         CommandGroup(before: .help) {
-            Button("Website") {
+
+            Button {
                 openURL(.website)
+            } label: {
+                Label("Website", systemImage: "globe")
             }
-            Button("Privacy Policy") {
+
+            Button {
                 openURL(.privacyPolicy)
+            } label: {
+                Label("Privacy Policy", systemImage: "globe")
             }
-            Button("GitHub") {
+
+            Button {
                 openURL(.gitHub)
+            } label: {
+                Label("GitHub", systemImage: "globe")
             }
-            Button("Support") {
+
+            Button {
                 openURL(.support)
+            } label: {
+                Label("Support", systemImage: "mail")
             }
+
             Divider()
         }
 

@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct ToolsToolbar: CustomizableToolbarContent {
+struct DeviceToolbar: CustomizableToolbarContent {
 
     @FocusedObject private var deviceProxy: DeviceModelProxy?
 
