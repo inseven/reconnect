@@ -26,29 +26,37 @@ public struct FileCommands: Commands {
 
         CommandGroup(replacing: .newItem) {
 
-            Button("New Folder") {
+            Button {
                 fileManageableProxy?.createNewFolder()
+            } label: {
+                Label("New Folder", systemImage: "folder.badge.plus")
             }
             .keyboardShortcut("N", modifiers: [.command, .shift])
             .disabled(!(fileManageableProxy?.canCreateNewFolder ?? false))
 
-            Button("Open") {
+            Button {
                 fileManageableProxy?.openSelection()
+            } label: {
+                Label("Open", systemImage: "arrow.up.forward.square")
             }
             .keyboardShortcut("O", modifiers: [.command])
             .disabled(!(fileManageableProxy?.canOpenSelection ?? false))
 
             Divider()
 
-            Button("Download") {
+            Button {
                 fileManageableProxy?.download()
+            } label: {
+                Label("Download", systemImage: "display.and.arrow.down")
             }
             .disabled(!(fileManageableProxy?.canDownload ?? false))
 
             Divider()
 
-            Button("Delete") {
+            Button {
                 fileManageableProxy?.delete()
+            } label: {
+                Label("Delete", systemImage: "trash")
             }
             .keyboardShortcut(.delete, modifiers: [.command])
             .disabled(!(fileManageableProxy?.canDelete ?? false))

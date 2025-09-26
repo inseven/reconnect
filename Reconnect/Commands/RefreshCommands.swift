@@ -29,8 +29,10 @@ public struct RefreshCommands: Commands {
 
         CommandGroup(before: .newItem) {
 
-            Button("Refresh") {
+            Button {
                 refreshableProxy?.refresh()
+            } label: {
+                Label("Refresh", systemImage: "arrow.clockwise")
             }
             .keyboardShortcut("R")
             .disabled(!(refreshableProxy?.canRefresh ?? false))

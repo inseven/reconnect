@@ -28,8 +28,10 @@ public struct DeviceCommands: Commands {
 
         CommandMenu("Device") {
 
-            Button("Capture Screenshot") {
+            Button {
                 deviceProxy?.deviceModel.captureScreenshot()
+            } label: {
+                Label("Capture Screenshot", systemImage: "camera.viewfinder")
             }
             .keyboardShortcut("S", modifiers: [.command, .shift])
             .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)

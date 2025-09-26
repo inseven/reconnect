@@ -28,20 +28,26 @@ public struct NavigationCommands: Commands {
 
         CommandMenu("Go") {
 
-            Button("Back") {
+            Button {
                 navigationHistory.back()
+            } label: {
+                Label("Back", systemImage: "chevron.backward")
             }
             .keyboardShortcut("[", modifiers: [.command])
             .disabled(!navigationHistory.canGoBack())
 
-            Button("Forward") {
+            Button {
                 navigationHistory.forward()
+            } label: {
+                Label("Forward", systemImage: "chevron.forward")
             }
             .keyboardShortcut("]", modifiers: [.command])
             .disabled(!navigationHistory.canGoForward())
 
-            Button("Enclosing Folder") {
+            Button {
                 parentNavigableProxy?.navigateToParent()
+            } label: {
+                Label("Enclosing Folder", systemImage: "arrow.turn.left.up")
             }
             .keyboardShortcut(.upArrow, modifiers: [.command])
             .disabled(!(parentNavigableProxy?.canNavigateToParent ?? false))
