@@ -51,7 +51,7 @@ public struct Release: Codable, Hashable {
     }
 
     var downloadURL: URL {
-        return URL(string: "https://software.psion.info/files/\(sha256)")!
+        return URL(string: "https://software.psion.community/files/\(sha256)")!
     }
 
 }
