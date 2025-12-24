@@ -38,7 +38,7 @@ extension URL {
     public static let software = URL(string: "https://jbmorley.co.uk/software")!
     public static let website = URL(string: "https://reconnect.jbmorley.co.uk")!
 
-    public static let softwareIndexAPIV1 = URL(string: "https://software.psion.info/api/v1")!
+    public static let softwareIndexAPIV1 = URL(string: "https://software.psion.community/api/v1")!
 
     public static var support: URL = {
         let subject = "Reconnect Support (\(Bundle.main.extendedVersion ?? "Unknown Version"))"
