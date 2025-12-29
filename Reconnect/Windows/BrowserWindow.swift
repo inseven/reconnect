@@ -43,7 +43,6 @@ struct BrowserWindow: Scene {
         }
         .commands {
             SparkleCommands(applicationModel: applicationModel)
-            HelpCommands()
             FileCommands()
             RefreshCommands()
             SidebarCommands()
