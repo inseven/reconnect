@@ -58,6 +58,27 @@ class FileConverter {
             try PsiLuaEnv().convertMultiBitmap(at: sourceURL, to: outputURL)
             try FileManager.default.removeItem(at: sourceURL)
             return outputURL
+        },
+
+        // WRD
+        Conversion { entry in
+            return entry.pathExtension.lowercased() == "wrd"
+        } filename: { entry in
+            return entry
+                .name
+                .deletingPathExtension
+                .appendingPathExtension("txt")
+        } perform: { sourceURL, destinationURL in
+            let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
+                                                                  conformingTo: .plainText)
+            let data = try Data(contentsOf: sourceURL)
+            let bytes = [UInt8](data)[...]
+            let result: ProcessResult = PsionWord.processFile(bytes)
+            guard result.errorCode == .noError else {
+                throw ReconnectError.unknown
+            }
+            try result.text.write(to: outputURL, atomically: true, encoding: .utf8)
+            return outputURL
         }
 
     ]

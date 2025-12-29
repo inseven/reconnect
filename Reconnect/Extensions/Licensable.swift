@@ -66,6 +66,14 @@ fileprivate let swiftNumericsLicense = License(id: "https://github.com/apple/swi
                                                 .url(URL(string: "https://github.com/apple/swift-numerics")!, title: "GitHub"),
                                                ])
 
+fileprivate let word2TextLicense = License(id: "https://github.com/smittytone/Word2Text",
+                                           name: "Word2Text",
+                                           author: "Tony Smith",
+                                           text: String(contentsOfResource: "word2text-license"),
+                                           attributes: [
+                                            .url(URL(string: "https://github.com/smittytone/Word2Text")!, title: "GitHub"),
+                                           ])
+
 extension Licensable where Self == License {
 
     fileprivate static var plptools: License { plptoolsLicense }
@@ -73,6 +81,7 @@ extension Licensable where Self == License {
     fileprivate static var swiftAlgorithms: License { swiftAlgorithmsLicense }
     fileprivate static var swiftArgumentParser: License { swiftArgumentParserLicense }
     fileprivate static var swiftNumerics: License { swiftNumericsLicense }
+    fileprivate static var word2Text: License { word2TextLicense }
 
 }
 
@@ -91,6 +100,7 @@ fileprivate let reconnectLicense = License(id: "https://github.com/inseven/recon
                                                .sparkle,
                                                .swiftAlgorithms,
                                                .swiftArgumentParser,
+                                               .word2Text,
                                            ])
 
 extension Licensable where Self == License {
