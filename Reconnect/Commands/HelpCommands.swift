@@ -63,7 +63,7 @@ public struct HelpCommands: Commands {
             Button {
                 openURL(.support)
             } label: {
-                Label("Support", systemImage: "mail")
+                Label("Support", systemImage: "envelope")
             }
 
             Divider()
