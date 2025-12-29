@@ -40,35 +40,6 @@ public struct HelpCommands: Commands {
 
         }
 
-        CommandGroup(before: .help) {
-
-            Button {
-                openURL(.website)
-            } label: {
-                Label("Website", systemImage: "globe")
-            }
-
-            Button {
-                openURL(.privacyPolicy)
-            } label: {
-                Label("Privacy Policy", systemImage: "globe")
-            }
-
-            Button {
-                openURL(.gitHub)
-            } label: {
-                Label("GitHub", systemImage: "globe")
-            }
-
-            Button {
-                openURL(.support)
-            } label: {
-                Label("Support", systemImage: "envelope")
-            }
-
-            Divider()
-        }
-
     }
 
 }
