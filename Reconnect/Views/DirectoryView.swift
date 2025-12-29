@@ -44,14 +44,22 @@ struct DirectoryView: View {
     }
 
     func itemProvider(for file: FileServer.DirectoryEntry) -> NSItemProvider? {
+        dispatchPrecondition(condition: .onQueue(.main))
+        let convertDraggedFiles = applicationModel.convertDraggedFiles
         let provider = NSItemProvider()
-        provider.suggestedName = FileConverter.targetFilename(for: file)
+        provider.suggestedName = if convertDraggedFiles {
+            FileConverter.targetFilename(for: file)
+        } else {
+            file.name
+        }
         provider.registerFileRepresentation(for: file.isDirectory ? .folder : .data) { completion in
             DispatchQueue.main.async {
                 do {
                     let fileManager = FileManager.default
                     let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
-                    self.directoryModel.download(Set([file.id]), to: temporaryDirectoryURL, convertFiles: true) { result in
+                    self.directoryModel.download(Set([file.id]),
+                                                 to: temporaryDirectoryURL,
+                                                 convertFiles: convertDraggedFiles) { result in
                         switch result {
                         case .success(let urls):
                             completion(urls.first!, false, nil)

@@ -27,6 +27,7 @@ struct SettingsView: View {
     enum SettingsSection {
         case general
         case devices
+        case conversions
     }
 
     @Environment(ApplicationModel.self) private var applicationModel
@@ -74,6 +75,29 @@ struct SettingsView: View {
                 Label("General", systemImage: "gear")
             }
             .tag(SettingsSection.general)
+
+            Form {
+
+                LabeledContent {
+                    VStack(alignment: .leading) {
+                        Toggle("Drag and drop", isOn: $applicationModel.convertDraggedFiles)
+                        Text("Always convert files when dragging to other applications.")
+                            .multilineTextAlignment(.leading)
+                            .font(.footnote)
+                            .frame(width: 300, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                } label: {
+                    Text("Convert Files:")
+                        .font(.headline)
+                }
+
+            }
+            .scenePadding()
+            .tabItem {
+                Label("Conversions", systemImage: "arrow.left.arrow.right")
+            }
+            .tag(SettingsSection.conversions)
 
             VStack {
                 if applicationModel.isDaemonConnected {

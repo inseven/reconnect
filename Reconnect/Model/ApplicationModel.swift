@@ -30,10 +30,17 @@ import ReconnectCore
 class ApplicationModel: NSObject {
 
     enum SettingsKey: String {
+        case convertDraggedFiles
         case convertFiles
         case downloadsURL
         case screenshotsURL
         case revealScreenshots
+    }
+
+    var convertDraggedFiles: Bool {
+        didSet {
+            keyedDefaults.set(convertDraggedFiles, forKey: .convertDraggedFiles)
+        }
     }
 
     var convertFiles: Bool {
@@ -120,6 +127,7 @@ class ApplicationModel: NSObject {
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
     override init() {
+        convertDraggedFiles = keyedDefaults.bool(forKey: .convertDraggedFiles, default: true)
         convertFiles = keyedDefaults.bool(forKey: .convertFiles, default: true)
         downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
