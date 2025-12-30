@@ -77,7 +77,10 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
     private func syncQueue_reload() {
         dispatchPrecondition(condition: .onQueue(syncQueue))
         do {
-            guard let installDirectory = deviceModel.installDirectory else {
+            let installDirectory = DispatchQueue.main.sync {
+                return deviceModel.installDirectory
+            }
+            guard let installDirectory else {
                 print("Unable to determine device install directory.")
                 return
             }

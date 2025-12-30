@@ -29,24 +29,36 @@ class InstallerModel: Runnable {
     struct ConfigurationQuery: Identifiable {
 
         let id = UUID()
+        let installDirectory: String
+        let defaultDrive: String
         let sis: Sis.File
         let defaultLanguage: String
         let drives: [FileServer.DriveInfo]
 
         private let completion: (Sis.BeginResult) -> Void
 
-        init(sis: Sis.File,
+        init(installDirectory: String,
+             defaultDrive: String,
+             sis: Sis.File,
              drives: [FileServer.DriveInfo],
              defaultLanguage: String,
              completion: @escaping (Sis.BeginResult) -> Void) {
+            self.installDirectory = installDirectory
+            self.defaultDrive = defaultDrive
             self.sis = sis
             self.drives = drives
             self.defaultLanguage = defaultLanguage
             self.completion = completion
         }
 
-        func resume(_ result: Sis.BeginResult) {
-            completion(result)
+        func `continue`(drive: String, language: String) {
+            completion(.install(.init(drive: drive,
+                                      stubDir: installDirectory,
+                                      language: language)))
+        }
+
+        func cancel() {
+            completion(.userCancelled)
         }
 
     }
@@ -123,7 +135,7 @@ class InstallerModel: Runnable {
     }
 
     private let applicationModel: ApplicationModel
-    private let fileServer = FileServer()
+    private var device: DeviceModel?
     private let url: URL
 
     var sis: Sis.File?
@@ -136,8 +148,14 @@ class InstallerModel: Runnable {
     }
 
     func start() {
+        device = applicationModel.devices.first
         DispatchQueue.global(qos: .userInteractive).async {
             do {
+                // Determine which device we're using.
+                guard self.device != nil else {
+                    throw PLPToolsError.unitDisconnected
+                }
+
                 // Load the installer details.
                 let sis = try PsiLuaEnv().loadSisFile(url: self.url)
                 DispatchQueue.main.sync {
@@ -180,15 +198,33 @@ class InstallerModel: Runnable {
 
     private func getConfiguration(sis: Sis.File, driveRequired: Bool) -> Sis.BeginResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        do {
-            let drives = try fileServer.drivesSync().filter { driveInfo in
+
+        // We pull this functionality out into a separate function because the Swift compiler (poor thing) fails to
+        // realize the only error this can throw is a `PLPToolsError` if we use it directly in the `do` block.
+        func showConfigurationQuery(sis: Sis.File, driveRequired: Bool) throws(PLPToolsError) -> Sis.BeginResult {
+            dispatchPrecondition(condition: .notOnQueue(.main))
+            guard let device else {
+                throw .unitDisconnected
+            }
+            let (installDirectory, defaultDrive) = DispatchQueue.main.sync {
+                return (device.installDirectory, device.internalDrive?.drive)
+            }
+            guard let installDirectory else {
+                throw .notSupported
+            }
+            guard let defaultDrive else {
+                throw .driveNotReady
+            }
+            let drives = try device.fileServer.drivesSync().filter { driveInfo in
                 driveInfo.mediaType != .rom
             }
             let sem = DispatchSemaphore(value: 0)
             let defaultLanguage = try! Locale.selectLanguage(sis.languages)
             var result: Sis.BeginResult = .userCancelled
             DispatchQueue.main.sync {
-                let query = ConfigurationQuery(sis: sis,
+                let query = ConfigurationQuery(installDirectory: installDirectory,
+                                               defaultDrive: defaultDrive,
+                                               sis: sis,
                                                drives: drives,
                                                defaultLanguage: defaultLanguage) { selection in
                     result = selection
@@ -203,6 +239,10 @@ class InstallerModel: Runnable {
                 }
             }
             return result
+        }
+
+        do {
+            return try showConfigurationQuery(sis: sis, driveRequired: driveRequired)
         } catch {
             return .epocError(error.rawValue)
         }
@@ -256,16 +296,25 @@ extension InstallerModel: SisInstallIoHandler {
 
     func sisGetStubs() -> Sis.GetStubsResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
+
         do {
-            let installDirectory: String = .epoc32InstallDirectory
+            guard let device else {
+                throw PLPToolsError.unitDisconnected
+            }
+            let installDirectory = DispatchQueue.main.sync {
+                return device.installDirectory
+            }
+            guard let installDirectory else {
+                throw PLPToolsError.notSupported
+            }
 
             // Ensure the install directory exists on the Psion.
-            if !(try fileServer.exists(path: installDirectory)) {
-                try fileServer.mkdir(path: installDirectory)
+            if !(try device.fileServer.exists(path: installDirectory)) {
+                try device.fileServer.mkdir(path: installDirectory)
             }
 
             // Index the existing stubs.
-            let stubs = try fileServer.getStubs(installDirectory: installDirectory) { progress in
+            let stubs = try device.fileServer.getStubs(installDirectory: installDirectory) { progress in
                 DispatchQueue.main.sync {
                     self.page = .checkingInstalledPackages(progress.fractionCompleted)
                 }
@@ -347,7 +396,10 @@ extension InstallerModel: SisInstallIoHandler {
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Perform operation \(operation)...")
-        return fileServer.fsop(operation) { progress in
+        guard let device else {
+            return .epocError(PLPToolsError.unitDisconnected.rawValue)
+        }
+        return device.fileServer.fsop(operation) { progress in
             DispatchQueue.main.sync {
                 self.page = .operation(operation, progress)
             }

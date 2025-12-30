@@ -41,17 +41,20 @@ class DeviceModel: Identifiable, Equatable {
         return lhs.id != rhs.id
     }
 
-    var machineType: RemoteCommandServicesClient.MachineType = .unknown
-    var machineInfo: RemoteCommandServicesClient.MachineInfo? = nil
-    var drives: [FileServer.DriveInfo] = []
-    var isCapturingScreenshot: Bool = false
+    @MainActor var machineType: RemoteCommandServicesClient.MachineType = .unknown
+    @MainActor var machineInfo: RemoteCommandServicesClient.MachineInfo? = nil
+    @MainActor var drives: [FileServer.DriveInfo] = []
+    @MainActor var isCapturingScreenshot: Bool = false
 
+    @MainActor
     var internalDrive: FileServer.DriveInfo? {
+        dispatchPrecondition(condition: .onQueue(.main))
         return drives.first { driveInfo in
             return driveInfo.mediaType == .ram
         }
     }
 
+    @MainActor
     var installDirectory: String? {
         switch machineType {
         case .unknown, .pc, .mc, .hc, .winC:
