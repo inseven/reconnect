@@ -23,7 +23,7 @@ import OpoLuaCore
 @MainActor
 struct ConfigurationQueryInstallerPage: View {
 
-    @State var driveSelection: String = "C"
+    @State var driveSelection: String
     @State var languageSelection: String
 
     let query: InstallerModel.ConfigurationQuery
@@ -32,6 +32,7 @@ struct ConfigurationQueryInstallerPage: View {
     init(query: InstallerModel.ConfigurationQuery) {
         self.query = query
         self.languages = query.sis.languages
+        self.driveSelection = query.defaultDrive
         self.languageSelection = query.defaultLanguage
     }
 
@@ -62,10 +63,10 @@ struct ConfigurationQueryInstallerPage: View {
                 .frame(maxWidth: InstallerView.LayoutMetrics.maximumContentWidth)
             } actions: {
                 Button("Cancel", role: .destructive) {
-                    query.resume(.userCancelled)
+                    query.cancel()
                 }
                 Button("Continue") {
-                    query.resume(.install(.init(drive: driveSelection, stubDir: nil, language: languageSelection)))
+                    query.continue(drive: driveSelection, language: languageSelection)
                 }
                 .keyboardShortcut(.defaultAction)
             }
