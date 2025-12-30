@@ -22,6 +22,15 @@ struct DeviceToolbar: CustomizableToolbarContent {
 
     @FocusedObject private var deviceProxy: DeviceModelProxy?
 
+    var canCaptureScreenshot: Bool {
+        guard let deviceModel = deviceProxy?.deviceModel,
+              deviceModel.canCaptureScreenshot,
+              !deviceModel.isCapturingScreenshot else {
+            return false
+        }
+        return true
+    }
+
     init() {
     }
 
@@ -34,7 +43,7 @@ struct DeviceToolbar: CustomizableToolbarContent {
                 Label("Screenshot", systemImage: "camera.viewfinder")
             }
             .help("Capture a screenshot of your Psion")
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+            .disabled(!canCaptureScreenshot)
         }
 
     }

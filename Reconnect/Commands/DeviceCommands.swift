@@ -24,6 +24,15 @@ public struct DeviceCommands: Commands {
 
     @FocusedObject private var deviceProxy: DeviceModelProxy?
 
+    var canCaptureScreenshot: Bool {
+        guard let deviceModel = deviceProxy?.deviceModel,
+              deviceModel.canCaptureScreenshot,
+              !deviceModel.isCapturingScreenshot else {
+            return false
+        }
+        return true
+    }
+
     public var body: some Commands {
 
         CommandMenu("Device") {
@@ -34,7 +43,7 @@ public struct DeviceCommands: Commands {
                 Label("Capture Screenshot", systemImage: "camera.viewfinder")
             }
             .keyboardShortcut("S", modifiers: [.command, .shift])
-            .disabled(deviceProxy?.deviceModel.isCapturingScreenshot ?? true)
+            .disabled(!canCaptureScreenshot)
 
             Divider()
 
