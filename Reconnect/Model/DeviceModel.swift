@@ -66,6 +66,18 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
+    @MainActor
+    var canCaptureScreenshot: Bool {
+        switch machineType {
+        case .unknown, .pc, .mc, .hc, .winC:
+            return false
+        case .series3, .series3acmx, .workabout, .siena, .series3c:
+            return false
+        case .series5:
+            return true
+        }
+    }
+
     let id = UUID()
 
     let fileServer = FileServer()
