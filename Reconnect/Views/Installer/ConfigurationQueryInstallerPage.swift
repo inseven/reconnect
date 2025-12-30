@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-import OpoLua
+import OpoLuaCore
 
 @MainActor
 struct ConfigurationQueryInstallerPage: View {
@@ -65,7 +65,7 @@ struct ConfigurationQueryInstallerPage: View {
                     query.resume(.userCancelled)
                 }
                 Button("Continue") {
-                    query.resume(.install(languageSelection, driveSelection))
+                    query.resume(.install(.init(drive: driveSelection, stubDir: nil, language: languageSelection)))
                 }
                 .keyboardShortcut(.defaultAction)
             }

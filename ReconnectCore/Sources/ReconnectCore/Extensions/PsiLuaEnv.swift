@@ -20,7 +20,7 @@ import CoreGraphics
 import Foundation
 import UniformTypeIdentifiers
 
-import OpoLua
+import OpoLuaCore
 
 extension PsiLuaEnv {
 

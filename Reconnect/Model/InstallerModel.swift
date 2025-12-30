@@ -19,7 +19,7 @@
 import SwiftUI
 
 import Interact
-import OpoLua
+import OpoLuaCore
 
 import ReconnectCore
 
@@ -282,7 +282,7 @@ extension InstallerModel: SisInstallIoHandler {
         }
     }
 
-    func sisInstallBegin(sis: OpoLua.Sis.File, context: Sis.BeginContext) -> Sis.BeginResult {
+    func sisInstallBegin(sis: Sis.File, context: Sis.BeginContext) -> Sis.BeginResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Installing '\(sis.name)'...")
 

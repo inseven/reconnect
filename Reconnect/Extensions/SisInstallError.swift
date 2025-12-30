@@ -19,7 +19,7 @@
 import Foundation
 
 import ReconnectCore
-import OpoLua
+import OpoLuaCore
 
 extension Sis.InstallError: @retroactive LocalizedError {
 

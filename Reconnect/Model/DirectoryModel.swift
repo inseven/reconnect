@@ -20,7 +20,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 import Algorithms
-import OpoLua
+import OpoLuaCore
 
 import ReconnectCore
 
