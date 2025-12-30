@@ -26,7 +26,7 @@ let package = Package(
             name: "ReconnectCore",
             dependencies: [
                 .product(name: "Diligence", package: "diligence"),
-                .product(name: "OpoLua", package: "opolua"),
+                .product(name: "OpoLuaCore", package: "opolua"),
                 .product(name: "ncp", package: "plptools"),
             ],
             swiftSettings: [

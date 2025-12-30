@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-import OpoLua
+import OpoLuaCore
 
 @MainActor
 struct ReplaceQueryInstallerPage: View {

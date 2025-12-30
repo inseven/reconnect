@@ -19,7 +19,7 @@
 import SwiftUI
 
 import Interact
-import OpoLua
+import OpoLuaCore
 
 extension Error {
 

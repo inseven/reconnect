@@ -18,7 +18,7 @@
 
 import Foundation
 
-import OpoLua
+import OpoLuaCore
 
 extension Sis.File: @retroactive Identifiable {
 

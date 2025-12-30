@@ -20,7 +20,7 @@ import Cocoa
 import SwiftUI
 import Quartz
 
-import OpoLua
+import OpoLuaCore
 import ReconnectCore
 
 class PreviewViewController: NSViewController, QLPreviewingController {

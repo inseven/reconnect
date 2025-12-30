@@ -19,7 +19,7 @@
 import SwiftUI
 
 import Interact
-import OpoLua
+import OpoLuaCore
 
 import ReconnectCore
 
@@ -130,7 +130,7 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
 
 }
 
-extension ProgramManagerModel: OpoLua.FileSystemIoHandler {
+extension ProgramManagerModel: FileSystemIoHandler {
 
     func fsop(_ operation: Fs.Operation) -> Fs.Result {
         dispatchPrecondition(condition: .notOnQueue(.main))

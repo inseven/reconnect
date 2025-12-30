@@ -20,7 +20,7 @@ import Foundation
 
 import Interact
 import Licensable
-import OpoLua
+import OpoLuaCore
 
 fileprivate let plptoolsLicense = License(id: "https://github.com/rrthomas/plptools",
                                           name: "plptools",
