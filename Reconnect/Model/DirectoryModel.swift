@@ -293,7 +293,9 @@ extension DirectoryModel: ParentNavigable {
     }
 
     func navigateToParent() {
-        navigate(to: path.deletingLastWindowsPathComponent)
+        navigate(to: path
+            .deletingLastWindowsPathComponent
+            .ensuringTrailingWindowsPathSeparator())
     }
 
 }
