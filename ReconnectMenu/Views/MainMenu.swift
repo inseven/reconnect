@@ -32,26 +32,22 @@ struct MainMenu: View {
 
     var body: some View {
         @Bindable var applicationModel = applicationModel
-        Button {
+        Button("My Psion...", systemImage: "folder") {
             applicationModel.openReconnect(.browser)
-        } label: {
-            Text("My Psion...")
         }
         Divider()
-        Button {
+        Button("About...", systemImage: "info.circle") {
             applicationModel.openReconnect(.about)
-        } label: {
-            Text("About...")
         }
-        Button("Settings...") {
+        Button("Settings...", systemImage: "gear") {
             applicationModel.openReconnect(.settings)
         }
         Divider()
-        Button("Check for Updates...") {
+        Button("Check for Updates...", systemImage: "square.and.arrow.down") {
             applicationModel.openReconnect(.update)
         }
         Divider()
-        Button("Quit") {
+        Button("Quit", systemImage: "xmark.rectangle") {
             applicationModel.quit()
         }
     }
