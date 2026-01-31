@@ -18,40 +18,6 @@
 
 import SwiftUI
 
-import OpoLuaCore
-
-@Observable
-class ImagePreviewViewModel {
-
-    struct IdentifiableImage: Identifiable {
-        let id = UUID()
-        let cgImage: CGImage
-
-        init(_ cgImage: CGImage) {
-            self.cgImage = cgImage
-        }
-
-    }
-
-    let url: URL
-    var images: [IdentifiableImage] = []
-
-    init(url: URL) {
-        self.url = url
-    }
-
-    func start() {
-        let bitmaps = PsiLuaEnv().getMbmBitmaps(path: url.path) ?? []
-        let images = bitmaps.map { bitmap in
-            return IdentifiableImage(CGImage.from(bitmap: bitmap))
-        }
-        DispatchQueue.main.async {
-            self.images = images
-        }
-    }
-
-}
-
 public struct ImagePreviewView: View {
 
     @State var model: ImagePreviewViewModel
@@ -61,11 +27,20 @@ public struct ImagePreviewView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(model.images) { image in
-                    Image(image.cgImage, scale: 1.0, label: Text("Image"))
-                        .interpolation(.none)
+        // This is a little gnarly: we use a geometry reader to determine the available width to so we can dynamically
+        // decide whether to use nearest neighbor resizing if we're scaling up, or regular resizing otherwise. This
+        // ensures images look crisp when displayed at the correct size, but don't get blocky when displayed at smaller
+        // sizes.
+        GeometryReader { geometry in
+            ScrollView {
+                LazyVStack {
+                    ForEach(model.images) { image in
+                        Image(image.cgImage, scale: 1.0, label: Text("Image"))
+                            .interpolation(geometry.size.width >= CGFloat(image.cgImage.size.width) ? .none : .medium)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: CGFloat(image.cgImage.width), maxHeight: CGFloat(image.cgImage.height))
+                    }
                 }
             }
         }
@@ -77,7 +52,12 @@ public struct ImagePreviewView: View {
 }
 
 #Preview("Single") {
-    ImagePreviewView(url: Bundle.module.url(forResource: "PsionStyle", withExtension: nil)!)
+    ImagePreviewView(url: Bundle.module.url(forResource: "PsionStyle.mbm", withExtension: nil)!)
+}
+
+#Preview("Single - Small") {
+    ImagePreviewView(url: Bundle.module.url(forResource: "PsionStyle.mbm", withExtension: nil)!)
+        .frame(width: 200, height: 200)
 }
 
 #Preview("Multiple") {
