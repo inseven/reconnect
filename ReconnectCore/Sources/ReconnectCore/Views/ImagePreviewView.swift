@@ -64,7 +64,8 @@ public struct ImagePreviewView: View {
         ScrollView {
             LazyVStack {
                 ForEach(model.images) { image in
-                    Image(image.cgImage, scale: 1.0, label: Text("Cheese"))
+                    Image(image.cgImage, scale: 1.0, label: Text("Image"))
+                        .interpolation(.none)
                 }
             }
         }
