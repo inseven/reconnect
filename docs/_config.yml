@@ -6,7 +6,7 @@ description: Psion Connectivity for macOS
 url: "https://reconnect.jbmorley.co.uk"
 baseurl: ""
 repository: https://github.com/inseven/reconnect
-copyright: 2023-2025 <a href="https://jbmorley.co.uk/about">Jason Morley</a>
+copyright: 2024-2026 <a href="https://jbmorley.co.uk/about">Jason Morley</a>
 
 navigation:
   - title: Reconnect
