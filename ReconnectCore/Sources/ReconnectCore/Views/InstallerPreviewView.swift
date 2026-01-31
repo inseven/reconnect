@@ -32,12 +32,16 @@ public struct InstallerPreviewView: View {
         VStack(alignment: .center) {
 
             PreviewSection {
-                Text(file.version.description)
-                    .font(.title2)
-                    .frame(maxWidth: .infinity)
-                Text(String(format: "0x%08X", file.uid))
-                    .foregroundStyle(.secondary)
-                    .monospaced()
+                if file.version != .zero {
+                    Text(file.version.description)
+                        .font(.title2)
+                        .frame(maxWidth: .infinity)
+                }
+                if file.uid != 0 {
+                    Text(String(format: "0x%08X", file.uid))
+                        .foregroundStyle(.secondary)
+                        .monospaced()
+                }
             } header: {
                 Text(file.localizedDisplayName)
                     .font(.title)
@@ -67,7 +71,15 @@ public struct InstallerPreviewView: View {
 
 }
 
-#Preview {
+#Preview("PsiMail Internet - EPOC16") {
+    InstallerPreviewView(file: Sis.File(target: .epoc16,
+                                        name: ["en-GB": "PsiMail Internet"],
+                                        uid: 0x00000000,
+                                        version: .zero,
+                                        languages: ["en_GB"]))
+}
+
+#Preview("Nezumi - EPOC32") {
     InstallerPreviewView(file: Sis.File(target: .epoc32,
                                         name: ["en-GB": "Nezumi"],
                                         uid: 0x100092c8,
