@@ -41,6 +41,7 @@ struct PreviewSection<Content: View, Header: View>: View {
             content
         }
         .padding(.bottom, LayoutMetrics.paddingBottom)
+        .frame(maxWidth: .infinity)
     }
 
 }
