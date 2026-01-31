@@ -49,17 +49,17 @@ public struct InstallerPreviewView: View {
             }
 
             PreviewSection {
+                Text(file.target.localizedStringResource)
+            } header: {
+                Text("Platform")
+            }
+
+            PreviewSection {
                 ForEach(file.languages, id: \.self) { language in
                     Text(NSLocalizedString(language, comment: language))
                 }
             } header: {
                 Text("Languages")
-            }
-
-            PreviewSection {
-                Text(file.target.localizedStringResource)
-            } header: {
-                Text("Platform")
             }
 
             Spacer()
@@ -77,6 +77,7 @@ public struct InstallerPreviewView: View {
                                         uid: 0x00000000,
                                         version: .zero,
                                         languages: ["en_GB"]))
+    .background(Color.pink)
 }
 
 #Preview("Nezumi - EPOC32") {
@@ -85,4 +86,5 @@ public struct InstallerPreviewView: View {
                                         uid: 0x100092c8,
                                         version: Sis.Version(major: 1, minor: 23),
                                         languages: ["en_GB"]))
+    .background(Color.pink)
 }
