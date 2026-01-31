@@ -19,6 +19,7 @@
 import Cocoa
 import Quartz
 
+// TODO: Is this needed?
 class PreviewProvider: QLPreviewProvider, QLPreviewingController {
     
 
