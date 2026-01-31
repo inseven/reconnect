@@ -18,37 +18,37 @@
 
 import SwiftUI
 
-import OpoLuaCore
-import ReconnectCore
+fileprivate struct LayoutMetrics {
+    static let paddingBottom = 16.0
+}
 
-struct InstallerPreviewView: View {
+struct PreviewSection<Content: View, Header: View>: View {
 
-    let file: Sis.File
+    let content: Content
+    let header: Header
+
+    init(@ViewBuilder content: () -> Content, @ViewBuilder header: () -> Header) {
+        self.content = content()
+        self.header = header()
+    }
 
     var body: some View {
-        VStack(alignment: .center) {
-            Text(file.localizedDisplayName)
+        VStack {
+            header
+                .font(.title3)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
-                .font(.title)
-            Text("\(file.version)")
-                .font(.title2)
-                .frame(maxWidth: .infinity)
-            Text(String(format: "0x%08X", file.uid))
-                .foregroundStyle(.secondary)
-
-            Divider()
-
-            Text("Languages")
-                .foregroundStyle(.secondary)
-            ForEach(file.languages, id: \.self) { language in
-                Text(NSLocalizedString(language, comment: language))
-            }
-
-            Spacer()
+            content
         }
-        .padding()
-        .background(Color(nsColor: .textBackgroundColor))
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, LayoutMetrics.paddingBottom)
+    }
+
+}
+
+extension PreviewSection where Header == EmptyView {
+
+    init(@ViewBuilder content: () -> Content) {
+        self.init(content: content, header: { EmptyView() })
     }
 
 }

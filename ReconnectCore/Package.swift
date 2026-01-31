@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "ReconnectCore",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
@@ -28,6 +29,9 @@ let package = Package(
                 .product(name: "Diligence", package: "diligence"),
                 .product(name: "OpoLuaCore", package: "opolua"),
                 .product(name: "ncp", package: "plptools"),
+            ],
+            resources: [
+                .process("Resources"),
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
