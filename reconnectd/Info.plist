@@ -13,6 +13,6 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2023-2025 Jason Morley</string>
+	<string>Copyright © 2024-2026 Jason Morley</string>
 </dict>
 </plist>
