@@ -12,6 +12,7 @@
 			<array>
 				<string>com.psion.sis</string>
 				<string>org.opolua.sis</string>
+				<string>com.psion.mbm</string>
 			</array>
 			<key>QLSupportsSearchableItems</key>
 			<false/>

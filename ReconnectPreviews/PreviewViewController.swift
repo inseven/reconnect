@@ -33,28 +33,23 @@ class PreviewViewController: NSViewController, QLPreviewingController {
         super.loadView()
     }
 
-    func configure(view: NSView) {
-        self.view.addSubview(view)
-        self.view.translatesAutoresizingMaskIntoConstraints = false
-        view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            view.topAnchor.constraint(equalTo: view.topAnchor),
-            view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-
-    }
-
     func preparePreviewOfFile(at url: URL) async throws {
-        let contentView: NSView
-        if url.pathExtension == "mbm" {
-            contentView = NSHostingView(rootView: ImagePreviewView(url: url))
+        let previewView: NSView
+        if url.pathExtension.lowercased() == "mbm" {
+            previewView = NSHostingView(rootView: ImagePreviewView(url: url))
         } else {
             let file = try PsiLuaEnv().loadSisFile(url: url)
-            contentView = NSHostingView(rootView: InstallerPreviewView(file: file))
+            previewView = NSHostingView(rootView: InstallerPreviewView(file: file))
         }
-        configure(view: contentView)
+        self.view.addSubview(previewView)
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        previewView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            previewView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            previewView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            previewView.topAnchor.constraint(equalTo: view.topAnchor),
+            previewView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
 
 }
