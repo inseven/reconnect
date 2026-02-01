@@ -34,8 +34,13 @@ class PreviewViewController: NSViewController, QLPreviewingController {
     }
 
     func preparePreviewOfFile(at url: URL) async throws {
-        let file = try PsiLuaEnv().loadSisFile(url: url)
-        let previewView = NSHostingView(rootView: InstallerPreviewView(file: file))
+        let previewView: NSView
+        if url.pathExtension.lowercased() == "mbm" {
+            previewView = NSHostingView(rootView: ImagePreviewView(url: url))
+        } else {
+            let file = try PsiLuaEnv().loadSisFile(url: url)
+            previewView = NSHostingView(rootView: InstallerPreviewView(file: file))
+        }
         self.view.addSubview(previewView)
         self.view.translatesAutoresizingMaskIntoConstraints = false
         previewView.translatesAutoresizingMaskIntoConstraints = false
