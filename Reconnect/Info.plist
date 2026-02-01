@@ -30,20 +30,6 @@
 				<string>org.opolua.sis</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleTypeName</key>
-			<string>Psion Multiple Bitmap File</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSHandlerRank</key>
-			<string>Default</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>com.psion.mbm</string>
-			</array>
-			<key>NSDocumentClass</key>
-			<string></string>
-		</dict>
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
@@ -118,7 +104,7 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>EPOC MultiBitmap File (MBM)</string>
+			<string>Psion Multiple Bitmap</string>
 			<key>UTTypeIcons</key>
 			<dict/>
 			<key>UTTypeIdentifier</key>
