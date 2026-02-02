@@ -18,36 +18,42 @@
 
 import SwiftUI
 
-struct Sidebar: View {
+struct Sidebar: NSViewRepresentable {
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(NavigationHistory.self) private var navigationHistory
 
-//    var section: Binding<BrowserSection> {
-//        return Binding {
-//            switch navigationHistory.currentItem?.section {
-//            case .connecting:
-//                return .connecting
-//            case .device(let deviceId):
-//                return .device(deviceId)
-//            case .directory(let deviceId, let driveInfo, _):
-//                return .drive(deviceId, driveInfo)
-//            case .drive(let deviceId, let driveInfo):
-//                return .drive(deviceId, driveInfo)
-//            case .program:
-//                return .softwareIndex
-//            case .softwareIndex:
-//                return .softwareIndex
-//            case .none:
-//                return .connecting
-//            }
-//        } set: { section in
-//            navigationHistory.navigate(section)
-//        }
-//    }
+    public final class Coordinator: NSObject, SidebarOutlineViewContainerViewDelegate {
 
-    var body: some View {
-        SidebarOutlineView()
+        var parent: Sidebar
+
+        init(_ parent: Sidebar) {
+            self.parent = parent
+        }
+
+        func sidebarOutlineVieContainer(_ sidebarOutlineVieContainer: SidebarOutlineViewContainerView,
+                                        didSelecSection section: BrowserSection) {
+            parent.applicationModel.navigate(to: section)
+        }
+
+    }
+
+    init() {
+    }
+
+    public func makeCoordinator() -> Coordinator {
+        return Coordinator(self)
+    }
+
+    func makeNSView(context: Context) -> SidebarOutlineViewContainerView {
+        let outlineContainerView = SidebarOutlineViewContainerView()
+        outlineContainerView.delegate = context.coordinator
+        applicationModel.delegate = outlineContainerView
+        return outlineContainerView
+    }
+
+    func updateNSView(_ nsView: SidebarOutlineViewContainerView, context: Context) {
+        // TODO: Update the selection here??
+        // TODO: Does this get called when navigation history changes??
     }
 
 }
