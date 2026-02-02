@@ -260,20 +260,4 @@ extension NSTreeController {
 
 }
 
-extension Array where Element == NSTreeNode {
 
-    // Find the first index path matching the predicate using a depth first search.
-    func firstIndexPath(`where` predicate: (NSTreeNode) -> Bool) -> IndexPath? {
-        for child in enumerated() {
-            if predicate(child.element) {
-                return IndexPath(index: child.offset)
-            }
-            if let children = child.element.children,
-               let indexPath = children.firstIndexPath(where: predicate) {
-                return IndexPath(index: child.offset) + indexPath
-            }
-        }
-        return nil
-    }
-
-}
