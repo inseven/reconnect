@@ -149,10 +149,7 @@ class ApplicationModel: NSObject {
     }
 
     let transfersModel = TransfersModel()
-
-    // TODO: Remove this filter from the library model now it lives in our code.
     let libraryModel = LibraryModel()
-
     let navigationHistory = NavigationHistory(section: .disconnected)
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
