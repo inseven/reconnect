@@ -240,10 +240,6 @@ extension SidebarContainerView: NSOutlineViewDelegate {
         return !node.isHeader
     }
 
-    func outlineViewSelectionDidChange(_ notification: Notification) {
-        // TODO: Use this instead of tracking the treeController.
-    }
-
     func outlineViewItemDidExpand(_ notification: Notification) {
         dispatchPrecondition(condition: .onQueue(.main))
 
@@ -314,8 +310,6 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
         // Insert the disconnected entry.
         treeController.insert(Node(section: .disconnected),
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
-
-        // TODO: Something is causing the selection to change here even though we're not actively doing it. I think.
 
     }
 
