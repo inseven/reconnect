@@ -51,7 +51,6 @@ struct BrowserView: View {
             switch applicationModel.activeSection {
             case .disconnected:
                 DisconnectedView()
-                    .ignoresSafeArea()
             case .drive(let deviceId, let driveInfo):
                 withDeviceModel { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
