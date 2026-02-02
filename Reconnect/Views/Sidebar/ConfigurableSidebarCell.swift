@@ -20,6 +20,6 @@ import AppKit
 
 protocol ConfigurableSidebarCell: NSView {
 
-    func configure(_ node: SidebarNode)
+    func configure(_ node: SidebarContainerView.Node)
 
 }

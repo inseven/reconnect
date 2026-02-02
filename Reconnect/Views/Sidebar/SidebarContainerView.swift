@@ -30,8 +30,52 @@ protocol SidebarContainerViewDelegate: NSObjectProtocol {
 
 class SidebarContainerView: NSView {
 
-    class func sidebarNode(from item: Any) -> SidebarNode? {
-        if let treeNode = item as? NSTreeNode, let node = treeNode.representedObject as? SidebarNode {
+    class Node: NSObject {
+
+        enum NodeType {
+            case header(String)
+            case section(BrowserSection)
+        }
+
+        @objc dynamic var children: [Node]
+
+        var name: String {
+            switch type {
+            case .header(let name):
+                return name
+            case .section(let section):
+                return section.title
+            }
+        }
+
+        var isGroup: Bool {
+            switch type {
+            case .header:
+                return true
+            case .section:
+                return false
+            }
+        }
+
+        let type: NodeType
+
+        private init(type: NodeType, children: [Node] = []) {
+            self.type = type
+            self.children = children
+        }
+
+        convenience init(header: String, children: [Node] = []) {
+            self.init(type: .header(header), children: children)
+        }
+
+        convenience init(section: BrowserSection, children: [Node] = []) {
+            self.init(type: .section(section), children: children)
+        }
+
+    }
+
+    class func sidebarNode(from item: Any) -> Node? {
+        if let treeNode = item as? NSTreeNode, let node = treeNode.representedObject as? Node {
             return node
         } else {
             return nil
@@ -74,14 +118,14 @@ class SidebarContainerView: NSView {
 
         // Configure the tree controller.
 
-        treeController.objectClass = SidebarNode.self
+        treeController.objectClass = Node.self
         treeController.childrenKeyPath = "children"
         treeController.content = [
-            SidebarNode(header: "Devices", children: [
-                SidebarNode(section: .disconnected)
+            Node(header: "Devices", children: [
+                Node(section: .disconnected)
             ]),
-            SidebarNode(header: "Library", children: [
-                SidebarNode(section: .softwareIndex),
+            Node(header: "Library", children: [
+                Node(section: .softwareIndex),
             ]),
         ]
 
@@ -108,7 +152,7 @@ class SidebarContainerView: NSView {
         treeControllerObserver = treeController.observe(\.selectedObjects, options: [.new]) { [weak self] (treeController, change) in
             guard
                 let self,
-                let selectedNode = treeController.selectedNodes.first?.representedObject as? SidebarNode,
+                let selectedNode = treeController.selectedNodes.first?.representedObject as? Node,
                 case .section(let section) = selectedNode.type
             else {
                 return
@@ -201,9 +245,9 @@ extension SidebarContainerView: ApplicationModelDelegate {
 
         // Construct and insert the new device entry.
         let drives = deviceModel.drives.map { driveInfo in
-            SidebarNode(section: .drive(deviceModel.id, driveInfo))
+            Node(section: .drive(deviceModel.id, driveInfo))
         }
-        treeController.insert(SidebarNode(section: .device(deviceModel.id), children: drives),
+        treeController.insert(Node(section: .device(deviceModel.id), children: drives),
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
 
         // Select the new device if the current selection is in the devices section.
@@ -220,7 +264,7 @@ extension SidebarContainerView: ApplicationModelDelegate {
         treeController.removeObject(atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
 
         // Insert the disconnected entry.
-        treeController.insert(SidebarNode(section: .disconnected),
+        treeController.insert(Node(section: .disconnected),
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
 
         // TODO: Something is causing the selection to change here even though we're not actively doing it. I think.
@@ -231,7 +275,7 @@ extension SidebarContainerView: ApplicationModelDelegate {
         dispatchPrecondition(condition: .onQueue(.main))
 
         treeController.selectFirstIndexPath { node in
-            guard let node = node.representedObject as? SidebarNode,
+            guard let node = node.representedObject as? Node,
                   case .section(let section) = node.type
             else {
                 return false

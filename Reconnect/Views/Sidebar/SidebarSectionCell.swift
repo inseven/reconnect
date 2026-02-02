@@ -43,7 +43,7 @@ class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(_ node: SidebarNode) {
+    func configure(_ node: SidebarContainerView.Node) {
         guard case .section(let section) = node.type else {
             fatalError("Unsupported node type \(node.type).")
         }
