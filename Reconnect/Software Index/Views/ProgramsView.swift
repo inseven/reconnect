@@ -23,7 +23,6 @@ import SwiftUI
 struct ProgramsView: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(NavigationHistory.self) private var navigationHistory
 
     @EnvironmentObject private var libraryModel: LibraryModel
 

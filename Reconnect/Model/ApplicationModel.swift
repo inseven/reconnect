@@ -304,7 +304,6 @@ class ApplicationModel: NSObject {
 
 extension ApplicationModel: SPUUpdaterDelegate {
 
-
     nonisolated func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
         // Disconnect from the daemon and shut down the menu bar app prior to relanuching the app.
         daemonClient.disconnect()
