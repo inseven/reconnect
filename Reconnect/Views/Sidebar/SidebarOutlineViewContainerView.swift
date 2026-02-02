@@ -110,7 +110,7 @@ class SidebarOutlineViewContainerView: NSView {
             guard
                 let self,
                 let selectedNode = treeController.selectedNodes.first?.representedObject as? SidebarNode,
-                case .item(let section) = selectedNode.type
+                case .section(let section) = selectedNode.type
             else {
                 return
             }
@@ -233,7 +233,7 @@ extension SidebarOutlineViewContainerView: ApplicationModelDelegate {
 
         treeController.selectFirstIndexPath { node in
             guard let node = node.representedObject as? SidebarNode,
-                  case .item(let section) = node.type
+                  case .section(let section) = node.type
             else {
                 return false
             }

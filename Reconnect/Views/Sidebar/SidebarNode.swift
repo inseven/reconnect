@@ -18,25 +18,21 @@
 
 import SwiftUI
 
-// Rename to SidebarNode?
-// SidebarItem?
+// TODO: Rename to SidebarItem?
 class SidebarNode: NSObject {
 
     enum NodeType {
         case header(String)
-        case item(BrowserSection)  // TODO: Rename to section
+        case section(BrowserSection)
     }
 
-    // TODO: Do these need to be dynamic??
-    // TODO: Consider adding the count back.
-//    @objc dynamic var name: String  // TODO: Does this need to be dynamic; see example below. I imagine it's for editing??
     @objc dynamic var children: [SidebarNode]
 
     var name: String {
         switch type {
         case .header(let name):
             return name
-        case .item(let section):
+        case .section(let section):
             return section.title
         }
     }
@@ -45,7 +41,7 @@ class SidebarNode: NSObject {
         switch type {
         case .header:
             return true
-        case .item:
+        case .section:
             return false
         }
     }
@@ -62,7 +58,7 @@ class SidebarNode: NSObject {
     }
 
     convenience init(section: BrowserSection, children: [SidebarNode] = []) {
-        self.init(type: .item(section), children: children)
+        self.init(type: .section(section), children: children)
     }
 
 }

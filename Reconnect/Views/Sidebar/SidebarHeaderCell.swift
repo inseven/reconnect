@@ -18,8 +18,6 @@
 
 import AppKit
 
-
-
 class SidebarHeaderCell: NSTableCellView, ConfigurableSidebarCell {
 
     static let identifier = NSUserInterfaceItemIdentifier(rawValue: "SidebarHeaderCell")

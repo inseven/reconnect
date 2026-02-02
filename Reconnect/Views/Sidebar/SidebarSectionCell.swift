@@ -26,7 +26,7 @@ class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
         static let iconSize = 16.0
     }
 
-    static let identifier = NSUserInterfaceItemIdentifier(rawValue: "SidebarItemCell")
+    static let identifier = NSUserInterfaceItemIdentifier(rawValue: "SidebarSectionCell")
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -49,7 +49,7 @@ class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
     }
 
     func configure(_ node: SidebarNode) {
-        guard case .item(let section) = node.type else {
+        guard case .section(let section) = node.type else {
             fatalError("Unsupported node type \(node.type).")
         }
         textField?.stringValue = section.title

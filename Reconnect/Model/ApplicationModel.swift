@@ -139,6 +139,11 @@ class ApplicationModel: NSObject {
 
     var devices: [DeviceModel] = []
 
+    /**
+     * Indciates whether there's a device currently connecting.
+     *
+     * This is inferred by the length of the `connectingDevices` array which tracks devices currently being initialized.
+     */
     var isConnecting: Bool {
         return !connectingDevices.isEmpty
     }
