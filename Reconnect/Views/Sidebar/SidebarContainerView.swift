@@ -104,7 +104,6 @@ class SidebarContainerView: NSView {
         scrollView.hasHorizontalScroller = false
         scrollView.hasVerticalScroller = true
         scrollView.autohidesScrollers = true
-        scrollView.focusRingType = .none
 
         self.addSubview(scrollView)
         NSLayoutConstraint.activate([
