@@ -29,7 +29,7 @@ struct BrowserView: View {
 
     @ObservedObject private var libraryModel: LibraryModel
 
-    init(applicationModel: ApplicationModel, libraryModel: LibraryModel) {
+    init(libraryModel: LibraryModel) {
         _libraryModel = ObservedObject(wrappedValue: libraryModel)
     }
 

@@ -41,7 +41,7 @@ struct BrowserWindow: Scene {
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            BrowserView(applicationModel: applicationModel, libraryModel: libraryModel)
+            BrowserView(libraryModel: libraryModel)
                 .opensSettings()
         }
         .commands {
