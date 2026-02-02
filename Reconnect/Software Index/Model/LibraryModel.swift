@@ -33,7 +33,6 @@ protocol LibraryModelDelegate: AnyObject {
 
 }
 
-// TODO: MAKE THIS OBSERVABLE!
 @MainActor class LibraryModel: ObservableObject {
 
     @Published var isLoading: Bool = true
@@ -48,12 +47,9 @@ protocol LibraryModelDelegate: AnyObject {
 
     @Published var downloads: [URL: URLSessionDownloadTask] = [:]
 
-    private let filter: (Release) -> Bool
-
     private var isRunning: Bool = false
 
-    init(filter: @escaping (Release) -> Bool) {
-        self.filter = filter
+    init() {
     }
 
     @MainActor func start() {
@@ -86,7 +82,7 @@ protocol LibraryModelDelegate: AnyObject {
                 let versions: [Version] = program.versions.compactMap { version in
                     let variants: [Collection] = version.variants.compactMap { collection in
                         let items: [Release] = collection.items.compactMap { release -> Release? in
-                            guard filter(release) else {
+                            guard release.kind == .installer else {
                                 return nil
                             }
                             return release
