@@ -31,4 +31,13 @@ extension NSTreeController {
         setSelectionIndexPath(indexPath)
     }
 
+    /**
+     * Convenience for revealing and highlighting the node corresponding with the browser section `section`.
+     */
+    func selectSection(_ section: BrowserSection) {
+        selectFirstIndexPath { node in
+            return (node.representedObject as? SidebarContainerView.Node)?.section == section
+        }
+    }
+
 }

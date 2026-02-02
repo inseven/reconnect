@@ -45,10 +45,10 @@ struct Sidebar: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> SidebarContainerView {
-        let outlineContainerView = SidebarContainerView()
-        outlineContainerView.delegate = context.coordinator
-        applicationModel.delegate = outlineContainerView
-        return outlineContainerView
+        let sidebarContainerView = SidebarContainerView()
+        sidebarContainerView.delegate = context.coordinator
+        applicationModel.delegate = sidebarContainerView
+        return sidebarContainerView
     }
 
     func updateNSView(_ nsView: SidebarContainerView, context: Context) {

@@ -48,13 +48,20 @@ class SidebarContainerView: NSView {
             }
         }
 
-        var isGroup: Bool {
+        var isHeader: Bool {
             switch type {
             case .header:
                 return true
             case .section:
                 return false
             }
+        }
+
+        var section: BrowserSection? {
+            guard case .section(let section) = type else {
+                return nil
+            }
+            return section
         }
 
         let type: NodeType
@@ -89,6 +96,30 @@ class SidebarContainerView: NSView {
     private let treeController: NSTreeController
 
     private var treeControllerObserver: NSKeyValueObservation?
+
+    private var _selectedSection: BrowserSection = .disconnected
+
+    /**
+     * Manage the selected section.
+     *
+     * Sets are guarded ensuring that, if the selection is currently selected, it will not be re-selected. This means
+     * that if the currently selected section is not currently visible (e.g., if the tree is collapsed), then it will
+     * revealed or the selection shown in the UI. However, if the section is not currently selected, the tree will be
+     * expanded and the corresponding node selected.
+     */
+    var selectedSection: BrowserSection {
+        get {
+            return _selectedSection
+        }
+        set {
+            dispatchPrecondition(condition: .onQueue(.main))
+            guard _selectedSection != newValue else {
+                return
+            }
+            _selectedSection = newValue
+            treeController.selectSection(newValue)
+        }
+    }
 
     init() {
 
@@ -165,6 +196,7 @@ class SidebarContainerView: NSView {
         outlineView.expandItem(treeController.arrangedObjects.children![0], expandChildren: true)
         outlineView.expandItem(treeController.arrangedObjects.children![1], expandChildren: true)
 
+        // Select the disconnected device item.
         treeController.setSelectionIndexPath(IndexPath(indexes: [0, 0]))
 
     }
@@ -197,7 +229,7 @@ class SidebarContainerView: NSView {
 extension SidebarContainerView: NSOutlineViewDelegate {
 
     func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
-        return Self.sidebarNode(from: item)?.isGroup ?? false
+        return Self.sidebarNode(from: item)?.isHeader ?? false
     }
 
     func outlineView(_ outlineView: NSOutlineView, shouldSelectItem item: Any) -> Bool {
@@ -205,7 +237,7 @@ extension SidebarContainerView: NSOutlineViewDelegate {
         guard let node = Self.sidebarNode(from: item) else {
             return false
         }
-        return !node.isGroup
+        return !node.isHeader
     }
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
@@ -213,7 +245,24 @@ extension SidebarContainerView: NSOutlineViewDelegate {
     }
 
     func outlineViewItemDidExpand(_ notification: Notification) {
-        // TODO: Can reselect here.
+        dispatchPrecondition(condition: .onQueue(.main))
+
+        // There's a lot going on in this guard statement:
+        // - we the node being expanded from the notification
+        // - see if that node has an immediate child matching our selected section (returned as an optional index)
+        // - get the index path of the node being expanded
+        guard
+            let node = notification.userInfo?["NSObject"] as? NSTreeNode,
+            let selectionIndex = node.children?.firstIndex(where: { ($0.representedObject as? Node)?.section == selectedSection }),
+            let parentIndexPath = treeController.arrangedObjects.children?.firstIndexPath(where: { $0 == node })
+        else {
+            return
+        }
+
+        // If we've got here, we know that one of the expanded node's children should be selected, so we assemble the
+        // index path for the child node and select it.
+        let indexPath = parentIndexPath + [selectionIndex]
+        treeController.setSelectionIndexPath(indexPath)
     }
 
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
@@ -250,10 +299,10 @@ extension SidebarContainerView: ApplicationModelDelegate {
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
 
         // Select the new device if the current selection is in the devices section.
-        let index = deviceModel.drives.firstIndex { $0.mediaType == .ram }
-        if let index {
-            treeController.setSelectionIndexPath(IndexPath(indexes: [0, 0, index]))
+        guard let internalDrive = deviceModel.drives.first(where: { $0.mediaType == .ram }) else {
+            return
         }
+        selectedSection = .drive(deviceModel.id, internalDrive)
     }
     
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidDisconnect deviceModel: DeviceModel) {
@@ -270,17 +319,8 @@ extension SidebarContainerView: ApplicationModelDelegate {
 
     }
 
-    func applicationModel(_ applicationModel: ApplicationModel, sectionDidChange newSection: BrowserSection) {
-        dispatchPrecondition(condition: .onQueue(.main))
-
-        treeController.selectFirstIndexPath { node in
-            guard let node = node.representedObject as? Node,
-                  case .section(let section) = node.type
-            else {
-                return false
-            }
-            return section == newSection
-        }
+    func applicationModel(_ applicationModel: ApplicationModel, sectionDidChange section: BrowserSection) {
+        selectedSection = section
     }
 
 }
