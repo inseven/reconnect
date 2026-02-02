@@ -32,50 +32,50 @@ struct NavigationToolbar: CustomizableToolbarContent {
 
         ToolbarItem(id: "navigation", placement: .navigation) {
             LabeledContent {
-            HStack(spacing: 8) {
+                HStack(spacing: 8) {
 
-                Menu {
-                    ForEach(navigationHistory.previousItems) { item in
-                        Button {
-                            navigationHistory.navigate(item)
-                        } label: {
-                            SectionLabel(section: item.section)
+                    Menu {
+                        ForEach(navigationHistory.previousItems) { item in
+                            Button {
+                                navigationHistory.navigate(item)
+                            } label: {
+                                SectionLabel(section: item.section)
+                            }
                         }
+                        .labelStyle(.titleAndIcon)
+                    } label: {
+                        Label("Back", systemImage: "chevron.backward")
+                    } primaryAction: {
+                        navigationHistory.back()
                     }
-                    .labelStyle(.titleAndIcon)
-                } label: {
-                    Label("Back", systemImage: "chevron.backward")
-                } primaryAction: {
-                    navigationHistory.back()
-                }
-                .menuIndicator(.hidden)
-                .disabled(!navigationHistory.canGoBack())
-                .id(navigationHistory.generation)
+                    .menuIndicator(.hidden)
+                    .disabled(!navigationHistory.canGoBack())
+                    .id(navigationHistory.generation)
 
-                Menu {
-                    ForEach(navigationHistory.nextItems) { item in
-                        Button {
-                            navigationHistory.navigate(item)
-                        } label: {
-                            SectionLabel(section: item.section)
+                    Menu {
+                        ForEach(navigationHistory.nextItems) { item in
+                            Button {
+                                navigationHistory.navigate(item)
+                            } label: {
+                                SectionLabel(section: item.section)
+                            }
                         }
+                        .labelStyle(.titleAndIcon)
+                    } label: {
+                        Label("Forward", systemImage: "chevron.forward")
+                    } primaryAction: {
+                        navigationHistory.forward()
                     }
-                    .labelStyle(.titleAndIcon)
-                } label: {
-                    Label("Forward", systemImage: "chevron.forward")
-                } primaryAction: {
-                    navigationHistory.forward()
-                }
-                .menuIndicator(.hidden)
-                .disabled(!navigationHistory.canGoForward())
-                .id(navigationHistory.generation)
+                    .menuIndicator(.hidden)
+                    .disabled(!navigationHistory.canGoForward())
+                    .id(navigationHistory.generation)
 
+                }
+                .help("See folders you viewed previously")
+
+            } label: {
+                Text("Back/Forward")
             }
-            .help("See folders you viewed previously")
-
-        } label: {
-            Text("Back/Forward")
-    }
 
         }
 
