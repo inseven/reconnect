@@ -242,22 +242,6 @@ extension SidebarOutlineViewContainerView: ApplicationModelDelegate {
 
 }
 
-extension NSTreeController {
 
-    func firstIndexPath(`where` predicate: (NSTreeNode) -> Bool) -> IndexPath? {
-        return arrangedObjects.children?.firstIndexPath(where: predicate)
-    }
-
-    func selectFirstIndexPath(`where` predicate: (NSTreeNode) -> Bool) {
-        guard
-            let indexPath = arrangedObjects.children?.firstIndexPath(where: predicate),
-            selectionIndexPath != indexPath
-        else {
-            return
-        }
-        setSelectionIndexPath(indexPath)
-    }
-
-}
 
 
