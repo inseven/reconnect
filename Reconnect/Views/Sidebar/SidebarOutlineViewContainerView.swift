@@ -194,7 +194,7 @@ extension SidebarOutlineViewContainerView: ApplicationModelDelegate {
     // N.B. This implementation assumes that we'll get matched connections and disconnections for single devices.
     // It will need to be updated in the future if we grow support for multiple connected devices.
 
-    func deviceDidConnect(deviceModel: DeviceModel) {
+    func applicationModel(_ applicationModel: ApplicationModel, deviceDidConnect deviceModel: DeviceModel) {
         dispatchPrecondition(condition: .onQueue(.main))
 
         // Remove the disconnected entry.
@@ -214,7 +214,7 @@ extension SidebarOutlineViewContainerView: ApplicationModelDelegate {
         }
     }
     
-    func deviceDidDisconnect(deviceModel: DeviceModel) {
+    func applicationModel(_ applicationModel: ApplicationModel, deviceDidDisconnect deviceModel: DeviceModel) {
         dispatchPrecondition(condition: .onQueue(.main))
 
         // Remove the existing device entry.
@@ -228,7 +228,7 @@ extension SidebarOutlineViewContainerView: ApplicationModelDelegate {
 
     }
 
-    func sectionDidChange(section newSection: BrowserSection) {
+    func applicationModel(_ applicationModel: ApplicationModel, sectionDidChange newSection: BrowserSection) {
         dispatchPrecondition(condition: .onQueue(.main))
 
         treeController.selectFirstIndexPath { node in

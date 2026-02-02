@@ -27,12 +27,11 @@ import Security
 import ReconnectCore
 
 // Guaranteed to be called on the main queue.
-// TODO: Inject the applicationModel
 protocol ApplicationModelDelegate: NSObjectProtocol {
 
-    func deviceDidConnect(deviceModel: DeviceModel)
-    func deviceDidDisconnect(deviceModel: DeviceModel)
-    func sectionDidChange(section: BrowserSection)
+    func applicationModel(_ applicationModel: ApplicationModel, deviceDidConnect deviceModel: DeviceModel)
+    func applicationModel(_ applicationModel: ApplicationModel, deviceDidDisconnect deviceModel: DeviceModel)
+    func applicationModel(_ applicationModel: ApplicationModel, sectionDidChange section: BrowserSection)
 
 }
 
@@ -346,12 +345,12 @@ extension ApplicationModel: DaemonClientDelegate {
                     }
                     self.connectingDevices.remove(at: index)
                     self.devices = [deviceModel]
-                    self.delegate?.deviceDidConnect(deviceModel: deviceModel)
+                    self.delegate?.applicationModel(self, deviceDidConnect: deviceModel)
                 }
             }
         } else {
             for deviceModel in self.devices {
-                delegate?.deviceDidDisconnect(deviceModel: deviceModel)
+                delegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
             }
             self.connectingDevices = []
             self.devices = []
@@ -391,7 +390,7 @@ extension ApplicationModel: NavigationHistoryDelegate {
             return
         }
         activeSection = section
-        delegate?.sectionDidChange(section: section)
+        delegate?.applicationModel(self, sectionDidChange: section)
     }
 
 }
