@@ -18,7 +18,14 @@
 
 import Foundation
 
-@Observable
+protocol NavigationHistoryDelegate: NSObjectProtocol {
+
+    @MainActor
+    func navigationHistory(_ navigationHistory: NavigationHistory, didNavigateToSection section: BrowserSection)
+
+}
+
+@MainActor @Observable
 class NavigationHistory {
 
     struct Item: Identifiable, Equatable {
@@ -47,6 +54,8 @@ class NavigationHistory {
         return Array(items[index+1..<items.count])
     }
 
+    weak var delegate: NavigationHistoryDelegate?
+
     private var items: [Item] = []
     private var index: Int? = nil
 
@@ -60,6 +69,7 @@ class NavigationHistory {
             return
         }
         self.index = index - 1
+        updateDelegate()
     }
 
     func forward() {
@@ -68,6 +78,7 @@ class NavigationHistory {
             return
         }
         self.index = index + 1
+        updateDelegate()
     }
 
     func canGoBack() -> Bool {
@@ -101,6 +112,14 @@ class NavigationHistory {
             return
         }
         self.index = index
+        updateDelegate()
+    }
+
+    func updateDelegate() {
+        guard let section = self.currentItem?.section else {
+            return
+        }
+        delegate?.navigationHistory(self, didNavigateToSection: section)
     }
 
 }

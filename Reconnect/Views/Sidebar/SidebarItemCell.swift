@@ -1,0 +1,76 @@
+// Reconnect -- Psion connectivity for macOS
+//
+// Copyright (C) 2024-2026 Jason Morley
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+import AppKit
+
+// TODO: SidebarSectionCell?
+class SidebarItemCell: NSTableCellView, ConfigurableSidebarCell {
+
+    struct LayoutMetrics {
+        static let interItemSpacing = 4.0
+        static let padding = 8.0
+        static let iconSize = 16.0
+    }
+
+    static let identifier = NSUserInterfaceItemIdentifier(rawValue: "SidebarItemCell")
+
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        self.identifier = Self.identifier
+
+        let imageView = NSImageView()
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.imageScaling = .scaleProportionallyDown
+        addSubview(imageView)
+        self.imageView = imageView
+
+        let textField = NSTextField()
+//        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.isBordered = false
+        textField.drawsBackground = false
+        textField.isEditable = false
+        addSubview(textField)
+        self.textField = textField
+
+//        NSLayoutConstraint.activate([
+//
+//            imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: LayoutMetrics.padding),
+//            imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+//            imageView.widthAnchor.constraint(equalToConstant: LayoutMetrics.iconSize),
+//            imageView.heightAnchor.constraint(equalToConstant: LayoutMetrics.iconSize),
+//
+//            textField.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: LayoutMetrics.padding),
+//            textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -LayoutMetrics.padding),
+//            textField.centerYAnchor.constraint(equalTo: centerYAnchor)
+//        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure(_ node: SidebarNode) {
+        guard case .item(let section) = node.type else {
+            fatalError("Unsupported node type \(node.type).")
+        }
+        textField?.stringValue = section.title
+        imageView?.image = NSImage(named: section.image)
+        textField?.isEditable = false
+    }
+
+}

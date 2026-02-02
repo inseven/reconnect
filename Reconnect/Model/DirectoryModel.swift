@@ -91,7 +91,7 @@ class DirectoryModel {
     }
 
     func navigate(to path: String) {
-        navigationHistory.navigate(.directory(deviceModel.id, driveInfo, path))
+        applicationModel.navigate(to: .directory(deviceModel.id, driveInfo, path))
     }
 
     private func update() {

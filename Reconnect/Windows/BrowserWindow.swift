@@ -24,21 +24,24 @@ struct BrowserWindow: Scene {
 
     static let id = "browser"
 
-    @State private var navigationHistory: NavigationHistory
-
     private let applicationModel: ApplicationModel
     private let transfersModel: TransfersModel
+    private let libraryModel: LibraryModel
+    private let navigationHistory: NavigationHistory
 
-    init(applicationModel: ApplicationModel, transfersModel: TransfersModel) {
+    init(applicationModel: ApplicationModel,
+         transfersModel: TransfersModel,
+         libraryModel: LibraryModel,
+         navigationHistory: NavigationHistory) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
-        let navigationHistory = NavigationHistory(section: .connecting)
+        self.libraryModel = libraryModel
         self.navigationHistory = navigationHistory
     }
 
     var body: some Scene {
         Window("My Psion", id: "browser") {
-            BrowserView(applicationModel: applicationModel)
+            BrowserView(applicationModel: applicationModel, libraryModel: libraryModel)
                 .opensSettings()
         }
         .commands {

@@ -27,14 +27,10 @@ struct BrowserView: View {
     @Environment(TransfersModel.self) private var transfersModel
     @Environment(NavigationHistory.self) private var navigationHistory
 
-    @StateObject var libraryModel: LibraryModel
+    @ObservedObject private var libraryModel: LibraryModel
 
-    init(applicationModel: ApplicationModel) {
-        let libraryModel = LibraryModel { release in
-            return release.kind == .installer
-        }
-        _libraryModel = StateObject(wrappedValue: libraryModel)
-        libraryModel.delegate = applicationModel
+    init(applicationModel: ApplicationModel, libraryModel: LibraryModel) {
+        _libraryModel = ObservedObject(wrappedValue: libraryModel)
     }
 
     @ViewBuilder func withDeviceModel(@ViewBuilder content: (DeviceModel) -> some View) -> some View {
@@ -52,9 +48,10 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar()
         } detail: {
-            switch navigationHistory.currentItem?.section {
-            case .connecting:
+            switch applicationModel.activeSection {
+            case .disconnected:
                 DisconnectedView()
+                    .ignoresSafeArea()
             case .drive(let deviceId, let driveInfo):
                 withDeviceModel { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
@@ -83,10 +80,8 @@ struct BrowserView: View {
                 ProgramsView()
                     .environmentObject(libraryModel)
             case .program(let program):
-                ProgramView(navigationHistory: navigationHistory, program: program)
+                ProgramView(applicationModel: applicationModel, program: program)
                     .environmentObject(libraryModel)
-            case .none:
-                Text("Nothing selected!")
             }
         }
         .toolbar(id: "main") {
@@ -98,29 +93,6 @@ struct BrowserView: View {
             RefreshToolbar()
         }
         .frame(minWidth: 800, minHeight: 600)
-        .onChange(of: applicationModel.devices) { oldValue, newDevices in
-            // When the set of available devices changes, we check to see if we need to update the UI accordingly.
-            if let device = newDevices.first {
-                // If we're currently displaying the connecting screen, then we want to instead display the new device.
-                guard navigationHistory.currentItem?.section == .connecting else {
-                    return
-                }
-                // When selecting the new device, we prefer the internal RAM drive if available.
-                let section: BrowserSection = if let drive = device.internalDrive {
-                    BrowserSection.drive(device.id, drive)
-                } else {
-                    BrowserSection.device(device.id)
-                }
-                navigationHistory.navigate(section)
-            } else {
-                switch navigationHistory.currentItem?.section {
-                case .connecting, .softwareIndex, .program:
-                    break
-                case .device, .directory, .drive, .none:
-                    navigationHistory.navigate(.connecting)
-                }
-            }
-        }
     }
 
 }

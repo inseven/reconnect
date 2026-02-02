@@ -16,13 +16,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import AppKit
 
-// TODO: This can probably get deleted.
-struct SidebarItem: Hashable, Identifiable {
+protocol ConfigurableSidebarCell: NSView {
 
-    var id: Self { self }
-    var section: BrowserSection
-    var children: [SidebarItem]? = nil
+    func configure(_ node: SidebarNode)
 
 }

@@ -41,13 +41,19 @@ struct DisconnectedView: View {
             } actions: {
                 SettingsButton("Open Connection Settings...", section: .devices)
             }
-        } else {
+        } else if applicationModel.isConnecting {
             ContentUnavailableView {
                 Label {
                     Text("Connecting...")
                 } icon: {
                     ProgressAnimation("cnt")
                 }
+            } actions: {
+                SettingsButton()
+            }
+        } else {
+            ContentUnavailableView {
+                Label("Not Connected", systemImage: "cable.connector")
             } actions: {
                 SettingsButton()
             }

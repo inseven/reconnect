@@ -26,6 +26,16 @@ import Security
 
 import ReconnectCore
 
+// Guaranteed to be called on the main queue.
+// TODO: Inject the applicationModel
+protocol ApplicationModelDelegate: NSObjectProtocol {
+
+    func deviceDidConnect(deviceModel: DeviceModel)
+    func deviceDidDisconnect(deviceModel: DeviceModel)
+    func sectionDidChange(section: BrowserSection)
+
+}
+
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
@@ -114,15 +124,33 @@ class ApplicationModel: NSObject {
 
     var updaterController: SPUStandardUpdaterController!
 
+    // TODO: This is only used by the sidebar. There must be a nicer way of doing this?? But then I don't want to diff.
+    weak public var delegate: ApplicationModelDelegate?
+
     // General applicaiton state.
     var launching: Bool = true
+    var activeSection: BrowserSection = .disconnected
     var activeSettingsSection: SettingsView.SettingsSection = .general
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
+
+    // Queue of devices that are being loaded; we keep them in a separate queue to ensure we don't present them in the
+    // UI until they're ready to be fully displayed.
+    private var connectingDevices: [DeviceModel] = []
+
     var devices: [DeviceModel] = []
-    var sidebarDevices: [SidebarItem] = [SidebarItem(section: .connecting)]
+
+    var isConnecting: Bool {
+        return !connectingDevices.isEmpty
+    }
 
     let transfersModel = TransfersModel()
+
+    let libraryModel = LibraryModel { release in
+        return release.kind == .installer
+    }
+
+    let navigationHistory = NavigationHistory(section: .disconnected)
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -140,6 +168,8 @@ class ApplicationModel: NSObject {
         daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
+        libraryModel.delegate = self
+        navigationHistory.delegate = self
 
         // Clear the launching flag after an acceptable timeout.
         // This is used in the UI to select between whether we should show a spinner while waiting to connect to the
@@ -259,9 +289,18 @@ class ApplicationModel: NSObject {
         window?.makeKeyAndOrderFront(nil)
     }
 
+    func navigate(to section: BrowserSection) {
+        guard activeSection != section else {
+            return
+        }
+        activeSection = section
+        navigationHistory.navigate(section)
+    }
+
 }
 
 extension ApplicationModel: SPUUpdaterDelegate {
+
 
     nonisolated func updaterWillRelaunchApplication(_ updater: SPUUpdater) {
         // Disconnect from the daemon and shut down the menu bar app prior to relanuching the app.
@@ -291,23 +330,31 @@ extension ApplicationModel: DaemonClientDelegate {
             // We pre-warm the model before adding it into the UI to ensure that the UI can immediately select a
             // suitable drive to display.
             let deviceModel = DeviceModel(applicationModel: self)
+            self.connectingDevices = [deviceModel]
+
+            // Initialize the device (this enumerates the drives to ensure we can present them immediately).
             deviceModel.start { error in
                 if let error {
                     print("Failed to initialize device with error \(error).")
                     return
                 }
                 DispatchQueue.main.async {
-                    self.devices = [deviceModel]
-
-                    let drives = deviceModel.drives.map { driveInfo in
-                        SidebarItem(section: .drive(deviceModel.id, driveInfo))
+                    // If the device list no longer contains a device with the device we assume it was disconnected
+                    // before we were able to initialize it.
+                    guard let index = self.connectingDevices.firstIndex(where: { $0.id == deviceModel.id }) else {
+                        return
                     }
-                    self.sidebarDevices = [SidebarItem(section: .device(deviceModel.id), children: drives)]
+                    self.connectingDevices.remove(at: index)
+                    self.devices = [deviceModel]
+                    self.delegate?.deviceDidConnect(deviceModel: deviceModel)
                 }
             }
         } else {
+            for deviceModel in self.devices {
+                delegate?.deviceDidDisconnect(deviceModel: deviceModel)
+            }
+            self.connectingDevices = []
             self.devices = []
-            self.sidebarDevices = [SidebarItem(section: .connecting)]
         }
     }
 
@@ -332,6 +379,19 @@ extension ApplicationModel: LibraryModelDelegate {
             // TODO: Handle these errors!
             print("Failed to handle download with error \(error).")
         }
+    }
+
+}
+
+extension ApplicationModel: NavigationHistoryDelegate {
+
+    func navigationHistory(_ navigationHistory: NavigationHistory, didNavigateToSection section: BrowserSection) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        guard activeSection != section else {
+            return
+        }
+        activeSection = section
+        delegate?.sectionDidChange(section: section)
     }
 
 }

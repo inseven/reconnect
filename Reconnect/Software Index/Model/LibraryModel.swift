@@ -33,6 +33,7 @@ protocol LibraryModelDelegate: AnyObject {
 
 }
 
+// TODO: MAKE THIS OBSERVABLE!
 @MainActor class LibraryModel: ObservableObject {
 
     @Published var isLoading: Bool = true
@@ -49,11 +50,17 @@ protocol LibraryModelDelegate: AnyObject {
 
     private let filter: (Release) -> Bool
 
+    private var isRunning: Bool = false
+
     init(filter: @escaping (Release) -> Bool) {
         self.filter = filter
     }
 
     @MainActor func start() {
+        guard !isRunning else {
+            return
+        }
+        isRunning = true
         $programs
             .combineLatest($searchFilter)
             .map { programs, filter in
@@ -65,10 +72,6 @@ protocol LibraryModelDelegate: AnyObject {
         Task {
             await self.fetch()
         }
-    }
-
-    @MainActor func stop() {
-        cancellables.removeAll()
     }
 
     @MainActor private func fetch() async {
@@ -142,7 +145,7 @@ protocol LibraryModelDelegate: AnyObject {
             do {
                 // First, cean up the download task and observation.
                 DispatchQueue.main.sync {
-                    self.downloads.removeValue(forKey: downloadURL)
+                    _ = self.downloads.removeValue(forKey: downloadURL)
                 }
 
                 // Check for errors.
@@ -176,4 +179,22 @@ protocol LibraryModelDelegate: AnyObject {
         downloadTask.resume()
     }
 
+}
+
+extension LibraryModel: Refreshable {
+
+    var canRefresh: Bool {
+        return !self.isLoading
+    }
+    
+    var isRefreshing: Bool {
+        return self.isLoading
+    }
+    
+    func refresh() {
+        Task {
+            await fetch()
+        }
+    }
+    
 }

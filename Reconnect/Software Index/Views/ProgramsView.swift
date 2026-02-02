@@ -22,6 +22,7 @@ import SwiftUI
 
 struct ProgramsView: View {
 
+    @Environment(ApplicationModel.self) private var applicationModel
     @Environment(NavigationHistory.self) private var navigationHistory
 
     @EnvironmentObject private var libraryModel: LibraryModel
@@ -41,7 +42,7 @@ struct ProgramsView: View {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 240))], spacing: 0) {
                         ForEach(libraryModel.filteredPrograms) { program in
                             Button {
-                                navigationHistory.navigate(.program(program))
+                                applicationModel.navigate(to: .program(program))
                             } label: {
                                 ItemView(imageURL: program.iconURL,
                                          title: program.name)
@@ -61,6 +62,7 @@ struct ProgramsView: View {
             libraryModel.start()
         }
         .environmentObject(libraryModel)
+        .focusedSceneObject(RefreshableProxy(libraryModel))
     }
 
 }
