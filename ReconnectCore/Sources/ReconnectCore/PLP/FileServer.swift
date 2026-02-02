@@ -107,8 +107,7 @@ public class FileServer: @unchecked Sendable {
 
         public var path: String {
             return "\(drive):\\"
-        }
-        
+        }        
     }
 
     public struct DirectoryEntry: Identifiable, Hashable {
