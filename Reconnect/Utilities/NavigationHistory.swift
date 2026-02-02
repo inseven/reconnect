@@ -97,7 +97,6 @@ class NavigationHistory {
         }
         assert(index < items.count)
 
-
         // Ignore requests to navigate to the current item.
         guard currentItem?.section != section else {
             return
