@@ -142,8 +142,8 @@ class SidebarOutlineViewContainerView: NSView {
         switch identifier {
         case SidebarHeaderCell.identifier:
             return SidebarHeaderCell()
-        case SidebarItemCell.identifier:
-            return SidebarItemCell()
+        case SidebarSectionCell.identifier:
+            return SidebarSectionCell()
         default:
             fatalError("Unknown cell identifier '\(identifier.rawValue)'.")
         }
@@ -181,7 +181,7 @@ extension SidebarOutlineViewContainerView: NSOutlineViewDelegate {
         let view = if self.outlineView(outlineView, isGroupItem: item) {
             view(for: SidebarHeaderCell.identifier)
         } else {
-            view(for: SidebarItemCell.identifier)
+            view(for: SidebarSectionCell.identifier)
         }
         view.configure(node)
         return view

@@ -18,8 +18,7 @@
 
 import AppKit
 
-// TODO: SidebarSectionCell?
-class SidebarItemCell: NSTableCellView, ConfigurableSidebarCell {
+class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
 
     struct LayoutMetrics {
         static let interItemSpacing = 4.0
@@ -34,30 +33,15 @@ class SidebarItemCell: NSTableCellView, ConfigurableSidebarCell {
         self.identifier = Self.identifier
 
         let imageView = NSImageView()
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.imageScaling = .scaleProportionallyDown
         addSubview(imageView)
         self.imageView = imageView
 
         let textField = NSTextField()
-//        textField.translatesAutoresizingMaskIntoConstraints = false
         textField.isBordered = false
         textField.drawsBackground = false
         textField.isEditable = false
         addSubview(textField)
         self.textField = textField
-
-//        NSLayoutConstraint.activate([
-//
-//            imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: LayoutMetrics.padding),
-//            imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-//            imageView.widthAnchor.constraint(equalToConstant: LayoutMetrics.iconSize),
-//            imageView.heightAnchor.constraint(equalToConstant: LayoutMetrics.iconSize),
-//
-//            textField.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: LayoutMetrics.padding),
-//            textField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -LayoutMetrics.padding),
-//            textField.centerYAnchor.constraint(equalTo: centerYAnchor)
-//        ])
     }
 
     required init?(coder: NSCoder) {
