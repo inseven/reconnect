@@ -52,8 +52,6 @@ struct Sidebar: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: SidebarOutlineViewContainerView, context: Context) {
-        // TODO: Update the selection here??
-        // TODO: Does this get called when navigation history changes??
     }
 
 }

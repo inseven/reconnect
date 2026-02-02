@@ -96,7 +96,6 @@ class SidebarOutlineViewContainerView: NSView {
 
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("NameColumn"))
         column.title = "Name"
-        column.width = 200  // TODO: This feels messy?
         column.bind(.value, to: treeController, withKeyPath: "arrangedObjects.name")
 
         outlineView.addTableColumn(column)

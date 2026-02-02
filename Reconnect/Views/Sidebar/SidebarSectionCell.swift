@@ -20,12 +20,6 @@ import AppKit
 
 class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
 
-    struct LayoutMetrics {
-        static let interItemSpacing = 4.0
-        static let padding = 8.0
-        static let iconSize = 16.0
-    }
-
     static let identifier = NSUserInterfaceItemIdentifier(rawValue: "SidebarSectionCell")
 
     override init(frame: NSRect) {
@@ -40,6 +34,7 @@ class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
         textField.isBordered = false
         textField.drawsBackground = false
         textField.isEditable = false
+        textField.lineBreakMode = .byTruncatingMiddle
         addSubview(textField)
         self.textField = textField
     }
