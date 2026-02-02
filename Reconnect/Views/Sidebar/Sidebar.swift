@@ -22,7 +22,7 @@ struct Sidebar: NSViewRepresentable {
 
     @Environment(ApplicationModel.self) private var applicationModel
 
-    public final class Coordinator: NSObject, SidebarOutlineViewContainerViewDelegate {
+    public final class Coordinator: NSObject, SidebarContainerViewDelegate {
 
         var parent: Sidebar
 
@@ -30,8 +30,8 @@ struct Sidebar: NSViewRepresentable {
             self.parent = parent
         }
 
-        func sidebarOutlineVieContainer(_ sidebarOutlineVieContainer: SidebarOutlineViewContainerView,
-                                        didSelecSection section: BrowserSection) {
+        func sidebarContainerView(_ sidebarContainerView: SidebarContainerView,
+                                  didSelectSection section: BrowserSection) {
             parent.applicationModel.navigate(to: section)
         }
 
@@ -44,14 +44,14 @@ struct Sidebar: NSViewRepresentable {
         return Coordinator(self)
     }
 
-    func makeNSView(context: Context) -> SidebarOutlineViewContainerView {
-        let outlineContainerView = SidebarOutlineViewContainerView()
+    func makeNSView(context: Context) -> SidebarContainerView {
+        let outlineContainerView = SidebarContainerView()
         outlineContainerView.delegate = context.coordinator
         applicationModel.delegate = outlineContainerView
         return outlineContainerView
     }
 
-    func updateNSView(_ nsView: SidebarOutlineViewContainerView, context: Context) {
+    func updateNSView(_ nsView: SidebarContainerView, context: Context) {
     }
 
 }

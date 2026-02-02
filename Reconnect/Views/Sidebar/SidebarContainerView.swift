@@ -20,15 +20,15 @@ import SwiftUI
 
 import ReconnectCore
 
-protocol SidebarOutlineViewContainerViewDelegate: NSObjectProtocol {
+protocol SidebarContainerViewDelegate: NSObjectProtocol {
 
     @MainActor
-    func sidebarOutlineVieContainer(_ sidebarOutlineVieContainer: SidebarOutlineViewContainerView,
-                                    didSelecSection section: BrowserSection)
+    func sidebarContainerView(_ sidebarContainerView: SidebarContainerView,
+                              didSelectSection section: BrowserSection)
 
 }
 
-class SidebarOutlineViewContainerView: NSView {
+class SidebarContainerView: NSView {
 
     class func sidebarNode(from item: Any) -> SidebarNode? {
         if let treeNode = item as? NSTreeNode, let node = treeNode.representedObject as? SidebarNode {
@@ -38,7 +38,7 @@ class SidebarOutlineViewContainerView: NSView {
         }
     }
 
-    weak var delegate: SidebarOutlineViewContainerViewDelegate?
+    weak var delegate: SidebarContainerViewDelegate?
 
     private let scrollView: NSScrollView
     private let outlineView: NSOutlineView
@@ -114,7 +114,7 @@ class SidebarOutlineViewContainerView: NSView {
                 return
             }
             DispatchQueue.main.async {
-                self.delegate?.sidebarOutlineVieContainer(self, didSelecSection: section)
+                self.delegate?.sidebarContainerView(self, didSelectSection: section)
             }
         }
 
@@ -151,7 +151,7 @@ class SidebarOutlineViewContainerView: NSView {
 
 }
 
-extension SidebarOutlineViewContainerView: NSOutlineViewDelegate {
+extension SidebarContainerView: NSOutlineViewDelegate {
 
     func outlineView(_ outlineView: NSOutlineView, isGroupItem item: Any) -> Bool {
         return Self.sidebarNode(from: item)?.isGroup ?? false
@@ -188,7 +188,7 @@ extension SidebarOutlineViewContainerView: NSOutlineViewDelegate {
 
 }
 
-extension SidebarOutlineViewContainerView: ApplicationModelDelegate {
+extension SidebarContainerView: ApplicationModelDelegate {
 
     // N.B. This implementation assumes that we'll get matched connections and disconnections for single devices.
     // It will need to be updated in the future if we grow support for multiple connected devices.
@@ -241,7 +241,3 @@ extension SidebarOutlineViewContainerView: ApplicationModelDelegate {
     }
 
 }
-
-
-
-
