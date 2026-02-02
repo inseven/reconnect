@@ -108,12 +108,6 @@ public class FileServer: @unchecked Sendable {
         public var path: String {
             return "\(drive):\\"
         }
-
-        public init(drive: String, mediaType: MediaType, name: String?) {
-            self.drive = drive
-            self.mediaType = mediaType
-            self.name = name
-        }
         
     }
 
