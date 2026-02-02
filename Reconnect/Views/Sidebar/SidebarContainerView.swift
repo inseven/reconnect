@@ -280,7 +280,7 @@ extension SidebarContainerView: NSOutlineViewDelegate {
 
 }
 
-extension SidebarContainerView: ApplicationModelDelegate {
+extension SidebarContainerView: ApplicationModelConnectionDelegate {
 
     // N.B. This implementation assumes that we'll get matched connections and disconnections for single devices.
     // It will need to be updated in the future if we grow support for multiple connected devices.
@@ -317,10 +317,6 @@ extension SidebarContainerView: ApplicationModelDelegate {
 
         // TODO: Something is causing the selection to change here even though we're not actively doing it. I think.
 
-    }
-
-    func applicationModel(_ applicationModel: ApplicationModel, sectionDidChange section: BrowserSection) {
-        selectedSection = section
     }
 
 }

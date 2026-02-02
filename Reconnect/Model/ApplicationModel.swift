@@ -27,11 +27,10 @@ import Security
 import ReconnectCore
 
 // Guaranteed to be called on the main queue.
-protocol ApplicationModelDelegate: NSObjectProtocol {
+protocol ApplicationModelConnectionDelegate: NSObjectProtocol {
 
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidConnect deviceModel: DeviceModel)
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidDisconnect deviceModel: DeviceModel)
-    func applicationModel(_ applicationModel: ApplicationModel, sectionDidChange section: BrowserSection)
 
 }
 
@@ -123,12 +122,10 @@ class ApplicationModel: NSObject {
 
     var updaterController: SPUStandardUpdaterController!
 
-    // TODO: This is only used by the sidebar. There must be a nicer way of doing this?? But then I don't want to diff.
-    weak public var delegate: ApplicationModelDelegate?
+    weak public var connectionDelegate: ApplicationModelConnectionDelegate?
 
     // General applicaiton state.
     var launching: Bool = true
-    var activeSection: BrowserSection = .disconnected
     var activeSettingsSection: SettingsView.SettingsSection = .general
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
@@ -169,7 +166,6 @@ class ApplicationModel: NSObject {
         openMenuApplication()
         updaterController.startUpdater()
         libraryModel.delegate = self
-        navigationHistory.delegate = self
 
         // Clear the launching flag after an acceptable timeout.
         // This is used in the UI to select between whether we should show a spinner while waiting to connect to the
@@ -289,14 +285,6 @@ class ApplicationModel: NSObject {
         window?.makeKeyAndOrderFront(nil)
     }
 
-    func navigate(to section: BrowserSection) {
-        guard activeSection != section else {
-            return
-        }
-        activeSection = section
-        navigationHistory.navigate(section)
-    }
-
 }
 
 extension ApplicationModel: SPUUpdaterDelegate {
@@ -345,12 +333,12 @@ extension ApplicationModel: DaemonClientDelegate {
                     }
                     self.connectingDevices.remove(at: index)
                     self.devices = [deviceModel]
-                    self.delegate?.applicationModel(self, deviceDidConnect: deviceModel)
+                    self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                 }
             }
         } else {
             for deviceModel in self.devices {
-                delegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
+                connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
             }
             self.connectingDevices = []
             self.devices = []
@@ -378,19 +366,6 @@ extension ApplicationModel: LibraryModelDelegate {
             // TODO: Handle these errors!
             print("Failed to handle download with error \(error).")
         }
-    }
-
-}
-
-extension ApplicationModel: NavigationHistoryDelegate {
-
-    func navigationHistory(_ navigationHistory: NavigationHistory, didNavigateToSection section: BrowserSection) {
-        dispatchPrecondition(condition: .onQueue(.main))
-        guard activeSection != section else {
-            return
-        }
-        activeSection = section
-        delegate?.applicationModel(self, sectionDidChange: section)
     }
 
 }

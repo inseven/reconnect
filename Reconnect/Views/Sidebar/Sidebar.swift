@@ -21,6 +21,7 @@ import SwiftUI
 struct Sidebar: NSViewRepresentable {
 
     @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(NavigationHistory.self) private var navigationHistory
 
     public final class Coordinator: NSObject, SidebarContainerViewDelegate {
 
@@ -32,7 +33,7 @@ struct Sidebar: NSViewRepresentable {
 
         func sidebarContainerView(_ sidebarContainerView: SidebarContainerView,
                                   didSelectSection section: BrowserSection) {
-            parent.applicationModel.navigate(to: section)
+            parent.navigationHistory.navigate(to: section)
         }
 
     }
@@ -47,11 +48,12 @@ struct Sidebar: NSViewRepresentable {
     func makeNSView(context: Context) -> SidebarContainerView {
         let sidebarContainerView = SidebarContainerView()
         sidebarContainerView.delegate = context.coordinator
-        applicationModel.delegate = sidebarContainerView
+        applicationModel.connectionDelegate = sidebarContainerView
         return sidebarContainerView
     }
 
-    func updateNSView(_ nsView: SidebarContainerView, context: Context) {
+    func updateNSView(_ sidebarContainerView: SidebarContainerView, context: Context) {
+        sidebarContainerView.selectedSection = navigationHistory.currentItem!.section
     }
 
 }
