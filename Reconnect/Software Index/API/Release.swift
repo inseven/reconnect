@@ -20,7 +20,7 @@
 
 import Foundation
 
-public struct Release: Codable, Hashable {
+public struct Release: Codable, Hashable, Sendable {
 
     public var uniqueId: String {
         return id + referenceString

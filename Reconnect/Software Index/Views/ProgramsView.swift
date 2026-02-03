@@ -41,7 +41,7 @@ struct ProgramsView: View {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 240))], spacing: 0) {
                         ForEach(libraryModel.filteredPrograms) { program in
                             Button {
-                                navigationHistory.navigate(.program(program))
+                                navigationHistory.navigate(to: .program(program))
                             } label: {
                                 ItemView(imageURL: program.iconURL,
                                          title: program.name)
@@ -61,6 +61,7 @@ struct ProgramsView: View {
             libraryModel.start()
         }
         .environmentObject(libraryModel)
+        .focusedSceneObject(RefreshableProxy(libraryModel))
     }
 
 }

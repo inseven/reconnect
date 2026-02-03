@@ -32,7 +32,7 @@ class ProgramViewModel: ParentNavigable {
     }
 
     func navigateToParent() {
-        self.navigationHistory.navigate(.softwareIndex)
+        self.navigationHistory.navigate(to: .softwareIndex)
     }
 
 }

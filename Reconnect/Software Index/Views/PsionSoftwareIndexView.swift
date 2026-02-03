@@ -58,10 +58,9 @@ public struct PsionSoftwareIndexView: View {
         delegate = nil
     }
 
-    public init(filter: @escaping (Release) -> Bool = { _ in true },
-                completion: @escaping (PsionSoftwareIndexView.Item?) -> Void) {
+    public init(completion: @escaping (PsionSoftwareIndexView.Item?) -> Void) {
         self.delegate = LibraryModelBlockDelegate(complete: completion)
-        let libraryModel = LibraryModel(filter: filter)
+        let libraryModel = LibraryModel()
         _model = StateObject(wrappedValue: libraryModel)
         libraryModel.delegate = delegate
     }

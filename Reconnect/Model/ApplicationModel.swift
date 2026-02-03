@@ -26,6 +26,14 @@ import Security
 
 import ReconnectCore
 
+// Guaranteed to be called on the main queue.
+protocol ApplicationModelConnectionDelegate: NSObjectProtocol {
+
+    func applicationModel(_ applicationModel: ApplicationModel, deviceDidConnect deviceModel: DeviceModel)
+    func applicationModel(_ applicationModel: ApplicationModel, deviceDidDisconnect deviceModel: DeviceModel)
+
+}
+
 @MainActor @Observable
 class ApplicationModel: NSObject {
 
@@ -114,15 +122,32 @@ class ApplicationModel: NSObject {
 
     var updaterController: SPUStandardUpdaterController!
 
+    weak public var connectionDelegate: ApplicationModelConnectionDelegate?
+
     // General applicaiton state.
     var launching: Bool = true
     var activeSettingsSection: SettingsView.SettingsSection = .general
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
+
+    // Queue of devices that are being loaded; we keep them in a separate queue to ensure we don't present them in the
+    // UI until they're ready to be fully displayed.
+    private var connectingDevices: [DeviceModel] = []
+
     var devices: [DeviceModel] = []
-    var sidebarDevices: [SidebarItem] = [SidebarItem(section: .connecting)]
+
+    /**
+     * Indciates whether there's a device currently connecting.
+     *
+     * This is inferred by the length of the `connectingDevices` array which tracks devices currently being initialized.
+     */
+    var isConnecting: Bool {
+        return !connectingDevices.isEmpty
+    }
 
     let transfersModel = TransfersModel()
+    let libraryModel = LibraryModel()
+    let navigationHistory = NavigationHistory(section: .disconnected)
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -140,6 +165,7 @@ class ApplicationModel: NSObject {
         daemonClient.connect()
         openMenuApplication()
         updaterController.startUpdater()
+        libraryModel.delegate = self
 
         // Clear the launching flag after an acceptable timeout.
         // This is used in the UI to select between whether we should show a spinner while waiting to connect to the
@@ -291,23 +317,31 @@ extension ApplicationModel: DaemonClientDelegate {
             // We pre-warm the model before adding it into the UI to ensure that the UI can immediately select a
             // suitable drive to display.
             let deviceModel = DeviceModel(applicationModel: self)
+            self.connectingDevices = [deviceModel]
+
+            // Initialize the device (this enumerates the drives to ensure we can present them immediately).
             deviceModel.start { error in
                 if let error {
                     print("Failed to initialize device with error \(error).")
                     return
                 }
                 DispatchQueue.main.async {
-                    self.devices = [deviceModel]
-
-                    let drives = deviceModel.drives.map { driveInfo in
-                        SidebarItem(section: .drive(deviceModel.id, driveInfo))
+                    // If the device list no longer contains a device with the device we assume it was disconnected
+                    // before we were able to initialize it.
+                    guard let index = self.connectingDevices.firstIndex(where: { $0.id == deviceModel.id }) else {
+                        return
                     }
-                    self.sidebarDevices = [SidebarItem(section: .device(deviceModel.id), children: drives)]
+                    self.connectingDevices.remove(at: index)
+                    self.devices = [deviceModel]
+                    self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                 }
             }
         } else {
+            for deviceModel in self.devices {
+                connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
+            }
+            self.connectingDevices = []
             self.devices = []
-            self.sidebarDevices = [SidebarItem(section: .connecting)]
         }
     }
 

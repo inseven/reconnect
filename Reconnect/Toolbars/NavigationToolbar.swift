@@ -35,7 +35,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                 HStack(spacing: 8) {
 
                     Menu {
-                        ForEach(navigationHistory.previousItems.reversed()) { item in
+                        ForEach(navigationHistory.previousItems) { item in
                             Button {
                                 navigationHistory.navigate(item)
                             } label: {
@@ -50,6 +50,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                     }
                     .menuIndicator(.hidden)
                     .disabled(!navigationHistory.canGoBack())
+                    .id(navigationHistory.generation)
 
                     Menu {
                         ForEach(navigationHistory.nextItems) { item in
@@ -67,6 +68,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                     }
                     .menuIndicator(.hidden)
                     .disabled(!navigationHistory.canGoForward())
+                    .id(navigationHistory.generation)
 
                 }
                 .help("See folders you viewed previously")

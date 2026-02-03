@@ -30,11 +30,14 @@ struct ReconnectApp: App {
     var body: some Scene {
 
         BrowserWindow(applicationModel: appDelegate.applicationModel,
-                      transfersModel: appDelegate.applicationModel.transfersModel)
+                      transfersModel: appDelegate.applicationModel.transfersModel,
+                      libraryModel: appDelegate.applicationModel.libraryModel,
+                      navigationHistory: appDelegate.applicationModel.navigationHistory)
 
         TransfersWindow()
             .environment(appDelegate.applicationModel)
             .environment(appDelegate.applicationModel.transfersModel)
+            .environment(appDelegate.applicationModel.navigationHistory)
 
         Settings {
             SettingsView()

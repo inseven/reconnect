@@ -17,11 +17,27 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import SwiftUI
+import ReconnectCore
 
-struct SidebarItem: Hashable, Identifiable {
+extension NSTreeController {
 
-    var id: Self { self }
-    var section: BrowserSection
-    var children: [SidebarItem]? = nil
+    func selectFirstIndexPath(`where` predicate: (NSTreeNode) -> Bool) {
+        guard
+            let indexPath = arrangedObjects.children?.firstIndexPath(where: predicate),
+            selectionIndexPath != indexPath
+        else {
+            return
+        }
+        setSelectionIndexPath(indexPath)
+    }
+
+    /**
+     * Convenience for revealing and highlighting the node corresponding with the browser section `section`.
+     */
+    func selectSection(_ section: BrowserSection) {
+        selectFirstIndexPath { node in
+            return (node.representedObject as? SidebarContainerView.Node)?.section == section
+        }
+    }
 
 }

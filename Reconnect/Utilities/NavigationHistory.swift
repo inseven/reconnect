@@ -18,7 +18,7 @@
 
 import Foundation
 
-@Observable
+@MainActor @Observable
 class NavigationHistory {
 
     struct Item: Identifiable, Equatable {
@@ -37,7 +37,7 @@ class NavigationHistory {
         guard let index else {
             return []
         }
-        return Array(items[0..<index])
+        return Array(items[0..<index]).reversed()
     }
 
     var nextItems: [Item] {
@@ -50,6 +50,8 @@ class NavigationHistory {
     private var items: [Item] = []
     private var index: Int? = nil
 
+    var generation = UUID()
+
     init(section: BrowserSection) {
         index = 0
         self.items = [Item(section: section)]
@@ -60,6 +62,7 @@ class NavigationHistory {
             return
         }
         self.index = index - 1
+        self.generation = UUID()
     }
 
     func forward() {
@@ -68,6 +71,7 @@ class NavigationHistory {
             return
         }
         self.index = index + 1
+        self.generation = UUID()
     }
 
     func canGoBack() -> Bool {
@@ -84,7 +88,7 @@ class NavigationHistory {
         return index < items.count - 1
     }
 
-    func navigate(_ section: BrowserSection) {
+    func navigate(to section: BrowserSection) {
         guard let index else {
             assert(items.count == 0)
             index = 0
@@ -92,8 +96,16 @@ class NavigationHistory {
             return
         }
         assert(index < items.count)
+
+        // Ignore requests to navigate to the current item.
+        guard currentItem?.section != section else {
+            return
+        }
+
+        // Push the item, truncting the list of items if we're already in the middle of the history.
         self.items = items[0...index] + [Item(section: section)]
         self.index = index + 1
+        self.generation = UUID()
     }
 
     func navigate(_ item: Item) {
@@ -101,6 +113,7 @@ class NavigationHistory {
             return
         }
         self.index = index
+        self.generation = UUID()
     }
 
 }

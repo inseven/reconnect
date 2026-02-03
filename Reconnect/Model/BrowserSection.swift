@@ -21,7 +21,7 @@ import SwiftUI
 import ReconnectCore
 
 enum BrowserSection: Hashable {
-    case connecting
+    case disconnected
     case drive(UUID, FileServer.DriveInfo)
     case directory(UUID, FileServer.DriveInfo, String)
     case device(UUID)
@@ -33,8 +33,8 @@ extension BrowserSection {
 
     var title: String {
         switch self {
-        case .connecting:
-            return "Connecting..."
+        case .disconnected:
+            return "Not Connected"
         case .drive(_, let driveInfo):
             return driveInfo.displayName
         case .directory(_, _, let path):
@@ -50,7 +50,7 @@ extension BrowserSection {
 
     var image: String {
         switch self {
-        case .connecting:
+        case .disconnected:
             return "Disconnected16"
         case .drive(_, let driveInfo):
             return driveInfo.image

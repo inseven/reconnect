@@ -47,13 +47,16 @@ protocol LibraryModelDelegate: AnyObject {
 
     @Published var downloads: [URL: URLSessionDownloadTask] = [:]
 
-    private let filter: (Release) -> Bool
+    private var isRunning: Bool = false
 
-    init(filter: @escaping (Release) -> Bool) {
-        self.filter = filter
+    init() {
     }
 
     @MainActor func start() {
+        guard !isRunning else {
+            return
+        }
+        isRunning = true
         $programs
             .combineLatest($searchFilter)
             .map { programs, filter in
@@ -65,10 +68,6 @@ protocol LibraryModelDelegate: AnyObject {
         Task {
             await self.fetch()
         }
-    }
-
-    @MainActor func stop() {
-        cancellables.removeAll()
     }
 
     @MainActor private func fetch() async {
@@ -83,7 +82,7 @@ protocol LibraryModelDelegate: AnyObject {
                 let versions: [Version] = program.versions.compactMap { version in
                     let variants: [Collection] = version.variants.compactMap { collection in
                         let items: [Release] = collection.items.compactMap { release -> Release? in
-                            guard filter(release) else {
+                            guard release.kind == .installer else {
                                 return nil
                             }
                             return release
@@ -142,7 +141,7 @@ protocol LibraryModelDelegate: AnyObject {
             do {
                 // First, cean up the download task and observation.
                 DispatchQueue.main.sync {
-                    self.downloads.removeValue(forKey: downloadURL)
+                    _ = self.downloads.removeValue(forKey: downloadURL)
                 }
 
                 // Check for errors.
@@ -176,4 +175,22 @@ protocol LibraryModelDelegate: AnyObject {
         downloadTask.resume()
     }
 
+}
+
+extension LibraryModel: Refreshable {
+
+    var canRefresh: Bool {
+        return !self.isLoading
+    }
+    
+    var isRefreshing: Bool {
+        return self.isLoading
+    }
+    
+    func refresh() {
+        Task {
+            await fetch()
+        }
+    }
+    
 }
