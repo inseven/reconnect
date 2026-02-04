@@ -285,7 +285,7 @@ class InstallerModel: Runnable {
 
 extension InstallerModel: SisInstallIoHandler {
 
-    func sisGetStubs() -> Sis.GetStubsResult {
+    func sisGetStubs(sis: Sis.File) -> Sis.GetStubsResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
         do {
@@ -302,6 +302,11 @@ extension InstallerModel: SisInstallIoHandler {
             // Ensure the install directory exists on the Psion.
             if !(try device.fileServer.exists(path: installDirectory)) {
                 try device.fileServer.mkdir(path: installDirectory)
+            }
+
+            // Don't check stubs if we're installing an EPOC16-friendly SIS file with a zero UID.
+            guard sis.target != .epoc16 || sis.uid > 0 else {
+                return .stubs([])
             }
 
             // Index the existing stubs.
