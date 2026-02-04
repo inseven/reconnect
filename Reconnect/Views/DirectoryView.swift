@@ -29,14 +29,14 @@ struct DirectoryView: View {
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
-         navigationHistory: NavigationHistory,
+         navigationModel: NavigationModel,
          deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {
         self.applicationModel = applicationModel
         _directoryModel = State(initialValue: DirectoryModel(applicationModel: applicationModel,
                                                              transfersModel: transfersModel,
-                                                             navigationHistory: navigationHistory,
+                                                             navigationModel: navigationModel,
                                                              deviceModel: deviceModel,
                                                              driveInfo: driveInfo,
                                                              path: path))

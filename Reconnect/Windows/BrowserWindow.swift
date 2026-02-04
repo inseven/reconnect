@@ -27,16 +27,16 @@ struct BrowserWindow: Scene {
     private let applicationModel: ApplicationModel
     private let transfersModel: TransfersModel
     private let libraryModel: LibraryModel
-    private let navigationHistory: NavigationHistory
+    private let navigationModel: NavigationModel
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
          libraryModel: LibraryModel,
-         navigationHistory: NavigationHistory) {
+         navigationModel: NavigationModel) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
         self.libraryModel = libraryModel
-        self.navigationHistory = navigationHistory
+        self.navigationModel = navigationModel
     }
 
     var body: some Scene {
@@ -56,7 +56,7 @@ struct BrowserWindow: Scene {
         }
         .environment(applicationModel)
         .environment(transfersModel)
-        .environment(navigationHistory)
+        .environment(navigationModel)
         .handlesExternalEvents(matching: [.browser, .settings, .settingsGeneral, .settingsDevices])
     }
 

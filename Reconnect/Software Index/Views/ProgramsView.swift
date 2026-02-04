@@ -22,7 +22,7 @@ import SwiftUI
 
 struct ProgramsView: View {
 
-    @Environment(NavigationHistory.self) private var navigationHistory
+    @Environment(NavigationModel.self) private var navigationModel
 
     @EnvironmentObject private var libraryModel: LibraryModel
 
@@ -41,7 +41,7 @@ struct ProgramsView: View {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 240))], spacing: 0) {
                         ForEach(libraryModel.filteredPrograms) { program in
                             Button {
-                                navigationHistory.navigate(to: .program(program))
+                                navigationModel.navigate(to: .program(program))
                             } label: {
                                 ItemView(imageURL: program.iconURL,
                                          title: program.name)

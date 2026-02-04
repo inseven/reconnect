@@ -19,7 +19,7 @@
 import Foundation
 
 @MainActor @Observable
-class NavigationHistory {
+class NavigationModel {
 
     struct Item: Identifiable, Equatable {
         let id = UUID()
