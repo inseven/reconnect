@@ -21,18 +21,6 @@ import SwiftUI
 import Interact
 import OpoLuaCore
 
-extension Error {
-
-    var isCancel: Bool {
-        if let error = self as? Sis.InstallError,
-           case .userCancelled = error {
-            return true
-        }
-        return false
-    }
-
-}
-
 @MainActor
 struct InstallerView: View {
 
