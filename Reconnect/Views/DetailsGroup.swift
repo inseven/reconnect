@@ -37,8 +37,7 @@ struct DetailsGroup<Content: View, Label: View>: View {
             }
             .padding()
             .frame(maxWidth: .infinity)
-            .background(.quinary)
-            .border(.quaternary)
+            .modifier(DetailsGroupBackground())
         }
     }
 
