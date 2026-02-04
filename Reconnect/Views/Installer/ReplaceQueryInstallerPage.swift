@@ -38,7 +38,7 @@ struct ReplaceQueryInstallerPage: View {
                     Spacer()
                 }
                 .padding()
-                .frame(maxWidth: InstallerView.LayoutMetrics.maximumContentWidth)
+                .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
             } actions: {
                 Button("No", role: .destructive) {
                     query.resume(false)

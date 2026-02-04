@@ -60,7 +60,7 @@ struct ConfigurationQueryInstallerPage: View {
                     }
                 }
                 .padding()
-                .frame(maxWidth: InstallerView.LayoutMetrics.maximumContentWidth)
+                .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
             } actions: {
                 Button("Cancel", role: .destructive) {
                     query.cancel()

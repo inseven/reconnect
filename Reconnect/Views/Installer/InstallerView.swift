@@ -24,11 +24,6 @@ import OpoLuaCore
 @MainActor
 struct InstallerView: View {
 
-    struct LayoutMetrics {
-        static let maximumContentWidth: CGFloat = 520.0
-        static let symbolSize: CGFloat = 64.0
-    }
-
     @Environment(\.closeWindow) private var closeWindow
     @Environment(\.window) private var window
 
@@ -68,7 +63,7 @@ struct InstallerView: View {
                         ProgressView(value: progress)
                     }
                     .padding()
-                    .frame(maxWidth: LayoutMetrics.maximumContentWidth)
+                    .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
                 } actions: {
                     Button("Cancel", role: .destructive) {}
                         .disabled(true)
@@ -90,53 +85,15 @@ struct InstallerView: View {
                         ProgressView(value: progress.fractionCompleted)
                     }
                     .padding()
-                    .frame(maxWidth: LayoutMetrics.maximumContentWidth)
+                    .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
                 } actions: {
                     Button("Cancel", role: .destructive) {}
                         .disabled(true)
                 }
             case .complete:
-                InstallerPage {
-                    VStack {
-                        Image(systemName: "checkmark.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: LayoutMetrics.symbolSize)
-                            .foregroundStyle(.green)
-                        Text("Installation Complete")
-                            .font(.headline)
-                    }
-                    .padding()
-                } actions: {
-                    Button("Close") {
-                        closeWindow()
-                    }
-                    .keyboardShortcut(.defaultAction)
-                }
+                WizardCompletePage("Installation Complete")
             case .error(let error):
-                InstallerPage {
-                    VStack {
-                        Image(systemName: "xmark.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: LayoutMetrics.symbolSize)
-                            .foregroundStyle(.red)
-                        if error.isCancel {
-                            Text("Cancelled")
-                                .font(.headline)
-                        } else {
-                            Text("Error")
-                                .font(.headline)
-                            Text(error.localizedDescription)
-                        }
-                    }
-                    .padding()
-                } actions: {
-                    Button("Close") {
-                        closeWindow()
-                    }
-                    .keyboardShortcut(.defaultAction)
-                }
+                WizardErrorPage(error: error)
             }
         }
         .sheet(item: $installerModel.query) { query in

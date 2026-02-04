@@ -36,7 +36,7 @@ struct ProgramManagerView: View {
                     ProgressView(value: progress.fractionCompleted)
                 }
                 .padding()
-                .frame(maxWidth: InstallerView.LayoutMetrics.maximumContentWidth)
+                .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 Table(of: ProgramManagerModel.ProgramDetails.self) {
