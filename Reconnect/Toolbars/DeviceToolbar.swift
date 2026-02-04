@@ -20,6 +20,8 @@ import SwiftUI
 
 struct DeviceToolbar: CustomizableToolbarContent {
 
+    @Environment(ApplicationModel.self) private var applicationModel
+
     @FocusedObject private var deviceProxy: DeviceModelProxy?
 
     var canCaptureScreenshot: Bool {
@@ -44,6 +46,14 @@ struct DeviceToolbar: CustomizableToolbarContent {
             }
             .help("Capture a screenshot of your Psion")
             .disabled(!canCaptureScreenshot)
+        }
+
+        ToolbarItem(id: "backup") {
+            Button {
+                applicationModel.showBackupWindow()
+            } label: {
+                Label("Backup", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+            }
         }
 
     }

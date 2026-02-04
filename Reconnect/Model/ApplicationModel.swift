@@ -67,6 +67,8 @@ class ApplicationModel: NSObject {
         }
     }
 
+    var backupsURL = URL(filePath: "/Users/jbmorley/Local/Psion Backups", directoryHint: .isDirectory)
+
     var revealScreenshots: Bool {
         didSet {
             keyedDefaults.set(revealScreenshots, forKey: .revealScreenshots)
@@ -282,6 +284,23 @@ class ApplicationModel: NSObject {
         }
 
         // Foreground the window.
+        window?.makeKeyAndOrderFront(nil)
+    }
+
+    func showBackupWindow() {
+
+        var window = NSApplication.shared.windows.first { window in
+            guard let _ = window as? NSBackupWindow else {
+                return false
+            }
+            return true
+        }
+
+        if window == nil {
+            window = NSBackupWindow(applicationModel: self)
+            window?.center()
+        }
+
         window?.makeKeyAndOrderFront(nil)
     }
 
