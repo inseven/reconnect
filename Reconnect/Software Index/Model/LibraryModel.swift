@@ -1,26 +1,26 @@
-// Copyright (c) 2024-2026 Jason Morley
+// Reconnect -- Psion connectivity for macOS
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+// Copyright (C) 2024-2026 Jason Morley
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import Combine
 import Foundation
 import SwiftUI
+
+import ReconnectCore
 
 /// Callbacks always occur on `MainActor`.
 protocol LibraryModelDelegate: AnyObject {
@@ -29,11 +29,18 @@ protocol LibraryModelDelegate: AnyObject {
     func libraryModelDidCancel(libraryModel: LibraryModel)
 
     @MainActor
-    func libraryModel(libraryModel: LibraryModel, didSelectItem item: PsionSoftwareIndexView.Item)
+    func libraryModel(libraryModel: LibraryModel, didSelectItem item: LibraryModel.Item)
 
 }
 
 @MainActor class LibraryModel: ObservableObject {
+
+    public struct Item {
+
+        public let sourceURL: URL
+        public let url: URL
+
+    }
 
     @Published var isLoading: Bool = true
     @Published var programs: [Program] = []
@@ -146,7 +153,7 @@ protocol LibraryModelDelegate: AnyObject {
 
                 // Check for errors.
                 guard let url else {
-                    throw error ?? PsionSoftwareIndexError.unknownDownloadFailure
+                    throw error ?? ReconnectError.unknownDownloadFailure
                 }
 
                 // Create a temporary directory and move the downloaded contents to ensure it has the correct filename.
@@ -157,7 +164,7 @@ protocol LibraryModelDelegate: AnyObject {
                 try fileManager.moveItem(at: url, to: itemURL)
 
                 // Call our delegate.
-                let item = PsionSoftwareIndexView.Item(sourceURL: downloadURL, url: itemURL)
+                let item = Item(sourceURL: downloadURL, url: itemURL)
                 DispatchQueue.main.async {
                     self.delegate?.libraryModel(libraryModel: self, didSelectItem: item)
                 }
