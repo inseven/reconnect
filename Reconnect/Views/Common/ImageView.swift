@@ -18,7 +18,12 @@
 
 import SwiftUI
 
-struct AnimatedImage: NSViewRepresentable {
+/**
+ * Uses `NSImageView` under the hood to display a named image.
+ *
+ * This can be used to display animaged GIFs as, unlike `Image`, `NSImage` has this functionality built-in.
+ */
+struct ImageView: NSViewRepresentable {
 
     var name: String
 

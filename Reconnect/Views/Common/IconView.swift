@@ -32,7 +32,7 @@ struct IconView: View {
                     .interpolation(.none)
             }
         } else {
-            SwiftUI.Image(.unknownAppIcon)
+            Image(.unknownAppIcon)
                 .interpolation(.none)
         }
     }
