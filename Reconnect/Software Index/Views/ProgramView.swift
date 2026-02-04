@@ -25,14 +25,14 @@ class ProgramViewModel: ParentNavigable {
 
     let canNavigateToParent = true
 
-    private let navigationHistory: NavigationHistory
+    private let navigationModel: NavigationModel
 
-    init(navigationHistory: NavigationHistory) {
-        self.navigationHistory = navigationHistory
+    init(navigationModel: NavigationModel) {
+        self.navigationModel = navigationModel
     }
 
     func navigateToParent() {
-        self.navigationHistory.navigate(to: .softwareIndex)
+        self.navigationModel.navigate(to: .softwareIndex)
     }
 
 }
@@ -45,8 +45,8 @@ struct ProgramView: View {
 
     let program: Program
 
-    init(navigationHistory: NavigationHistory, program: Program) {
-        _programViewModel = State(initialValue: ProgramViewModel(navigationHistory: navigationHistory))
+    init(navigationModel: NavigationModel, program: Program) {
+        _programViewModel = State(initialValue: ProgramViewModel(navigationModel: navigationModel))
         self.program = program
     }
 

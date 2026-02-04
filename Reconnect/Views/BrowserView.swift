@@ -25,7 +25,7 @@ struct BrowserView: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
     @Environment(TransfersModel.self) private var transfersModel
-    @Environment(NavigationHistory.self) private var navigationHistory
+    @Environment(NavigationModel.self) private var navigationModel
 
     @ObservedObject private var libraryModel: LibraryModel
 
@@ -48,14 +48,14 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar()
         } detail: {
-            switch navigationHistory.currentItem?.section {
+            switch navigationModel.currentItem?.section {
             case .disconnected:
                 DisconnectedView()
             case .drive(let deviceId, let driveInfo):
                 withDeviceModel { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
                                   transfersModel: transfersModel,
-                                  navigationHistory: navigationHistory,
+                                  navigationModel: navigationModel,
                                   deviceModel: deviceModel,
                                   driveInfo: driveInfo,
                                   path: driveInfo.path)
@@ -65,7 +65,7 @@ struct BrowserView: View {
                 withDeviceModel { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
                                   transfersModel: transfersModel,
-                                  navigationHistory: navigationHistory,
+                                  navigationModel: navigationModel,
                                   deviceModel: deviceModel,
                                   driveInfo: driveInfo,
                                   path: path)
@@ -79,7 +79,7 @@ struct BrowserView: View {
                 ProgramsView()
                     .environmentObject(libraryModel)
             case .program(let program):
-                ProgramView(navigationHistory: navigationHistory, program: program)
+                ProgramView(navigationModel: navigationModel, program: program)
                     .environmentObject(libraryModel)
             case .none:
                 Text("Nothing selected!")

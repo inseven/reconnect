@@ -147,7 +147,7 @@ class ApplicationModel: NSObject {
 
     let transfersModel = TransfersModel()
     let libraryModel = LibraryModel()
-    let navigationHistory = NavigationHistory(section: .disconnected)
+    let navigationModel = NavigationModel(section: .disconnected)
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 

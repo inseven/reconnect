@@ -38,7 +38,7 @@ class DirectoryModel {
     let transfersModel: TransfersModel
 
     @ObservationIgnored
-    private let navigationHistory: NavigationHistory
+    private let navigationModel: NavigationModel
 
     @ObservationIgnored
     private let deviceModel: DeviceModel
@@ -54,13 +54,13 @@ class DirectoryModel {
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
-         navigationHistory: NavigationHistory,
+         navigationModel: NavigationModel,
          deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
-        self.navigationHistory = navigationHistory
+        self.navigationModel = navigationModel
         self.deviceModel = deviceModel
         self.driveInfo = driveInfo
         self.path = path
@@ -91,7 +91,7 @@ class DirectoryModel {
     }
 
     func navigate(to path: String) {
-        navigationHistory.navigate(to: .directory(deviceModel.id, driveInfo, path))
+        navigationModel.navigate(to: .directory(deviceModel.id, driveInfo, path))
     }
 
     private func update() {

@@ -21,7 +21,7 @@ import SwiftUI
 struct NavigationToolbar: CustomizableToolbarContent {
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(NavigationHistory.self) private var navigationHistory
+    @Environment(NavigationModel.self) private var navigationModel
 
     @FocusedObject private var parentNavigable: ParentNavigableProxy?
 
@@ -35,9 +35,9 @@ struct NavigationToolbar: CustomizableToolbarContent {
                 HStack(spacing: 8) {
 
                     Menu {
-                        ForEach(navigationHistory.previousItems) { item in
+                        ForEach(navigationModel.previousItems) { item in
                             Button {
-                                navigationHistory.navigate(item)
+                                navigationModel.navigate(item)
                             } label: {
                                 SectionLabel(section: item.section)
                             }
@@ -46,16 +46,16 @@ struct NavigationToolbar: CustomizableToolbarContent {
                     } label: {
                         Label("Back", systemImage: "chevron.backward")
                     } primaryAction: {
-                        navigationHistory.back()
+                        navigationModel.back()
                     }
                     .menuIndicator(.hidden)
-                    .disabled(!navigationHistory.canGoBack())
-                    .id(navigationHistory.generation)
+                    .disabled(!navigationModel.canGoBack())
+                    .id(navigationModel.generation)
 
                     Menu {
-                        ForEach(navigationHistory.nextItems) { item in
+                        ForEach(navigationModel.nextItems) { item in
                             Button {
-                                navigationHistory.navigate(item)
+                                navigationModel.navigate(item)
                             } label: {
                                 SectionLabel(section: item.section)
                             }
@@ -64,11 +64,11 @@ struct NavigationToolbar: CustomizableToolbarContent {
                     } label: {
                         Label("Forward", systemImage: "chevron.forward")
                     } primaryAction: {
-                        navigationHistory.forward()
+                        navigationModel.forward()
                     }
                     .menuIndicator(.hidden)
-                    .disabled(!navigationHistory.canGoForward())
-                    .id(navigationHistory.generation)
+                    .disabled(!navigationModel.canGoForward())
+                    .id(navigationModel.generation)
 
                 }
                 .help("See folders you viewed previously")

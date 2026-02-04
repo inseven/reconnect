@@ -20,7 +20,7 @@ import SwiftUI
 
 public struct NavigationCommands: Commands {
 
-    @Environment(NavigationHistory.self) private var navigationHistory
+    @Environment(NavigationModel.self) private var navigationModel
 
     @FocusedObject private var parentNavigableProxy: ParentNavigableProxy?
 
@@ -29,20 +29,20 @@ public struct NavigationCommands: Commands {
         CommandMenu("Go") {
 
             Button {
-                navigationHistory.back()
+                navigationModel.back()
             } label: {
                 Label("Back", systemImage: "chevron.backward")
             }
             .keyboardShortcut("[", modifiers: [.command])
-            .disabled(!navigationHistory.canGoBack())
+            .disabled(!navigationModel.canGoBack())
 
             Button {
-                navigationHistory.forward()
+                navigationModel.forward()
             } label: {
                 Label("Forward", systemImage: "chevron.forward")
             }
             .keyboardShortcut("]", modifiers: [.command])
-            .disabled(!navigationHistory.canGoForward())
+            .disabled(!navigationModel.canGoForward())
 
             Button {
                 parentNavigableProxy?.navigateToParent()
