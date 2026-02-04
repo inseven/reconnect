@@ -32,7 +32,7 @@ struct ProgressAnimation: View {
     }
 
     var body: some View {
-        AnimatedImage(named: name)
+        ImageView(named: name)
             .frame(width: LayoutMetrics.width, height: LayoutMetrics.height)
     }
 
