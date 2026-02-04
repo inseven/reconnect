@@ -18,35 +18,19 @@
 
 import SwiftUI
 
-struct ItemView: View {
+struct UnadornedCircularProgressViewStyle: ProgressViewStyle {
 
-    let imageURL: URL?
-    let title: String
-    let subtitle: String?
-
-    init(imageURL: URL?, title: String, subtitle: String? = nil) {
-        self.imageURL = imageURL
-        self.title = title
-        self.subtitle = subtitle
+    func makeBody(configuration: Configuration) -> some View {
+        ProgressView(value: configuration.fractionCompleted)
+            .progressViewStyle(.circular)
     }
 
-    var body: some View {
-        HStack {
-            IconView(url: imageURL)
-                .padding()
-            VStack(alignment: .leading) {
-                Spacer()
-                Text(title)
-                if let subtitle {
-                    Text(subtitle)
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
-                }
-                Spacer()
-                Divider()
-            }
-        }
-        .contentShape(Rectangle())
+}
+
+extension ProgressViewStyle where Self == UnadornedCircularProgressViewStyle {
+
+    static var unadornedCircular: UnadornedCircularProgressViewStyle {
+        return UnadornedCircularProgressViewStyle()
     }
 
 }

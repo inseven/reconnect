@@ -363,7 +363,7 @@ extension ApplicationModel: LibraryModelDelegate {
 
     }
 
-    func libraryModel(libraryModel: LibraryModel, didSelectItem item: PsionSoftwareIndexView.Item) {
+    func libraryModel(libraryModel: LibraryModel, didSelectItem item: LibraryModel.Item) {
         do {
             let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
             showInstallerWindow(url: url)
