@@ -27,6 +27,7 @@ enum BrowserSection: Hashable {
     case device(UUID, String)
     case softwareIndex
     case program(Program)
+    case backupDevice(UUID, String)
 }
 
 extension BrowserSection {
@@ -45,6 +46,8 @@ extension BrowserSection {
             return "Software Index"
         case .program(let program):
             return program.name
+        case .backupDevice(_, let name):
+            return name
         }
     }
 
@@ -62,6 +65,8 @@ extension BrowserSection {
             return "Install16"
         case .program:
             return "FileUnknown16"
+        case .backupDevice(_, _):
+            return "Backups16"
         }
     }
 

@@ -27,6 +27,60 @@ import Security
 import ReconnectCore
 
 // Guaranteed to be called on the main queue.
+protocol BackupsModelDelegate: NSObjectProtocol {
+
+    func backupsModel(_ backupsModel: BackupsModel, didUpdateDevices devices: [DeviceConfiguration])
+
+}
+
+@Observable
+class BackupsModel {
+
+    private let rootURL: URL
+    private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
+
+    var devices: [DeviceConfiguration] = []
+
+    @ObservationIgnored
+    weak public var delegate: BackupsModelDelegate?
+
+    init(rootURL: URL) {
+        self.rootURL = rootURL
+    }
+
+    func update() {
+        workQueue.async {
+            do {
+                let fileManager = FileManager.default
+
+                // Load the backups.
+                let fileURLs = try fileManager.contentsOfDirectory(at: self.rootURL,
+                                                                   includingPropertiesForKeys: [.isDirectoryKey])
+
+                let devices = fileURLs.compactMap { fileURL -> DeviceConfiguration? in
+                    let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+                    guard isDirectory else {
+                        return nil
+                    }
+                    let configURL = fileURL.appendingPathComponent("config.ini")
+                    guard fileManager.fileExists(at: configURL) else {
+                        return nil
+                    }
+                    return try? DeviceConfiguration(data: try Data(contentsOf: configURL))
+                }
+                DispatchQueue.main.async {
+                    self.devices = devices
+                    self.delegate?.backupsModel(self, didUpdateDevices: devices)
+                }
+            } catch {
+                print("Failed to enumerate directories with error \(error).")
+            }
+        }
+    }
+
+}
+
+// Guaranteed to be called on the main queue.
 protocol ApplicationModelConnectionDelegate: NSObjectProtocol {
 
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidConnect deviceModel: DeviceModel)
@@ -67,7 +121,7 @@ class ApplicationModel: NSObject {
         }
     }
 
-    var backupsURL = URL(filePath: "/Users/jbmorley/Local/Psion Backups", directoryHint: .isDirectory)
+    var backupsURL: URL
 
     var revealScreenshots: Bool {
         didSet {
@@ -124,6 +178,7 @@ class ApplicationModel: NSObject {
 
     var updaterController: SPUStandardUpdaterController!
 
+    @ObservationIgnored
     weak public var connectionDelegate: ApplicationModelConnectionDelegate?
 
     // General applicaiton state.
@@ -150,6 +205,7 @@ class ApplicationModel: NSObject {
     let transfersModel = TransfersModel()
     let libraryModel = LibraryModel()
     let navigationHistory = NavigationHistory(section: .disconnected)
+    let backupsModel: BackupsModel
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -159,6 +215,9 @@ class ApplicationModel: NSObject {
         downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
+        let backupsURL = URL(filePath: "/Users/jbmorley/Local/Psion Backups", directoryHint: .isDirectory)
+        self.backupsURL = backupsURL
+        backupsModel = BackupsModel(rootURL: backupsURL)
         super.init()
         updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: self,
@@ -168,6 +227,7 @@ class ApplicationModel: NSObject {
         openMenuApplication()
         updaterController.startUpdater()
         libraryModel.delegate = self
+        backupsModel.update()
 
         // Clear the launching flag after an acceptable timeout.
         // This is used in the UI to select between whether we should show a spinner while waiting to connect to the
@@ -345,6 +405,17 @@ extension ApplicationModel: DaemonClientDelegate {
                     }
                     switch result {
                     case .success(let deviceModel):
+
+                        // Update the back up identifier for this device, and re-enumerate the backups.
+                        let deviceBackupsURL = self.backupsURL
+                            .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
+                        let configURL = deviceBackupsURL.appending(path: "config.ini")
+                        if !FileManager.default.fileExists(at: deviceBackupsURL) {
+                            try? FileManager.default.createDirectory(at: deviceBackupsURL, withIntermediateDirectories: true)
+                        }
+                        try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
+                        self.backupsModel.update()
+
                         self.devices = [deviceModel]
                         self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                         print("Device \(deviceModel.id.uuidString) connected.")

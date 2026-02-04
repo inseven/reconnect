@@ -49,6 +49,7 @@ struct Sidebar: NSViewRepresentable {
         let sidebarContainerView = SidebarContainerView()
         sidebarContainerView.delegate = context.coordinator
         applicationModel.connectionDelegate = sidebarContainerView
+        applicationModel.backupsModel.delegate = sidebarContainerView
         return sidebarContainerView
     }
 

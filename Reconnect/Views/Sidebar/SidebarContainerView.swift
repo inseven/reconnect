@@ -20,6 +20,7 @@ import SwiftUI
 
 import ReconnectCore
 
+
 protocol SidebarContainerViewDelegate: NSObjectProtocol {
 
     @MainActor
@@ -121,6 +122,8 @@ class SidebarContainerView: NSView {
         }
     }
 
+    @objc dynamic var contents: [Node] = []
+
     init() {
 
         scrollView = NSScrollView()
@@ -150,7 +153,9 @@ class SidebarContainerView: NSView {
 
         treeController.objectClass = Node.self
         treeController.childrenKeyPath = "children"
-        treeController.content = [
+        treeController.bind(.contentArray, to: self, withKeyPath: "contents")
+
+        contents = [
             Node(header: "Devices", children: [
                 Node(section: .disconnected)
             ]),
@@ -158,6 +163,7 @@ class SidebarContainerView: NSView {
                 Node(section: .softwareIndex),
             ]),
         ]
+        treeController.content = contents
 
         // Configure the outline view.
 
@@ -310,7 +316,25 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
         // Insert the disconnected entry.
         treeController.insert(Node(section: .disconnected),
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
+    }
 
+}
+
+extension SidebarContainerView: BackupsModelDelegate {
+
+    func backupsModel(_ backupsModel: BackupsModel, didUpdateDevices devices: [DeviceConfiguration]) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        let children = devices.map { device in
+            Node(section: .backupDevice(device.id, device.name))
+        }
+        let selection = treeController.selectionIndexPath  // Read the current selection so we can restore it later.
+        let node = Node(header: "Backups", children: children)
+        if (treeController.arrangedObjects.children?.count ?? 0) > 2 {
+            treeController.removeObject(atArrangedObjectIndexPath: IndexPath(indexes: [2]))
+        }
+        treeController.insert(node, atArrangedObjectIndexPath: IndexPath(indexes: [2]))
+        outlineView.expandItem(treeController.arrangedObjects.children![2], expandChildren: true)
+        treeController.setSelectionIndexPath(selection)  // Restore selection.
     }
 
 }

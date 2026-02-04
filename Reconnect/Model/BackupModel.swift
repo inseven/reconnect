@@ -50,11 +50,12 @@ class BackupModel: Runnable {
         let backupsURL = applicationModel.backupsURL
         DispatchQueue.global(qos: .userInteractive).async {
 
+            let deviceBackupsURL = backupsURL.appendingPathComponent(deviceModel.id.uuidString, isDirectory: true)
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
             dateFormatter.timeZone = .gmt
             let basename = dateFormatter.string(from: Date())
-            let deviceBackupsURL = backupsURL.appendingPathComponent(deviceModel.id.uuidString, isDirectory: true)
+
             let backupURL = deviceBackupsURL.appendingPathComponent(basename, isDirectory: true)
 
             do {
