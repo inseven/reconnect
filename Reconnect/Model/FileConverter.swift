@@ -21,6 +21,7 @@ import SwiftUI
 import OpoLuaCore
 
 import ReconnectCore
+import Word2text
 
 // This is expected to grow into some kind of engine / model for managing file conversions and giving in the moment
 // answers about conversions based on the users choices and enabled conversions.
@@ -73,12 +74,18 @@ class FileConverter {
                                                                   conformingTo: .plainText)
             let data = try Data(contentsOf: sourceURL)
             let bytes = [UInt8](data)[...]
-            let result: ProcessResult = PsionWord.processFile(bytes)
-            guard result.errorCode == .noError else {
-                throw ReconnectError.unknown
+            var settings = ProcessSettings()
+            settings.doShowInfo = false
+            settings.doReturnMarkdown = false
+            settings.doIncludeHeader = false
+            let result = PsionWord.processFile(bytes, "", .init())
+            switch result {
+            case .success(let output):
+                try output.write(to: outputURL, atomically: true, encoding: .utf8)
+                return outputURL
+            case .failure(let error):
+                throw error
             }
-            try result.text.write(to: outputURL, atomically: true, encoding: .utf8)
-            return outputURL
         }
 
     ]

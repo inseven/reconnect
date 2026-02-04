@@ -22,3 +22,6 @@
 [submodule "docs/_theme"]
 	path = docs/_theme
 	url = https://github.com/jbmorley/showcase-theme.git
+[submodule "dependencies/Word2Text"]
+	path = dependencies/Word2Text
+	url = https://github.com/smittytone/Word2Text.git
