@@ -37,7 +37,7 @@ struct InstallerView: View {
         VStack(spacing: 0) {
             switch installerModel.page {
             case .loading:
-                InstallerPage {
+                WizardPage {
                     VStack {
                         ProgressView()
                     }
@@ -47,7 +47,7 @@ struct InstallerView: View {
                         .disabled(true)
                 }
             case .ready:
-                InstallerPage {
+                WizardPage {
                     VStack {
                         Image("Installer")
                     }
@@ -57,7 +57,7 @@ struct InstallerView: View {
                         .disabled(true)
                 }
             case .checkingInstalledPackages(let progress):
-                InstallerPage {
+                WizardPage {
                     VStack {
                         Text("Checking installed packages...")
                         ProgressView(value: progress)
@@ -69,7 +69,7 @@ struct InstallerView: View {
                         .disabled(true)
                 }
             case .operation(let operation, let progress):
-                InstallerPage {
+                WizardPage {
                     VStack {
                         switch operation.type {
                         case .write:

@@ -29,7 +29,7 @@ struct WizardErrorPage: View {
     }
 
     var body: some View {
-        InstallerPage {
+        WizardPage {
             VStack {
                 Image(systemName: "xmark.circle")
                     .resizable()

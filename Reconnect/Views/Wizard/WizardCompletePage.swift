@@ -29,7 +29,7 @@ struct WizardCompletePage: View {
     }
 
     var body: some View {
-        InstallerPage {
+        WizardPage {
             VStack {
                 Image(systemName: "checkmark.circle")
                     .resizable()

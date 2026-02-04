@@ -31,7 +31,7 @@ struct ReplaceQueryInstallerPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            InstallerPage("Replace '\(query.replacing.name)'?") {
+            WizardPage("Replace '\(query.replacing.name)'?") {
                 HStack(spacing: 0) {
                     Text("'\(query.replacing.name) - \(query.replacing.version)' is already installed on drive \(query.replacing.drive). Do you want to replace it with version \(query.sis.version)?")
                         .multilineTextAlignment(.leading)

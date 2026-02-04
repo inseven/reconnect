@@ -23,9 +23,8 @@ fileprivate struct LayoutMetrics {
     static let minHeight: CGFloat = 400
 }
 
-
 @MainActor
-struct InstallerPage<Content: View, Actions: View>: View {
+struct WizardPage<Content: View, Actions: View>: View {
 
     let title: Text?
     let content: Content
