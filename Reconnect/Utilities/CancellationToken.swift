@@ -45,8 +45,7 @@ class CancellationToken {
         guard isCancelled else {
             return
         }
-        // TODO: Throw a better error?
-        throw PLPToolsError.cancelled
+        throw ReconnectError.cancelled
     }
 
 }

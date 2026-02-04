@@ -32,6 +32,7 @@ public enum ReconnectError: Error {
     case invalidDaemonProxy
     case configurationDencodeError
     case configurationEncodeError
+    case cancelled
 }
 
 extension ReconnectError: LocalizedError {
@@ -60,6 +61,8 @@ extension ReconnectError: LocalizedError {
             return "Failed to decode device configuration."
         case .configurationEncodeError:
             return "Failed to encode device configuration."
+        case .cancelled:
+            return "Cancelled."
         }
     }
 
