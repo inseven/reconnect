@@ -37,24 +37,126 @@ extension RemoteCommandServicesClient.MachineType {
 @Observable
 class DeviceModel: Identifiable, Equatable {
 
+    /**
+     * Perform initial device configuration on connection and return a fully-configured device model.
+     *
+     * This is performed as a separate, asynchronous step to ensure that properties of the device model are available
+     * syncrhonously by the time we have a full device model.
+     *
+     * Initialization can be cancelled at ay point in time by calling cancel.
+     *
+     * The completion block is called on a background queue.
+     */
+    //       decouple it from some of the logic around device model creation itself (we're currently having to inject
+    //       more state than we need.)
+    static func initialize(applicationModel: ApplicationModel,
+                           cancellationToken: CancellationToken = CancellationToken(),
+                           completion: @escaping (Result<DeviceModel, Error>) -> Void) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+
+                // Bootstrap the connection to the Psion, inferring the type of the deivce we're connected to and its
+                // limitations as we go. There are probably better appraoches to this, but this at least gets things
+                // working, and we can revisit them in the future.
+
+                // We check to see if we've been cancelled at each step of the initialization process to allow us to
+                // exit early if the calling code has cancelled.
+
+                // Create the servers for communicating with the Psion. These will be handed off, on success, to the
+                // new device model.
+                let fileServer = FileServer()
+                let remoteCommandServicesClient = RemoteCommandServicesClient()
+
+                // 1) Perform a drive listing. We know we can always safely do this.
+                try cancellationToken.checkCancellation()
+                let drives = try fileServer.drivesSync()
+
+                // 2) Get the internal drive.
+                guard let internalDrive = drives.first(where: { $0.mediaType == .ram }) else {
+                    throw PLPToolsError.driveNotReady
+                }
+
+                // 3) Infer that we're talking to an EPOC16 device by the presence of a RAM-drive labeled M.
+                try cancellationToken.checkCancellation()
+                let epoc16 = internalDrive.drive == "M"
+
+                // 3) If we're EPOC16, we need to ensure the RPCS server is installed on the Psion, copying it if not.
+                try cancellationToken.checkCancellation()
+                if try (epoc16 && !fileServer.exists(path: "M:\\SYS$RPCS.IMG")) {
+                    let rpcsServer = Bundle.main.url(forResource: "SYS$RPCS", withExtension: ".IMG")!
+                    try fileServer.copyFileSync(fromLocalPath: rpcsServer.path, toRemotePath: "M:\\SYS$RPCS.IMG") { _, _ in return .continue }
+                }
+
+                // 4) Once we've made sure the RPCS server is present irrespective of the machine we're using, we can
+                //    fetch the machine type.
+                try cancellationToken.checkCancellation()
+                let machineType = try remoteCommandServicesClient.getMachineType()
+
+                // 5) We then use the machine type as a more fine-grained way to determine if it's safe to fetch the
+                //    full machine info.
+                try cancellationToken.checkCancellation()
+                let machineInfo: RemoteCommandServicesClient.MachineInfo? = if machineType.isEpoc32 {
+                    try remoteCommandServicesClient.getMachineInfo()
+                } else {
+                    nil
+                }
+
+                // 6) Check to see if the machine already has a Reconnect-managed unique identifier, creating one if
+                //    necessary. We generate our own identifiers to work around EPOC16's lack of unique identifiers and
+                //    give us a way to identify device sessions (between hard resets) instead of the device hardware
+                //    itself.
+
+                let configPath: String = epoc16 ? .epoc16ConfigPath : .epoc32ConfigPath
+
+                // Ensure the config directory exists.
+                let configDirectoryPath = configPath.deletingLastWindowsPathComponent
+                if !(try fileServer.exists(path: configDirectoryPath)) {
+                    try fileServer.mkdir(path: configDirectoryPath)
+                }
+
+                // Ccreate or read the device config.
+                let deviceConfiguration: DeviceConfiguration
+                if !(try fileServer.exists(path: configPath)) {
+                    deviceConfiguration = DeviceConfiguration()
+                    let data = try deviceConfiguration.data()
+                    try fileServer.writeFile(path: configPath, data: data)
+                } else {
+                    let data = try fileServer.readFile(path: configPath)
+                    let configuration = try DeviceConfiguration(data: data)
+                    deviceConfiguration = configuration
+                }
+
+                // 7) And with all that done, it's safe to hand back to the UI with enough information to allow things
+                //    to continue and conditionally display things correctly. 😬
+                let deviceModel = DeviceModel(applicationModel: applicationModel,
+                                              fileServer: fileServer,
+                                              remoteCommandServicesClient: remoteCommandServicesClient,
+                                              deviceConfiguration: deviceConfiguration,
+                                              machineType: machineType,
+                                              machineInfo: machineInfo,
+                                              drives: drives,
+                                              internalDrive: internalDrive)
+
+                // Hand it back!
+                completion(.success(deviceModel))
+
+            } catch {
+                completion(.failure(error))
+            }
+
+        }
+    }
+
     static func == (lhs: DeviceModel, rhs: DeviceModel) -> Bool {
         return lhs.id != rhs.id
     }
 
-    @MainActor var machineType: RemoteCommandServicesClient.MachineType = .unknown
-    @MainActor var machineInfo: RemoteCommandServicesClient.MachineInfo? = nil
-    @MainActor var drives: [FileServer.DriveInfo] = []
     @MainActor var isCapturingScreenshot: Bool = false
 
-    @MainActor
-    var internalDrive: FileServer.DriveInfo? {
-        dispatchPrecondition(condition: .onQueue(.main))
-        return drives.first { driveInfo in
-            return driveInfo.mediaType == .ram
-        }
+    var id: UUID {
+        return deviceConfiguration.id
     }
 
-    @MainActor
     var installDirectory: String? {
         switch machineType {
         case .unknown, .pc, .mc, .hc, .winC:
@@ -66,7 +168,6 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
-    @MainActor
     var canCaptureScreenshot: Bool {
         switch machineType {
         case .unknown, .pc, .mc, .hc, .winC:
@@ -78,67 +179,36 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
-    let id = UUID()
-
-    let fileServer = FileServer()
-    let remoteCommandServicesClient = RemoteCommandServicesClient()
-
     @ObservationIgnored
     private weak var applicationModel: ApplicationModel?
 
+    let fileServer: FileServer
+    let remoteCommandServicesClient: RemoteCommandServicesClient
+
+    let deviceConfiguration: DeviceConfiguration
+    let machineType: RemoteCommandServicesClient.MachineType
+    let machineInfo: RemoteCommandServicesClient.MachineInfo?
+    let drives: [FileServer.DriveInfo]
+    let internalDrive: FileServer.DriveInfo
+
     private let workQueue = DispatchQueue(label: "DeviceModel.workQueue")
 
-    init(applicationModel: ApplicationModel) {
+    private init(applicationModel: ApplicationModel,
+                 fileServer: FileServer,
+                 remoteCommandServicesClient: RemoteCommandServicesClient,
+                 deviceConfiguration: DeviceConfiguration,
+                 machineType: RemoteCommandServicesClient.MachineType,
+                 machineInfo: RemoteCommandServicesClient.MachineInfo?,
+                 drives: [FileServer.DriveInfo],
+                 internalDrive: FileServer.DriveInfo) {
         self.applicationModel = applicationModel
-    }
-
-    func start(completion: @escaping (Error?) -> Void) {
-        workQueue.async { [self] in
-            do {
-
-                // Bootstrap the connection to the Psion, inferring the type of the deivce we're connected to and its
-                // limitations as we go. There are probably better appraoches to this, but this at least gets things
-                // working, and we can revisit them in the future.
-
-                // 1) Perform a drive listing. We know we can always safely do this.
-                let drives = try fileServer.drivesSync()
-
-                // 2) Once we have a drive list, we can infer that we're talking to an EPOC16 device by the presence of
-                //    a RAM-drive labeled M.
-                let epoc16 = drives.first(where: { driveInfo in
-                    return driveInfo.mediaType == .ram && driveInfo.drive == "M"
-                }) != nil
-
-                // 3) If we're EPOC16, we need to ensure the RPCS server is installed on the Psion, copying it if not.
-                if try (epoc16 && !fileServer.exists(path: "M:\\SYS$RPCS.IMG")) {
-                    let rpcsServer = Bundle.main.url(forResource: "SYS$RPCS", withExtension: ".IMG")!
-                    try fileServer.copyFileSync(fromLocalPath: rpcsServer.path, toRemotePath: "M:\\SYS$RPCS.IMG") { _, _ in return .continue }
-                }
-
-                // 4) Once we've made sure the RPCS server is present irrespective of the machine we're using, we can
-                //    fetch the machine type.
-                let machineType = try remoteCommandServicesClient.getMachineType()
-
-                // 5) We then use the machine type as a more fine-grained way to determine if it's safe to fetch the
-                //    full machine info.
-                let machineInfo: RemoteCommandServicesClient.MachineInfo? = if machineType.isEpoc32 {
-                    try remoteCommandServicesClient.getMachineInfo()
-                } else {
-                    nil
-                }
-
-                // 6) And with all that done, it's safe to hand back to the UI with enough information to allow things
-                //    to continue and conditionally display things correctly. 😬
-                DispatchQueue.main.sync {
-                    self.machineType = machineType
-                    self.machineInfo = machineInfo
-                    self.drives = drives
-                }
-                completion(nil)
-            } catch {
-                completion(error)
-            }
-        }
+        self.fileServer = fileServer
+        self.remoteCommandServicesClient = remoteCommandServicesClient
+        self.deviceConfiguration = deviceConfiguration
+        self.machineType = machineType
+        self.machineInfo = machineInfo
+        self.drives = drives
+        self.internalDrive = internalDrive
     }
 
     private func runInBackground(perform: @escaping () throws -> Void) {
@@ -146,7 +216,6 @@ class DeviceModel: Identifiable, Equatable {
             do {
                 try perform()
             } catch {
-                // TODO: Surface these errors to the user.
                 print("Failed to perform background operation with error \(error).")
             }
         }

@@ -291,7 +291,7 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
         let drives = deviceModel.drives.map { driveInfo in
             Node(section: .drive(deviceModel.id, driveInfo))
         }
-        treeController.insert(Node(section: .device(deviceModel.id), children: drives),
+        treeController.insert(Node(section: .device(deviceModel.id, deviceModel.deviceConfiguration.name), children: drives),
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
 
         // Select the new device if the current selection is in the devices section.

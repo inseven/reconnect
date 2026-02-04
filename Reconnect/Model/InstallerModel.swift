@@ -158,12 +158,10 @@ class InstallerModel: Runnable {
 
                 // Load the installer details.
                 let sis = try PsiLuaEnv().loadSisFile(url: self.url)
-                DispatchQueue.main.sync {
-                    self.sis = sis
-                    self.page = .checkingInstalledPackages(0.0)
-                }
+
                 // Indicate that we're ready and kick off the install process.
                 DispatchQueue.main.sync {
+                    self.sis = sis
                     self.page = .ready
                     self.install()
                 }
@@ -206,14 +204,8 @@ class InstallerModel: Runnable {
             guard let device else {
                 throw .unitDisconnected
             }
-            let (installDirectory, defaultDrive) = DispatchQueue.main.sync {
-                return (device.installDirectory, device.internalDrive?.drive)
-            }
-            guard let installDirectory else {
+            guard let installDirectory = device.installDirectory else {
                 throw .notSupported
-            }
-            guard let defaultDrive else {
-                throw .driveNotReady
             }
             let drives = try device.fileServer.drivesSync().filter { driveInfo in
                 driveInfo.mediaType != .rom
@@ -223,7 +215,7 @@ class InstallerModel: Runnable {
             var result: Sis.BeginResult = .userCancelled
             DispatchQueue.main.sync {
                 let query = ConfigurationQuery(installDirectory: installDirectory,
-                                               defaultDrive: defaultDrive,
+                                               defaultDrive: device.internalDrive.drive,
                                                sis: sis,
                                                drives: drives,
                                                defaultLanguage: defaultLanguage) { selection in
@@ -240,7 +232,6 @@ class InstallerModel: Runnable {
             }
             return result
         }
-
         do {
             return try showConfigurationQuery(sis: sis, driveRequired: driveRequired)
         } catch {

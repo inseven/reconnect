@@ -39,6 +39,10 @@ let package = Package(
         ),
         .testTarget(
             name: "ReconnectCoreTests",
-            dependencies: ["ReconnectCore"]),
+            dependencies: ["ReconnectCore"],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ]
+        ),
     ]
 )

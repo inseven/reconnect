@@ -20,6 +20,8 @@ import Foundation
 
 public extension String {
 
+    static let epoc16ConfigPath = "M:\\sync\\config.ini"
+    static let epoc32ConfigPath = "C:\\System\\Sync\\config.ini"
     static let epoc16InstallDirectory = "M:\\Install\\"
     static let epoc32InstallDirectory = "C:\\System\\Install\\"
     static let reconnectToolsStubPath = "C:\\System\\Install\\ReconnectTools.sis"

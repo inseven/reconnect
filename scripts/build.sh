@@ -114,6 +114,10 @@ function cleanup {
 
 trap cleanup EXIT
 
+# Build and test ReconnectCore.
+swift build --package-path ReconnectCore
+swift test --package-path ReconnectCore
+
 # Determine the version and build number.
 VERSION_NUMBER=`changes version`
 BUILD_NUMBER=`build-number.swift`
