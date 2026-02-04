@@ -16,9 +16,36 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import XCTest
-@testable import ReconnectCore
+import Foundation
 
-final class ReconnectCoreTests: XCTestCase {
+import ReconnectCore
+
+class CancellationToken {
+
+    private let lock = NSLock()
+
+    private var _isCancelled = false
+
+    var isCancelled: Bool {
+        lock.withLock {
+            return _isCancelled
+        }
+    }
+
+    init() {
+    }
+
+    func cancel() {
+        lock.withLock {
+            _isCancelled = true
+        }
+    }
+
+    func checkCancellation() throws {
+        guard isCancelled else {
+            return
+        }
+        throw ReconnectError.cancelled
+    }
 
 }

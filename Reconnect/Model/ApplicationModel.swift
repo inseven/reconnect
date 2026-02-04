@@ -132,7 +132,7 @@ class ApplicationModel: NSObject {
 
     // Queue of devices that are being loaded; we keep them in a separate queue to ensure we don't present them in the
     // UI until they're ready to be fully displayed.
-    private var connectingDevices: [DeviceModel] = []
+    private var connectingDevices: [CancellationToken] = []
 
     var devices: [DeviceModel] = []
 
@@ -312,36 +312,41 @@ extension ApplicationModel: DaemonClientDelegate {
 
     func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
-        if isDeviceConnected {
-            // Create a new `DeviceModel` that encapsulates all PLP sessions with the newly attached Psion.
-            // We pre-warm the model before adding it into the UI to ensure that the UI can immediately select a
-            // suitable drive to display.
-            let deviceModel = DeviceModel(applicationModel: self)
-            self.connectingDevices = [deviceModel]
 
-            // Initialize the device (this enumerates the drives to ensure we can present them immediately).
-            deviceModel.start { error in
-                if let error {
-                    print("Failed to initialize device with error \(error).")
-                    return
-                }
+        if isDeviceConnected {  // Connection.
+
+            // Create a new `DeviceModel` that encapsulates all PLP sessions with the newly attached Psion.
+            // We inject a cancellation token to allow us to cancel the initialization mid-flow if we need to.
+            let cancellationToken = CancellationToken()
+            DeviceModel.initialize(applicationModel: self, cancellationToken: cancellationToken) { result in
                 DispatchQueue.main.async {
-                    // If the device list no longer contains a device with the device we assume it was disconnected
-                    // before we were able to initialize it.
-                    guard let index = self.connectingDevices.firstIndex(where: { $0.id == deviceModel.id }) else {
+                    // Check the cancellation token to ensure we weren't cancelled while being dispatched.
+                    guard !cancellationToken.isCancelled else {
                         return
                     }
-                    self.connectingDevices.remove(at: index)
-                    self.devices = [deviceModel]
-                    self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
+                    switch result {
+                    case .success(let deviceModel):
+                        self.devices = [deviceModel]
+                        self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
+                        print("Device \(deviceModel.id.uuidString) connected.")
+                    case .failure(let error):
+                        print("Failed to initialize device with error \(error).")
+                    }
                 }
             }
-        } else {
+            self.connectingDevices.append(cancellationToken)
+
+        } else {  // Disconnection.
+
             for deviceModel in self.devices {
                 connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
             }
+            for cancellationToken in self.connectingDevices {
+                cancellationToken.cancel()
+            }
             self.connectingDevices = []
             self.devices = []
+
         }
     }
 

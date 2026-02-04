@@ -455,6 +455,26 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
+    public func readFile(path: String) throws -> Data {
+        let fileManager = FileManager.default
+        let temporaryURL = fileManager.temporaryURL()
+        defer { try? fileManager.removeItem(at: temporaryURL) }
+        try copyFileSync(fromRemotePath: path, toLocalPath: temporaryURL.path) { _, _ in
+            return .continue
+        }
+        return try Data(contentsOf: temporaryURL)
+    }
+
+    public func writeFile(path: String, data: Data) throws {
+        let fileManager = FileManager.default
+        let temporaryURL = fileManager.temporaryURL()
+        defer { try? fileManager.removeItem(at: temporaryURL) }
+        try data.write(to: temporaryURL, options: .atomic)
+        try copyFileSync(fromLocalPath: temporaryURL.path, toRemotePath: path) { _, _ in
+            return .continue
+        }
+    }
+
     public func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
         try await perform {
             return try self.workQueue_getExtendedAttributes(path: path)

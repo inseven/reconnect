@@ -30,6 +30,9 @@ public enum ReconnectError: Error {
     case invalidFileReference
     case missingTools
     case invalidDaemonProxy
+    case configurationDencodeError
+    case configurationEncodeError
+    case cancelled
 }
 
 extension ReconnectError: LocalizedError {
@@ -54,6 +57,12 @@ extension ReconnectError: LocalizedError {
             return "The Reconnect Tools are not installed on your Psion."
         case .invalidDaemonProxy:
             return "Failed to get daemon proxy."
+        case .configurationDencodeError:
+            return "Failed to decode device configuration."
+        case .configurationEncodeError:
+            return "Failed to encode device configuration."
+        case .cancelled:
+            return "Cancelled."
         }
     }
 

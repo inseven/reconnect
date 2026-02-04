@@ -24,7 +24,7 @@ enum BrowserSection: Hashable {
     case disconnected
     case drive(UUID, FileServer.DriveInfo)
     case directory(UUID, FileServer.DriveInfo, String)
-    case device(UUID)
+    case device(UUID, String)
     case softwareIndex
     case program(Program)
 }
@@ -39,8 +39,8 @@ extension BrowserSection {
             return driveInfo.displayName
         case .directory(_, _, let path):
             return path.lastWindowsPathComponent
-        case .device:
-            return "My Psion"
+        case .device(_, let name):
+            return name
         case .softwareIndex:
             return "Software Index"
         case .program(let program):
