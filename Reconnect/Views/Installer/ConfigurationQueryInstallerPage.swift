@@ -38,7 +38,7 @@ struct ConfigurationQueryInstallerPage: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            InstallerPage("Install '\(query.sis.localizedDisplayNameAndVersion)'?") {
+            WizardPage("Install '\(query.sis.localizedDisplayNameAndVersion)'?") {
                 Form {
                     if languages.count > 1 {
                         LabeledContent("Language") {
