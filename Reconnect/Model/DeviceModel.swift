@@ -22,18 +22,6 @@ import OpoLuaCore
 
 import ReconnectCore
 
-extension RemoteCommandServicesClient.MachineType {
-
-    var isEpoc32: Bool {
-        switch self {
-        case .unknown, .pc, .mc, .hc, .series3, .series3acmx, .workabout, .siena, .series3c:
-            return false
-        case .series5, .winC:
-            return true
-        }
-    }
-}
-
 @Observable
 class DeviceModel: Identifiable, Equatable {
 
