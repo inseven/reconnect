@@ -25,6 +25,7 @@
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
 		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
+		D8EBFD572F35349E008D7F47 /* Word2text in Frameworks */ = {isa = PBXBuildFile; productRef = D8EBFD562F35349E008D7F47 /* Word2text */; };
 		D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8F1A5B72C4A4F8000931C00 /* Interact */; };
 /* End PBXBuildFile section */
 
@@ -217,6 +218,7 @@
 			files = (
 				D8A8A8082DE19312007A657B /* Algorithms in Frameworks */,
 				D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */,
+				D8EBFD572F35349E008D7F47 /* Word2text in Frameworks */,
 				D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */,
 				D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */,
 				D83B17D02F33B8F7001864E5 /* Word2text in Frameworks */,
@@ -354,6 +356,7 @@
 				D83BD9652DE862AB0075902D /* SwiftyGif */,
 				D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */,
 				D83B17CF2F33B8F7001864E5 /* Word2text */,
+				D8EBFD562F35349E008D7F47 /* Word2text */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -551,7 +554,7 @@
 				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 				D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */,
-				D83B17CE2F33B8F7001864E5 /* XCLocalSwiftPackageReference "dependencies/Word2Text" */,
+				D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */,
 			);
 			preferredProjectObjectVersion = 56;
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
@@ -1215,10 +1218,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		D83B17CE2F33B8F7001864E5 /* XCLocalSwiftPackageReference "dependencies/Word2Text" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/Word2Text;
-		};
 		D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/interact;
@@ -1268,6 +1267,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.2.1;
+			};
+		};
+		D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/smittytone/Word2Text.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1335,6 +1342,11 @@
 		D8E31EB22C26E09500350082 /* Diligence */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Diligence;
+		};
+		D8EBFD562F35349E008D7F47 /* Word2text */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */;
+			productName = Word2text;
 		};
 		D8F1A5B72C4A4F8000931C00 /* Interact */ = {
 			isa = XCSwiftPackageProductDependency;
