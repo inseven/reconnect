@@ -41,9 +41,9 @@ struct ProgramView: View {
 
     @State private var programViewModel: ProgramViewModel
 
-    let program: Program
+    let program: SoftwareIndex.Program
 
-    init(navigationModel: NavigationModel, program: Program) {
+    init(navigationModel: NavigationModel, program: SoftwareIndex.Program) {
         _programViewModel = State(initialValue: ProgramViewModel(navigationModel: navigationModel))
         self.program = program
     }
