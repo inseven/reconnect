@@ -29,14 +29,14 @@ struct DirectoryView: View {
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
-         navigationHistory: NavigationHistory,
+         navigationModel: NavigationModel,
          deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {
         self.applicationModel = applicationModel
         _directoryModel = State(initialValue: DirectoryModel(applicationModel: applicationModel,
                                                              transfersModel: transfersModel,
-                                                             navigationHistory: navigationHistory,
+                                                             navigationModel: navigationModel,
                                                              deviceModel: deviceModel,
                                                              driveInfo: driveInfo,
                                                              path: path))
@@ -125,25 +125,27 @@ struct DirectoryView: View {
             }
             .contextMenu(forSelectionType: FileServer.DirectoryEntry.ID.self) { items in
 
-                Button("Open") {
+                Button("Open", systemImage: "arrow.up.forward.square") {
                     directoryModel.navigate(to: items.first!)
                 }
                 .disabled(items.count != 1 || !(items.first?.isWindowsDirectory ?? false))
 
                 Divider()
 
-                Button("Download") {
+                Button("Download", systemImage: "display.and.arrow.down") {
                     directoryModel.download(items,
                                           to: FileManager.default.downloadsDirectory,
                                           convertFiles: applicationModel.convertFiles,
                                           completion: { _ in })
                 }
+                .disabled(items.count < 1)
 
                 Divider()
 
-                Button("Delete") {
+                Button("Delete", systemImage: "trash") {
                     directoryModel.delete(items)
                 }
+                .disabled(items.count < 1)
 
             } primaryAction: { items in
                 guard

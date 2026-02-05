@@ -14,6 +14,7 @@ Reconnect is licensed under the GNU General Public License (GPL) version 2 (see 
 - [Interact](https://github.com/inseven/interact), MIT License
 - [Licensable](https://github.com/inseven/licensable), MIT License
 - [Lua](https://www.lua.org), MIT License
+- [LuaSwift](https://github.com/tomsci/LuaSwift), MIT License
 - [OpoLua](https://github.com/inseven/opolua), MIT License
 - [plptools](https://github.com/rrthomas/plptools), GPL 2.0 License
 - [PsionSoftwareIndexSwift](https://github.com/inseven/PsionSoftwareIndexSwift), MIT License

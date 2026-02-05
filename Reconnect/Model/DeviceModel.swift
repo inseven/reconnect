@@ -22,18 +22,6 @@ import OpoLuaCore
 
 import ReconnectCore
 
-extension RemoteCommandServicesClient.MachineType {
-
-    var isEpoc32: Bool {
-        switch self {
-        case .unknown, .pc, .mc, .hc, .series3, .series3acmx, .workabout, .siena, .series3c:
-            return false
-        case .series5, .winC:
-            return true
-        }
-    }
-}
-
 @Observable
 class DeviceModel: Identifiable, Equatable {
 
@@ -157,17 +145,6 @@ class DeviceModel: Identifiable, Equatable {
         return deviceConfiguration.id
     }
 
-    var installDirectory: String? {
-        switch machineType {
-        case .unknown, .pc, .mc, .hc, .winC:
-            return nil
-        case .series3, .series3acmx, .workabout, .siena, .series3c:
-            return .epoc16InstallDirectory
-        case .series5:
-            return .epoc32InstallDirectory
-        }
-    }
-
     var canCaptureScreenshot: Bool {
         switch machineType {
         case .unknown, .pc, .mc, .hc, .winC:
@@ -176,6 +153,51 @@ class DeviceModel: Identifiable, Equatable {
             return false
         case .series5:
             return true
+        }
+    }
+
+    var platform: Platform {
+        if machineType.isEpoc32 {
+            return .epoc32
+        } else {
+            return .epoc16
+        }
+    }
+
+    /**
+     * Return a new folder name with a specific count.
+     *
+     * The expectation is that this will be called with increasing values of `index` (starting at 0), until a unique
+     * name is found. It is implemented as a function (as opposed to simply returning a default new folder basename to
+     * allow for per-platform customization around how the name changes with different values of index (e.g., EPOC16
+     * does not permit spaces in files, while EPOC32 does).
+     *
+     * This maybe localized in the future.
+     */
+    func synthesizeNewFolderName(index: UInt8) -> String {
+        if machineType.isEpoc32 {
+            if index == 0 {
+                return "untitled folder"
+            } else {
+                return "untitled folder \(index)"
+            }
+        } else {
+            if index == 0 {
+                return "FOLDER"
+            } else {
+                return "FOLDER\(index)"
+            }
+        }
+    }
+
+    var installDirectory: String? {
+        switch machineType {
+        case .unknown, .pc, .mc, .hc, .winC:
+            return nil
+        case .series3, .series3acmx, .workabout, .siena, .series3c:
+            return .epoc16InstallDirectory
+        case .series5:
+            return .epoc32InstallDirectory
         }
     }
 

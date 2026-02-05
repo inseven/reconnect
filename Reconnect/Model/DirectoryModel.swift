@@ -38,7 +38,7 @@ class DirectoryModel {
     let transfersModel: TransfersModel
 
     @ObservationIgnored
-    private let navigationHistory: NavigationHistory
+    private let navigationModel: NavigationModel
 
     @ObservationIgnored
     private let deviceModel: DeviceModel
@@ -54,13 +54,13 @@ class DirectoryModel {
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
-         navigationHistory: NavigationHistory,
+         navigationModel: NavigationModel,
          deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
-        self.navigationHistory = navigationHistory
+        self.navigationModel = navigationModel
         self.deviceModel = deviceModel
         self.driveInfo = driveInfo
         self.path = path
@@ -91,7 +91,7 @@ class DirectoryModel {
     }
 
     func navigate(to path: String) {
-        navigationHistory.navigate(to: .directory(deviceModel.id, driveInfo, path))
+        navigationModel.navigate(to: .directory(deviceModel.id, driveInfo, path))
     }
 
     private func update() {
@@ -232,22 +232,30 @@ extension DirectoryModel: FileManageable {
     func createNewFolder() {
         run { [path, deviceModel] in
 
-            // Get the names of the files and folders in the current path.
+            // Get the names of the files and folders in the current path to allow us to check against existing names.
+            // Since Psion file systems are case insensitive, we lowercase all entries for consistency.
             let names = try deviceModel.fileServer
                 .dirSync(path: path)
-                .map { $0.name }
+                .map { $0.name.lowercased() }
                 .reduce(into: Set()) { $0.insert($1) }
 
-            // Select the first name (up to 'untitled folder 99') that doesn't conflict.
-            var name = "untitled folder"
-            var folderNumber = 1
-            while names.contains(name) {
-                folderNumber += 1
-                name = "untitled folder \(folderNumber)"
+            // Select the first name (up to 99) that doesn't conflict.
+            var folderName: String?
+            for i: UInt8 in 0..<100 {
+                let name = deviceModel.synthesizeNewFolderName(index: i)
+                guard !names.contains(name.lowercased()) else {
+                    continue
+                }
+                folderName = name
+                break
+            }
+
+            guard let folderName else {
+                throw PLPToolsError.invalidFileName
             }
 
             // Create the folder.
-            let folderPath = path + name
+            let folderPath = path + folderName
             try deviceModel.fileServer.mkdir(path: folderPath)
             let files = try deviceModel.fileServer.dirSync(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
