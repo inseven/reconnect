@@ -23,7 +23,6 @@ import Foundation
 extension URL {
     static let softwareIndexAPIV1 = URL(string: "https://software.psion.community/api/v1")!
     static let softwareIndexFilesURL = URL(string: "https://software.psion.community/files")!
-
 }
 
 struct SoftwareIndex {
