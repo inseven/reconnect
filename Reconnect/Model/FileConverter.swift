@@ -73,21 +73,10 @@ class FileConverter {
             let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
                                                                   conformingTo: .plainText)
             let data = try Data(contentsOf: sourceURL)
-            let bytes = [UInt8](data)[...]
-            var settings = ProcessSettings()
-            settings.doShowInfo = false
-            settings.doReturnMarkdown = false
-            settings.doIncludeHeader = false
-            let result = PsionWord.processFile(bytes, "", .init())
-            switch result {
-            case .success(let output):
-                try output.write(to: outputURL, atomically: true, encoding: .utf8)
-                return outputURL
-            case .failure(let error):
-                throw error
-            }
+            let output = try PsionWord.processFile(data).get()
+            try output.write(to: outputURL, atomically: true, encoding: .utf8)
+            return outputURL
         }
-
     ]
 
     private static func converter(for directoryEntry: FileServer.DirectoryEntry) -> Conversion? {
