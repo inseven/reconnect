@@ -16,16 +16,21 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import SwiftUI
 
-extension FileServer.DriveInfo {
+struct UnadornedCircularProgressViewStyle: ProgressViewStyle {
 
-    public var displayName: String {
-        if let name {
-            return "\(name) (\(drive):)"
-        } else {
-            return "\(drive):"
-        }
+    func makeBody(configuration: Configuration) -> some View {
+        ProgressView(value: configuration.fractionCompleted)
+            .progressViewStyle(.circular)
+    }
+
+}
+
+extension ProgressViewStyle where Self == UnadornedCircularProgressViewStyle {
+
+    static var unadornedCircular: UnadornedCircularProgressViewStyle {
+        return UnadornedCircularProgressViewStyle()
     }
 
 }

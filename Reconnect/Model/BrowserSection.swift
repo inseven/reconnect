@@ -22,11 +22,11 @@ import ReconnectCore
 
 enum BrowserSection: Hashable {
     case disconnected
-    case drive(UUID, FileServer.DriveInfo)
+    case drive(UUID, FileServer.DriveInfo, Platform)
     case directory(UUID, FileServer.DriveInfo, String)
     case device(UUID, String)
     case softwareIndex
-    case program(Program)
+    case program(SoftwareIndex.Program)
     case backupDevice(UUID, String)
 }
 
@@ -36,7 +36,7 @@ extension BrowserSection {
         switch self {
         case .disconnected:
             return "Not Connected"
-        case .drive(_, let driveInfo):
+        case .drive(_, let driveInfo, _):
             return driveInfo.displayName
         case .directory(_, _, let path):
             return path.lastWindowsPathComponent
@@ -55,8 +55,22 @@ extension BrowserSection {
         switch self {
         case .disconnected:
             return "Disconnected16"
-        case .drive(_, let driveInfo):
-            return driveInfo.image
+        case .drive(_, let driveInfo, let platform):
+            switch platform {
+            case .epoc16:
+                if driveInfo.drive == "A" || driveInfo.drive == "B" {
+                    return "SSD16"
+                } else {
+                    return "Drive16"
+                }
+            case .epoc32:
+                switch driveInfo.mediaType {
+                case .disk:
+                    return "Disk16"
+                default:
+                    return "Drive16"
+                }
+            }
         case .directory:
             return "Folder16"
         case .device:

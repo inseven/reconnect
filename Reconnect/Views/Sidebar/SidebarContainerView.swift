@@ -295,16 +295,13 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
 
         // Construct and insert the new device entry.
         let drives = deviceModel.drives.map { driveInfo in
-            Node(section: .drive(deviceModel.id, driveInfo))
+            Node(section: .drive(deviceModel.id, driveInfo, deviceModel.platform))
         }
         treeController.insert(Node(section: .device(deviceModel.id, deviceModel.deviceConfiguration.name), children: drives),
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
 
-        // Select the new device if the current selection is in the devices section.
-        guard let internalDrive = deviceModel.drives.first(where: { $0.mediaType == .ram }) else {
-            return
-        }
-        selectedSection = .drive(deviceModel.id, internalDrive)
+        // Select the internal drive.
+        selectedSection = .drive(deviceModel.id, deviceModel.internalDrive, deviceModel.platform)
     }
     
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidDisconnect deviceModel: DeviceModel) {

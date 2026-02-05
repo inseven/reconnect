@@ -16,15 +16,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import Foundation
+import SwiftUI
 
-extension FileServer.DriveInfo {
+struct DetailsGroupBackground: ViewModifier {
 
-    public var displayName: String {
-        if let name {
-            return "\(name) (\(drive):)"
+    fileprivate struct LayoutMetrics {
+        static let cornerRadius = 16.0
+    }
+
+    func body(content: Content) -> some View {
+
+        if #available(macOS 26, *) {
+            content
+                .background(.quinary)
+                .cornerRadius(LayoutMetrics.cornerRadius, corners: .all)
+
         } else {
-            return "\(drive):"
+            content
+                .background(.quinary)
+                .border(.quaternary)
         }
     }
 

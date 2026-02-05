@@ -14,6 +14,7 @@ Reconnect is licensed under the GNU General Public License (GPL) version 2 (see 
 - [Interact](https://github.com/inseven/interact), MIT License
 - [Licensable](https://github.com/inseven/licensable), MIT License
 - [Lua](https://www.lua.org), MIT License
+- [LuaSwift](https://github.com/tomsci/LuaSwift), MIT License
 - [OpoLua](https://github.com/inseven/opolua), MIT License
 - [plptools](https://github.com/rrthomas/plptools), GPL 2.0 License
 - [PsionSoftwareIndexSwift](https://github.com/inseven/PsionSoftwareIndexSwift), MIT License
@@ -21,5 +22,6 @@ Reconnect is licensed under the GNU General Public License (GPL) version 2 (see 
 - [Swift Algorithms](https://github.com/apple/swift-algorithms), Apache 2.0 License
 - [Swift Argument Parser](https://github.com/apple/swift-argument-parser), Apache 2.0 License
 - [Swift Numerics](https://github.com/apple/swift-numerics), Apache 2.0 License
+- [Word2Text](https://github.com/smittytone/Word2Text), MIT License
 
 Reconnect includes graphics (icons and animations) from the original Psion PsiWin and PsiMac software. These remain copyright Psion PLC.

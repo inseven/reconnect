@@ -33,6 +33,7 @@ public enum ReconnectError: Error {
     case configurationDencodeError
     case configurationEncodeError
     case cancelled
+    case unknownDownloadFailure
 }
 
 extension ReconnectError: LocalizedError {
@@ -63,6 +64,8 @@ extension ReconnectError: LocalizedError {
             return "Failed to encode device configuration."
         case .cancelled:
             return "Cancelled."
+        case .unknownDownloadFailure:
+            return "Unknown download failure."
         }
     }
 

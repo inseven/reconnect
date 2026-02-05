@@ -32,12 +32,12 @@ struct ReconnectApp: App {
         BrowserWindow(applicationModel: appDelegate.applicationModel,
                       transfersModel: appDelegate.applicationModel.transfersModel,
                       libraryModel: appDelegate.applicationModel.libraryModel,
-                      navigationHistory: appDelegate.applicationModel.navigationHistory)
+                      navigationModel: appDelegate.applicationModel.navigationModel)
 
         TransfersWindow()
             .environment(appDelegate.applicationModel)
             .environment(appDelegate.applicationModel.transfersModel)
-            .environment(appDelegate.applicationModel.navigationHistory)
+            .environment(appDelegate.applicationModel.navigationModel)
 
         Settings {
             SettingsView()
@@ -61,6 +61,7 @@ struct ReconnectApp: App {
                 Credit("Lukas Fittl")
                 Credit("Matt Sephton")
                 Credit("Pavlos Vinieratos")
+                Credit("Reuben Thomas")
                 Credit("Sarah Barbour")
                 Credit("Tony Smith")
             }

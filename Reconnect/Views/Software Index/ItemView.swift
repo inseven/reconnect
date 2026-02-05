@@ -18,20 +18,35 @@
 
 import SwiftUI
 
-struct AnimatedImage: NSViewRepresentable {
+struct ItemView: View {
 
-    var name: String
+    let imageURL: URL?
+    let title: String
+    let subtitle: String?
 
-    init(named name: String) {
-        self.name = name
+    init(imageURL: URL?, title: String, subtitle: String? = nil) {
+        self.imageURL = imageURL
+        self.title = title
+        self.subtitle = subtitle
     }
 
-    func makeNSView(context: Context) -> NSImageView {
-        let image = NSImage(named: name)!
-        return NSImageView(image: image)
-    }
-
-    func updateNSView(_ uiView: NSImageView, context: Context) {
+    var body: some View {
+        HStack {
+            IconView(url: imageURL)
+                .padding()
+            VStack(alignment: .leading) {
+                Spacer()
+                Text(title)
+                if let subtitle {
+                    Text(subtitle)
+                        .foregroundStyle(.secondary)
+                        .font(.caption)
+                }
+                Spacer()
+                Divider()
+            }
+        }
+        .contentShape(Rectangle())
     }
 
 }
