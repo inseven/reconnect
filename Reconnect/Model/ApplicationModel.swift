@@ -33,52 +33,7 @@ protocol BackupsModelDelegate: NSObjectProtocol {
 
 }
 
-@Observable
-class BackupsModel {
 
-    private let rootURL: URL
-    private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
-
-    var devices: [DeviceConfiguration] = []
-
-    @ObservationIgnored
-    weak public var delegate: BackupsModelDelegate?
-
-    init(rootURL: URL) {
-        self.rootURL = rootURL
-    }
-
-    func update() {
-        workQueue.async {
-            do {
-                let fileManager = FileManager.default
-
-                // Load the backups.
-                let fileURLs = try fileManager.contentsOfDirectory(at: self.rootURL,
-                                                                   includingPropertiesForKeys: [.isDirectoryKey])
-
-                let devices = fileURLs.compactMap { fileURL -> DeviceConfiguration? in
-                    let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
-                    guard isDirectory else {
-                        return nil
-                    }
-                    let configURL = fileURL.appendingPathComponent("config.ini")
-                    guard fileManager.fileExists(at: configURL) else {
-                        return nil
-                    }
-                    return try? DeviceConfiguration(data: try Data(contentsOf: configURL))
-                }
-                DispatchQueue.main.async {
-                    self.devices = devices
-                    self.delegate?.backupsModel(self, didUpdateDevices: devices)
-                }
-            } catch {
-                print("Failed to enumerate directories with error \(error).")
-            }
-        }
-    }
-
-}
 
 // Guaranteed to be called on the main queue.
 protocol ApplicationModelConnectionDelegate: NSObjectProtocol {
