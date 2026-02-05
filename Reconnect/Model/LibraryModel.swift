@@ -43,9 +43,9 @@ protocol LibraryModelDelegate: AnyObject {
     }
 
     @Published var isLoading: Bool = true
-    @Published var programs: [Program] = []
+    @Published var programs: [SoftwareIndex.Program] = []
     @Published var searchFilter: String = ""
-    @Published var filteredPrograms: [Program] = []
+    @Published var filteredPrograms: [SoftwareIndex.Program] = []
     @Published var error: Error? = nil
 
     weak var delegate: LibraryModelDelegate?
@@ -85,10 +85,10 @@ protocol LibraryModelDelegate: AnyObject {
             let decoder = JSONDecoder()
 
             // Filter the list to include only SIS files.
-            let programs = try decoder.decode([Program].self, from: data).compactMap { program -> Program? in
-                let versions: [Version] = program.versions.compactMap { version in
-                    let variants: [Collection] = version.variants.compactMap { collection in
-                        let items: [Release] = collection.items.compactMap { release -> Release? in
+            let programs = try decoder.decode([SoftwareIndex.Program].self, from: data).compactMap { program -> SoftwareIndex.Program? in
+                let versions: [SoftwareIndex.Version] = program.versions.compactMap { version in
+                    let variants: [SoftwareIndex.Collection] = version.variants.compactMap { collection in
+                        let items: [SoftwareIndex.Release] = collection.items.compactMap { release -> SoftwareIndex.Release? in
                             guard release.kind == .installer else {
                                 return nil
                             }
@@ -97,24 +97,24 @@ protocol LibraryModelDelegate: AnyObject {
                         guard let release = items.first else {
                             return nil
                         }
-                        return Collection(identifier: collection.identifier, items: [release])
+                        return SoftwareIndex.Collection(identifier: collection.identifier, items: [release])
                     }
                     guard variants.count > 0 else {
                         return nil
                     }
-                    return Version(version: version.version, variants: variants)
+                    return SoftwareIndex.Version(version: version.version, variants: variants)
                 }
                 guard versions.count > 0 else {
                     return nil
                 }
-                return Program(id: program.id,
-                               name: program.name,
-                               icon: program.icon,
-                               versions: versions,
-                               subtitle: program.subtitle,
-                               description: program.description,
-                               tags: program.tags,
-                               screenshots: program.screenshots)
+                return SoftwareIndex.Program(id: program.id,
+                                             name: program.name,
+                                             icon: program.icon,
+                                             versions: versions,
+                                             subtitle: program.subtitle,
+                                             description: program.description,
+                                             tags: program.tags,
+                                             screenshots: program.screenshots)
             }.sorted { lhs, rhs in
                 lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
             }
@@ -129,7 +129,7 @@ protocol LibraryModelDelegate: AnyObject {
         }
     }
 
-    func download(_ release: Release) {
+    func download(_ release: SoftwareIndex.Release) {
         dispatchPrecondition(condition: .onQueue(.main))
 
         // Ensure there are no active downloads for that URL.

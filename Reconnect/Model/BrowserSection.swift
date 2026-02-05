@@ -26,7 +26,7 @@ enum BrowserSection: Hashable {
     case directory(UUID, FileServer.DriveInfo, String)
     case device(UUID, String)
     case softwareIndex
-    case program(Program)
+    case program(SoftwareIndex.Program)
 }
 
 extension BrowserSection {
