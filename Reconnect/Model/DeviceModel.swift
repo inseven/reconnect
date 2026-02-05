@@ -168,6 +168,14 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
+    var platform: Platform {
+        if machineType.isEpoc32 {
+            return .epoc32
+        } else {
+            return .epoc16
+        }
+    }
+
     /**
      * Return a new folder name with a specific count.
      *
