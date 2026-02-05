@@ -18,14 +18,7 @@
 
 import Foundation
 
-extension FileServer.DriveInfo {
-
-    public var displayName: String {
-        if let name {
-            return "\(name) (\(drive):)"
-        } else {
-            return "\(drive):"
-        }
-    }
-
+public enum Platform {
+    case epoc16
+    case epoc32
 }

@@ -51,7 +51,7 @@ struct BrowserView: View {
             switch navigationModel.currentItem?.section {
             case .disconnected:
                 DisconnectedView()
-            case .drive(let deviceId, let driveInfo):
+            case .drive(let deviceId, let driveInfo, _):
                 withDeviceModel { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
                                   transfersModel: transfersModel,
