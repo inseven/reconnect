@@ -350,9 +350,7 @@ public class FileServer: @unchecked Sendable {
 
         // List the contents of the directory.
         let files = try workQueue_dir(path: path, recursive: true)
-        for file in files {
-            print(file.path)
-        }
+
         // Delete the directory contents; relies on the list of contents returned from a recursive `workQueue_dir` being
         // given in a depth-first search order.
         for file in files.reversed() {
