@@ -341,9 +341,28 @@ public class FileServer: @unchecked Sendable {
         try client.mkdir(path).check()
     }
 
+    // This deviates from the plptools implementation (and the underlying RFSV implementation) in that it recursively
+    // deletes the contents of the directory prior to attempting to delete the directory. This better matches, to me
+    // at least, the calling expectation of a function named rmdir.
     func workQueue_rmdir(path: String) throws(PLPToolsError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
+
+        // List the contents of the directory.
+        let files = try workQueue_dir(path: path, recursive: true)
+        for file in files {
+            print(file.path)
+        }
+        // Delete the directory contents; relies on the list of contents returned from a recursive `workQueue_dir` being
+        // given in a depth-first search order.
+        for file in files.reversed() {
+            if file.isDirectory {
+                try client.rmdir(file.path).check()
+            } else {
+                try client.remove(file.path).check()
+            }
+        }
+
         try client.rmdir(path).check()
     }
 
