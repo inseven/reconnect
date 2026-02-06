@@ -22,12 +22,21 @@ import ReconnectCore
 
 struct BackupManifest: Equatable, Hashable, Codable {
 
+    struct Drive: Equatable, Hashable, Codable {
+        let drive: String
+        let mediaType: FileServer.MediaType
+        let driveAttributes: FileServer.DriveAttributes
+        let name: String?
+    }
+
     let device: DeviceConfiguration
     let date: Date
+    let drives: [Drive]
 
-    init(device: DeviceConfiguration, date: Date) {
+    init(device: DeviceConfiguration, date: Date, drives: [Drive]) {
         self.device = device
         self.date = date
+        self.drives = drives
     }
 
     init(contentsOf url: URL) throws {

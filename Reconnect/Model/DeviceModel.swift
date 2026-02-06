@@ -66,7 +66,7 @@ class DeviceModel: Identifiable, Equatable {
                 let drives = try fileServer.drivesSync()
 
                 // 2) Get the internal drive.
-                guard let internalDrive = drives.first(where: { $0.mediaType == .ram }) else {
+                guard let internalDrive = drives.first(where: { $0.driveAttributes.contains(.internal) }) else {
                     throw PLPToolsError.driveNotReady
                 }
 
@@ -226,11 +226,32 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
+    static let backupNameDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
+        dateFormatter.timeZone = .gmt
+        return dateFormatter
+    }()
+
     // TODO: Accept a configuration and drives to back up.
-    func backup(to backupURL: URL,
-                progress: Progress = Progress(),
+    func backup(progress: Progress = Progress(),
                 cancellationToken: CancellationToken = CancellationToken()) throws -> BackupsModel.Backup {
         dispatchPrecondition(condition: .notOnQueue(.main))  // Not sure we care.
+
+        // TODO: Clean up failed backups.
+//        try? FileManager.default.removeItem(at: backupURL)
+
+        // Determine the backup URL.
+        // It might make sense to move this into a central backup manager in the future.
+        let backupsURL = DispatchQueue.main.sync {
+            return applicationModel?.backupsURL
+        }
+        guard let backupsURL else {
+            throw ReconnectError.unknown
+        }
+        let backupURL = backupsURL
+            .appendingPathComponent(id.uuidString, isDirectory: true)
+            .appendingPathComponent(Self.backupNameDateFormatter.string(from: Date()), isDirectory: true)
 
         // TODO: Work out how to show text when we're loading files.
 
@@ -250,7 +271,7 @@ class DeviceModel: Identifiable, Equatable {
         try cancellationToken.checkCancellation()
         let fileManager = FileManager.default
         let driveBackupURL = backupURL.appendingPathComponent(internalDrive.drive, isDirectory: true)
-        for file in files[0..<50] {  // TODO: Don't do this!
+        for file in files {
             guard file.path.hasPrefix(internalDrive.path) else {
                 throw PLPToolsError.invalidFileName
             }
@@ -278,14 +299,19 @@ class DeviceModel: Identifiable, Equatable {
         }
 
         // Write a manifest.
+//        NCP_GET_UNIQUE_ID
+        // This synthesizes a drive entry and uses the machine identifier
         try cancellationToken.checkCancellation()
-        let manifest = BackupManifest(device: deviceConfiguration, date: .now)
+        let drive = BackupManifest.Drive(drive: internalDrive.drive,
+                                         mediaType: internalDrive.mediaType,
+                                         driveAttributes: internalDrive.driveAttributes,
+                                         name: internalDrive.name)
+        let manifest = BackupManifest(device: deviceConfiguration, date: .now, drives: [drive])
         try manifest.write(to: backupURL.appending(path: String.manifestFilename))
         
         let backup = BackupsModel.Backup(manifest: manifest, url: backupURL)
 
-
-        // TODO: The main actor conformance doesn't seem to be applying for the device model API??
+        // Notify our delegate.
         DispatchQueue.main.async {
             self.delegate?.deviceModel(deviceModel: self, didFinishBackup: backup)
         }

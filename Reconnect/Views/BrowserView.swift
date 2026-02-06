@@ -18,7 +18,6 @@
 
 import SwiftUI
 
-// TODO: Rename to content view??
 @MainActor
 struct BrowserView: View {
 
@@ -82,11 +81,8 @@ struct BrowserView: View {
             case .program(let program):
                 ProgramView(navigationModel: navigationModel, program: program)
                     .environmentObject(libraryModel)
-            case .backupSet(let id, let name):
-                VStack {
-                    Text(name)
-                    Text(id.uuidString)
-                }
+            case .backupSet(let device):
+                BackupSetView(device: device)
             case .backup(let backup):
                 BackupSummaryView(backup: backup)
             case .none:
@@ -102,81 +98,6 @@ struct BrowserView: View {
             RefreshToolbar()
         }
         .frame(minWidth: 800, minHeight: 600)
-    }
-
-}
-
-// Table: TabularDetailsSection?
-struct TabularDetailsSection<Content: View, Label: View>: View {
-
-    let content: Content
-    let label: Label
-
-    init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> Label) {
-        self.content = content()
-        self.label = label()
-    }
-
-    var body: some View {
-        DetailsGroup {  // TODO: Rename DetailsGroup to DetailsSection??
-            Form {
-                content
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-        } label: {
-            label
-        }
-    }
-
-}
-
-extension TabularDetailsSection where Label == Text {
-
-    init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) {
-        self.init(content: content) {
-            Text(title)
-        }
-    }
-
-    @_disfavoredOverload
-    init(_ title: String, @ViewBuilder content: () -> Content) {
-        self.init(content: content) {
-            Text(title)
-        }
-    }
-
-}
-
-struct BackupSummaryView: View {
-
-    let backup: BackupsModel.Backup
-
-    var body: some View {
-        InformationView {
-
-            TabularDetailsSection("Device") {
-                LabeledContent("Name:", value: backup.manifest.device.name)
-                LabeledContent("Sync Identiifer:", value: backup.manifest.device.id.uuidString)
-            }
-
-            TabularDetailsSection("Summary") {
-                LabeledContent {
-                    Text(backup.manifest.date, format: .dateTime)
-                } label: {
-                    Text("Date:")
-                }
-            }
-
-            HStack {
-                Spacer()
-                Button("Show in Finder") {
-                    NSWorkspace.shared.open(backup.url)
-                }
-            }
-
-        }
-        .navigationTitle("Backup")
     }
 
 }

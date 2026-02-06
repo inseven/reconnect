@@ -58,6 +58,7 @@ struct DeviceToolbar: CustomizableToolbarContent {
             } label: {
                 Label("Backup", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
             }
+            .disabled(deviceProxy == nil)
         }
 
     }

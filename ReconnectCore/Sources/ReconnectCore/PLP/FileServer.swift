@@ -27,7 +27,7 @@ import OpoLuaCore
 // documentation says you shouldn't be using traditional concurrency mechanisms to make async/await operations blocking.
 public class FileServer: @unchecked Sendable {
 
-    public enum MediaType: UInt32 {
+    public enum MediaType: UInt32, Codable {
         case notPresent = 0
         case unknown = 1
         case floppy = 2
@@ -42,6 +42,23 @@ public class FileServer: @unchecked Sendable {
     public enum ProgressResponse: Int32 {
         case cancel = 0
         case `continue` = 1
+    }
+
+    public struct DriveAttributes: OptionSet, Equatable, Hashable, Codable {
+
+        public static let local = DriveAttributes(rawValue: 0x01)
+        public static let rom = DriveAttributes(rawValue: 0x02)
+        public static let redirected = DriveAttributes(rawValue: 0x04)
+        public static let substitued = DriveAttributes(rawValue: 0x08)
+        public static let `internal` = DriveAttributes(rawValue: 0x10)
+        public static let removable = DriveAttributes(rawValue: 0x20)
+
+        public let rawValue: UInt32
+
+        public init(rawValue: UInt32) {
+            self.rawValue = rawValue
+        }
+
     }
 
     public struct FileAttributes: OptionSet {
@@ -103,6 +120,7 @@ public class FileServer: @unchecked Sendable {
 
         public let drive: String
         public let mediaType: MediaType
+        public let driveAttributes: DriveAttributes
         public let name: String?
 
         public var path: String {
@@ -400,10 +418,12 @@ public class FileServer: @unchecked Sendable {
         guard let mediaType = MediaType(rawValue: driveInfo.getMediaType()) else {
             throw PLPToolsError.unknownMedia
         }
+        let driveAttributes = DriveAttributes(rawValue: driveInfo.getDriveAttribute())
         let name = string_cstr(driveInfo.getName())!
 
         return DriveInfo(drive: drive,
                          mediaType: mediaType,
+                         driveAttributes: driveAttributes,
                          name: String(cString: name))
     }
 

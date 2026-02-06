@@ -161,7 +161,11 @@ class ApplicationModel: NSObject {
         downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
-        let backupsURL = URL(filePath: "/Users/jbmorley/Local/Psion Backups", directoryHint: .isDirectory)
+
+        let applicationSupportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("Reconnect")
+
+        let backupsURL = applicationSupportURL.appending(path: "Backups", directoryHint: .isDirectory)
         self.backupsURL = backupsURL
         backupsModel = BackupsModel(rootURL: backupsURL)
         super.init()

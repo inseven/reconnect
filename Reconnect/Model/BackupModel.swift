@@ -43,29 +43,10 @@ class BackupModel: Runnable {
     }
 
     func start() {
-        guard let deviceModel = applicationModel.devices.first else {
-            // TODO: Handle null device model.
-            return
-        }
-        let backupsURL = applicationModel.backupsURL  // TODO: This could, and should, be on the device model.
         DispatchQueue.global(qos: .userInteractive).async {
-
-            let deviceBackupsURL = backupsURL.appendingPathComponent(deviceModel.id.uuidString, isDirectory: true)
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
-            dateFormatter.timeZone = .gmt
-            let basename = dateFormatter.string(from: Date())
-
-            let backupURL = deviceBackupsURL.appendingPathComponent(basename, isDirectory: true)
-
             do {
-                try self.backup(to: backupURL)
+                try self.backup()
             } catch {
-
-                // Clean up.
-                try? FileManager.default.removeItem(at: backupURL)
-
-                // Report the error.
                 DispatchQueue.main.async {
                     self.page = .error(error)
                 }
@@ -73,11 +54,10 @@ class BackupModel: Runnable {
         }
     }
 
-    private func backup(to backupURL: URL) throws {
+    private func backup() throws {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
         // TODO: Query for the backup configuration.
-
 
         let progress = Progress()
         let cancellationToken = CancellationToken()
@@ -90,9 +70,8 @@ class BackupModel: Runnable {
 
         // Perform the backup.
         // TODO: This should probably work on a queue itself to stop us running two at once, or gate other access, etc.
-        try deviceModel.backup(to: backupURL,
-                               progress: progress,
-                               cancellationToken: cancellationToken)
+        _ = try deviceModel.backup(progress: progress,
+                                   cancellationToken: cancellationToken)
 
         // Show complete page.
         DispatchQueue.main.sync {

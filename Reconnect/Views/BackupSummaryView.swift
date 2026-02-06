@@ -18,29 +18,35 @@
 
 import SwiftUI
 
-struct DeviceView: View {
+struct BackupSummaryView: View {
 
-    @Environment(DeviceModel.self) private var deviceModel
+    let backup: BackupsModel.Backup
 
     var body: some View {
         InformationView {
 
             TabularDetailsSection("Device") {
-                LabeledContent("Name:", value: deviceModel.deviceConfiguration.name)
-                LabeledContent("Sync Identiifer:", value: deviceModel.deviceConfiguration.id.uuidString)
+                LabeledContent("Name:", value: backup.manifest.device.name)
+                LabeledContent("Sync Identiifer:", value: backup.manifest.device.id.uuidString)
             }
 
-            MachineDetailsGroup(machineInfo: deviceModel.machineInfo)
-
-            DetailsSection("Installed Programs") {
-                ProgramManagerView(deviceModel: deviceModel)
-                    .frame(height: 300)
-                    .border(.quaternary)
+            TabularDetailsSection("Summary") {
+                LabeledContent {
+                    Text(backup.manifest.date, format: .dateTime)
+                } label: {
+                    Text("Date:")
+                }
             }
-            
+
+            HStack {
+                Spacer()
+                Button("Show in Finder...") {
+                    NSWorkspace.shared.open(backup.url)
+                }
+            }
+
         }
-        .navigationTitle("My Psion")
-        .showsDeviceProgress()
+        .navigationTitle("Backup")
     }
 
 }

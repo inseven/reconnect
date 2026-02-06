@@ -20,7 +20,6 @@ import SwiftUI
 
 import ReconnectCore
 
-
 protocol SidebarContainerViewDelegate: NSObjectProtocol {
 
     @MainActor
@@ -333,7 +332,7 @@ extension SidebarContainerView: BackupsModelDelegate {
                     .map { backup in
                         return Node(section: .backup(backup))
                     }
-                return Node(section: .backupSet(backupSet.device.id, backupSet.device.name), children: children)
+                return Node(section: .backupSet(backupSet.device), children: children)
             }
         let selection = treeController.selectionIndexPath  // Read the current selection so we can restore it later.
         let node = Node(header: "Backups", children: children)
