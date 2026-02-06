@@ -57,7 +57,7 @@ struct MachineDetailsGroup: View {
     }
 
     var body: some View {
-        DetailsGroup("Machine Information") {
+        DetailsSection("Machine Information") {
             Form {
 
                 LabeledContent {

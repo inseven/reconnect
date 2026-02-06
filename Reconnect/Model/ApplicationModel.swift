@@ -67,6 +67,8 @@ class ApplicationModel: NSObject {
         }
     }
 
+    var backupsURL: URL
+
     var revealScreenshots: Bool {
         didSet {
             keyedDefaults.set(revealScreenshots, forKey: .revealScreenshots)
@@ -122,6 +124,7 @@ class ApplicationModel: NSObject {
 
     var updaterController: SPUStandardUpdaterController!
 
+    @ObservationIgnored
     weak public var connectionDelegate: ApplicationModelConnectionDelegate?
 
     // General applicaiton state.
@@ -148,6 +151,7 @@ class ApplicationModel: NSObject {
     let transfersModel = TransfersModel()
     let libraryModel = LibraryModel()
     let navigationModel = NavigationModel(section: .disconnected)
+    let backupsModel: BackupsModel
 
     private let keyedDefaults = KeyedDefaults<SettingsKey>()
 
@@ -157,6 +161,13 @@ class ApplicationModel: NSObject {
         downloadsURL = (try? keyedDefaults.securityScopedURL(forKey: .downloadsURL)) ?? .downloadsDirectory
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
+
+        let applicationSupportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("Reconnect")
+
+        let backupsURL = applicationSupportURL.appending(path: "Backups", directoryHint: .isDirectory)
+        self.backupsURL = backupsURL
+        backupsModel = BackupsModel(rootURL: backupsURL)
         super.init()
         updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: self,
@@ -166,6 +177,7 @@ class ApplicationModel: NSObject {
         openMenuApplication()
         updaterController.startUpdater()
         libraryModel.delegate = self
+        backupsModel.update()
 
         // Clear the launching flag after an acceptable timeout.
         // This is used in the UI to select between whether we should show a spinner while waiting to connect to the
@@ -276,8 +288,28 @@ class ApplicationModel: NSObject {
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            logger.debug("Creating new installer window for '\(url)'...")
             window = NSInstallerWindow(applicationModel: self, url: url)
+            window?.center()
+        }
+
+        // Foreground the window.
+        window?.makeKeyAndOrderFront(nil)
+    }
+
+    func showBackupWindow(deviceModel: DeviceModel) {
+
+        // Check to see if there's already an open window for the installer.
+        var window = NSApplication.shared.windows.first { window in
+            guard let window = window as? NSBackupWindow else {
+                return false
+            }
+            return window.deviceModelId == deviceModel.id
+        }
+
+
+        // Create a new window and center if one doesn't exist.
+        if window == nil {
+            window = NSBackupWindow(applicationModel: self, deviceModel: deviceModel)
             window?.center()
         }
 
@@ -326,6 +358,20 @@ extension ApplicationModel: DaemonClientDelegate {
                     }
                     switch result {
                     case .success(let deviceModel):
+
+                        // Set the delegate.
+                        deviceModel.delegate = self
+
+                        // Update the back up identifier for this device, and re-enumerate the backups.
+                        let deviceBackupsURL = self.backupsURL
+                            .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
+                        let configURL = deviceBackupsURL.appending(path: "config.ini")
+                        if !FileManager.default.fileExists(at: deviceBackupsURL) {
+                            try? FileManager.default.createDirectory(at: deviceBackupsURL, withIntermediateDirectories: true)
+                        }
+                        try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
+                        self.backupsModel.update()
+
                         self.devices = [deviceModel]
                         self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                         print("Device \(deviceModel.id.uuidString) connected.")
@@ -353,6 +399,15 @@ extension ApplicationModel: DaemonClientDelegate {
     func daemonClient(_ daemonClient: ReconnectCore.DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
         dispatchPrecondition(condition: .onQueue(.main))
         self.serialDevices = serialDevices
+    }
+
+}
+
+// TODO: @MainActor here doesn't appear to do anything other than silence the compiler?
+extension ApplicationModel: @MainActor DeviceModelDelegate {
+
+    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: BackupsModel.Backup) {
+        self.backupsModel.update()
     }
 
 }

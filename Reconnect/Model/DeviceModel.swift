@@ -22,6 +22,12 @@ import OpoLuaCore
 
 import ReconnectCore
 
+protocol DeviceModelDelegate: AnyObject {
+
+    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: BackupsModel.Backup)
+
+}
+
 @Observable
 class DeviceModel: Identifiable, Equatable {
 
@@ -60,7 +66,7 @@ class DeviceModel: Identifiable, Equatable {
                 let drives = try fileServer.drivesSync()
 
                 // 2) Get the internal drive.
-                guard let internalDrive = drives.first(where: { $0.mediaType == .ram }) else {
+                guard let internalDrive = drives.first(where: { $0.driveAttributes.contains(.internal) }) else {
                     throw PLPToolsError.driveNotReady
                 }
 
@@ -164,32 +170,6 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
-    /**
-     * Return a new folder name with a specific count.
-     *
-     * The expectation is that this will be called with increasing values of `index` (starting at 0), until a unique
-     * name is found. It is implemented as a function (as opposed to simply returning a default new folder basename to
-     * allow for per-platform customization around how the name changes with different values of index (e.g., EPOC16
-     * does not permit spaces in files, while EPOC32 does).
-     *
-     * This maybe localized in the future.
-     */
-    func synthesizeNewFolderName(index: UInt8) -> String {
-        if machineType.isEpoc32 {
-            if index == 0 {
-                return "untitled folder"
-            } else {
-                return "untitled folder \(index)"
-            }
-        } else {
-            if index == 0 {
-                return "FOLDER"
-            } else {
-                return "FOLDER\(index)"
-            }
-        }
-    }
-
     var installDirectory: String? {
         switch machineType {
         case .unknown, .pc, .mc, .hc, .winC:
@@ -203,6 +183,9 @@ class DeviceModel: Identifiable, Equatable {
 
     @ObservationIgnored
     private weak var applicationModel: ApplicationModel?
+
+    @ObservationIgnored
+    weak var delegate: DeviceModelDelegate?
 
     let fileServer: FileServer
     let remoteCommandServicesClient: RemoteCommandServicesClient
@@ -242,6 +225,99 @@ class DeviceModel: Identifiable, Equatable {
             }
         }
     }
+
+    static let backupNameDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
+        dateFormatter.timeZone = .gmt
+        return dateFormatter
+    }()
+
+    // TODO: Accept a configuration and drives to back up.
+    func backup(progress: Progress = Progress(),
+                cancellationToken: CancellationToken = CancellationToken()) throws -> BackupsModel.Backup {
+        dispatchPrecondition(condition: .notOnQueue(.main))  // Not sure we care.
+
+        let fileManager = FileManager.default
+
+        // Determine the backup URL.
+        // It might make sense to move this into a central backup manager in the future.
+        let backupsURL = DispatchQueue.main.sync {
+            return applicationModel?.backupsURL
+        }
+        guard let backupsURL else {
+            throw ReconnectError.unknown
+        }
+        let backupSetURL = backupsURL.appendingPathComponent(id.uuidString, isDirectory: true)
+        let destinationURL = backupSetURL
+            .appendingPathComponent(Self.backupNameDateFormatter.string(from: Date()), isDirectory: true)
+
+        // Ensure the backup set directory exists.
+        if !fileManager.fileExists(at: backupSetURL) {
+            try fileManager.createDirectory(at: backupSetURL, withIntermediateDirectories: true)
+        }
+
+        // Back up to a temporary directory to ensure partial backups don't pollute the backups directory.
+        let backupURL = fileManager.temporaryURL(isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: backupURL) }
+
+        // TODO: Quit running apps.
+
+        let files = try fileServer.dirSync(path: internalDrive.path, recursive: true)
+        progress.totalUnitCount = Int64(files.count)
+        progress.localizedDescription = "Copying files..."
+
+        try cancellationToken.checkCancellation()
+        let driveBackupURL = backupURL.appendingPathComponent(internalDrive.drive, isDirectory: true)
+        for file in files {
+            guard file.path.hasPrefix(internalDrive.path) else {
+                throw PLPToolsError.invalidFileName
+            }
+            let relativePath = String(file.path.dropFirst(3))
+            let destinationURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
+
+            // Create the destination directory, or copy the file.
+            progress.localizedAdditionalDescription = file.path
+            if file.path.isWindowsDirectory {
+                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
+                progress.completedUnitCount += 1
+            } else {
+                let copyProgress = Progress(totalUnitCount: Int64(file.size))
+                progress.addChild(copyProgress, withPendingUnitCount: 1)
+
+                try fileServer.copyFileSync(fromRemotePath: file.path, toLocalPath: destinationURL.path) { current, total in
+                    copyProgress.completedUnitCount = Int64(current)
+                    copyProgress.totalUnitCount = Int64(total)
+                    return cancellationToken.isCancelled ? .cancel : .continue
+                }
+            }
+
+            // Check to see if we've been cancelled.
+            try cancellationToken.checkCancellation()
+        }
+
+        // Write a manifest.
+        // We should use NCP_GET_UNIQUE_ID to include drive identifiers when we support removable drives.
+        try cancellationToken.checkCancellation()
+        let drive = BackupManifest.Drive(drive: internalDrive.drive,
+                                         mediaType: internalDrive.mediaType,
+                                         driveAttributes: internalDrive.driveAttributes,
+                                         name: internalDrive.name)
+        let manifest = BackupManifest(device: deviceConfiguration, date: .now, drives: [drive])
+        try manifest.write(to: backupURL.appending(path: String.manifestFilename))
+
+        // Move the backup to the final destination.
+        try fileManager.moveItem(at: backupURL, to: destinationURL)
+        let backup = BackupsModel.Backup(manifest: manifest, url: destinationURL)
+
+        // Notify our delegate.
+        DispatchQueue.main.async {
+            self.delegate?.deviceModel(deviceModel: self, didFinishBackup: backup)
+        }
+
+        return backup
+    }
+
 
     @MainActor
     func captureScreenshot() {
@@ -323,6 +399,33 @@ class DeviceModel: Identifiable, Equatable {
 
             }
 
+        }
+
+    }
+
+    /**
+     * Return a new folder name with a specific count.
+     *
+     * The expectation is that this will be called with increasing values of `index` (starting at 0), until a unique
+     * name is found. It is implemented as a function (as opposed to simply returning a default new folder basename to
+     * allow for per-platform customization around how the name changes with different values of index (e.g., EPOC16
+     * does not permit spaces in files, while EPOC32 does).
+     *
+     * This maybe localized in the future.
+     */
+    func synthesizeNewFolderName(index: UInt8) -> String {
+        if machineType.isEpoc32 {
+            if index == 0 {
+                return "untitled folder"
+            } else {
+                return "untitled folder \(index)"
+            }
+        } else {
+            if index == 0 {
+                return "FOLDER"
+            } else {
+                return "FOLDER\(index)"
+            }
         }
     }
 

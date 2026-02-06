@@ -16,31 +16,32 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-struct DeviceView: View {
+public struct BackupManifest: Codable {
 
-    @Environment(DeviceModel.self) private var deviceModel
+    public let device: DeviceConfiguration
+    public let date: Date
 
-    var body: some View {
-        InformationView {
+    public init(device: DeviceConfiguration, date: Date) {
+        self.device = device
+        self.date = date
+    }
 
-            TabularDetailsSection("Device") {
-                LabeledContent("Name:", value: deviceModel.deviceConfiguration.name)
-                LabeledContent("Sync Identiifer:", value: deviceModel.deviceConfiguration.id.uuidString)
-            }
+    public init(contentsOf url: URL) throws {
+        let data = try Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        self = try decoder.decode(Self.self, from: data)
+    }
 
-            MachineDetailsGroup(machineInfo: deviceModel.machineInfo)
-
-            DetailsSection("Installed Programs") {
-                ProgramManagerView(deviceModel: deviceModel)
-                    .frame(height: 300)
-                    .border(.quaternary)
-            }
-            
-        }
-        .navigationTitle("My Psion")
-        .showsDeviceProgress()
+    public func write(to url: URL) throws {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let data = try encoder.encode(self)
+        try data.write(to: url, options: .atomic)
     }
 
 }
+

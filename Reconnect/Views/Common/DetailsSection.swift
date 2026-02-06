@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct DetailsGroup<Content: View, Label: View>: View {
+struct DetailsSection<Content: View, Label: View>: View {
 
     let content: Content
     let label: Label
@@ -43,7 +43,7 @@ struct DetailsGroup<Content: View, Label: View>: View {
 
 }
 
-extension DetailsGroup where Label == Text {
+extension DetailsSection where Label == Text {
 
     init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) {
         self.init(content: content) {

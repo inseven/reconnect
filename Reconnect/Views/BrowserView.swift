@@ -39,7 +39,7 @@ struct BrowserView: View {
                 .environment(deviceModel)
                 .focusedSceneObject(DeviceModelProxy(deviceModel: deviceModel))
         } else {
-            EmptyView()
+            Text("No device found.")
         }
     }
 
@@ -81,6 +81,10 @@ struct BrowserView: View {
             case .program(let program):
                 ProgramView(navigationModel: navigationModel, program: program)
                     .environmentObject(libraryModel)
+            case .backupSet(let device):
+                BackupSetView(device: device)
+            case .backup(let backup):
+                BackupSummaryView(backup: backup)
             case .none:
                 Text("Nothing selected!")
             }

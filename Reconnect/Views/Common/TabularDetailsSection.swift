@@ -18,29 +18,43 @@
 
 import SwiftUI
 
-struct DeviceView: View {
+struct TabularDetailsSection<Content: View, Label: View>: View {
 
-    @Environment(DeviceModel.self) private var deviceModel
+    let content: Content
+    let label: Label
+
+    init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> Label) {
+        self.content = content()
+        self.label = label()
+    }
 
     var body: some View {
-        InformationView {
-
-            TabularDetailsSection("Device") {
-                LabeledContent("Name:", value: deviceModel.deviceConfiguration.name)
-                LabeledContent("Sync Identiifer:", value: deviceModel.deviceConfiguration.id.uuidString)
+        DetailsSection {
+            Form {
+                content
             }
-
-            MachineDetailsGroup(machineInfo: deviceModel.machineInfo)
-
-            DetailsSection("Installed Programs") {
-                ProgramManagerView(deviceModel: deviceModel)
-                    .frame(height: 300)
-                    .border(.quaternary)
-            }
-            
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } label: {
+            label
         }
-        .navigationTitle("My Psion")
-        .showsDeviceProgress()
+    }
+
+}
+
+extension TabularDetailsSection where Label == Text {
+
+    init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) {
+        self.init(content: content) {
+            Text(title)
+        }
+    }
+
+    @_disfavoredOverload
+    init(_ title: String, @ViewBuilder content: () -> Content) {
+        self.init(content: content) {
+            Text(title)
+        }
     }
 
 }

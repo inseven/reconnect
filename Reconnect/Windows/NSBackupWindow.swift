@@ -18,29 +18,23 @@
 
 import SwiftUI
 
-struct DeviceView: View {
+class NSBackupWindow: NSWindow {
 
-    @Environment(DeviceModel.self) private var deviceModel
+    var deviceModelId: UUID?
 
-    var body: some View {
-        InformationView {
-
-            TabularDetailsSection("Device") {
-                LabeledContent("Name:", value: deviceModel.deviceConfiguration.name)
-                LabeledContent("Sync Identiifer:", value: deviceModel.deviceConfiguration.id.uuidString)
-            }
-
-            MachineDetailsGroup(machineInfo: deviceModel.machineInfo)
-
-            DetailsSection("Installed Programs") {
-                ProgramManagerView(deviceModel: deviceModel)
-                    .frame(height: 300)
-                    .border(.quaternary)
-            }
-            
-        }
-        .navigationTitle("My Psion")
-        .showsDeviceProgress()
+    convenience init(applicationModel: ApplicationModel,
+                     deviceModel: DeviceModel) {
+        let windowProxy = WindowProxy()
+        let rootView = BackupView(applicationModel: applicationModel, deviceModel: deviceModel)
+            .environment(applicationModel)
+            .environment(deviceModel)
+            .environment(\.window, windowProxy)
+        self.init(contentViewController: NSHostingController(rootView: rootView))
+        self.deviceModelId = deviceModel.id
+        windowProxy.nsWindow = self
+        title = "Backup"
+        styleMask.remove([.closable, .resizable, .borderless, .fullSizeContentView])
+        setContentSize(CGSize(width: 800, height: 600))
     }
 
 }
