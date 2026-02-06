@@ -39,7 +39,7 @@ protocol BackupsModelDelegate: NSObjectProtocol {
 }
 
 extension String {
-    static let manifestFilename = "manifest.ini"
+    static let manifestFilename = "manifest.json"
 }
 
 

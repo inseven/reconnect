@@ -238,8 +238,7 @@ class DeviceModel: Identifiable, Equatable {
                 cancellationToken: CancellationToken = CancellationToken()) throws -> BackupsModel.Backup {
         dispatchPrecondition(condition: .notOnQueue(.main))  // Not sure we care.
 
-        // TODO: Clean up failed backups.
-//        try? FileManager.default.removeItem(at: backupURL)
+        let fileManager = FileManager.default
 
         // Determine the backup URL.
         // It might make sense to move this into a central backup manager in the future.
@@ -249,27 +248,26 @@ class DeviceModel: Identifiable, Equatable {
         guard let backupsURL else {
             throw ReconnectError.unknown
         }
-        let backupURL = backupsURL
-            .appendingPathComponent(id.uuidString, isDirectory: true)
+        let backupSetURL = backupsURL.appendingPathComponent(id.uuidString, isDirectory: true)
+        let destinationURL = backupSetURL
             .appendingPathComponent(Self.backupNameDateFormatter.string(from: Date()), isDirectory: true)
 
-        // TODO: Work out how to show text when we're loading files.
-
-        let drives = try fileServer.drivesSync()
-        guard let internalDrive = drives.first(where: { driveInfo in
-            return driveInfo.mediaType == .ram
-        }) else {
-            throw PLPToolsError.driveNotReady
+        // Ensure the backup set directory exists.
+        if !fileManager.fileExists(at: backupSetURL) {
+            try fileManager.createDirectory(at: backupSetURL, withIntermediateDirectories: true)
         }
 
-        // TODO: Quit apps before loading.
+        // Back up to a temporary directory to ensure partial backups don't pollute the backups directory.
+        let backupURL = fileManager.temporaryURL(isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: backupURL) }
+
+        // TODO: Quit running apps.
 
         let files = try fileServer.dirSync(path: internalDrive.path, recursive: true)
         progress.totalUnitCount = Int64(files.count)
         progress.localizedDescription = "Copying files..."
 
         try cancellationToken.checkCancellation()
-        let fileManager = FileManager.default
         let driveBackupURL = backupURL.appendingPathComponent(internalDrive.drive, isDirectory: true)
         for file in files {
             guard file.path.hasPrefix(internalDrive.path) else {
@@ -299,8 +297,7 @@ class DeviceModel: Identifiable, Equatable {
         }
 
         // Write a manifest.
-//        NCP_GET_UNIQUE_ID
-        // This synthesizes a drive entry and uses the machine identifier
+        // We should use NCP_GET_UNIQUE_ID to include drive identifiers when we support removable drives.
         try cancellationToken.checkCancellation()
         let drive = BackupManifest.Drive(drive: internalDrive.drive,
                                          mediaType: internalDrive.mediaType,
@@ -308,8 +305,10 @@ class DeviceModel: Identifiable, Equatable {
                                          name: internalDrive.name)
         let manifest = BackupManifest(device: deviceConfiguration, date: .now, drives: [drive])
         try manifest.write(to: backupURL.appending(path: String.manifestFilename))
-        
-        let backup = BackupsModel.Backup(manifest: manifest, url: backupURL)
+
+        // Move the backup to the final destination.
+        try fileManager.moveItem(at: backupURL, to: destinationURL)
+        let backup = BackupsModel.Backup(manifest: manifest, url: destinationURL)
 
         // Notify our delegate.
         DispatchQueue.main.async {
