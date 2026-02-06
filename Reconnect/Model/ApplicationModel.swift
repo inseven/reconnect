@@ -27,15 +27,6 @@ import Security
 import ReconnectCore
 
 // Guaranteed to be called on the main queue.
-protocol BackupsModelDelegate: NSObjectProtocol {
-
-    func backupsModel(_ backupsModel: BackupsModel, didUpdateDevices devices: [DeviceConfiguration])
-
-}
-
-
-
-// Guaranteed to be called on the main queue.
 protocol ApplicationModelConnectionDelegate: NSObjectProtocol {
 
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidConnect deviceModel: DeviceModel)

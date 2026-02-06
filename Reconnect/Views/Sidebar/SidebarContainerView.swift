@@ -319,11 +319,22 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
 
 extension SidebarContainerView: BackupsModelDelegate {
 
-    func backupsModel(_ backupsModel: BackupsModel, didUpdateDevices devices: [DeviceConfiguration]) {
+    func backupsModel(_ backupsModel: BackupsModel, didUpdateBackupSets backupSets: [BackupsModel.BackupSet]) {
         dispatchPrecondition(condition: .onQueue(.main))
-        let children = devices.map { device in
-            Node(section: .backupDevice(device.id, device.name))
-        }
+        let children = backupSets
+            .sorted { lhs, rhs in
+                return lhs.device.name.localizedCaseInsensitiveCompare(rhs.device.name) == .orderedAscending
+            }
+            .map { backupSet in
+                let children: [Node] = backupSet.backups
+                    .sorted { lhs, rhs in
+                        return lhs.manifest.date > rhs.manifest.date
+                    }
+                    .map { backup in
+                        return Node(section: .backup(backup.manifest.date))
+                    }
+                return Node(section: .backupSet(backupSet.device.id, backupSet.device.name), children: children)
+            }
         let selection = treeController.selectionIndexPath  // Read the current selection so we can restore it later.
         let node = Node(header: "Backups", children: children)
         if (treeController.arrangedObjects.children?.count ?? 0) > 2 {

@@ -81,10 +81,14 @@ struct BrowserView: View {
             case .program(let program):
                 ProgramView(navigationModel: navigationModel, program: program)
                     .environmentObject(libraryModel)
-            case .backupDevice(let id, let name):
+            case .backupSet(let id, let name):
                 VStack {
                     Text(name)
                     Text(id.uuidString)
+                }
+            case .backup(let date):
+                VStack {
+                    Text(date, format: .dateTime)
                 }
             case .none:
                 Text("Nothing selected!")

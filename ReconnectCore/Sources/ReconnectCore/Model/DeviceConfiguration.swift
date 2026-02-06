@@ -23,7 +23,7 @@ import Foundation
  *
  * Serialization uses the INI file format with Windows line endings to make it as easy as possible to parse on a Psion.
  */
-public struct DeviceConfiguration {
+public struct DeviceConfiguration: Codable {
 
     public let id: UUID
     public let name: String

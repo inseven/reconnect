@@ -20,13 +20,46 @@ import SwiftUI
 
 import ReconnectCore
 
+extension FileManager {
+
+    func directories(at url: URL) throws -> [URL] {
+        return try contentsOfDirectory(at: url, includingPropertiesForKeys: [.isDirectoryKey])
+            .filter { url in
+                return (try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true
+            }
+    }
+
+}
+
+// Guaranteed to be called on the main queue.
+protocol BackupsModelDelegate: NSObjectProtocol {
+
+    func backupsModel(_ backupsModel: BackupsModel, didUpdateBackupSets backupSets: [BackupsModel.BackupSet])
+
+}
+
+extension String {
+    static let manifestFilename = "manifest.ini"
+}
+
+
 @Observable
 class BackupsModel {
+
+    struct Backup {
+        let manifest: BackupManifest
+        let url: URL
+    }
+
+    struct BackupSet {
+        let device: DeviceConfiguration
+        let backups: [Backup]
+    }
 
     private let rootURL: URL
     private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
 
-    var devices: [DeviceConfiguration] = []
+    var backupSets: [BackupSet] = []
 
     @ObservationIgnored
     weak public var delegate: BackupsModelDelegate?
@@ -35,30 +68,48 @@ class BackupsModel {
         self.rootURL = rootURL
     }
 
+    static func loadSets(rootURL: URL) throws -> [Backup] {
+        let fileManager = FileManager.default
+        let backups = try fileManager
+            .directories(at: rootURL)
+            .compactMap { directoryURL -> Backup? in
+                let manifestURL = directoryURL.appendingPathComponent(.manifestFilename)
+                guard fileManager.fileExists(at: manifestURL) else {
+                    return nil
+                }
+                let manifest = try BackupManifest(contentsOf: manifestURL)
+                return Backup(manifest: manifest, url: directoryURL)
+            }
+        return backups
+    }
+
     func update() {
         workQueue.async {
             do {
                 let fileManager = FileManager.default
 
                 // Load the backups.
-                let fileURLs = try fileManager.contentsOfDirectory(at: self.rootURL,
-                                                                   includingPropertiesForKeys: [.isDirectoryKey])
+                let backupSets = try fileManager
+                    .directories(at: self.rootURL)
+                    .compactMap { directoryURL -> BackupSet? in
+                        let configURL = directoryURL.appendingPathComponent("config.ini")
+                        guard fileManager.fileExists(at: configURL) else {
+                            return nil
+                        }
+                        let deviceConfiguration = try DeviceConfiguration(data: try Data(contentsOf: configURL))
+                        let backups = try Self.loadSets(rootURL: directoryURL)
+                        guard !backups.isEmpty else {
+                            return nil
+                        }
+                        return BackupSet(device: deviceConfiguration, backups: backups)
+                    }
 
-                let devices = fileURLs.compactMap { fileURL -> DeviceConfiguration? in
-                    let isDirectory = (try? fileURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
-                    guard isDirectory else {
-                        return nil
-                    }
-                    let configURL = fileURL.appendingPathComponent("config.ini")
-                    guard fileManager.fileExists(at: configURL) else {
-                        return nil
-                    }
-                    return try? DeviceConfiguration(data: try Data(contentsOf: configURL))
-                }
+                // Update the model state.
                 DispatchQueue.main.async {
-                    self.devices = devices
-                    self.delegate?.backupsModel(self, didUpdateDevices: devices)
+                    self.backupSets = backupSets
+                    self.delegate?.backupsModel(self, didUpdateBackupSets: backupSets)
                 }
+
             } catch {
                 print("Failed to enumerate directories with error \(error).")
             }

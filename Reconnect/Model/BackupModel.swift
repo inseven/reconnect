@@ -21,6 +21,33 @@ import Interact
 
 import ReconnectCore
 
+struct BackupManifest: Codable {
+
+    let device: DeviceConfiguration
+    let date: Date
+
+    init(device: DeviceConfiguration, date: Date) {
+        self.device = device
+        self.date = date
+    }
+
+    init(contentsOf url: URL) throws {
+        let data = try Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        self = try decoder.decode(Self.self, from: data)
+    }
+
+    func write(to url: URL) throws {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let data = try encoder.encode(self)
+        try data.write(to: url, options: .atomic)
+    }
+
+}
+
 @Observable
 class BackupModel: Runnable {
 
@@ -72,6 +99,7 @@ class BackupModel: Runnable {
             }
         }
     }
+
     private func backup(to backupURL: URL) throws {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
@@ -122,7 +150,7 @@ class BackupModel: Runnable {
         }
 
         let driveBackupURL = backupURL.appendingPathComponent(internalDrive.drive, isDirectory: true)
-        for file in files {
+        for file in files[0..<10] {  // TODO: Don't do this!
             guard file.path.hasPrefix(internalDrive.path) else {
                 return
             }
@@ -157,6 +185,12 @@ class BackupModel: Runnable {
             }
 
         }
+
+        // Write a manifest.
+        try cancellationToken.checkCancellation()
+        let manifest = BackupManifest(device: deviceModel.deviceConfiguration,
+                                      date: .now)
+        try manifest.write(to: backupURL.appending(path: String.manifestFilename))
 
         // Show complete page.
         DispatchQueue.main.sync {
