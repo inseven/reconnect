@@ -28,9 +28,9 @@ struct BackupView: View {
 
     private var applicationModel: ApplicationModel
 
-    init(applicationModel: ApplicationModel) {
+    init(applicationModel: ApplicationModel, deviceModel: DeviceModel) {
         self.applicationModel = applicationModel
-        _backupModel = State(initialValue: BackupModel(applicationModel: applicationModel))
+        _backupModel = State(initialValue: BackupModel(applicationModel: applicationModel, deviceModel: deviceModel))
     }
 
     var body: some View {

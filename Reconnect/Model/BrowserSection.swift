@@ -28,7 +28,7 @@ enum BrowserSection: Hashable {
     case softwareIndex
     case program(SoftwareIndex.Program)
     case backupSet(UUID, String)
-    case backup(Date)
+    case backup(BackupsModel.Backup)
 }
 
 extension BrowserSection {
@@ -49,8 +49,8 @@ extension BrowserSection {
             return program.name
         case .backupSet(_, let name):
             return name
-        case .backup(let date):
-            return date.formatted()
+        case .backup(let backup):
+            return backup.manifest.date.formatted()
         }
     }
 

@@ -331,7 +331,7 @@ extension SidebarContainerView: BackupsModelDelegate {
                         return lhs.manifest.date > rhs.manifest.date
                     }
                     .map { backup in
-                        return Node(section: .backup(backup.manifest.date))
+                        return Node(section: .backup(backup))
                     }
                 return Node(section: .backupSet(backupSet.device.id, backupSet.device.name), children: children)
             }

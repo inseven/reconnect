@@ -46,7 +46,8 @@ extension String {
 @Observable
 class BackupsModel {
 
-    struct Backup {
+    // TODO: Move this elsewhere.
+    struct Backup: Equatable, Hashable {
         let manifest: BackupManifest
         let url: URL
     }

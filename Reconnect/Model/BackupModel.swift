@@ -21,33 +21,6 @@ import Interact
 
 import ReconnectCore
 
-struct BackupManifest: Codable {
-
-    let device: DeviceConfiguration
-    let date: Date
-
-    init(device: DeviceConfiguration, date: Date) {
-        self.device = device
-        self.date = date
-    }
-
-    init(contentsOf url: URL) throws {
-        let data = try Data(contentsOf: url)
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        self = try decoder.decode(Self.self, from: data)
-    }
-
-    func write(to url: URL) throws {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        let data = try encoder.encode(self)
-        try data.write(to: url, options: .atomic)
-    }
-
-}
-
 @Observable
 class BackupModel: Runnable {
 
@@ -58,14 +31,15 @@ class BackupModel: Runnable {
         case complete
     }
 
-    // Synchronized on the main queue.
+    // Synchronzized on the main queue.
     var page: Page = .loading
-    var deviceModel: DeviceModel?
 
     private let applicationModel: ApplicationModel
+    private let deviceModel: DeviceModel
 
-    init(applicationModel: ApplicationModel) {
+    init(applicationModel: ApplicationModel, deviceModel: DeviceModel) {
         self.applicationModel = applicationModel
+        self.deviceModel = deviceModel
     }
 
     func start() {
@@ -73,8 +47,7 @@ class BackupModel: Runnable {
             // TODO: Handle null device model.
             return
         }
-        self.deviceModel = deviceModel
-        let backupsURL = applicationModel.backupsURL
+        let backupsURL = applicationModel.backupsURL  // TODO: This could, and should, be on the device model.
         DispatchQueue.global(qos: .userInteractive).async {
 
             let deviceBackupsURL = backupsURL.appendingPathComponent(deviceModel.id.uuidString, isDirectory: true)
@@ -103,100 +76,28 @@ class BackupModel: Runnable {
     private func backup(to backupURL: URL) throws {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
-        // Determine which device we're using and get its file server.
-        // TODO: Tidy up the file server life cyle:
-        //       - How many file servers can I use here?
-        //       - Can I pool them?
-        //       - How do I make sure they're not owned outside of the device model?
-        guard let deviceModel = self.deviceModel else {
-            throw PLPToolsError.unitDisconnected
-        }
-        let fileServer = deviceModel.fileServer
+        // TODO: Query for the backup configuration.
 
-        // TODO: Show backup configuration with drive picker and incremental backup options.
-
-        // TODO: Show loading files screen
-
-        let drives = try fileServer.drivesSync()
-        guard let internalDrive = drives.first(where: { driveInfo in
-            return driveInfo.mediaType == .ram
-        }) else {
-            throw PLPToolsError.driveNotReady
-        }
 
         let progress = Progress()
         let cancellationToken = CancellationToken()
 
+        // Show the progress page.
+        // Since this observes the progress object we've injected in, we don't need to do anything to ensure it updates.
         DispatchQueue.main.sync {
             self.page = .progress(progress, cancellationToken)
         }
 
-        let files = try fileServer.dirSync(path: internalDrive.path, recursive: true)
-        progress.totalUnitCount = Int64(files.count)
-        progress.localizedDescription = "Copying files..."
-
-        try cancellationToken.checkCancellation()
-
-        // TODO: Convenience for updating callbacks.
-
-        // TODO: Quit apps before launching.
-
-        // TODO: Show confirmation.
-
-        let fileManager = FileManager.default
-
-        DispatchQueue.main.sync {
-            self.page = .progress(progress, cancellationToken)
-        }
-
-        let driveBackupURL = backupURL.appendingPathComponent(internalDrive.drive, isDirectory: true)
-        for file in files[0..<10] {  // TODO: Don't do this!
-            guard file.path.hasPrefix(internalDrive.path) else {
-                return
-            }
-            let relativePath = String(file.path.dropFirst(3))
-            let destinationURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
-
-            // Create the destination directory, or copy the file.
-            progress.localizedAdditionalDescription = file.path
-            if file.path.isWindowsDirectory {
-                try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
-                progress.completedUnitCount += 1
-            } else {
-                let copyProgress = Progress(totalUnitCount: Int64(file.size))
-                progress.addChild(copyProgress, withPendingUnitCount: 1)
-
-                try fileServer.copyFileSync(fromRemotePath: file.path, toLocalPath: destinationURL.path) { current, total in
-                    copyProgress.completedUnitCount = Int64(current)
-                    copyProgress.totalUnitCount = Int64(total)
-                    DispatchQueue.main.async {
-                        self.page = .progress(progress, cancellationToken)
-                    }
-                    return cancellationToken.isCancelled ? .cancel : .continue
-                }
-            }
-
-            // Check to see if we've been cancelled.
-            try cancellationToken.checkCancellation()
-
-            // Show final file progress.
-            DispatchQueue.main.sync {
-                self.page = .progress(progress, cancellationToken)
-            }
-
-        }
-
-        // Write a manifest.
-        try cancellationToken.checkCancellation()
-        let manifest = BackupManifest(device: deviceModel.deviceConfiguration,
-                                      date: .now)
-        try manifest.write(to: backupURL.appending(path: String.manifestFilename))
+        // Perform the backup.
+        // TODO: This should probably work on a queue itself to stop us running two at once, or gate other access, etc.
+        try deviceModel.backup(to: backupURL,
+                               progress: progress,
+                               cancellationToken: cancellationToken)
 
         // Show complete page.
         DispatchQueue.main.sync {
             self.page = .complete
         }
-
     }
 
     func stop() {

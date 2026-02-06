@@ -284,7 +284,6 @@ class ApplicationModel: NSObject {
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            logger.debug("Creating new installer window for '\(url)'...")
             window = NSInstallerWindow(applicationModel: self, url: url)
             window?.center()
         }
@@ -293,20 +292,24 @@ class ApplicationModel: NSObject {
         window?.makeKeyAndOrderFront(nil)
     }
 
-    func showBackupWindow() {
+    func showBackupWindow(deviceModel: DeviceModel) {
 
+        // Check to see if there's already an open window for the installer.
         var window = NSApplication.shared.windows.first { window in
-            guard let _ = window as? NSBackupWindow else {
+            guard let window = window as? NSBackupWindow else {
                 return false
             }
-            return true
+            return window.deviceModelId == deviceModel.id
         }
 
+
+        // Create a new window and center if one doesn't exist.
         if window == nil {
-            window = NSBackupWindow(applicationModel: self)
+            window = NSBackupWindow(applicationModel: self, deviceModel: deviceModel)
             window?.center()
         }
 
+        // Foreground the window.
         window?.makeKeyAndOrderFront(nil)
     }
 
@@ -352,6 +355,9 @@ extension ApplicationModel: DaemonClientDelegate {
                     switch result {
                     case .success(let deviceModel):
 
+                        // Set the delegate.
+                        deviceModel.delegate = self
+
                         // Update the back up identifier for this device, and re-enumerate the backups.
                         let deviceBackupsURL = self.backupsURL
                             .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
@@ -389,6 +395,15 @@ extension ApplicationModel: DaemonClientDelegate {
     func daemonClient(_ daemonClient: ReconnectCore.DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
         dispatchPrecondition(condition: .onQueue(.main))
         self.serialDevices = serialDevices
+    }
+
+}
+
+// TODO: @MainActor here doesn't appear to do anything other than silence the compiler?
+extension ApplicationModel: @MainActor DeviceModelDelegate {
+
+    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: BackupsModel.Backup) {
+        self.backupsModel.update()
     }
 
 }

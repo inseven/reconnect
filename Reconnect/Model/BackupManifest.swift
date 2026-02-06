@@ -16,25 +16,33 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import Foundation
 
-class NSBackupWindow: NSWindow {
+import ReconnectCore
 
-    var deviceModelId: UUID?
+struct BackupManifest: Equatable, Hashable, Codable {
 
-    convenience init(applicationModel: ApplicationModel,
-                     deviceModel: DeviceModel) {
-        let windowProxy = WindowProxy()
-        let rootView = BackupView(applicationModel: applicationModel, deviceModel: deviceModel)
-            .environment(applicationModel)
-            .environment(deviceModel)
-            .environment(\.window, windowProxy)
-        self.init(contentViewController: NSHostingController(rootView: rootView))
-        self.deviceModelId = deviceModel.id
-        windowProxy.nsWindow = self
-        title = "Backup"
-        styleMask.remove([.closable, .resizable, .borderless, .fullSizeContentView])
-        setContentSize(CGSize(width: 800, height: 600))
+    let device: DeviceConfiguration
+    let date: Date
+
+    init(device: DeviceConfiguration, date: Date) {
+        self.device = device
+        self.date = date
+    }
+
+    init(contentsOf url: URL) throws {
+        let data = try Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        self = try decoder.decode(Self.self, from: data)
+    }
+
+    func write(to url: URL) throws {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let data = try encoder.encode(self)
+        try data.write(to: url, options: .atomic)
     }
 
 }

@@ -18,28 +18,49 @@
 
 import SwiftUI
 
-struct DeviceView: View {
+struct InformationView<Content: View>: View {
 
-    @Environment(DeviceModel.self) private var deviceModel
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 32) {
-
-                MachineDetailsGroup(machineInfo: deviceModel.machineInfo)
-                
-                DetailsGroup("Installed Programs") {
-                    ProgramManagerView(deviceModel: deviceModel)
-                        .frame(height: 300)
-                        .border(.quaternary)
-                }
-
+                content
             }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .scenePadding()
         }
         .background(.textBackgroundColor)
+    }
+
+}
+
+struct DeviceView: View {
+
+    @Environment(DeviceModel.self) private var deviceModel
+
+    var body: some View {
+        InformationView {
+
+            TabularDetailsSection("Device") {
+                LabeledContent("Name:", value: deviceModel.deviceConfiguration.name)
+                LabeledContent("Sync Identiifer:", value: deviceModel.deviceConfiguration.id.uuidString)
+            }
+
+            MachineDetailsGroup(machineInfo: deviceModel.machineInfo)
+
+            DetailsGroup("Installed Programs") {
+                ProgramManagerView(deviceModel: deviceModel)
+                    .frame(height: 300)
+                    .border(.quaternary)
+            }
+            
+        }
         .navigationTitle("My Psion")
         .showsDeviceProgress()
     }

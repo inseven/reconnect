@@ -50,7 +50,11 @@ struct DeviceToolbar: CustomizableToolbarContent {
 
         ToolbarItem(id: "backup") {
             Button {
-                applicationModel.showBackupWindow()
+                // TODO: Call deviec model directly to do this.
+                guard let deviceModel = deviceProxy?.deviceModel else {
+                    return
+                }
+                applicationModel.showBackupWindow(deviceModel: deviceModel)
             } label: {
                 Label("Backup", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
             }
