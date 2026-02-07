@@ -24,7 +24,8 @@ import ReconnectCore
 
 protocol DeviceModelDelegate: AnyObject {
 
-    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: Backup)
+    func deviceModel(deviceModel: DeviceModel, willStartBackupWithIdentifier identifier: UUID)
+    func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup)
 
 }
 
@@ -238,6 +239,11 @@ class DeviceModel: Identifiable, Equatable {
                 cancellationToken: CancellationToken = CancellationToken()) throws -> Backup {
         dispatchPrecondition(condition: .notOnQueue(.main))  // Not sure we care.
 
+        let backupIdentifier = UUID()
+        DispatchQueue.main.sync {
+            self.delegate?.deviceModel(deviceModel: self, willStartBackupWithIdentifier: backupIdentifier)
+        }
+
         let fileManager = FileManager.default
 
         // Determine the backup URL.
@@ -312,7 +318,9 @@ class DeviceModel: Identifiable, Equatable {
 
         // Notify our delegate.
         DispatchQueue.main.async {
-            self.delegate?.deviceModel(deviceModel: self, didFinishBackup: backup)
+            self.delegate?.deviceModel(deviceModel: self,
+                                       didFinishBackupWithIdentifier: backupIdentifier,
+                                       backup: backup)
         }
 
         return backup
