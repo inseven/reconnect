@@ -48,7 +48,7 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar()
         } detail: {
-            switch navigationModel.currentItem?.section {
+            switch navigationModel.currentItem?.element {
             case .disconnected:
                 DisconnectedView()
             case .drive(let deviceId, let driveInfo, _):

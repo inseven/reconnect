@@ -23,7 +23,7 @@ class NavigationModel<Element: Hashable> {
 
     struct Item: Identifiable, Equatable {
         let id = UUID()
-        let section: Element
+        let element: Element
     }
 
     var currentItem: Item? {
@@ -52,9 +52,9 @@ class NavigationModel<Element: Hashable> {
 
     var generation = UUID()
 
-    init(section: Element) {
+    init(element: Element) {
         index = 0
-        self.items = [Item(section: section)]
+        self.items = [Item(element: element)]
     }
 
     func back() {
@@ -88,22 +88,22 @@ class NavigationModel<Element: Hashable> {
         return index < items.count - 1
     }
 
-    func navigate(to section: Element) {
+    func navigate(to element: Element) {
         guard let index else {
             assert(items.count == 0)
             index = 0
-            self.items = [Item(section: section)]
+            self.items = [Item(element: element)]
             return
         }
         assert(index < items.count)
 
         // Ignore requests to navigate to the current item.
-        guard currentItem?.section != section else {
+        guard currentItem?.element != element else {
             return
         }
 
         // Push the item, truncting the list of items if we're already in the middle of the history.
-        self.items = items[0...index] + [Item(section: section)]
+        self.items = items[0...index] + [Item(element: element)]
         self.index = index + 1
         self.generation = UUID()
     }

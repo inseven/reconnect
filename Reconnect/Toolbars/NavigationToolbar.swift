@@ -39,7 +39,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                             Button {
                                 navigationModel.navigate(item)
                             } label: {
-                                SectionLabel(section: item.section)
+                                SectionLabel(section: item.element)
                             }
                         }
                         .labelStyle(.titleAndIcon)
@@ -57,7 +57,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                             Button {
                                 navigationModel.navigate(item)
                             } label: {
-                                SectionLabel(section: item.section)
+                                SectionLabel(section: item.element)
                             }
                         }
                         .labelStyle(.titleAndIcon)
