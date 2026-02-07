@@ -21,7 +21,7 @@ import SwiftUI
 struct NavigationToolbar: CustomizableToolbarContent {
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(NavigationModel.self) private var navigationModel
+    @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
     @FocusedObject private var parentNavigable: ParentNavigableProxy?
 
@@ -39,7 +39,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                             Button {
                                 navigationModel.navigate(item)
                             } label: {
-                                SectionLabel(section: item.section)
+                                SectionLabel(section: item.element)
                             }
                         }
                         .labelStyle(.titleAndIcon)
@@ -57,7 +57,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                             Button {
                                 navigationModel.navigate(item)
                             } label: {
-                                SectionLabel(section: item.section)
+                                SectionLabel(section: item.element)
                             }
                         }
                         .labelStyle(.titleAndIcon)

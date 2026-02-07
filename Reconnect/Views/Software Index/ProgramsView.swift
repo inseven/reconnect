@@ -20,7 +20,7 @@ import SwiftUI
 
 struct ProgramsView: View {
 
-    @Environment(NavigationModel.self) private var navigationModel
+    @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
     @EnvironmentObject private var libraryModel: LibraryModel
 

@@ -19,11 +19,11 @@
 import Foundation
 
 @MainActor @Observable
-class NavigationModel {
+class NavigationModel<Element: Hashable> {
 
     struct Item: Identifiable, Equatable {
         let id = UUID()
-        let section: BrowserSection
+        let element: Element
     }
 
     var currentItem: Item? {
@@ -52,9 +52,9 @@ class NavigationModel {
 
     var generation = UUID()
 
-    init(section: BrowserSection) {
+    init(element: Element) {
         index = 0
-        self.items = [Item(section: section)]
+        self.items = [Item(element: element)]
     }
 
     func back() {
@@ -88,22 +88,22 @@ class NavigationModel {
         return index < items.count - 1
     }
 
-    func navigate(to section: BrowserSection) {
+    func navigate(to element: Element) {
         guard let index else {
             assert(items.count == 0)
             index = 0
-            self.items = [Item(section: section)]
+            self.items = [Item(element: element)]
             return
         }
         assert(index < items.count)
 
         // Ignore requests to navigate to the current item.
-        guard currentItem?.section != section else {
+        guard currentItem?.element != element else {
             return
         }
 
         // Push the item, truncting the list of items if we're already in the middle of the history.
-        self.items = items[0...index] + [Item(section: section)]
+        self.items = items[0...index] + [Item(element: element)]
         self.index = index + 1
         self.generation = UUID()
     }

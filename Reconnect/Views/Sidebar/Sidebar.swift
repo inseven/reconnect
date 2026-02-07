@@ -21,7 +21,7 @@ import SwiftUI
 struct Sidebar: NSViewRepresentable {
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(NavigationModel.self) private var navigationModel
+    @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
     public final class Coordinator: NSObject, SidebarContainerViewDelegate {
 
@@ -54,7 +54,7 @@ struct Sidebar: NSViewRepresentable {
     }
 
     func updateNSView(_ sidebarContainerView: SidebarContainerView, context: Context) {
-        sidebarContainerView.selectedSection = navigationModel.currentItem!.section
+        sidebarContainerView.selectedSection = navigationModel.currentItem!.element
     }
 
 }

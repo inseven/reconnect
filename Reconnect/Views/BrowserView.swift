@@ -25,7 +25,7 @@ struct BrowserView: View {
 
     @Environment(ApplicationModel.self) private var applicationModel
     @Environment(TransfersModel.self) private var transfersModel
-    @Environment(NavigationModel.self) private var navigationModel
+    @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
     @ObservedObject private var libraryModel: LibraryModel
 
@@ -48,7 +48,7 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar()
         } detail: {
-            switch navigationModel.currentItem?.section {
+            switch navigationModel.currentItem?.element {
             case .disconnected:
                 DisconnectedView()
             case .drive(let deviceId, let driveInfo, _):
