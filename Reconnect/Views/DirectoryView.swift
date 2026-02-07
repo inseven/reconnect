@@ -29,7 +29,7 @@ struct DirectoryView: View {
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
-         navigationModel: NavigationModel,
+         navigationModel: NavigationModel<BrowserSection>,
          deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {

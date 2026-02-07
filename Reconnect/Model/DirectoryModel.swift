@@ -38,7 +38,7 @@ class DirectoryModel {
     let transfersModel: TransfersModel
 
     @ObservationIgnored
-    private let navigationModel: NavigationModel
+    private let navigationModel: NavigationModel<BrowserSection>
 
     @ObservationIgnored
     private let deviceModel: DeviceModel
@@ -54,7 +54,7 @@ class DirectoryModel {
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
-         navigationModel: NavigationModel,
+         navigationModel: NavigationModel<BrowserSection>,
          deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {

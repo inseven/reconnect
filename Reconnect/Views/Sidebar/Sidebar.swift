@@ -21,7 +21,7 @@ import SwiftUI
 struct Sidebar: NSViewRepresentable {
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(NavigationModel.self) private var navigationModel
+    @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
     public final class Coordinator: NSObject, SidebarContainerViewDelegate {
 

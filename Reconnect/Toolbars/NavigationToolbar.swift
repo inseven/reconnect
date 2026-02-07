@@ -21,7 +21,7 @@ import SwiftUI
 struct NavigationToolbar: CustomizableToolbarContent {
 
     @Environment(ApplicationModel.self) private var applicationModel
-    @Environment(NavigationModel.self) private var navigationModel
+    @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
     @FocusedObject private var parentNavigable: ParentNavigableProxy?
 

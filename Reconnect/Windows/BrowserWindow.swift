@@ -27,12 +27,12 @@ struct BrowserWindow: Scene {
     private let applicationModel: ApplicationModel
     private let transfersModel: TransfersModel
     private let libraryModel: LibraryModel
-    private let navigationModel: NavigationModel
+    private let navigationModel: NavigationModel<BrowserSection>
 
     init(applicationModel: ApplicationModel,
          transfersModel: TransfersModel,
          libraryModel: LibraryModel,
-         navigationModel: NavigationModel) {
+         navigationModel: NavigationModel<BrowserSection>) {
         self.applicationModel = applicationModel
         self.transfersModel = transfersModel
         self.libraryModel = libraryModel

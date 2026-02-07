@@ -20,7 +20,7 @@ import SwiftUI
 
 public struct NavigationCommands: Commands {
 
-    @Environment(NavigationModel.self) private var navigationModel
+    @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
     @FocusedObject private var parentNavigableProxy: ParentNavigableProxy?
 

@@ -19,11 +19,11 @@
 import Foundation
 
 @MainActor @Observable
-class NavigationModel {
+class NavigationModel<Element: Hashable> {
 
     struct Item: Identifiable, Equatable {
         let id = UUID()
-        let section: BrowserSection
+        let section: Element
     }
 
     var currentItem: Item? {
@@ -52,7 +52,7 @@ class NavigationModel {
 
     var generation = UUID()
 
-    init(section: BrowserSection) {
+    init(section: Element) {
         index = 0
         self.items = [Item(section: section)]
     }
@@ -88,7 +88,7 @@ class NavigationModel {
         return index < items.count - 1
     }
 
-    func navigate(to section: BrowserSection) {
+    func navigate(to section: Element) {
         guard let index else {
             assert(items.count == 0)
             index = 0
