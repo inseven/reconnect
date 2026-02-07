@@ -20,7 +20,7 @@ import SwiftUI
 
 struct BackupSummaryView: View {
 
-    let backup: BackupsModel.Backup
+    let backup: Backup
 
     var body: some View {
         InformationView {

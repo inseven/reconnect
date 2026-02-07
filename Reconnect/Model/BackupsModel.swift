@@ -34,7 +34,7 @@ extension FileManager {
 // Guaranteed to be called on the main queue.
 protocol BackupsModelDelegate: NSObjectProtocol {
 
-    func backupsModel(_ backupsModel: BackupsModel, didUpdateBackupSets backupSets: [BackupsModel.BackupSet])
+    func backupsModel(_ backupsModel: BackupsModel, didUpdateBackupSets backupSets: [BackupSet])
 
 }
 
@@ -42,20 +42,8 @@ extension String {
     static let manifestFilename = "manifest.json"
 }
 
-
 @Observable
 class BackupsModel {
-
-    // TODO: Move this elsewhere.
-    struct Backup: Equatable, Hashable {
-        let manifest: BackupManifest
-        let url: URL
-    }
-
-    struct BackupSet {
-        let device: DeviceConfiguration
-        let backups: [Backup]
-    }
 
     private let rootURL: URL
     private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")

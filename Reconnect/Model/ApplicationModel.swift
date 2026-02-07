@@ -406,7 +406,7 @@ extension ApplicationModel: DaemonClientDelegate {
 // TODO: @MainActor here doesn't appear to do anything other than silence the compiler?
 extension ApplicationModel: @MainActor DeviceModelDelegate {
 
-    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: BackupsModel.Backup) {
+    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: Backup) {
         self.backupsModel.update()
     }
 

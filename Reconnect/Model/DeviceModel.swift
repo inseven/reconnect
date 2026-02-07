@@ -24,7 +24,7 @@ import ReconnectCore
 
 protocol DeviceModelDelegate: AnyObject {
 
-    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: BackupsModel.Backup)
+    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: Backup)
 
 }
 
@@ -235,7 +235,7 @@ class DeviceModel: Identifiable, Equatable {
 
     // TODO: Accept a configuration and drives to back up.
     func backup(progress: Progress = Progress(),
-                cancellationToken: CancellationToken = CancellationToken()) throws -> BackupsModel.Backup {
+                cancellationToken: CancellationToken = CancellationToken()) throws -> Backup {
         dispatchPrecondition(condition: .notOnQueue(.main))  // Not sure we care.
 
         let fileManager = FileManager.default
@@ -308,7 +308,7 @@ class DeviceModel: Identifiable, Equatable {
 
         // Move the backup to the final destination.
         try fileManager.moveItem(at: backupURL, to: destinationURL)
-        let backup = BackupsModel.Backup(manifest: manifest, url: destinationURL)
+        let backup = Backup(manifest: manifest, url: destinationURL)
 
         // Notify our delegate.
         DispatchQueue.main.async {
