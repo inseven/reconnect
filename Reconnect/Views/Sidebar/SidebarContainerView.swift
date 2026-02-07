@@ -318,7 +318,7 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
 
 extension SidebarContainerView: BackupsModelDelegate {
 
-    func backupsModel(_ backupsModel: BackupsModel, didUpdateBackupSets backupSets: [BackupsModel.BackupSet]) {
+    func backupsModel(_ backupsModel: BackupsModel, didUpdateBackupSets backupSets: [BackupSet]) {
         dispatchPrecondition(condition: .onQueue(.main))
         let children = backupSets
             .sorted { lhs, rhs in

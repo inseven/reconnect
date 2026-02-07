@@ -28,7 +28,7 @@ enum BrowserSection: Hashable {
     case softwareIndex
     case program(SoftwareIndex.Program)
     case backupSet(DeviceConfiguration)
-    case backup(BackupsModel.Backup)
+    case backup(Backup)
 }
 
 extension BrowserSection {
