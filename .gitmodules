@@ -5,19 +5,19 @@
 	path = scripts/build-tools
 	url = https://github.com/jbmorley/build-tools.git
 [submodule "dependencies/diligence"]
-	path = dependencies/diligence
+	path = macos/dependencies/diligence
 	url = https://github.com/inseven/diligence.git
 [submodule "dependencies/plptools"]
-	path = dependencies/plptools/plptools
+	path = macos/dependencies/plptools/plptools
 	url = https://github.com/jbmorley/plptools.git
 [submodule "dependencies/interact"]
-	path = dependencies/interact
+	path = macos/dependencies/interact
 	url = https://github.com/inseven/interact.git
 [submodule "scripts/Sparkle"]
 	path = scripts/Sparkle
 	url = https://github.com/sparkle-project/Sparkle
 [submodule "dependencies/opolua/opolua"]
-	path = dependencies/opolua
+	path = macos/dependencies/opolua
 	url = https://github.com/inseven/opolua.git
 [submodule "docs/_theme"]
 	path = docs/_theme
