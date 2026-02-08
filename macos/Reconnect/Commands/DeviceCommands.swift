@@ -38,6 +38,13 @@ public struct DeviceCommands: Commands {
         CommandMenu("Device") {
 
             Button {
+                deviceProxy?.deviceModel.backUp()
+            } label: {
+                Label("Back Up...", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+            }
+            .keyboardShortcut("B", modifiers: [.command])
+
+            Button {
                 deviceProxy?.deviceModel.captureScreenshot()
             } label: {
                 Label("Capture Screenshot", systemImage: "camera.viewfinder")
