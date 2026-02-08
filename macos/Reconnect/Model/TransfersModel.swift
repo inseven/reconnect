@@ -32,8 +32,6 @@ class TransfersModel {
     var transfers: [Transfer] = []
     var selection: UUID? = nil
 
-    let fileServer = FileServer()
-
     init() {
     }
 
@@ -41,7 +39,8 @@ class TransfersModel {
     // destinationURL _must_ be a directory and must exist.
     // Accepts a `process` block which can be used to perform file conversions during processing.
     // TODO: Move this into `FileServer`
-    fileprivate func downloadFile(from source: FileServer.DirectoryEntry,
+    fileprivate func downloadFile(using fileServer: FileServer,
+                                  from source: FileServer.DirectoryEntry,
                                   to destinationURL: URL,
                                   process: (FileServer.DirectoryEntry, URL) throws -> URL,
                                   callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {
@@ -54,9 +53,9 @@ class TransfersModel {
 
         // Perform the file copy.
         let transferURL = temporaryDirectory.appendingPathComponent(source.path.lastWindowsPathComponent)
-        try await self.fileServer.copyFile(fromRemotePath: source.path,
-                                           toLocalPath: transferURL.path,
-                                           callback: callback)
+        try await fileServer.copyFile(fromRemotePath: source.path,
+                                      toLocalPath: transferURL.path,
+                                      callback: callback)
         let processedURL = try process(source, transferURL)
 
         // Move the completed file to the destination.
@@ -69,18 +68,19 @@ class TransfersModel {
         return details
     }
 
-    func download(from source: FileServer.DirectoryEntry,
-                  to destinationURL: URL,
+    func download(fileServer: FileServer,
+                  sourceDirectoryEntry: FileServer.DirectoryEntry,
+                  destinationURL: URL,
                   process: @escaping (FileServer.DirectoryEntry, URL) throws -> URL) async throws -> URL {
         precondition(destinationURL.hasDirectoryPath)
 
-        let download = Transfer(item: .remote(source)) { transfer in
+        let download = Transfer(item: .remote(sourceDirectoryEntry)) { transfer in
 
             // Check to see if we're downloading a single file or a directory.
-            if source.isDirectory {
+            if sourceDirectoryEntry.isDirectory {
                 let fileManager = FileManager.default
-                let targetURL = destinationURL.appendingPathComponent(source.path.lastWindowsPathComponent)
-                let parentPath = source.path
+                let targetURL = destinationURL.appendingPathComponent(sourceDirectoryEntry.path.lastWindowsPathComponent)
+                let parentPath = sourceDirectoryEntry.path
                     .deletingLastWindowsPathComponent
                     .ensuringTrailingWindowsPathSeparator(isPresent: true)
 
@@ -92,7 +92,7 @@ class TransfersModel {
                 transfer.setStatus(.active(progress))
 
                 // Determine the number of items we need to process and update the process object.
-                let files = try await self.fileServer.dir(path: source.path, recursive: true)
+                let files = try await fileServer.dir(path: sourceDirectoryEntry.path, recursive: true)
                 progress.totalUnitCount = Int64(files.count)
                 progress.fileTotalCount = files.count
                 transfer.setStatus(.active(progress))
@@ -126,7 +126,8 @@ class TransfersModel {
                     innerProgress.kind = .file
                     innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                     progress.addChild(innerProgress, withPendingUnitCount: 1)
-                    let innerDetails = try await self.downloadFile(from: file,
+                    let innerDetails = try await self.downloadFile(using: fileServer,
+                                                                   from: file,
                                                                    to: innerDestinationURL,
                                                                    process: process) { p, size in
                         innerProgress.totalUnitCount = Int64(size)
@@ -145,7 +146,8 @@ class TransfersModel {
                 progress.kind = .file
                 progress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                 transfer.setStatus(.active(progress))
-                let details = try await self.downloadFile(from: source,
+                let details = try await self.downloadFile(using: fileServer,
+                                                          from: sourceDirectoryEntry,
                                                           to: destinationURL,
                                                           process: process) { p, size in
                     progress.totalUnitCount = Int64(size)
@@ -170,17 +172,17 @@ class TransfersModel {
         return url
     }
 
-    func upload(from sourceURL: URL, to destinationPath: String) async throws {
+    func upload(fileServer: FileServer, sourceURL: URL, destinationPath: String) async throws {
         print("Uploading file at path '\(sourceURL.path)' to destination path '\(destinationPath)'...")
         let upload = Transfer(item: .local(sourceURL)) { transfer in
-            try await self.fileServer.copyFile(fromLocalPath: sourceURL.path,
-                                               toRemotePath: destinationPath) { progress, size in
+            try await fileServer.copyFile(fromLocalPath: sourceURL.path,
+                                          toRemotePath: destinationPath) { progress, size in
                 let p = Progress(totalUnitCount: Int64(size))
                 p.completedUnitCount = Int64(progress)
                 transfer.setStatus(.active(p))
                 return transfer.isCancelled ? .cancel : .continue
             }
-            let directoryEntry = try await self.fileServer.getExtendedAttributes(path: destinationPath)
+            let directoryEntry = try await fileServer.getExtendedAttributes(path: destinationPath)
             let fileDetails = Transfer.FileDetails(reference: .remote(directoryEntry),
                                                    size: UInt64(directoryEntry.size))
             transfer.setStatus(.complete(fileDetails))

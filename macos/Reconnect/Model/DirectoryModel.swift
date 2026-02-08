@@ -35,9 +35,6 @@ class DirectoryModel {
     let applicationModel: ApplicationModel
 
     @ObservationIgnored
-    let transfersModel: TransfersModel
-
-    @ObservationIgnored
     private let navigationModel: NavigationModel<BrowserSection>
 
     @ObservationIgnored
@@ -53,13 +50,11 @@ class DirectoryModel {
     var lastError: Error? = nil
 
     init(applicationModel: ApplicationModel,
-         transfersModel: TransfersModel,
          navigationModel: NavigationModel<BrowserSection>,
          deviceModel: DeviceModel,
          driveInfo: FileServer.DriveInfo,
          path: String) {
         self.applicationModel = applicationModel
-        self.transfersModel = transfersModel
         self.navigationModel = navigationModel
         self.deviceModel = deviceModel
         self.driveInfo = driveInfo
@@ -167,16 +162,14 @@ class DirectoryModel {
         let selection = selection ?? fileSelection
         let files = files.filter { selection.contains($0.id) }
 
-        TransfersWindow.reveal()
-
         Task {
             do {
-                let urls = try await withThrowingTaskGroup(of: URL.self) { [transfersModel] group in
+                let urls = try await withThrowingTaskGroup(of: URL.self) { [deviceModel] group in
                     for file in files {
                         group.addTask {
-                            return try await transfersModel.download(from: file,
-                                                                     to: destinationURL,
-                                                                     process: convertFiles ? FileConverter.convertFiles : FileConverter.identity)
+                            return try await deviceModel.download(sourceDirectoryEntry: file,
+                                                                  destinationURL: destinationURL,
+                                                                  process: convertFiles ? FileConverter.convertFiles : FileConverter.identity)
                         }
                     }
                     var results: [URL] = []
@@ -193,9 +186,8 @@ class DirectoryModel {
     }
     
     func upload(url: URL) {
-        TransfersWindow.reveal()
-        Task {
-            try? await self.transfersModel.upload(from: url, to: path + url.lastPathComponent)
+        Task { [deviceModel] in
+            try? await deviceModel.upload(sourceURL: url, destinationPath: path + url.lastPathComponent)
             self.refresh()
         }
     }

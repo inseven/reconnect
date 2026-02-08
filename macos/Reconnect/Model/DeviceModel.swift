@@ -43,8 +43,6 @@ class DeviceModel: Identifiable, Equatable {
      *
      * The completion block is called on a background queue.
      */
-    //       decouple it from some of the logic around device model creation itself (we're currently having to inject
-    //       more state than we need.)
     static func initialize(applicationModel: ApplicationModel,
                            cancellationToken: CancellationToken = CancellationToken(),
                            completion: @escaping (Result<DeviceModel, Error>) -> Void) {
@@ -126,6 +124,7 @@ class DeviceModel: Identifiable, Equatable {
                 //    to continue and conditionally display things correctly. 😬
                 let deviceModel = DeviceModel(applicationModel: applicationModel,
                                               fileServer: fileServer,
+                                              transfersFileServer: machineType.isEpoc32 ? FileServer() : nil,
                                               remoteCommandServicesClient: remoteCommandServicesClient,
                                               deviceConfiguration: deviceConfiguration,
                                               machineType: machineType,
@@ -190,6 +189,7 @@ class DeviceModel: Identifiable, Equatable {
     weak var delegate: DeviceModelDelegate?
 
     let fileServer: FileServer
+    let transfersFileServer: FileServer?
     let remoteCommandServicesClient: RemoteCommandServicesClient
 
     let deviceConfiguration: DeviceConfiguration
@@ -202,6 +202,7 @@ class DeviceModel: Identifiable, Equatable {
 
     private init(applicationModel: ApplicationModel,
                  fileServer: FileServer,
+                 transfersFileServer: FileServer?,
                  remoteCommandServicesClient: RemoteCommandServicesClient,
                  deviceConfiguration: DeviceConfiguration,
                  machineType: RemoteCommandServicesClient.MachineType,
@@ -210,6 +211,7 @@ class DeviceModel: Identifiable, Equatable {
                  internalDrive: FileServer.DriveInfo) {
         self.applicationModel = applicationModel
         self.fileServer = fileServer
+        self.transfersFileServer = transfersFileServer
         self.remoteCommandServicesClient = remoteCommandServicesClient
         self.deviceConfiguration = deviceConfiguration
         self.machineType = machineType
@@ -342,7 +344,6 @@ class DeviceModel: Identifiable, Equatable {
         }
     }
 
-
     @MainActor
     func captureScreenshot() {
         dispatchPrecondition(condition: .onQueue(.main))
@@ -401,8 +402,9 @@ class DeviceModel: Identifiable, Equatable {
             Task {
 
                 // Download and convert the screenshot.
-                let outputURL = try await transfersModel.download(from: screenshotDetails,
-                                                                  to: screenshotsURL) { entry, url in
+                let outputURL = try await transfersModel.download(fileServer: fileServer,
+                                                                  sourceDirectoryEntry: screenshotDetails,
+                                                                  destinationURL: screenshotsURL) { entry, url in
                     let destinationURL = url.deletingLastPathComponent()
                     let outputURL = destinationURL.appendingPathComponent(url.lastPathComponent.deletingPathExtension,
                                                                           conformingTo: .png)
@@ -425,6 +427,33 @@ class DeviceModel: Identifiable, Equatable {
 
         }
 
+    }
+
+    @MainActor
+    func download(sourceDirectoryEntry: FileServer.DirectoryEntry,
+                  destinationURL: URL,
+                  process: @escaping (FileServer.DirectoryEntry, URL) throws -> URL) async throws -> URL {
+        guard let applicationModel else {
+            // We assume we're tearing down if applicationModel is nil.
+            throw ReconnectError.cancelled
+        }
+        TransfersWindow.reveal()
+        return try await applicationModel.transfersModel.download(fileServer: transfersFileServer ?? fileServer,
+                                                                  sourceDirectoryEntry: sourceDirectoryEntry,
+                                                                  destinationURL: destinationURL,
+                                                                  process: process)
+    }
+
+    @MainActor
+    func upload(sourceURL: URL, destinationPath: String) async throws {
+        guard let applicationModel else {
+            // We assume we're tearing down if applicationModel is nil.
+            throw ReconnectError.cancelled
+        }
+        TransfersWindow.reveal()
+        return try await applicationModel.transfersModel.upload(fileServer: transfersFileServer ?? fileServer,
+                                                                sourceURL: sourceURL,
+                                                                destinationPath: destinationPath)
     }
 
     /**
