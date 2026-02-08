@@ -34,33 +34,24 @@ class NavigationModel<Element: Hashable> {
         let element: Element
     }
 
-    private var currentItem: Item? {
-        guard let index else {
-            return nil
-        }
+    private var currentItem: Item {
         return items[index]
     }
 
-    var current: Element? {
-        return currentItem?.element
+    var current: Element {
+        return currentItem.element
     }
 
     var previousItems: [Item] {
-        guard let index else {
-            return []
-        }
         return Array(items[0..<index]).reversed()
     }
 
     var nextItems: [Item] {
-        guard let index else {
-            return []
-        }
         return Array(items[index+1..<items.count])
     }
 
     private var items: [Item] = []
-    private var index: Int? = nil
+    private var index: Int = 0
 
     var generation = UUID()
 
@@ -92,9 +83,6 @@ class NavigationModel<Element: Hashable> {
     }
 
     func previousNavigableIndex() -> Int? {
-        guard let index else {
-            return nil
-        }
         for i in (0..<index).reversed() {
             guard canNavigate(to: items[i]) else {
                 continue
@@ -109,19 +97,10 @@ class NavigationModel<Element: Hashable> {
     }
 
     func navigate(to element: Element) {
-        guard let index else {
-            assert(items.count == 0)
-            index = 0
-            self.items = [Item(element: element)]
-            return
-        }
-        assert(index < items.count)
-
         // Ignore requests to navigate to the current item.
-        guard currentItem?.element != element else {
+        guard currentItem.element != element else {
             return
         }
-
         // Push the item, truncting the list of items if we're already in the middle of the history.
         self.items = items[0...index] + [Item(element: element)]
         self.index = index + 1
@@ -129,9 +108,6 @@ class NavigationModel<Element: Hashable> {
     }
 
     func nextNavigableIndex() -> Int? {
-        guard let index, index < items.count - 1 else {
-            return nil
-        }
         for i in index+1..<items.count {
             guard canNavigate(to: items[i]) else {
                 continue
