@@ -235,10 +235,14 @@ class DeviceModel: Identifiable, Equatable {
         return dateFormatter
     }()
 
+    @MainActor
+    func backUp() {
+        applicationModel?.showBackupWindow(deviceModel: self)
+    }
+
     // TODO: Accept a configuration and drives to back up.
-    func backup(progress: Progress = Progress(),
-                cancellationToken: CancellationToken = CancellationToken()) throws -> Backup {
-        dispatchPrecondition(condition: .notOnQueue(.main))  // Not sure we care.
+    func backUp(progress: Progress, cancellationToken: CancellationToken) throws -> Backup {
+        dispatchPrecondition(condition: .notOnQueue(.main))
 
         let backupIdentifier = UUID()
         DispatchQueue.main.sync {

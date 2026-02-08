@@ -30,6 +30,7 @@ struct FileToolbar: CustomizableToolbarContent {
             } label: {
                 Label("New Folder", systemImage: "folder.badge.plus")
             }
+            .help("Create a new folder")
             .disabled(!(fileManageableProxy?.canCreateNewFolder ?? false))
         }
 
@@ -39,6 +40,7 @@ struct FileToolbar: CustomizableToolbarContent {
             } label: {
                 Label("Download", systemImage: "display.and.arrow.down")
             }
+            .help("Download the currently selected items")
             .disabled(!(fileManageableProxy?.canDownload ?? false))
         }
 
@@ -48,6 +50,7 @@ struct FileToolbar: CustomizableToolbarContent {
             } label: {
                 Label("Delete", systemImage: "trash")
             }
+            .help("Delete the currently selected items")
             .disabled(!(fileManageableProxy?.canDelete ?? false))
         }
 

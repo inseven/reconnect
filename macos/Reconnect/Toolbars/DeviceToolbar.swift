@@ -50,14 +50,11 @@ struct DeviceToolbar: CustomizableToolbarContent {
 
         ToolbarItem(id: "backup") {
             Button {
-                // TODO: Call deviec model directly to do this.
-                guard let deviceModel = deviceProxy?.deviceModel else {
-                    return
-                }
-                applicationModel.showBackupWindow(deviceModel: deviceModel)
+                deviceProxy?.deviceModel.backUp()
             } label: {
-                Label("Backup", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                Label("Back Up", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
             }
+            .help("Back up your Psion's internal drive")
             .disabled(deviceProxy == nil)
         }
 

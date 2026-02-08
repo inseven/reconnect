@@ -69,9 +69,7 @@ class BackupModel: Runnable {
         }
 
         // Perform the backup.
-        // TODO: This should probably work on a queue itself to stop us running two at once, or gate other access, etc.
-        _ = try deviceModel.backup(progress: progress,
-                                   cancellationToken: cancellationToken)
+        _ = try deviceModel.backUp(progress: progress, cancellationToken: cancellationToken)
 
         // Show complete page.
         DispatchQueue.main.sync {

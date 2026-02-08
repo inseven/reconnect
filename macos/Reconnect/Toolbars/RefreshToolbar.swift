@@ -37,6 +37,7 @@ struct RefreshToolbar: CustomizableToolbarContent {
             } label: {
                 Label("Refresh", systemImage: "arrow.clockwise")
             }
+            .help("Refresh the current view")
             .disabled(!(refreshableProxy?.canRefresh ?? false))
         }
 
