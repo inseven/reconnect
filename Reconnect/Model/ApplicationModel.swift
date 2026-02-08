@@ -132,6 +132,7 @@ class ApplicationModel: NSObject {
     var activeSettingsSection: SettingsView.SettingsSection = .general
     var isDaemonConnected = false
     var serialDevices = [SerialDevice]()
+    var longRunningOperations: Set<UUID> = []
 
     // Queue of devices that are being loaded; we keep them in a separate queue to ensure we don't present them in the
     // UI until they're ready to be fully displayed.
@@ -162,8 +163,13 @@ class ApplicationModel: NSObject {
         revealScreenshots = keyedDefaults.bool(forKey: .revealScreenshots, default: true)
         screenshotsURL = (try? keyedDefaults.securityScopedURL(forKey: .screenshotsURL)) ?? .downloadsDirectory
 
+#if DEBUG
+        let applicationSupportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("Reconnect-Debug")
+#else
         let applicationSupportURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
             .appendingPathComponent("Reconnect")
+#endif
 
         let backupsURL = applicationSupportURL.appending(path: "Backups", directoryHint: .isDirectory)
         self.backupsURL = backupsURL
@@ -406,8 +412,17 @@ extension ApplicationModel: DaemonClientDelegate {
 // TODO: @MainActor here doesn't appear to do anything other than silence the compiler?
 extension ApplicationModel: @MainActor DeviceModelDelegate {
 
-    func deviceModel(deviceModel: DeviceModel, didFinishBackup backup: Backup) {
+    func deviceModel(deviceModel: DeviceModel, willStartBackupWithIdentifier identifier: UUID) {
+        self.longRunningOperations.insert(identifier)
+    }
+
+    func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup) {
         self.backupsModel.update()
+        self.longRunningOperations.remove(identifier)
+    }
+
+    func deviceModel(deviceModel: DeviceModel, didFailBackupWithIdentifier identifier: UUID, error: any Error) {
+        self.longRunningOperations.remove(identifier)
     }
 
 }

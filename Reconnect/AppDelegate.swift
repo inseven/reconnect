@@ -35,6 +35,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard !applicationModel.longRunningOperations.isEmpty else {
+            return .terminateNow
+        }
+        let alert = NSAlert()
+        alert.messageText = "Quit Reconnect?"
+        alert.informativeText = "Reconnect is currently performing long running operations."
+        alert.addButton(withTitle: "Quit")
+        alert.addButton(withTitle: "Cancel")
+        alert.alertStyle = .warning
+        let response = alert.runModal()
+        return response == .alertFirstButtonReturn ? .terminateNow : .terminateCancel
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         if !applicationModel.openAtLogin {
             applicationModel.terminateRunningMenuApplications()
