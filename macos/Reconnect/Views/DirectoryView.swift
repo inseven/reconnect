@@ -35,7 +35,6 @@ struct DirectoryView: View {
          path: String) {
         self.applicationModel = applicationModel
         _directoryModel = State(initialValue: DirectoryModel(applicationModel: applicationModel,
-                                                             transfersModel: transfersModel,
                                                              navigationModel: navigationModel,
                                                              deviceModel: deviceModel,
                                                              driveInfo: driveInfo,
