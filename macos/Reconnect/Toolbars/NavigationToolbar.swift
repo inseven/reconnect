@@ -40,6 +40,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                         } label: {
                             SectionLabel(section: item.element)
                         }
+                        .disabled(!navigationModel.canNavigate(to: item))
                     }
                     .labelStyle(.titleAndIcon)
                 } label: {
@@ -58,6 +59,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                         } label: {
                             SectionLabel(section: item.element)
                         }
+                        .disabled(!navigationModel.canNavigate(to: item))
                     }
                     .labelStyle(.titleAndIcon)
                 } label: {

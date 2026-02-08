@@ -48,7 +48,7 @@ struct BrowserView: View {
         NavigationSplitView {
             Sidebar()
         } detail: {
-            switch navigationModel.currentItem?.element {
+            switch navigationModel.current! {
             case .disconnected:
                 DisconnectedView()
             case .drive(let deviceId, let driveInfo, _):
@@ -85,8 +85,6 @@ struct BrowserView: View {
                 BackupSetView(device: device)
             case .backup(let backup):
                 BackupSummaryView(backup: backup)
-            case .none:
-                Text("Nothing selected!")
             }
         }
         .toolbar(id: "main") {

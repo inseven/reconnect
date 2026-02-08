@@ -18,6 +18,14 @@
 
 import Foundation
 
+protocol NavigationModelDelegate<Element>: AnyObject {
+
+    associatedtype Element: Hashable
+
+    func navigationModel(_ navigationModel: NavigationModel<Element>, canNavigateToItem item: Element) -> Bool
+
+}
+
 @MainActor @Observable
 class NavigationModel<Element: Hashable> {
 
@@ -26,11 +34,15 @@ class NavigationModel<Element: Hashable> {
         let element: Element
     }
 
-    var currentItem: Item? {
+    private var currentItem: Item? {
         guard let index else {
             return nil
         }
         return items[index]
+    }
+
+    var current: Element? {
+        return currentItem?.element
     }
 
     var previousItems: [Item] {
@@ -52,40 +64,48 @@ class NavigationModel<Element: Hashable> {
 
     var generation = UUID()
 
+    weak var delegate: (any NavigationModelDelegate<Element>)? = nil
+
     init(element: Element) {
         index = 0
         self.items = [Item(element: element)]
     }
 
     func back() {
-        guard let index else {
+        guard let previousIndex = previousNavigableIndex() else {
             return
         }
-        self.index = index - 1
+        self.index = previousIndex
         self.generation = UUID()
     }
 
     func forward() {
-        assert(canGoForward())
-        guard let index else {
+        guard let nextIndex = nextNavigableIndex() else {
             return
         }
-        self.index = index + 1
+        self.index = nextIndex
         self.generation = UUID()
     }
 
     func canGoBack() -> Bool {
+        return previousNavigableIndex() != nil
+    }
+
+    func previousNavigableIndex() -> Int? {
         guard let index else {
-            return false
+            return nil
         }
-        return index > 0
+        for i in (0..<index).reversed() {
+            guard canNavigate(to: items[i]) else {
+                continue
+            }
+            return i
+        }
+        return nil
     }
 
     func canGoForward() -> Bool {
-        guard let index else {
-            return false
-        }
-        return index < items.count - 1
+        return nextNavigableIndex() != nil
     }
 
     func navigate(to element: Element) {
@@ -106,6 +126,23 @@ class NavigationModel<Element: Hashable> {
         self.items = items[0...index] + [Item(element: element)]
         self.index = index + 1
         self.generation = UUID()
+    }
+
+    func nextNavigableIndex() -> Int? {
+        guard let index, index < items.count - 1 else {
+            return nil
+        }
+        for i in index+1..<items.count {
+            guard canNavigate(to: items[i]) else {
+                continue
+            }
+            return i
+        }
+        return nil
+    }
+
+    func canNavigate(to item: Item) -> Bool {
+        return delegate?.navigationModel(self, canNavigateToItem: item.element) ?? true
     }
 
     func navigate(_ item: Item) {

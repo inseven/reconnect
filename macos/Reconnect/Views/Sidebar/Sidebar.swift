@@ -54,7 +54,7 @@ struct Sidebar: NSViewRepresentable {
     }
 
     func updateNSView(_ sidebarContainerView: SidebarContainerView, context: Context) {
-        sidebarContainerView.selectedSection = navigationModel.currentItem!.element
+        sidebarContainerView.selectedSection = navigationModel.current!
     }
 
 }
