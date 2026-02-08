@@ -31,51 +31,49 @@ struct NavigationToolbar: CustomizableToolbarContent {
     var body: some CustomizableToolbarContent {
 
         ToolbarItem(id: "navigation", placement: .navigation) {
-            LabeledContent {
-                HStack(spacing: 8) {
+            ControlGroup {
 
-                    Menu {
-                        ForEach(navigationModel.previousItems) { item in
-                            Button {
-                                navigationModel.navigate(item)
-                            } label: {
-                                SectionLabel(section: item.element)
-                            }
+                Menu {
+                    ForEach(navigationModel.previousItems) { item in
+                        Button {
+                            navigationModel.navigate(item)
+                        } label: {
+                            SectionLabel(section: item.element)
                         }
-                        .labelStyle(.titleAndIcon)
-                    } label: {
-                        Label("Back", systemImage: "chevron.backward")
-                    } primaryAction: {
-                        navigationModel.back()
                     }
-                    .menuIndicator(.hidden)
-                    .disabled(!navigationModel.canGoBack())
-                    .id(navigationModel.generation)
-
-                    Menu {
-                        ForEach(navigationModel.nextItems) { item in
-                            Button {
-                                navigationModel.navigate(item)
-                            } label: {
-                                SectionLabel(section: item.element)
-                            }
-                        }
-                        .labelStyle(.titleAndIcon)
-                    } label: {
-                        Label("Forward", systemImage: "chevron.forward")
-                    } primaryAction: {
-                        navigationModel.forward()
-                    }
-                    .menuIndicator(.hidden)
-                    .disabled(!navigationModel.canGoForward())
-                    .id(navigationModel.generation)
-
+                    .labelStyle(.titleAndIcon)
+                } label: {
+                    Label("Back", systemImage: "chevron.backward")
+                } primaryAction: {
+                    navigationModel.back()
                 }
-                .help("See items you viewed previously")
+                .menuIndicator(.hidden)
+                .disabled(!navigationModel.canGoBack())
+                .id(navigationModel.generation)
+
+                Menu {
+                    ForEach(navigationModel.nextItems) { item in
+                        Button {
+                            navigationModel.navigate(item)
+                        } label: {
+                            SectionLabel(section: item.element)
+                        }
+                    }
+                    .labelStyle(.titleAndIcon)
+                } label: {
+                    Label("Forward", systemImage: "chevron.forward")
+                } primaryAction: {
+                    navigationModel.forward()
+                }
+                .menuIndicator(.hidden)
+                .disabled(!navigationModel.canGoForward())
+                .id(navigationModel.generation)
 
             } label: {
                 Text("Back/Forward")
             }
+            .controlGroupStyle(.navigation)
+            .help("See items you viewed previously")
 
         }
 
