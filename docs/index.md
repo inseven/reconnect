@@ -30,7 +30,7 @@ layout: showcase
     </li>
     <li>
         <p><img class="icon" src="/images/icons/backup.png" /></p>
-        <p><strong>Backup Files</strong></p>
+        <p><strong>Back Up Files</strong></p>
         <p>Protect your data with built-in backup support.</p>
     </li>
 </ul>
