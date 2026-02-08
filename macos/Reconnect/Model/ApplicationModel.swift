@@ -178,6 +178,7 @@ class ApplicationModel: NSObject {
         updaterController = SPUStandardUpdaterController(startingUpdater: false,
                                                          updaterDelegate: self,
                                                          userDriverDelegate: nil)
+        navigationModel.delegate = self
         daemonClient.delegate = self
         daemonClient.connect()
         openMenuApplication()
@@ -440,6 +441,26 @@ extension ApplicationModel: LibraryModelDelegate {
         } catch {
             // TODO: Handle these errors!
             print("Failed to handle download with error \(error).")
+        }
+    }
+
+}
+
+extension ApplicationModel: @MainActor NavigationModelDelegate {
+
+    func navigationModel(_ navigationModel: NavigationModel<BrowserSection>,
+                                     canNavigateToItem item: BrowserSection) -> Bool {
+        switch item {
+        case .disconnected:
+            return self.devices.isEmpty
+        case .drive(let deviceId, _, _), .directory(let deviceId, _, _), .device(let deviceId, _):
+            return self.devices.first?.id == deviceId
+        case .softwareIndex, .program(_):
+            return true
+        case .backupSet(_):
+            return true
+        case .backup(_):
+            return true
         }
     }
 
