@@ -150,15 +150,6 @@
 			);
 			target = D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */;
 		};
-		D85414062E29A5E9009DEC42 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"reconnect-tools/Reconnect Tools.pkg",
-				"reconnect-tools/screenshot.exe",
-				ReconnectTools.sis,
-			);
-			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
-		};
 		D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -180,14 +171,6 @@
 			);
 			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
 		};
-		D8A75B5C2E18AFA2007B6DBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"reconnect-tools/Reconnect Tools.pkg",
-				"reconnect-tools/screenshot.exe",
-			);
-			target = D84964D52C1BFCB600405656 /* Reconnect */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -208,7 +191,7 @@
 		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
 		D891AE922E1373CE009EC465 /* ReconnectPreviews */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectPreviews; sourceTree = "<group>"; };
 		D891AEDA2E13741B009EC465 /* Reconnect */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AF102E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D891AF112E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Reconnect; sourceTree = "<group>"; };
-		D8A75B552E18AF8A007B6DBA /* tools */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8A75B5C2E18AFA2007B6DBA /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D85414062E29A5E9009DEC42 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = tools; sourceTree = "<group>"; };
+		D8A75B552E18AF8A007B6DBA /* tools */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = tools; path = ../tools; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
