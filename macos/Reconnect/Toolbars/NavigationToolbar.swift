@@ -71,7 +71,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                     .id(navigationModel.generation)
 
                 }
-                .help("See folders you viewed previously")
+                .help("See items you viewed previously")
 
             } label: {
                 Text("Back/Forward")
@@ -85,6 +85,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
             } label: {
                 Label("Enclosing Folder", systemImage: "arrow.turn.left.up")
             }
+            .help("Navigate to this view's parent")
             .disabled(!(parentNavigable?.canNavigateToParent ?? false))
         }
 
