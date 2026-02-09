@@ -20,7 +20,6 @@ import SwiftUI
 
 import ReconnectCore
 
-//@MainActor
 @Observable
 class Transfer: Identifiable, @unchecked Sendable {
 
@@ -95,6 +94,7 @@ class Transfer: Identifiable, @unchecked Sendable {
     var status: Status
 
     var isActive: Bool {
+        dispatchPrecondition(condition: .onQueue(.main))
         switch status {
         case .waiting, .active:
             return true

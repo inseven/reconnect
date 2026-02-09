@@ -234,6 +234,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     let internalDrive: FileServer.DriveInfo
 
     private let workQueue = DispatchQueue(label: "DeviceModel.workQueue")
+    private let transfersQueue = DispatchQueue(label: "DeviceModel.transfersQueue")
 
     private init(applicationModel: ApplicationModel,
                  fileServer: FileServer,
@@ -459,7 +460,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             return
         }
         let transfer = transfersModel.newTransfer(fileReference: .remote(sourceDirectoryEntry))
-        DispatchQueue.global(qos: .userInitiated).async { [self] in  // TODO: Run this on our own device queue.
+        transfersQueue.async { [self] in
             let progress = Progress()
             transfer.setStatus(.active(progress))
             do {
@@ -490,7 +491,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             return
         }
         let transfer = transfersModel.newTransfer(fileReference: .local(sourceURL))
-        DispatchQueue.global(qos: .userInitiated).async { [self] in
+        transfersQueue.async { [self] in
             do {
                 let progress = Progress()
                 transfer.setStatus(.active(progress))
@@ -607,7 +608,24 @@ extension DeviceModel {
         // Move the file to the destination path.
         try fileManager.moveItem(at: temporaryURL, to: destinationURL)
 
-        return destinationURL
+        // Check to see if the file needs transforming.
+        let convertFiles = DispatchQueue.main.sync {
+            guard let applicationModel else {
+                return false
+            }
+            switch context {
+            case .drag:
+                return applicationModel.convertDraggedFiles
+            case .interactive:
+                return applicationModel.convertFiles
+            case .backup, .copy:
+                return false
+            }
+        }
+        let conversion = convertFiles ? FileConverter.convertFiles : FileConverter.identity
+        let convertedURL = try conversion(sourceDirectoryEntry, destinationURL)
+
+        return convertedURL
     }
 
     /**
