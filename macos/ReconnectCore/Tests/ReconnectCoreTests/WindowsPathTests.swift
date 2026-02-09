@@ -17,7 +17,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import XCTest
-@testable import Reconnect
+@testable import ReconnectCore
 
 final class WindowsPathTests: XCTestCase {
 
