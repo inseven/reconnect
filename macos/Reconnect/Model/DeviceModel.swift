@@ -510,7 +510,6 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
 }
 
-
 // File transfer conveniences.
 
 extension DeviceModel {
