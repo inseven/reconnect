@@ -480,12 +480,13 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         }
     }
 
-    // TODO: Completion Block?
     @MainActor
     func upload(sourceURL: URL,
                 destinationPath: String,
-                context: FileTransferContext) throws {
+                context: FileTransferContext,
+                completion: @escaping (Result<FileServer.DirectoryEntry, Error>) -> Void = { _ in }) {
         guard let transfersModel = applicationModel?.transfersModel else {
+            completion(.failure(ReconnectError.cancelled))
             return
         }
         let transfer = transfersModel.newTransfer(fileReference: .local(sourceURL))
@@ -501,8 +502,10 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 let result = Transfer.FileDetails(remoteDirectoryEntry: directoryEntry,
                                                   size: UInt64(directoryEntry.size))
                 transfer.setStatus(.complete(result))
+                completion(.success(directoryEntry))
             } catch {
                 transfer.setStatus(.failed(error))
+                completion(.failure(error))
             }
         }
     }

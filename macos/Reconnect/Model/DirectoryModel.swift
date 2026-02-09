@@ -175,6 +175,7 @@ class DirectoryModel {
     /**
      * Download a single file, represented by a directory entry id, from the Psion to the destination directory URL.
      */
+    // TODO: Check completion queue?
     func download(sourceDirectoryEntryId: FileServer.DirectoryEntry.ID,
                   destinationDirectoryURL: URL,
                   context: FileTransferContext,
@@ -190,13 +191,14 @@ class DirectoryModel {
                              completion: completion)
     }
 
-    // TODO: Completion block.
-    func upload(url: URL,
-                context: FileTransferContext) {
-        try? deviceModel.upload(sourceURL: url,
-                                destinationPath: path + url.lastPathComponent,
-                                context: context)
-//        self.refresh()  // TODO: Do this on completion.
+    func upload(url: URL, context: FileTransferContext) {
+        deviceModel.upload(sourceURL: url,
+                           destinationPath: path + url.lastPathComponent,
+                           context: context) { result in
+            DispatchQueue.main.async {
+                self.refresh()
+            }
+        }
     }
 
 }
