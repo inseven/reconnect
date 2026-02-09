@@ -18,12 +18,31 @@
 
 import SwiftUI
 
-@MainActor @Observable
-class Transfer: Identifiable {
+import ReconnectCore
+
+//@MainActor
+@Observable
+class Transfer: Identifiable, @unchecked Sendable {
 
     struct FileDetails: Equatable {
         let reference: FileReference
         let size: UInt64
+
+        init(reference: FileReference, size: UInt64 = 0) {
+            self.reference = reference
+            self.size = size
+        }
+
+        init(localURL: URL, size: UInt64 = 0) {
+            self.reference = .local(localURL)
+            self.size = size
+        }
+
+        init(remoteDirectoryEntry: FileServer.DirectoryEntry, size: UInt64 = 0) {
+            self.reference = .remote(remoteDirectoryEntry)
+            self.size = size
+        }
+
     }
 
     enum Status: Equatable {
@@ -66,20 +85,15 @@ class Transfer: Identifiable {
     }
 
     var isCancelled: Bool {
-        return lock.withLock {
-            return _isCancelled
-        }
+        return cancellationToken.isCancelled
     }
 
     let id = UUID()
+    let cancellationToken = CancellationToken()
     let item: FileReference
-    let action: (Transfer) async throws -> FileReference
+    let action: (Transfer) throws -> FileReference
 
     var status: Status
-
-    private var task: Task<FileReference, Error>? = nil
-    private var lock = NSLock()
-    private var _isCancelled: Bool = false
 
     var isActive: Bool {
         switch status {
@@ -92,24 +106,22 @@ class Transfer: Identifiable {
 
     init(item: FileReference,
          status: Status = .waiting,
-         action: @escaping ((Transfer) async throws -> FileReference)) {
+         action: @escaping ((Transfer) throws -> FileReference)) {
         self.item = item
         self.status = status
         self.action = action
     }
 
-    func run() async throws -> FileReference {
-        let task = Task {
-            do {
-                return try await action(self)
-            } catch {
-                print("Failed with error \(error).")
-                self.setStatus(.failed(error))
-                throw error
-            }
+    // Runs the task synchronously.
+    // TODO: This could be achieved by dispatching to the worker and handling the result internally?
+    func run() throws -> FileReference {
+        do {
+            return try action(self)
+        } catch {
+            print("Failed with error \(error).")
+            self.setStatus(.failed(error))
+            throw error
         }
-        self.task = task
-        return try await task.value
     }
 
     func setStatus(_ status: Status) {
@@ -119,9 +131,26 @@ class Transfer: Identifiable {
     }
 
     func cancel() {
-        task?.cancel()
-        lock.withLock {
-            _isCancelled = true
+        cancellationToken.cancel()
+    }
+
+    func checkCancellation() throws {
+        return try cancellationToken.checkCancellation()
+    }
+
+    /**
+     * Convenience. Performs the work on the current queue catching any exceptions, updates the transfer accordingly,
+     * and re-throws the error.
+     */
+    func withThrowing(_ perform: (Progress) throws -> FileDetails?) throws {
+        do {
+            let progress = Progress()
+            setStatus(.active(progress))
+            let result = try perform(progress)
+            setStatus(.complete(result))
+        } catch {
+            setStatus(.failed(error))
+            throw error
         }
     }
 

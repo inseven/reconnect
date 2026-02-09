@@ -56,12 +56,12 @@ struct DirectoryView: View {
                 do {
                     let fileManager = FileManager.default
                     let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
-                    self.directoryModel.download(Set([file.id]),
-                                                 to: temporaryDirectoryURL,
-                                                 convertFiles: convertDraggedFiles) { result in
+                    self.directoryModel.download(sourceDirectoryEntryId: file.id,
+                                                 destinationDirectoryURL: temporaryDirectoryURL,
+                                                 context: .drag) { result  in
                         switch result {
-                        case .success(let urls):
-                            completion(urls.first!, false, nil)
+                        case .success(let url):
+                            completion(url, false, nil)
                         case .failure(let error):
                             completion(nil, false, error)
                         }
@@ -133,9 +133,8 @@ struct DirectoryView: View {
 
                 Button("Download", systemImage: "display.and.arrow.down") {
                     directoryModel.download(items,
-                                          to: FileManager.default.downloadsDirectory,
-                                          convertFiles: applicationModel.convertFiles,
-                                          completion: { _ in })
+                                            destinationDirectoryURL: FileManager.default.downloadsDirectory,
+                                            context: .interactive)
                 }
                 .disabled(items.count < 1)
 

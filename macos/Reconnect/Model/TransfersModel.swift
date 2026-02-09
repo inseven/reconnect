@@ -32,6 +32,8 @@ class TransfersModel {
     var transfers: [Transfer] = []
     var selection: UUID? = nil
 
+    let workQueue = DispatchQueue(label: "TransfersModel.workQueue")
+
     init() {
     }
 
@@ -43,7 +45,8 @@ class TransfersModel {
                                   from source: FileServer.DirectoryEntry,
                                   to destinationURL: URL,
                                   process: (FileServer.DirectoryEntry, URL) throws -> URL,
-                                  callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) async throws -> Transfer.FileDetails {
+                                  callback: @escaping (UInt32, UInt32) -> FileServer.ProgressResponse) throws -> Transfer.FileDetails {
+        dispatchPrecondition(condition: .notOnQueue(.main))
 
         let fileManager = FileManager.default
         let temporaryDirectory = try fileManager.createTemporaryDirectory()
@@ -53,9 +56,9 @@ class TransfersModel {
 
         // Perform the file copy.
         let transferURL = temporaryDirectory.appendingPathComponent(source.path.lastWindowsPathComponent)
-        try await fileServer.copyFile(fromRemotePath: source.path,
-                                      toLocalPath: transferURL.path,
-                                      callback: callback)
+        try fileServer.copyFile(fromRemotePath: source.path,
+                                    toLocalPath: transferURL.path,
+                                    callback: callback)
         let processedURL = try process(source, transferURL)
 
         // Move the completed file to the destination.
@@ -68,11 +71,28 @@ class TransfersModel {
         return details
     }
 
+    func newTransfer(fileReference: FileReference) -> Transfer {
+        TransfersWindow.reveal()
+        let transfer = Transfer(item: fileReference) { _ in
+            // This block is part of a transition away from transfer blocks that perform the work, to simple tracking
+            // objects. This means that this block will never be run so the throw is the cleanest situation to notice
+            // if it's called by mistake.
+            throw ReconnectError.unknown
+        }
+        DispatchQueue.main.async {
+            self.transfers.append(transfer)
+        }
+        return transfer
+    }
+
     func download(fileServer: FileServer,
                   sourceDirectoryEntry: FileServer.DirectoryEntry,
                   destinationURL: URL,
-                  process: @escaping (FileServer.DirectoryEntry, URL) throws -> URL) async throws -> URL {
+                  process: @escaping (FileServer.DirectoryEntry, URL) throws -> URL,
+                  completion: @escaping (Result<URL, Error>) -> Void) {
         precondition(destinationURL.hasDirectoryPath)
+
+        TransfersWindow.reveal()
 
         let download = Transfer(item: .remote(sourceDirectoryEntry)) { transfer in
 
@@ -92,7 +112,7 @@ class TransfersModel {
                 transfer.setStatus(.active(progress))
 
                 // Determine the number of items we need to process and update the process object.
-                let files = try await fileServer.dir(path: sourceDirectoryEntry.path, recursive: true)
+                let files = try fileServer.dir(path: sourceDirectoryEntry.path, recursive: true)
                 progress.totalUnitCount = Int64(files.count)
                 progress.fileTotalCount = files.count
                 transfer.setStatus(.active(progress))
@@ -126,10 +146,10 @@ class TransfersModel {
                     innerProgress.kind = .file
                     innerProgress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                     progress.addChild(innerProgress, withPendingUnitCount: 1)
-                    let innerDetails = try await self.downloadFile(using: fileServer,
-                                                                   from: file,
-                                                                   to: innerDestinationURL,
-                                                                   process: process) { p, size in
+                    let innerDetails = try self.downloadFile(using: fileServer,
+                                                             from: file,
+                                                             to: innerDestinationURL,
+                                                             process: process) { p, size in
                         innerProgress.totalUnitCount = Int64(size)
                         innerProgress.completedUnitCount = Int64(p)
                         transfer.setStatus(.active(progress))
@@ -146,10 +166,10 @@ class TransfersModel {
                 progress.kind = .file
                 progress.setUserInfoObject(Progress.FileOperationKind.downloading, forKey: .fileOperationKindKey)
                 transfer.setStatus(.active(progress))
-                let details = try await self.downloadFile(using: fileServer,
-                                                          from: sourceDirectoryEntry,
-                                                          to: destinationURL,
-                                                          process: process) { p, size in
+                let details = try self.downloadFile(using: fileServer,
+                                                    from: sourceDirectoryEntry,
+                                                    to: destinationURL,
+                                                    process: process) { p, size in
                     progress.totalUnitCount = Int64(size)
                     progress.completedUnitCount = Int64(p)
                     transfer.setStatus(.active(progress))
@@ -160,36 +180,49 @@ class TransfersModel {
             }
         }
 
-        // Append and run the transfer operation, waiting until it's complete.
+        // Append the transfer operation so it can be shown (and managed) in the UI.
         transfers.append(download)
-        let reference = try await download.run()
 
-        // Double check that we received a local file.
-        guard case .local(let url) = reference else {
-            throw ReconnectError.invalidFileReference
+        // Perform the actual work.
+        workQueue.async {
+            do {
+                let reference = try download.run()
+                guard case .local(let url) = reference else {  // Double check that we received a local file.
+                    throw ReconnectError.invalidFileReference
+                }
+                DispatchQueue.main.async {
+                    completion(.success(url))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
         }
 
-        return url
     }
 
-    func upload(fileServer: FileServer, sourceURL: URL, destinationPath: String) async throws {
+    func upload(fileServer: FileServer, sourceURL: URL, destinationPath: String) throws {
         print("Uploading file at path '\(sourceURL.path)' to destination path '\(destinationPath)'...")
+        TransfersWindow.reveal()
         let upload = Transfer(item: .local(sourceURL)) { transfer in
-            try await fileServer.copyFile(fromLocalPath: sourceURL.path,
+            try fileServer.copyFile(fromLocalPath: sourceURL.path,
                                           toRemotePath: destinationPath) { progress, size in
                 let p = Progress(totalUnitCount: Int64(size))
                 p.completedUnitCount = Int64(progress)
                 transfer.setStatus(.active(p))
                 return transfer.isCancelled ? .cancel : .continue
             }
-            let directoryEntry = try await fileServer.getExtendedAttributes(path: destinationPath)
+            let directoryEntry = try fileServer.getExtendedAttributesSync(path: destinationPath)
             let fileDetails = Transfer.FileDetails(reference: .remote(directoryEntry),
                                                    size: UInt64(directoryEntry.size))
             transfer.setStatus(.complete(fileDetails))
             return .remote(directoryEntry)
         }
         transfers.append(upload)
-        _ = try await upload.run()
+        workQueue.async {
+            _ = try? upload.run()
+        }
     }
 
     func clear() {

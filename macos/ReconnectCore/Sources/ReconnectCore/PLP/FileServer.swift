@@ -61,7 +61,7 @@ public class FileServer: @unchecked Sendable {
 
     }
 
-    public struct FileAttributes: OptionSet {
+    public struct FileAttributes: OptionSet, Sendable {
 
         public static let readOnly = FileAttributes(rawValue: 0x0001)
         public static let hidden = FileAttributes(rawValue: 0x0002)
@@ -128,7 +128,7 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public struct DirectoryEntry: Identifiable, Hashable {
+    public struct DirectoryEntry: Identifiable, Hashable, Sendable {
 
         public var id: String {
             return path
@@ -439,29 +439,13 @@ public class FileServer: @unchecked Sendable {
         return result
     }
 
-    public func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
-        return try await perform {
-            return try self.workQueue_dir(path: path, recursive: recursive)
-        }
-    }
-
-    public func dirSync(path: String, recursive: Bool = false) throws(PLPToolsError) -> [DirectoryEntry] {
+    public func dir(path: String, recursive: Bool = false) throws(PLPToolsError) -> [DirectoryEntry] {
         return try performSync { () throws(PLPToolsError) -> [DirectoryEntry] in
             return try self.workQueue_dir(path: path, recursive: recursive)
         }
     }
 
     public func copyFile(fromRemotePath remoteSourcePath: String,
-                         toLocalPath localDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) async throws {
-        try await perform {
-            try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
-                                        toLocalPath: localDestinationPath,
-                                        callback: callback)
-        }
-    }
-
-    public func copyFileSync(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         return try performSync { () throws(PLPToolsError) in
@@ -473,17 +457,7 @@ public class FileServer: @unchecked Sendable {
 
     public func copyFile(fromLocalPath localSourcePath: String,
                          toRemotePath remoteDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) async throws {
-        try await perform {
-            try self.workQueue_copyFile(fromLocalPath: localSourcePath,
-                                        toRemotePath: remoteDestinationPath,
-                                        callback: callback)
-        }
-    }
-
-    public func copyFileSync(fromLocalPath localSourcePath: String,
-                             toRemotePath remoteDestinationPath: String,
-                             callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         try performSync {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
@@ -496,7 +470,7 @@ public class FileServer: @unchecked Sendable {
         let fileManager = FileManager.default
         let temporaryURL = fileManager.temporaryURL()
         defer { try? fileManager.removeItem(at: temporaryURL) }
-        try copyFileSync(fromRemotePath: path, toLocalPath: temporaryURL.path) { _, _ in
+        try copyFile(fromRemotePath: path, toLocalPath: temporaryURL.path) { _, _ in
             return .continue
         }
         return try Data(contentsOf: temporaryURL)
@@ -507,7 +481,7 @@ public class FileServer: @unchecked Sendable {
         let temporaryURL = fileManager.temporaryURL()
         defer { try? fileManager.removeItem(at: temporaryURL) }
         try data.write(to: temporaryURL, options: .atomic)
-        try copyFileSync(fromLocalPath: temporaryURL.path, toRemotePath: path) { _, _ in
+        try copyFile(fromLocalPath: temporaryURL.path, toRemotePath: path) { _, _ in
             return .continue
         }
     }
@@ -616,7 +590,7 @@ extension FileServer {
                     }
                 }
                 try data.write(to: temporaryURL)
-                try copyFileSync(fromLocalPath: temporaryURL.path, toRemotePath: operation.path) { completed, size in
+                try copyFile(fromLocalPath: temporaryURL.path, toRemotePath: operation.path) { completed, size in
                     progress.totalUnitCount = Int64(size)
                     progress.completedUnitCount = Int64(completed)
                     callback(progress)
@@ -667,7 +641,7 @@ extension FileServer {
             return []
         }
         let fileManager = FileManager.default
-        let paths = try dirSync(path: installDirectory)
+        let paths = try dir(path: installDirectory)
             .filter { $0.pathExtension.lowercased() == "sis" }
         var stubs: [Sis.Stub] = []
         let progress = Progress(totalUnitCount: Int64(paths.count))
@@ -676,7 +650,7 @@ extension FileServer {
             defer {
                 try? fileManager.removeItem(at: temporaryURL)
             }
-            try copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
+            try copyFile(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
                 return .continue
             }
             let contents = try Data(contentsOf: temporaryURL)

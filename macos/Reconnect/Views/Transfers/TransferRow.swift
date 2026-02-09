@@ -86,7 +86,7 @@ struct TransferRow: View {
         case .active:
             return nil
         case .complete(let details):
-            if let details {
+            if let details, details.size > 0 {
                 return details.size.formatted(.byteCount(style: .file))
             } else {
                 return "Complete"
