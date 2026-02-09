@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct ProgramsView: View {
 
     @Environment(NavigationModel<BrowserSection>.self) private var navigationModel

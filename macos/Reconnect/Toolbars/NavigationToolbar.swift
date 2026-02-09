@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct NavigationToolbar: CustomizableToolbarContent {
 
     @Environment(ApplicationModel.self) private var applicationModel
@@ -36,7 +38,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                 Menu {
                     ForEach(navigationModel.previousItems) { item in
                         Button {
-                            navigationModel.navigate(item)
+                            navigationModel.navigate(to: item)
                         } label: {
                             SectionLabel(section: item.element)
                         }
@@ -55,7 +57,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                 Menu {
                     ForEach(navigationModel.nextItems) { item in
                         Button {
-                            navigationModel.navigate(item)
+                            navigationModel.navigate(to: item)
                         } label: {
                             SectionLabel(section: item.element)
                         }

@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct Sidebar: NSViewRepresentable {
 
     @Environment(ApplicationModel.self) private var applicationModel
