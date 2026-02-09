@@ -69,7 +69,7 @@ struct BackupView: View {
             }
         }
         .onAppear {
-            window.title = "Backup"
+            window.title = "Backup - \(backupModel.name)"
         }
         .runs(backupModel)
     }

@@ -37,6 +37,10 @@ class BackupModel: Runnable {
     private let applicationModel: ApplicationModel
     private let deviceModel: DeviceModel
 
+    var name: String {
+        return deviceModel.deviceConfiguration.name
+    }
+
     init(applicationModel: ApplicationModel, deviceModel: DeviceModel) {
         self.applicationModel = applicationModel
         self.deviceModel = deviceModel
