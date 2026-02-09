@@ -37,19 +37,13 @@ struct TransferRow: View {
             switch transfer.status {
             case .complete(let details):
                 switch transfer.item {
-                case .local:
-                    PixelImage(.fileUnknown16)
-                case .remote(let file):
-                    if let details {
-                        switch details.reference {
-                        case .local(let url):
-                            ThumbnailView(url: url,
-                                          size: CGSize(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize))
-                        case .remote(let directoryEntry):
-                            PixelImage(directoryEntry.fileType.image)
-                        }
-                    } else {
-                        PixelImage(file.fileType.image)
+                case .local, .remote:
+                    switch details.reference {
+                    case .local(let url):
+                        ThumbnailView(url: url,
+                                      size: CGSize(width: LayoutMetrics.iconSize, height: LayoutMetrics.iconSize))
+                    case .remote(let directoryEntry):
+                        PixelImage(directoryEntry.fileType.image)
                     }
                 }
             default:
@@ -65,10 +59,7 @@ struct TransferRow: View {
     }
 
     var name: String {
-        guard
-            case .complete(let details) = transfer.status,
-            let details
-        else {
+        guard case .complete(let details) = transfer.status else {
             return transfer.item.name
         }
         switch details.reference {
@@ -86,7 +77,7 @@ struct TransferRow: View {
         case .active:
             return nil
         case .complete(let details):
-            if let details, details.size > 0 {
+            if details.size > 0 {
                 return details.size.formatted(.byteCount(style: .file))
             } else {
                 return "Complete"
@@ -142,14 +133,12 @@ struct TransferRow: View {
                 }
                 .buttonStyle(.plain)
             case .complete(let details):
-                if let details {
+                if case .local = details.reference {
                     Button {
-                        switch details.reference {
-                        case .local(let url):
-                            Application.reveal(url)
-                        case .remote:
-                            print("Revealing remote files is not currently supported!")
+                        guard case .local(let url) = details.reference else {
+                            return
                         }
+                        Application.reveal(url)
                     } label: {
                         Image(systemName: "magnifyingglass.circle.fill")
                     }

@@ -78,7 +78,7 @@ class Transfer: Identifiable, @unchecked Sendable {
 
         case waiting
         case active(Progress)
-        case complete(FileDetails?)
+        case complete(FileDetails)
         case cancelled
         case failed(Error)
     }
@@ -126,7 +126,7 @@ class Transfer: Identifiable, @unchecked Sendable {
      * Convenience. Performs the work on the current queue catching any exceptions, updates the transfer accordingly,
      * and re-throws the error.
      */
-    func withThrowing(_ perform: (Progress) throws -> FileDetails?) throws {
+    func withThrowing(_ perform: (Progress) throws -> FileDetails) throws {
         do {
             let progress = Progress()
             setStatus(.active(progress))
