@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 @Observable
 class ProgramViewModel: ParentNavigable {
 

@@ -20,6 +20,8 @@ import SwiftUI
 
 import Interact
 
+import ReconnectCore
+
 struct BrowserWindow: Scene {
 
     static let id = "browser"

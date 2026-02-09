@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 @MainActor
 struct BrowserView: View {
 
