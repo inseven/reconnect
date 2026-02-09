@@ -61,7 +61,7 @@ public class FileServer: @unchecked Sendable {
 
     }
 
-    public struct FileAttributes: OptionSet {
+    public struct FileAttributes: OptionSet, Sendable {
 
         public static let readOnly = FileAttributes(rawValue: 0x0001)
         public static let hidden = FileAttributes(rawValue: 0x0002)
@@ -128,7 +128,7 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public struct DirectoryEntry: Identifiable, Hashable {
+    public struct DirectoryEntry: Identifiable, Hashable, Sendable {
 
         public var id: String {
             return path
@@ -220,20 +220,7 @@ public class FileServer: @unchecked Sendable {
         self.port = port
     }
 
-    private func perform<T>(action: @escaping () throws -> T) async throws -> T {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
-                do {
-                    let result = try action()
-                    continuation.resume(returning: result)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
-    private func performSync<T, E: Error>(action: @escaping () throws(E) -> T) throws(E) -> T {
+    private func perform<T, E: Error>(action: @escaping () throws(E) -> T) throws(E) -> T {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         let result: Result<T, E> = workQueue.sync {
             return Result(catching: action)
@@ -439,32 +426,16 @@ public class FileServer: @unchecked Sendable {
         return result
     }
 
-    public func dir(path: String, recursive: Bool = false) async throws -> [DirectoryEntry] {
-        return try await perform {
-            return try self.workQueue_dir(path: path, recursive: recursive)
-        }
-    }
-
-    public func dirSync(path: String, recursive: Bool = false) throws(PLPToolsError) -> [DirectoryEntry] {
-        return try performSync { () throws(PLPToolsError) -> [DirectoryEntry] in
+    public func dir(path: String, recursive: Bool = false) throws(PLPToolsError) -> [DirectoryEntry] {
+        return try perform { () throws(PLPToolsError) -> [DirectoryEntry] in
             return try self.workQueue_dir(path: path, recursive: recursive)
         }
     }
 
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) async throws {
-        try await perform {
-            try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
-                                        toLocalPath: localDestinationPath,
-                                        callback: callback)
-        }
-    }
-
-    public func copyFileSync(fromRemotePath remoteSourcePath: String,
-                         toLocalPath localDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
-        return try performSync { () throws(PLPToolsError) in
+        return try perform { () throws(PLPToolsError) in
             try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
                                         callback: callback)
@@ -473,19 +444,9 @@ public class FileServer: @unchecked Sendable {
 
     public func copyFile(fromLocalPath localSourcePath: String,
                          toRemotePath remoteDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) async throws {
-        try await perform {
-            try self.workQueue_copyFile(fromLocalPath: localSourcePath,
-                                        toRemotePath: remoteDestinationPath,
-                                        callback: callback)
-        }
-    }
-
-    public func copyFileSync(fromLocalPath localSourcePath: String,
-                             toRemotePath remoteDestinationPath: String,
-                             callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        try performSync {
+        try perform {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
                                         callback: callback)
@@ -496,7 +457,7 @@ public class FileServer: @unchecked Sendable {
         let fileManager = FileManager.default
         let temporaryURL = fileManager.temporaryURL()
         defer { try? fileManager.removeItem(at: temporaryURL) }
-        try copyFileSync(fromRemotePath: path, toLocalPath: temporaryURL.path) { _, _ in
+        try copyFile(fromRemotePath: path, toLocalPath: temporaryURL.path) { _, _ in
             return .continue
         }
         return try Data(contentsOf: temporaryURL)
@@ -507,26 +468,20 @@ public class FileServer: @unchecked Sendable {
         let temporaryURL = fileManager.temporaryURL()
         defer { try? fileManager.removeItem(at: temporaryURL) }
         try data.write(to: temporaryURL, options: .atomic)
-        try copyFileSync(fromLocalPath: temporaryURL.path, toRemotePath: path) { _, _ in
+        try copyFile(fromLocalPath: temporaryURL.path, toRemotePath: path) { _, _ in
             return .continue
         }
     }
 
-    public func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
-        try await perform {
-            return try self.workQueue_getExtendedAttributes(path: path)
-        }
-    }
-
-    public func getExtendedAttributesSync(path: String) throws -> DirectoryEntry {
-        return try performSync { () throws(PLPToolsError) in
+    public func getExtendedAttributes(path: String) throws -> DirectoryEntry {
+        return try perform { () throws(PLPToolsError) in
             return try self.workQueue_getExtendedAttributes(path: path)
         }
     }
 
     public func exists(path: String) throws(PLPToolsError) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        return try performSync { () throws(PLPToolsError) in
+        return try perform { () throws(PLPToolsError) in
             let result = try self.workQueue_exists(path: path)
             return result
         }
@@ -534,37 +489,31 @@ public class FileServer: @unchecked Sendable {
 
     public func mkdir(path: String) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        try performSync { () throws(PLPToolsError) in
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_mkdir(path: path)
         }
     }
 
     public func rmdir(path: String) throws {
-        try performSync {
+        try perform {
             try self.workQueue_rmdir(path: path)
         }
     }
 
     public func remove(path: String) throws(PLPToolsError) {
-        try performSync { () throws(PLPToolsError) in
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_remove(path: path)
         }
     }
 
     public func rename(from fromPath: String, to toPath: String) throws {
-        try performSync {
+        try perform {
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
     }
 
-    public func drives() async throws -> [DriveInfo] {
-        try await perform {
-            return try self.workQueue_drives()
-        }
-    }
-
-    public func drivesSync() throws(PLPToolsError) -> [DriveInfo] {
-        return try performSync { () throws(PLPToolsError) -> [DriveInfo] in
+    public func drives() throws(PLPToolsError) -> [DriveInfo] {
+        return try perform { () throws(PLPToolsError) -> [DriveInfo] in
             return try self.workQueue_drives()
         }
     }
@@ -616,7 +565,7 @@ extension FileServer {
                     }
                 }
                 try data.write(to: temporaryURL)
-                try copyFileSync(fromLocalPath: temporaryURL.path, toRemotePath: operation.path) { completed, size in
+                try copyFile(fromLocalPath: temporaryURL.path, toRemotePath: operation.path) { completed, size in
                     progress.totalUnitCount = Int64(size)
                     progress.completedUnitCount = Int64(completed)
                     callback(progress)
@@ -626,7 +575,7 @@ extension FileServer {
 
             case .stat:
 
-                let attributes = try getExtendedAttributesSync(path: operation.path)
+                let attributes = try getExtendedAttributes(path: operation.path)
                 return .stat(Fs.Stat(size: UInt64(attributes.size),
                                      lastModified: attributes.modificationDate,
                                      isDirectory: attributes.isDirectory))
@@ -667,7 +616,7 @@ extension FileServer {
             return []
         }
         let fileManager = FileManager.default
-        let paths = try dirSync(path: installDirectory)
+        let paths = try dir(path: installDirectory)
             .filter { $0.pathExtension.lowercased() == "sis" }
         var stubs: [Sis.Stub] = []
         let progress = Progress(totalUnitCount: Int64(paths.count))
@@ -676,7 +625,7 @@ extension FileServer {
             defer {
                 try? fileManager.removeItem(at: temporaryURL)
             }
-            try copyFileSync(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
+            try copyFile(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
                 return .continue
             }
             let contents = try Data(contentsOf: temporaryURL)

@@ -93,7 +93,7 @@ class DirectoryModel {
         self.isLoading = true
         self.files = []
         self.run { [path, deviceModel] in
-            let files = try deviceModel.fileServer.dirSync(path: path)
+            let files = try deviceModel.fileServer.dir(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
             DispatchQueue.main.sync {
                 self.files = files
@@ -150,45 +150,53 @@ class DirectoryModel {
         }
     }
 
-    // Download a set of files from the Psion to the destination directory URL.
-    func download(_ selection: Set<FileServer.DirectoryEntry.ID>? = nil,
-                  to: URL?,
-                  convertFiles: Bool,
-                  completion: @escaping (Result<Array<URL>, Error>) -> Void) {
+    /**
+     * Download a set of files from the Psion to the destination directory URL.
+     *
+     * If the source directory entry ids are omitted, this acts on the current selection.
+     */
+    func download(_ sourceDirectoryEntryIds: Set<FileServer.DirectoryEntry.ID>? = nil,
+                  destinationDirectoryURL: URL?,
+                  context: FileTransferContext) {
 
         dispatchPrecondition(condition: .onQueue(.main))
-        let destinationURL = to ?? applicationModel.downloadsURL
-        precondition(destinationURL.hasDirectoryPath)
-        let selection = selection ?? fileSelection
-        let files = files.filter { selection.contains($0.id) }
+        let destinationDirectoryURL = destinationDirectoryURL ?? applicationModel.downloadsURL
+        precondition(destinationDirectoryURL.hasDirectoryPath)
+        let sourceDirectoryEntryIds = sourceDirectoryEntryIds ?? fileSelection
+        let files = files.filter { sourceDirectoryEntryIds.contains($0.id) }
 
-        Task {
-            do {
-                let urls = try await withThrowingTaskGroup(of: URL.self) { [deviceModel] group in
-                    for file in files {
-                        group.addTask {
-                            return try await deviceModel.download(sourceDirectoryEntry: file,
-                                                                  destinationURL: destinationURL,
-                                                                  process: convertFiles ? FileConverter.convertFiles : FileConverter.identity)
-                        }
-                    }
-                    var results: [URL] = []
-                    for try await url in group {
-                        results.append(url)
-                    }
-                    return results
-                }
-                completion(.success(urls))
-            } catch {
-                completion(.failure(error))
-            }
+        for file in files {
+            deviceModel.download(sourceDirectoryEntry: file,
+                                 destinationURL: destinationDirectoryURL.appendingPathComponent(file.name),
+                                 context: context)
         }
     }
-    
-    func upload(url: URL) {
-        Task { [deviceModel] in
-            try? await deviceModel.upload(sourceURL: url, destinationPath: path + url.lastPathComponent)
-            self.refresh()
+
+    /**
+     * Download a single file, represented by a directory entry id, from the Psion to the destination directory URL.
+     */
+    func download(sourceDirectoryEntryId: FileServer.DirectoryEntry.ID,
+                  destinationDirectoryURL: URL,
+                  context: FileTransferContext,
+                  completion: @escaping (Result<URL, Error>) -> Void) {
+        precondition(destinationDirectoryURL.hasDirectoryPath)
+        guard let sourceDirectoryEntry = files.first(where: { $0.id == sourceDirectoryEntryId }) else {
+            completion(.failure(PLPToolsError.noSuchFile))
+            return
+        }
+        deviceModel.download(sourceDirectoryEntry: sourceDirectoryEntry,
+                             destinationURL: destinationDirectoryURL.appendingPathComponent(sourceDirectoryEntry.name),
+                             context: context,
+                             completion: completion)
+    }
+
+    func upload(url: URL, context: FileTransferContext) {
+        deviceModel.upload(sourceURL: url,
+                           destinationPath: path + url.lastPathComponent,
+                           context: context) { result in
+            DispatchQueue.main.async {
+                self.refresh()
+            }
         }
     }
 
@@ -227,7 +235,7 @@ extension DirectoryModel: FileManageable {
             // Get the names of the files and folders in the current path to allow us to check against existing names.
             // Since Psion file systems are case insensitive, we lowercase all entries for consistency.
             let names = try deviceModel.fileServer
-                .dirSync(path: path)
+                .dir(path: path)
                 .map { $0.name.lowercased() }
                 .reduce(into: Set()) { $0.insert($1) }
 
@@ -249,7 +257,7 @@ extension DirectoryModel: FileManageable {
             // Create the folder.
             let folderPath = path + folderName
             try deviceModel.fileServer.mkdir(path: folderPath)
-            let files = try deviceModel.fileServer.dirSync(path: path)
+            let files = try deviceModel.fileServer.dir(path: path)
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
             // Update the model state.
@@ -279,9 +287,7 @@ extension DirectoryModel: FileManageable {
     }
 
     func download() {
-        download(to: applicationModel.downloadsURL,
-                 convertFiles: applicationModel.convertFiles,
-                 completion: { _ in })
+        download(destinationDirectoryURL: applicationModel.downloadsURL, context: .interactive)
     }
 
 }
@@ -303,8 +309,7 @@ extension DirectoryModel: ParentNavigable {
 extension DirectoryModel: Refreshable {
 
     var canRefresh: Bool {
-        // TODO: Gate on whether we're refreshing already.
-        return true
+        return !isLoading
     }
 
     var isRefreshing: Bool {

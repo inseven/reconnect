@@ -18,22 +18,32 @@
 
 import Foundation
 
-public class PsionClient {
+/**
+ * The context in which a file transfer (upload or download) occurs.
+ *
+ * This maps closely to the purpose of the transfer and how it was initiated. It is used to determine what transform
+ * operation to perform when transfering the file.
+ */
+enum FileTransferContext {
 
-    let fileServer = FileServer()
-    let remoteCommandServices = RemoteCommandServicesClient()
+    /**
+     * Transfer is the result of a drag-and-drop operation.
+     */
+    case drag
 
-    public init() {
-        
-    }
+    /**
+     * Transfer is the result of a user interaction (e.g., clicking the download toolbar button or menu item).
+     */
+    case interactive
 
-    public func runProgram(path: String) throws {
-        let attributes = try fileServer.getExtendedAttributes(path: path)
-        if attributes.uid1 == .dynamicLibraryUid {
-            try remoteCommandServices.execProgram(program: path)
-        } else {
-            try remoteCommandServices.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + path)
-        }
-    }
+    /**
+     * Transfer is part of a backup operation.
+     */
+    case backup
+
+    /**
+     * Transfer is a simple copy with no file conversion.
+     */
+    case copy
 
 }

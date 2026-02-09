@@ -30,8 +30,10 @@ protocol DeviceModelDelegate: AnyObject {
 
 }
 
+
+
 @Observable
-class DeviceModel: Identifiable, Equatable {
+class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
     /**
      * Perform initial device configuration on connection and return a fully-configured device model.
@@ -63,7 +65,7 @@ class DeviceModel: Identifiable, Equatable {
 
                 // 1) Perform a drive listing. We know we can always safely do this.
                 try cancellationToken.checkCancellation()
-                let drives = try fileServer.drivesSync()
+                let drives = try fileServer.drives()
 
                 // 2) Get the internal drive.
                 guard let internalDrive = drives.first(where: { $0.driveAttributes.contains(.internal) }) else {
@@ -78,7 +80,7 @@ class DeviceModel: Identifiable, Equatable {
                 try cancellationToken.checkCancellation()
                 if try (epoc16 && !fileServer.exists(path: "M:\\SYS$RPCS.IMG")) {
                     let rpcsServer = Bundle.main.url(forResource: "SYS$RPCS", withExtension: ".IMG")!
-                    try fileServer.copyFileSync(fromLocalPath: rpcsServer.path, toRemotePath: "M:\\SYS$RPCS.IMG") { _, _ in return .continue }
+                    try fileServer.copyFile(fromLocalPath: rpcsServer.path, toRemotePath: "M:\\SYS$RPCS.IMG") { _, _ in return .continue }
                 }
 
                 // 4) Once we've made sure the RPCS server is present irrespective of the machine we're using, we can
@@ -122,9 +124,14 @@ class DeviceModel: Identifiable, Equatable {
 
                 // 7) And with all that done, it's safe to hand back to the UI with enough information to allow things
                 //    to continue and conditionally display things correctly. 😬
+                //
+                //    Note that there's a tiny bit of magic in the constructor: we check to see if the device is EPOC16
+                //    or EPOC32 and, conditionally create a section file server to use for file transfers on EPOC32;
+                //    since EPOC16 only supports a single file server, we have to share it between tasks on these
+                //    machines.
                 let deviceModel = DeviceModel(applicationModel: applicationModel,
                                               fileServer: fileServer,
-                                              transfersFileServer: machineType.isEpoc32 ? FileServer() : nil,
+                                              transfersFileServer: machineType.isEpoc32 ? FileServer() : fileServer,
                                               remoteCommandServicesClient: remoteCommandServicesClient,
                                               deviceConfiguration: deviceConfiguration,
                                               machineType: machineType,
@@ -189,7 +196,7 @@ class DeviceModel: Identifiable, Equatable {
     weak var delegate: DeviceModelDelegate?
 
     let fileServer: FileServer
-    let transfersFileServer: FileServer?
+    let transfersFileServer: FileServer
     let remoteCommandServicesClient: RemoteCommandServicesClient
 
     let deviceConfiguration: DeviceConfiguration
@@ -199,10 +206,11 @@ class DeviceModel: Identifiable, Equatable {
     let internalDrive: FileServer.DriveInfo
 
     private let workQueue = DispatchQueue(label: "DeviceModel.workQueue")
+    private let transfersQueue = DispatchQueue(label: "DeviceModel.transfersQueue")
 
     private init(applicationModel: ApplicationModel,
                  fileServer: FileServer,
-                 transfersFileServer: FileServer?,
+                 transfersFileServer: FileServer,
                  remoteCommandServicesClient: RemoteCommandServicesClient,
                  deviceConfiguration: DeviceConfiguration,
                  machineType: RemoteCommandServicesClient.MachineType,
@@ -273,43 +281,18 @@ class DeviceModel: Identifiable, Equatable {
             }
 
             // Back up to a temporary directory to ensure partial backups don't pollute the backups directory.
-            let backupURL = fileManager.temporaryURL(isDirectory: true)
+            let backupURL = try fileManager.createTemporaryDirectory()
             defer { try? FileManager.default.removeItem(at: backupURL) }
 
             // TODO: Quit running apps.
 
-            let files = try fileServer.dirSync(path: internalDrive.path, recursive: true)
-            progress.totalUnitCount = Int64(files.count)
-            progress.localizedDescription = "Copying files..."
-
-            try cancellationToken.checkCancellation()
+            // Create the target directory for the drive.
             let driveBackupURL = backupURL.appendingPathComponent(internalDrive.drive, isDirectory: true)
-            for file in files {
-                guard file.path.hasPrefix(internalDrive.path) else {
-                    throw PLPToolsError.invalidFileName
-                }
-                let relativePath = String(file.path.dropFirst(3))
-                let destinationURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
-
-                // Create the destination directory, or copy the file.
-                progress.localizedAdditionalDescription = file.path
-                if file.path.isWindowsDirectory {
-                    try fileManager.createDirectory(at: destinationURL, withIntermediateDirectories: true)
-                    progress.completedUnitCount += 1
-                } else {
-                    let copyProgress = Progress(totalUnitCount: Int64(file.size))
-                    progress.addChild(copyProgress, withPendingUnitCount: 1)
-
-                    try fileServer.copyFileSync(fromRemotePath: file.path, toLocalPath: destinationURL.path) { current, total in
-                        copyProgress.completedUnitCount = Int64(current)
-                        copyProgress.totalUnitCount = Int64(total)
-                        return cancellationToken.isCancelled ? .cancel : .continue
-                    }
-                }
-
-                // Check to see if we've been cancelled.
-                try cancellationToken.checkCancellation()
-            }
+            _ = try _downloadDirectory(sourcePath: internalDrive.path,
+                                       destinationURL: driveBackupURL,
+                                       context: .backup,
+                                       progress: progress,
+                                       cancellationToken: cancellationToken)
 
             // Write a manifest.
             // We should use NCP_GET_UNIQUE_ID to include drive identifiers when we support removable drives.
@@ -357,7 +340,7 @@ class DeviceModel: Identifiable, Equatable {
 
         let transfersModel = applicationModel.transfersModel
 
-        runInBackground { [transfersModel] in
+        runInBackground { [self, transfersModel] in
 
             defer {
                 DispatchQueue.main.async {
@@ -384,7 +367,6 @@ class DeviceModel: Identifiable, Equatable {
             }
 
             // Take a screenshot.
-            print("Taking screenshot...")
             let timestamp = Date.now
             try client.execProgram(program: .screenshotToolPath, args: "")
             sleep(5)
@@ -395,65 +377,109 @@ class DeviceModel: Identifiable, Equatable {
             try fileServer.rename(from: .screenshotPath, to: screenshotPath)
 
             // Perhaps the transfer model can use some paired down reference which includes the type?
-            let screenshotDetails = try fileServer.getExtendedAttributesSync(path: screenshotPath)
+            let screenshotDetails = try fileServer.getExtendedAttributes(path: screenshotPath)
 
-            TransfersWindow.reveal()
+            // Download and convert the screenshot.
+            // This runs in the context of the transfers operation queue, but perhaps it would be cleaner to run this
+            // work on our own device-specific executor, and just request a tracked operation that we bind to from the
+            // transfers mdoel. Would keep it cleaner and avoid us serializing stuff with multiple devices connected.
 
-            Task {
+            let temporaryFileURL = temporaryDirectory.appendingPathComponent(screenshotDetails.name)
 
-                // Download and convert the screenshot.
-                let outputURL = try await transfersModel.download(fileServer: fileServer,
-                                                                  sourceDirectoryEntry: screenshotDetails,
-                                                                  destinationURL: screenshotsURL) { entry, url in
-                    let destinationURL = url.deletingLastPathComponent()
-                    let outputURL = destinationURL.appendingPathComponent(url.lastPathComponent.deletingPathExtension,
-                                                                          conformingTo: .png)
-                    try PsiLuaEnv().convertMultiBitmap(at: url, to: outputURL, type: .png)
-                    try FileManager.default.removeItem(at: url)
-                    return outputURL
-                }
+            // Track the transfer using the transfers model.
+            let transfer = transfersModel.newTransfer(fileReference: .remote(screenshotDetails))
+
+            try transfer.withThrowing { progress in
+
+                // Download the file.
+                _ = try _downloadFile(sourceDirectoryEntry: screenshotDetails,
+                                      destinationURL: temporaryFileURL,
+                                      context: .copy,
+                                      progress: progress,
+                                      cancellationToken: transfer.cancellationToken)
+
+                // Manually convert the file.
+                let outputURL = screenshotsURL.appendingPathComponent(name, conformingTo: .png)
+                try PsiLuaEnv().convertMultiBitmap(at: temporaryFileURL, to: outputURL, type: .png)
 
                 // Cleanup.
                 try fileServer.remove(path: screenshotPath)
 
                 // Reveal the screenshot.
-                await MainActor.run {
-                    if revealScreenshot {
+                if revealScreenshot {
+                    DispatchQueue.main.async {
                         NSWorkspace.shared.activateFileViewerSelecting([outputURL])
                     }
                 }
 
+                return Transfer.FileDetails(localURL: outputURL)
             }
 
         }
 
     }
 
+    /**
+     * Download a remote Psion file or directory, displaying progress in the transfers window.
+     */
     @MainActor
     func download(sourceDirectoryEntry: FileServer.DirectoryEntry,
                   destinationURL: URL,
-                  process: @escaping (FileServer.DirectoryEntry, URL) throws -> URL) async throws -> URL {
-        guard let applicationModel else {
-            // We assume we're tearing down if applicationModel is nil.
-            throw ReconnectError.cancelled
+                  context: FileTransferContext,
+                  completion: @escaping (Result<URL, Error>) -> Void = { _ in }) {
+        guard let transfersModel = applicationModel?.transfersModel else {
+            completion(.failure(ReconnectError.cancelled))
+            return
         }
-        TransfersWindow.reveal()
-        return try await applicationModel.transfersModel.download(fileServer: transfersFileServer ?? fileServer,
-                                                                  sourceDirectoryEntry: sourceDirectoryEntry,
-                                                                  destinationURL: destinationURL,
-                                                                  process: process)
+        let transfer = transfersModel.newTransfer(fileReference: .remote(sourceDirectoryEntry))
+        transfersQueue.async { [self] in
+            let progress = Progress()
+            transfer.setStatus(.active(progress))
+            do {
+                let url = try _download(sourceDirectoryEntry: sourceDirectoryEntry,
+                                        destinationURL: destinationURL,
+                                        context: context,
+                                        progress: progress,
+                                        cancellationToken: transfer.cancellationToken)
+                let result = Transfer.FileDetails(localURL: (url))
+                transfer.setStatus(.complete(result))
+                completion(.success(url))
+            } catch {
+                transfer.setStatus(.failed(error))
+                completion(.failure(error))
+            }
+
+        }
     }
 
     @MainActor
-    func upload(sourceURL: URL, destinationPath: String) async throws {
-        guard let applicationModel else {
-            // We assume we're tearing down if applicationModel is nil.
-            throw ReconnectError.cancelled
+    func upload(sourceURL: URL,
+                destinationPath: String,
+                context: FileTransferContext,
+                completion: @escaping (Result<FileServer.DirectoryEntry, Error>) -> Void = { _ in }) {
+        guard let transfersModel = applicationModel?.transfersModel else {
+            completion(.failure(ReconnectError.cancelled))
+            return
         }
-        TransfersWindow.reveal()
-        return try await applicationModel.transfersModel.upload(fileServer: transfersFileServer ?? fileServer,
-                                                                sourceURL: sourceURL,
-                                                                destinationPath: destinationPath)
+        let transfer = transfersModel.newTransfer(fileReference: .local(sourceURL))
+        transfersQueue.async { [self] in
+            do {
+                let progress = Progress()
+                transfer.setStatus(.active(progress))
+                let directoryEntry = try _upload(sourceURL: sourceURL,
+                                                 destinationPath: destinationPath,
+                                                 context: context,
+                                                 progress: progress,
+                                                 cancellationToken: transfer.cancellationToken)
+                let result = Transfer.FileDetails(remoteDirectoryEntry: directoryEntry,
+                                                  size: UInt64(directoryEntry.size))
+                transfer.setStatus(.complete(result))
+                completion(.success(directoryEntry))
+            } catch {
+                transfer.setStatus(.failed(error))
+                completion(.failure(error))
+            }
+        }
     }
 
     /**
@@ -480,6 +506,284 @@ class DeviceModel: Identifiable, Equatable {
                 return "FOLDER\(index)"
             }
         }
+    }
+
+}
+
+// File transfer conveniences.
+
+extension DeviceModel {
+
+    /**
+     * Download any remote Psion file or directory.
+     *
+     * Internally this calls `downloadFile` or `downloadDirectory` (which in turn will call `downloadFile` for
+     * individual file transfers).
+     */
+    fileprivate func _download(sourceDirectoryEntry: FileServer.DirectoryEntry,
+                               destinationURL: URL,
+                               context: FileTransferContext,
+                               progress: Progress,
+                               cancellationToken: CancellationToken) throws -> URL {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        if sourceDirectoryEntry.isDirectory {
+            return try _downloadDirectory(sourcePath: sourceDirectoryEntry.path,
+                                          destinationURL: destinationURL,
+                                          context: context,
+                                          progress: progress,
+                                          cancellationToken: cancellationToken)
+        } else {
+            return try _downloadFile(sourceDirectoryEntry: sourceDirectoryEntry,
+                                     destinationURL: destinationURL,
+                                     context: context,
+                                     progress: progress,
+                                     cancellationToken: cancellationToken)
+        }
+    }
+
+    /**
+     * Download a remote Psion file.
+     */
+    fileprivate func _downloadFile(sourceDirectoryEntry: FileServer.DirectoryEntry,
+                                   destinationURL: URL,
+                                   context: FileTransferContext,
+                                   progress: Progress,
+                                   cancellationToken: CancellationToken) throws -> URL {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        assert(!sourceDirectoryEntry.isDirectory)
+
+        let fileManager = FileManager.default
+
+        // Set the progress.
+        progress.totalUnitCount = Int64(sourceDirectoryEntry.size)
+
+        // Create a temporary directory to download to.
+        let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
+        let temporaryURL = temporaryDirectoryURL.appendingPathComponent(sourceDirectoryEntry.path)
+        defer {
+            try? fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
+        }
+
+        // Download the file.
+        try transfersFileServer.copyFile(fromRemotePath: sourceDirectoryEntry.path,
+                                         toLocalPath: temporaryURL.path) { current, total in
+            progress.completedUnitCount = Int64(current)
+            progress.totalUnitCount = Int64(total)
+            return cancellationToken.isCancelled ? .cancel : .continue
+        }
+
+        // Check to see if we've been cancelled.
+        try cancellationToken.checkCancellation()
+
+        // Move the file to the destination path.
+        try fileManager.moveItem(at: temporaryURL, to: destinationURL)
+
+        // Check to see if the file needs transforming.
+        let convertFiles = DispatchQueue.main.sync {
+            guard let applicationModel else {
+                return false
+            }
+            switch context {
+            case .drag:
+                return applicationModel.convertDraggedFiles
+            case .interactive:
+                return applicationModel.convertFiles
+            case .backup, .copy:
+                return false
+            }
+        }
+        let conversion = convertFiles ? FileConverter.convertFiles : FileConverter.identity
+        let convertedURL = try conversion(sourceDirectoryEntry, destinationURL)
+
+        return convertedURL
+    }
+
+    /**
+     * Download the contents of a remote Psion directory.
+     *
+     * Under the hood, this first performs an initial recurisve listing of the directory, downloads each file
+     * sequentially to a temporary directory, and finally moves the temporary directory to the requested URL.
+     */
+    fileprivate func _downloadDirectory(sourcePath: String,
+                                        destinationURL: URL,
+                                        context: FileTransferContext,
+                                        progress: Progress,
+                                        cancellationToken: CancellationToken) throws -> URL {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        assert(sourcePath.isWindowsDirectory)
+
+        let fileManager = FileManager.default
+
+        // Create a temporary destination directory (we move this to the destination URL once the download is complete).
+        let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
+        defer {
+            try? fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
+        }
+
+        // Recursively list the files to work out what we need to download.
+        progress.localizedDescription = "Listing files..."
+        let files = try transfersFileServer.dir(path: sourcePath, recursive: true)
+
+        // Update the progress accordingly.
+        progress.totalUnitCount = Int64(files.count)
+        progress.localizedDescription = "Copying files..."
+
+        // Iterate over the files and copy each one in turn.
+        try cancellationToken.checkCancellation()
+        for file in files {
+
+            // Double-check that the file is contained by our (case-insensitive) directory.
+            guard file.path.lowercased().hasPrefix(sourcePath.lowercased()) else {
+                throw PLPToolsError.invalidFileName
+            }
+
+            // Determine the destination path.
+            let relativePath = String(file.path.dropFirst(sourcePath.count))
+            let innerDestinationURL = temporaryDirectoryURL.appendingPathComponents(relativePath.windowsPathComponents)
+
+            // Create the destination directory, or copy the file.
+            progress.localizedAdditionalDescription = file.path
+            if file.path.isWindowsDirectory {
+                try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
+                progress.completedUnitCount += 1
+            } else {
+                let copyProgress = Progress()
+                progress.addChild(copyProgress, withPendingUnitCount: 1)
+                _ = try _downloadFile(sourceDirectoryEntry: file,
+                                      destinationURL: innerDestinationURL,
+                                      context: context,
+                                      progress: copyProgress,
+                                      cancellationToken: cancellationToken)
+            }
+
+            // Check to see if we've been cancelled.
+            try cancellationToken.checkCancellation()
+        }
+
+        // Move to the requested destination.
+        try fileManager.moveItem(at: temporaryDirectoryURL, to: destinationURL)
+
+        return destinationURL
+    }
+
+    func _upload(sourceURL: URL,
+                 destinationPath: String,
+                 context: FileTransferContext,
+                 progress: Progress,
+                 cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        if FileManager.default.directoryExists(at: sourceURL) {
+            return try _uploadDirectory(sourceURL: sourceURL,
+                                        destinationPath: destinationPath,
+                                        context: context,
+                                        progress: progress,
+                                        cancellationToken: cancellationToken)
+        } else {
+            return try _uploadFile(sourceURL: sourceURL,
+                                   destinationPath: destinationPath,
+                                   context: context,
+                                   progress: progress,
+                                   cancellationToken: cancellationToken)
+        }
+    }
+
+    func _uploadFile(sourceURL: URL,
+                     destinationPath: String,
+                     context: FileTransferContext,
+                     progress: Progress,
+                     cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        assert(!sourceURL.hasDirectoryPath)
+
+        let fileManager = FileManager.default
+
+        // Read the local file size so we can set the progress total unit count.
+        let attributes = try fileManager.attributesOfItem(atPath: sourceURL.path)
+        let size = attributes[.size] as! Int64
+        progress.totalUnitCount = size
+
+        // Upload the file.
+        try transfersFileServer.copyFile(fromLocalPath: sourceURL.path,
+                                         toRemotePath: destinationPath) { current, total in
+            progress.completedUnitCount = Int64(current)
+            progress.totalUnitCount = Int64(total)
+            return cancellationToken.isCancelled ? .cancel : .continue
+        }
+
+        // Read the new file's metadata.
+        let directoryEntry = try transfersFileServer.getExtendedAttributes(path: destinationPath)
+
+        // Iterate over the files and copy each one in turn.
+        try cancellationToken.checkCancellation()
+
+        return directoryEntry
+    }
+
+    func _uploadDirectory(sourceURL: URL,
+                          destinationPath: String,
+                          context: FileTransferContext,
+                          progress: Progress,
+                          cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        assert(sourceURL.hasDirectoryPath)
+
+        let fileManager = FileManager.default
+
+        // Recursively list the files to work out what we need to upload.
+        let files = try fileManager.contentsOfDirectory(at: sourceURL, includingPropertiesForKeys: [.isDirectoryKey])
+            .filter { $0.lastPathComponent != ".DS_Store" }
+
+        // Create the directory to upload to.
+        try transfersFileServer.mkdir(path: destinationPath)
+
+        // Iterate over the files and copy each one in turn.
+        try cancellationToken.checkCancellation()
+        for file in files {
+
+            // Double-check that the file is contained by our directory.
+            guard file.path.hasPrefix(sourceURL.path) else {
+                throw PLPToolsError.invalidFileName
+            }
+
+            // Determine the destination path.
+            let relativePath = String(file.path.dropFirst(sourceURL.path().count))
+            let innerDestinationPath = destinationPath.appendingWindowsPathComponent(relativePath)
+
+            // Create the destination directory, or copy the file.
+            progress.localizedAdditionalDescription = file.path
+            if file.hasDirectoryPath {
+                try transfersFileServer.mkdir(path: innerDestinationPath)
+                progress.completedUnitCount += 1
+            } else {
+                let copyProgress = Progress()
+                progress.addChild(copyProgress, withPendingUnitCount: 1)
+
+                // Read the local file size so we can set the progress total unit count.
+                let attributes = try fileManager.attributesOfItem(atPath: sourceURL.path)
+                let size = attributes[.size] as! Int64
+                copyProgress.totalUnitCount = size
+
+                // Upload the file.
+                try transfersFileServer.copyFile(fromLocalPath: file.path,
+                                                 toRemotePath: innerDestinationPath) { current, total in
+                    copyProgress.completedUnitCount = Int64(current)
+                    copyProgress.totalUnitCount = Int64(total)
+                    return cancellationToken.isCancelled ? .cancel : .continue
+                }
+                copyProgress.completedUnitCount = copyProgress.totalUnitCount
+            }
+
+            // Check to see if we've been cancelled.
+            try cancellationToken.checkCancellation()
+        }
+
+        // Read the new file's metadata.
+        let directoryEntry = try transfersFileServer.getExtendedAttributes(path: destinationPath)
+
+        // Iterate over the files and copy each one in turn.
+        try cancellationToken.checkCancellation()
+
+        return directoryEntry
     }
 
 }
