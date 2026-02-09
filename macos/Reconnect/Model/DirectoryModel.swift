@@ -175,7 +175,6 @@ class DirectoryModel {
     /**
      * Download a single file, represented by a directory entry id, from the Psion to the destination directory URL.
      */
-    // TODO: Check completion queue?
     func download(sourceDirectoryEntryId: FileServer.DirectoryEntry.ID,
                   destinationDirectoryURL: URL,
                   context: FileTransferContext,

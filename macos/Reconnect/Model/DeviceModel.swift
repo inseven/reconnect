@@ -469,7 +469,6 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                                         context: context,
                                         progress: progress,
                                         cancellationToken: transfer.cancellationToken)
-                // TODO: Read the file size.
                 let result = Transfer.FileDetails(localURL: (url))
                 transfer.setStatus(.complete(result))
                 completion(.success(url))
@@ -723,7 +722,7 @@ extension DeviceModel {
                      progress: Progress,
                      cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        assert(!sourceURL.hasDirectoryPath)  // TODO: Is this sufficient?
+        assert(!sourceURL.hasDirectoryPath)
 
         let fileManager = FileManager.default
 
@@ -755,7 +754,7 @@ extension DeviceModel {
                           progress: Progress,
                           cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
         dispatchPrecondition(condition: .notOnQueue(.main))
-        assert(sourceURL.hasDirectoryPath)  // TODO: Is this sufficient?
+        assert(sourceURL.hasDirectoryPath)
 
         let fileManager = FileManager.default
 
@@ -808,7 +807,6 @@ extension DeviceModel {
         }
 
         // Read the new file's metadata.
-        // TODO: This isn't displaying correctly.
         let directoryEntry = try transfersFileServer.getExtendedAttributes(path: destinationPath)
 
         // Iterate over the files and copy each one in turn.
