@@ -622,7 +622,9 @@ extension DeviceModel {
 
         // Recursively list the files to work out what we need to download.
         progress.localizedDescription = "Listing files..."
-        let files = try transfersFileServer.dir(path: sourcePath, recursive: true)
+        let files = try transfersFileServer.dir(path: sourcePath,
+                                                recursive: true,
+                                                cancellationToken: cancellationToken)
 
         // Update the progress accordingly.
         progress.totalUnitCount = Int64(files.count)
