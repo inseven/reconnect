@@ -404,7 +404,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             try fileServer.rename(from: .screenshotPath, to: screenshotPath)
 
             // Perhaps the transfer model can use some paired down reference which includes the type?
-            let screenshotDetails = try fileServer.getExtendedAttributesSync(path: screenshotPath)
+            let screenshotDetails = try fileServer.getExtendedAttributes(path: screenshotPath)
 
             // Download and convert the screenshot.
             // This runs in the context of the transfers operation queue, but perhaps it would be cleaner to run this
@@ -468,7 +468,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                                         context: context,
                                         progress: progress,
                                         cancellationToken: transfer.cancellationToken)
-                let result = Transfer.FileDetails(reference: .local(url), size: 0)
+                // TODO: Read the file size.
+                let result = Transfer.FileDetails(localURL: (url))
                 transfer.setStatus(.complete(result))
                 completion(.success(url))
             } catch {
@@ -479,16 +480,31 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         }
     }
 
+    // TODO: Completion Block?
     @MainActor
-    func upload(sourceURL: URL, destinationPath: String) throws {
-        guard let applicationModel else {
-            // We assume we're tearing down if applicationModel is nil.
-            throw ReconnectError.cancelled
+    func upload(sourceURL: URL,
+                destinationPath: String,
+                context: FileTransferContext) throws {
+        guard let transfersModel = applicationModel?.transfersModel else {
+            return
         }
-        TransfersWindow.reveal()
-        return try applicationModel.transfersModel.upload(fileServer: transfersFileServer,
-                                                          sourceURL: sourceURL,
-                                                          destinationPath: destinationPath)
+        let transfer = transfersModel.newTransfer(fileReference: .local(sourceURL))
+        DispatchQueue.global(qos: .userInitiated).async { [self] in
+            do {
+                let progress = Progress()
+                transfer.setStatus(.active(progress))
+                let directoryEntry = try _upload(sourceURL: sourceURL,
+                                                 destinationPath: destinationPath,
+                                                 context: context,
+                                                 progress: progress,
+                                                 cancellationToken: transfer.cancellationToken)
+                let result = Transfer.FileDetails(remoteDirectoryEntry: directoryEntry,
+                                                  size: UInt64(directoryEntry.size))
+                transfer.setStatus(.complete(result))
+            } catch {
+                transfer.setStatus(.failed(error))
+            }
+        }
     }
 
     /**
@@ -657,6 +673,127 @@ extension DeviceModel {
         try fileManager.moveItem(at: temporaryDirectoryURL, to: destinationURL)
 
         return destinationURL
+    }
+
+    func _upload(sourceURL: URL,
+                 destinationPath: String,
+                 context: FileTransferContext,
+                 progress: Progress,
+                 cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        if FileManager.default.directoryExists(at: sourceURL) {
+            return try _uploadDirectory(sourceURL: sourceURL,
+                                        destinationPath: destinationPath,
+                                        context: context,
+                                        progress: progress,
+                                        cancellationToken: cancellationToken)
+        } else {
+            return try _uploadFile(sourceURL: sourceURL,
+                                   destinationPath: destinationPath,
+                                   context: context,
+                                   progress: progress,
+                                   cancellationToken: cancellationToken)
+        }
+    }
+
+    func _uploadFile(sourceURL: URL,
+                     destinationPath: String,
+                     context: FileTransferContext,
+                     progress: Progress,
+                     cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        assert(!sourceURL.hasDirectoryPath)  // TODO: Is this sufficient?
+
+        let fileManager = FileManager.default
+
+        // Read the local file size so we can set the progress total unit count.
+        let attributes = try fileManager.attributesOfItem(atPath: sourceURL.path)
+        let size = attributes[.size] as! Int64
+        progress.totalUnitCount = size
+
+        // Upload the file.
+        try transfersFileServer.copyFile(fromLocalPath: sourceURL.path,
+                                         toRemotePath: destinationPath) { current, total in
+            progress.completedUnitCount = Int64(current)
+            progress.totalUnitCount = Int64(total)
+            return cancellationToken.isCancelled ? .cancel : .continue
+        }
+
+        // Read the new file's metadata.
+        let directoryEntry = try transfersFileServer.getExtendedAttributes(path: destinationPath)
+
+        // Iterate over the files and copy each one in turn.
+        try cancellationToken.checkCancellation()
+
+        return directoryEntry
+    }
+
+    func _uploadDirectory(sourceURL: URL,
+                          destinationPath: String,
+                          context: FileTransferContext,
+                          progress: Progress,
+                          cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        assert(sourceURL.hasDirectoryPath)  // TODO: Is this sufficient?
+
+        let fileManager = FileManager.default
+
+        // Recursively list the files to work out what we need to upload.
+        let files = try fileManager.contentsOfDirectory(at: sourceURL, includingPropertiesForKeys: [.isDirectoryKey])
+            .filter { $0.lastPathComponent != ".DS_Store" }
+
+        // Create the directory to upload to.
+        try transfersFileServer.mkdir(path: destinationPath)
+
+        // Iterate over the files and copy each one in turn.
+        try cancellationToken.checkCancellation()
+        for file in files {
+
+            // Double-check that the file is contained by our directory.
+            guard file.path.hasPrefix(sourceURL.path) else {
+                throw PLPToolsError.invalidFileName
+            }
+
+            // Determine the destination path.
+            let relativePath = String(file.path.dropFirst(sourceURL.path().count))
+            let innerDestinationPath = destinationPath.appendingWindowsPathComponent(relativePath)
+
+            // Create the destination directory, or copy the file.
+            progress.localizedAdditionalDescription = file.path
+            if file.hasDirectoryPath {
+                try transfersFileServer.mkdir(path: innerDestinationPath)
+                progress.completedUnitCount += 1
+            } else {
+                let copyProgress = Progress()
+                progress.addChild(copyProgress, withPendingUnitCount: 1)
+
+                // Read the local file size so we can set the progress total unit count.
+                let attributes = try fileManager.attributesOfItem(atPath: sourceURL.path)
+                let size = attributes[.size] as! Int64
+                copyProgress.totalUnitCount = size
+
+                // Upload the file.
+                try transfersFileServer.copyFile(fromLocalPath: file.path,
+                                                 toRemotePath: innerDestinationPath) { current, total in
+                    copyProgress.completedUnitCount = Int64(current)
+                    copyProgress.totalUnitCount = Int64(total)
+                    return cancellationToken.isCancelled ? .cancel : .continue
+                }
+                copyProgress.completedUnitCount = copyProgress.totalUnitCount
+            }
+
+            // Check to see if we've been cancelled.
+            try cancellationToken.checkCancellation()
+        }
+
+        // Read the new file's metadata.
+        // TODO: This isn't displaying correctly.
+        let directoryEntry = try transfersFileServer.getExtendedAttributes(path: destinationPath)
+
+        // Iterate over the files and copy each one in turn.
+        try cancellationToken.checkCancellation()
+
+        return directoryEntry
     }
 
 }

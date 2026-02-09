@@ -190,12 +190,13 @@ class DirectoryModel {
                              completion: completion)
     }
 
-    func upload(url: URL) {
-        // TODO: This should take a completion block!!
-        Task { [deviceModel] in
-            try? deviceModel.upload(sourceURL: url, destinationPath: path + url.lastPathComponent)
-            self.refresh()
-        }
+    // TODO: Completion block.
+    func upload(url: URL,
+                context: FileTransferContext) {
+        try? deviceModel.upload(sourceURL: url,
+                                destinationPath: path + url.lastPathComponent,
+                                context: context)
+//        self.refresh()  // TODO: Do this on completion.
     }
 
 }

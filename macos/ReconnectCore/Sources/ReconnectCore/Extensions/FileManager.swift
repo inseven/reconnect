@@ -34,6 +34,17 @@ extension FileManager {
         return temporaryURL
     }
 
+    public func directoryExists(at url: URL) -> Bool {
+        guard url.isFileURL else {
+            return false
+        }
+        var isDirectory: ObjCBool = false
+        guard fileExists(atPath: url.path, isDirectory: &isDirectory) else {
+            return false
+        }
+        return isDirectory.boolValue
+    }
+
     public func fileExists(at url: URL) -> Bool {
         guard url.isFileURL else {
             return false

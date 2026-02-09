@@ -486,13 +486,7 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func getExtendedAttributes(path: String) async throws -> DirectoryEntry {
-        try await perform {
-            return try self.workQueue_getExtendedAttributes(path: path)
-        }
-    }
-
-    public func getExtendedAttributesSync(path: String) throws -> DirectoryEntry {
+    public func getExtendedAttributes(path: String) throws -> DirectoryEntry {
         return try performSync { () throws(PLPToolsError) in
             return try self.workQueue_getExtendedAttributes(path: path)
         }
@@ -600,7 +594,7 @@ extension FileServer {
 
             case .stat:
 
-                let attributes = try getExtendedAttributesSync(path: operation.path)
+                let attributes = try getExtendedAttributes(path: operation.path)
                 return .stat(Fs.Stat(size: UInt64(attributes.size),
                                      lastModified: attributes.modificationDate,
                                      isDirectory: attributes.isDirectory))

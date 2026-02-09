@@ -91,7 +91,6 @@ class Transfer: Identifiable, @unchecked Sendable {
     let id = UUID()
     let cancellationToken = CancellationToken()
     let item: FileReference
-    let action: (Transfer) throws -> FileReference
 
     var status: Status
 
@@ -104,24 +103,9 @@ class Transfer: Identifiable, @unchecked Sendable {
         }
     }
 
-    init(item: FileReference,
-         status: Status = .waiting,
-         action: @escaping ((Transfer) throws -> FileReference)) {
+    init(item: FileReference, status: Status = .waiting) {
         self.item = item
         self.status = status
-        self.action = action
-    }
-
-    // Runs the task synchronously.
-    // TODO: This could be achieved by dispatching to the worker and handling the result internally?
-    func run() throws -> FileReference {
-        do {
-            return try action(self)
-        } catch {
-            print("Failed with error \(error).")
-            self.setStatus(.failed(error))
-            throw error
-        }
     }
 
     func setStatus(_ status: Status) {

@@ -23,55 +23,19 @@ import ReconnectCore
 @MainActor @Observable
 class TransfersModel {
 
-    var isActive: Bool {
-        return transfers
-            .map { $0.isActive }
-            .reduce(false) { $0 || $1 }
-    }
-
     var transfers: [Transfer] = []
     var selection: UUID? = nil
-
-    let workQueue = DispatchQueue(label: "TransfersModel.workQueue")
 
     init() {
     }
 
     func newTransfer(fileReference: FileReference) -> Transfer {
         TransfersWindow.reveal()
-        let transfer = Transfer(item: fileReference) { _ in
-            // This block is part of a transition away from transfer blocks that perform the work, to simple tracking
-            // objects. This means that this block will never be run so the throw is the cleanest situation to notice
-            // if it's called by mistake.
-            throw ReconnectError.unknown
-        }
+        let transfer = Transfer(item: fileReference)
         DispatchQueue.main.async {
             self.transfers.append(transfer)
         }
         return transfer
-    }
-
-    func upload(fileServer: FileServer, sourceURL: URL, destinationPath: String) throws {
-        print("Uploading file at path '\(sourceURL.path)' to destination path '\(destinationPath)'...")
-        TransfersWindow.reveal()
-        let upload = Transfer(item: .local(sourceURL)) { transfer in
-            try fileServer.copyFile(fromLocalPath: sourceURL.path,
-                                          toRemotePath: destinationPath) { progress, size in
-                let p = Progress(totalUnitCount: Int64(size))
-                p.completedUnitCount = Int64(progress)
-                transfer.setStatus(.active(p))
-                return transfer.isCancelled ? .cancel : .continue
-            }
-            let directoryEntry = try fileServer.getExtendedAttributesSync(path: destinationPath)
-            let fileDetails = Transfer.FileDetails(reference: .remote(directoryEntry),
-                                                   size: UInt64(directoryEntry.size))
-            transfer.setStatus(.complete(fileDetails))
-            return .remote(directoryEntry)
-        }
-        transfers.append(upload)
-        workQueue.async {
-            _ = try? upload.run()
-        }
     }
 
     func clear() {

@@ -27,17 +27,8 @@ public class PsionClient {
         
     }
 
-    public func runProgram(path: String) async throws {
-        let attributes = try await fileServer.getExtendedAttributes(path: path)
-        if attributes.uid1 == .dynamicLibraryUid {
-            try remoteCommandServices.execProgram(program: path)
-        } else {
-            try remoteCommandServices.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + path)
-        }
-    }
-
     public func runProgram(path: String) throws {
-        let attributes = try fileServer.getExtendedAttributesSync(path: path)
+        let attributes = try fileServer.getExtendedAttributes(path: path)
         if attributes.uid1 == .dynamicLibraryUid {
             try remoteCommandServices.execProgram(program: path)
         } else {

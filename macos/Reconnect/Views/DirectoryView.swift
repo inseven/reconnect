@@ -175,7 +175,7 @@ struct DirectoryView: View {
                         return
                     }
                     DispatchQueue.main.sync {
-                        directoryModel.upload(url: url)
+                        directoryModel.upload(url: url, context: .drag)
                     }
                 }
             }
