@@ -18,34 +18,32 @@
 
 import Foundation
 
-import ReconnectCore
-
-class CancellationToken {
+public class CancellationToken {
 
     private let lock = NSLock()
 
     private var _isCancelled = false
 
-    var isCancelled: Bool {
+    public var isCancelled: Bool {
         lock.withLock {
             return _isCancelled
         }
     }
 
-    init() {
+    public init() {
     }
 
-    func cancel() {
+    public func cancel() {
         lock.withLock {
             _isCancelled = true
         }
     }
 
-    func checkCancellation() throws {
+    public func checkCancellation() throws(PLPToolsError) {
         guard isCancelled else {
             return
         }
-        throw ReconnectError.cancelled
+        throw PLPToolsError.cancelled
     }
 
 }

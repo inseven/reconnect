@@ -234,7 +234,9 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    private func workQueue_dir(path: String, recursive: Bool) throws(PLPToolsError) -> [DirectoryEntry] {
+    private func workQueue_dir(path: String,
+                               recursive: Bool,
+                               cancellationToken: CancellationToken) throws(PLPToolsError) -> [DirectoryEntry] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var details = PlpDir()
@@ -252,9 +254,15 @@ public class FileServer: @unchecked Sendable {
         for entry in entries {
             result.append(entry)
             if entry.isDirectory {
-                result.append(contentsOf: try workQueue_dir(path: entry.path, recursive: true))
+                try cancellationToken.checkCancellation()
+                result.append(contentsOf: try workQueue_dir(path: entry.path,
+                                                            recursive: true,
+                                                            cancellationToken: cancellationToken))
             }
         }
+
+        try cancellationToken.checkCancellation()
+
         return result
     }
 
@@ -354,7 +362,7 @@ public class FileServer: @unchecked Sendable {
         try workQueue_connect()
 
         // List the contents of the directory.
-        let files = try workQueue_dir(path: path, recursive: true)
+        let files = try workQueue_dir(path: path, recursive: true, cancellationToken: CancellationToken())
 
         // Delete the directory contents; relies on the list of contents returned from a recursive `workQueue_dir` being
         // given in a depth-first search order.
@@ -426,9 +434,11 @@ public class FileServer: @unchecked Sendable {
         return result
     }
 
-    public func dir(path: String, recursive: Bool = false) throws(PLPToolsError) -> [DirectoryEntry] {
+    public func dir(path: String,
+                    recursive: Bool = false,
+                    cancellationToken: CancellationToken = CancellationToken()) throws(PLPToolsError) -> [DirectoryEntry] {
         return try perform { () throws(PLPToolsError) -> [DirectoryEntry] in
-            return try self.workQueue_dir(path: path, recursive: recursive)
+            return try self.workQueue_dir(path: path, recursive: recursive, cancellationToken: cancellationToken)
         }
     }
 
