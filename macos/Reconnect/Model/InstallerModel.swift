@@ -207,7 +207,7 @@ class InstallerModel: Runnable {
             guard let installDirectory = device.installDirectory else {
                 throw .notSupported
             }
-            let drives = try device.fileServer.drivesSync().filter { driveInfo in
+            let drives = try device.fileServer.drives().filter { driveInfo in
                 driveInfo.mediaType != .rom
             }
             let sem = DispatchSemaphore(value: 0)

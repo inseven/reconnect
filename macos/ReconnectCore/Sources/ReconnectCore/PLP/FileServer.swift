@@ -220,20 +220,7 @@ public class FileServer: @unchecked Sendable {
         self.port = port
     }
 
-    private func perform<T>(action: @escaping () throws -> T) async throws -> T {
-        return try await withCheckedThrowingContinuation { continuation in
-            workQueue.async {
-                do {
-                    let result = try action()
-                    continuation.resume(returning: result)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-
-    private func performSync<T, E: Error>(action: @escaping () throws(E) -> T) throws(E) -> T {
+    private func perform<T, E: Error>(action: @escaping () throws(E) -> T) throws(E) -> T {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         let result: Result<T, E> = workQueue.sync {
             return Result(catching: action)
@@ -440,7 +427,7 @@ public class FileServer: @unchecked Sendable {
     }
 
     public func dir(path: String, recursive: Bool = false) throws(PLPToolsError) -> [DirectoryEntry] {
-        return try performSync { () throws(PLPToolsError) -> [DirectoryEntry] in
+        return try perform { () throws(PLPToolsError) -> [DirectoryEntry] in
             return try self.workQueue_dir(path: path, recursive: recursive)
         }
     }
@@ -448,7 +435,7 @@ public class FileServer: @unchecked Sendable {
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
-        return try performSync { () throws(PLPToolsError) in
+        return try perform { () throws(PLPToolsError) in
             try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
                                         callback: callback)
@@ -459,7 +446,7 @@ public class FileServer: @unchecked Sendable {
                          toRemotePath remoteDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        try performSync {
+        try perform {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
                                         callback: callback)
@@ -487,14 +474,14 @@ public class FileServer: @unchecked Sendable {
     }
 
     public func getExtendedAttributes(path: String) throws -> DirectoryEntry {
-        return try performSync { () throws(PLPToolsError) in
+        return try perform { () throws(PLPToolsError) in
             return try self.workQueue_getExtendedAttributes(path: path)
         }
     }
 
     public func exists(path: String) throws(PLPToolsError) -> Bool {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        return try performSync { () throws(PLPToolsError) in
+        return try perform { () throws(PLPToolsError) in
             let result = try self.workQueue_exists(path: path)
             return result
         }
@@ -502,37 +489,31 @@ public class FileServer: @unchecked Sendable {
 
     public func mkdir(path: String) throws {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
-        try performSync { () throws(PLPToolsError) in
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_mkdir(path: path)
         }
     }
 
     public func rmdir(path: String) throws {
-        try performSync {
+        try perform {
             try self.workQueue_rmdir(path: path)
         }
     }
 
     public func remove(path: String) throws(PLPToolsError) {
-        try performSync { () throws(PLPToolsError) in
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_remove(path: path)
         }
     }
 
     public func rename(from fromPath: String, to toPath: String) throws {
-        try performSync {
+        try perform {
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
     }
 
-    public func drives() async throws -> [DriveInfo] {
-        try await perform {
-            return try self.workQueue_drives()
-        }
-    }
-
-    public func drivesSync() throws(PLPToolsError) -> [DriveInfo] {
-        return try performSync { () throws(PLPToolsError) -> [DriveInfo] in
+    public func drives() throws(PLPToolsError) -> [DriveInfo] {
+        return try perform { () throws(PLPToolsError) -> [DriveInfo] in
             return try self.workQueue_drives()
         }
     }

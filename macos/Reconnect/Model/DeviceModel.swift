@@ -65,7 +65,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
                 // 1) Perform a drive listing. We know we can always safely do this.
                 try cancellationToken.checkCancellation()
-                let drives = try fileServer.drivesSync()
+                let drives = try fileServer.drives()
 
                 // 2) Get the internal drive.
                 guard let internalDrive = drives.first(where: { $0.driveAttributes.contains(.internal) }) else {
