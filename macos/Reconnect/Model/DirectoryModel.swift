@@ -181,7 +181,7 @@ class DirectoryModel {
                   completion: @escaping (Result<URL, Error>) -> Void) {
         precondition(destinationDirectoryURL.hasDirectoryPath)
         guard let sourceDirectoryEntry = files.first(where: { $0.id == sourceDirectoryEntryId }) else {
-            completion(.failure(PLPToolsError.noSuchFile))
+            completion(.failure(PLPToolsError.E_PSI_FILE_NXIST))
             return
         }
         deviceModel.download(sourceDirectoryEntry: sourceDirectoryEntry,
@@ -251,7 +251,7 @@ extension DirectoryModel: FileManageable {
             }
 
             guard let folderName else {
-                throw PLPToolsError.invalidFileName
+                throw PLPToolsError.E_PSI_FILE_NAME
             }
 
             // Create the folder.

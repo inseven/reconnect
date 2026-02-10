@@ -43,7 +43,7 @@ public class CancellationToken {
         guard isCancelled else {
             return
         }
-        throw PLPToolsError.cancelled
+        throw .E_PSI_FILE_CANCEL
     }
 
 }

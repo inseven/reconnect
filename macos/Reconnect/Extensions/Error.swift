@@ -24,7 +24,7 @@ extension Error {
     var isCancel: Bool {
         if let error = self as? Sis.InstallError, case .userCancelled = error {
             return true
-        } else if let error = self as? PLPToolsError, case .cancelled = error {
+        } else if let error = self as? PLPToolsError, case .E_PSI_FILE_CANCEL = error {
             return true
         } else if let error = self as? ReconnectError, case .cancelled = error {
             return true

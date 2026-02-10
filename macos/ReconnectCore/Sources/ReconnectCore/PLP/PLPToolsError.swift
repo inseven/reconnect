@@ -18,87 +18,170 @@
 
 import Foundation
 
-public enum PLPToolsError: Int32, Error {
-    case general = -1
-    case badArgument = -2
-    case osError = -3
-    case notSupported = -4
-    case underflow = -5
-    case overflow = -6
-    case outOfRange = -7
-    case divideByZero = -8
-    case inUse = -9
-    case outOfMemory = -10
-    case outOfSegments = -11
-    case outOfSemaphores = -12
-    case outOfProcesses = -13
-    case alreadyOpen = -14
-    case notOpen = -15
-    case badImage = -16
-    case receiveError = -17
-    case deviceError = -18
-    case noFilesystem = -19
-    case notReady = -20
-    case noFont = -21
-    case tooWide = -22
-    case tooMany = -23
-    case fileAlreadyExists = -32
-    case noSuchFile = -33
-    case writeError = -34
-    case readError = -35
-    case endOfFile = -36
-    case readBufferFull = -37
-    case invalidFileName = -38
-    case accessDenied = -39
-    case resourceLocked = -40
-    case noSuchDevice = -41
-    case noSuchDirectory = -42
-    case noSuchRecord = -43
-    case fileIsReadOnly = -44
-    case invalidIOOperation = -45
-    case ioPending = -46
-    case invalidVolumeName = -47
-    case cancelled = -48
-    case noMemoryForControlBlock = -49
-    case unitDisconnected = -50
-    case alreadyConnected = -51
-    case retransmissionThresholdExceeded = -52
-    case physicalLinkFailure = -53
-    case inactivityTimerExpired = -54
-    case serialParityError = -55
-    case serialFramingError = -56
-    case serialOverrunError = -57
-    case modemCannotConnectToRemoteModem = -58
-    case remoteModemBusy = -59
-    case remoteModemDidNotAnswer = -60
-    case numberBlacklistedByTheModem = -61
-    case driveNotReady = -62
-    case unknownMedia = -63
-    case directoryFull = -64
-    case writeProtected = -65
-    case mediaCorrupt = -66
-    case abortedOperation = -67
-    case failedToEraseFlashMedia = -68
-    case invalidFileForDBFSystem = -69
-    case powerFailure = -100
-    case tooBig = -101
-    case badDescriptor = -102
-    case badEntryPoint = -103
-    case couldNotDisconnect = -104
-    case badDriver = -105
-    case operationNotCompleted = -106
-    case serverBusy = -107
-    case terminated = -108
-    case died = -109
-    case badHandle = -110
+import ncp
 
-    case unknown = -999
-}
+public typealias PLPToolsError = rfsv.errs
 
-extension PLPToolsError: LocalizedError {
+extension PLPToolsError: @retroactive _BridgedNSError {}
+extension PLPToolsError: @retroactive _ObjectiveCBridgeableError {}
+
+extension PLPToolsError: @retroactive LocalizedError {
 
     public var errorDescription: String? {
-        return LocalizedEpoc32ErrorCode(rawValue)
+        switch self {
+        case  .E_PSI_GEN_NONE:
+            return "None"
+        case .E_PSI_GEN_FAIL:
+            return "General"
+        case .E_PSI_GEN_ARG:
+            return "Bad argument"
+        case .E_PSI_GEN_OS:
+            return "OS error"
+        case .E_PSI_GEN_NSUP:
+            return "Not supported"
+        case .E_PSI_GEN_UNDER:
+            return "Underflow"
+        case .E_PSI_GEN_OVER:
+            return "Overflow"
+        case .E_PSI_GEN_RANGE:
+            return "Out of range"
+        case .E_PSI_GEN_DIVIDE:
+            return "Divide by zero"
+        case .E_PSI_GEN_INUSE:
+            return "In use"
+        case  .E_PSI_GEN_NOMEMORY:
+            return "Out of memory"
+        case .E_PSI_GEN_NOSEGMENTS:
+            return "Out of segments"
+        case .E_PSI_GEN_NOSEM:
+            return "Out of semaphores"
+        case .E_PSI_GEN_NOPROC:
+            return "Out of processes"
+        case .E_PSI_GEN_OPEN:
+            return "Already open"
+        case .E_PSI_GEN_NOTOPEN:
+            return "Not open"
+        case .E_PSI_GEN_IMAGE:
+            return "Bad image"
+        case .E_PSI_GEN_RECEIVER:
+            return "Receive error"
+        case .E_PSI_GEN_DEVICE:
+            return "Device error"
+        case .E_PSI_GEN_FSYS:
+            return "No filesystem"
+        case .E_PSI_GEN_START:
+            return "Not ready"
+        case .E_PSI_GEN_NOFONT:
+            return "No font"
+        case .E_PSI_GEN_TOOWIDE:
+            return "Too wide"
+        case .E_PSI_GEN_TOOMANY:
+            return "Too many"
+        case .E_PSI_FILE_EXIST:
+            return "File already exists"
+        case .E_PSI_FILE_NXIST:
+            return "No such file"
+        case .E_PSI_FILE_WRITE:
+            return "Write error"
+        case .E_PSI_FILE_READ:
+            return "Read error"
+        case .E_PSI_FILE_EOF:
+            return "End of file"
+        case .E_PSI_FILE_FULL:
+            return "Disk/serial read buffer full"
+        case .E_PSI_FILE_NAME:
+            return "Invalid file name"
+        case .E_PSI_FILE_ACCESS:
+            return "Access denied"
+        case .E_PSI_FILE_LOCKED:
+            return "Resource locked"
+        case .E_PSI_FILE_DEVICE:
+            return "No such device"
+        case .E_PSI_FILE_DIR:
+            return "No such directory"
+        case .E_PSI_FILE_RECORD:
+            return "No such record"
+        case .E_PSI_FILE_RDONLY:
+            return "File is read-only"
+        case .E_PSI_FILE_INV:
+            return "Invalid I/O operation"
+        case .E_PSI_FILE_PENDING:
+            return "I/O pending (not yet completed)"
+        case .E_PSI_FILE_VOLUME:
+            return "Invalid volume name"
+        case .E_PSI_FILE_CANCEL:
+            return "Canceled"
+        case .E_PSI_FILE_ALLOC:
+            return "No memory for control block"
+        case .E_PSI_FILE_DISC:
+            return "Disconnected"
+        case .E_PSI_FILE_CONNECT:
+            return "Already connected"
+        case .E_PSI_FILE_RETRAN:
+            return "Retransmission threshold exceeded"
+        case .E_PSI_FILE_LINE:
+            return "Physical link failure"
+        case .E_PSI_FILE_INACT:
+            return "Inactivity timer expired"
+        case .E_PSI_FILE_PARITY:
+            return "Serial parity error"
+        case .E_PSI_FILE_FRAME:
+            return "Serial framing error"
+        case .E_PSI_FILE_OVERRUN:
+            return "Serial overrun error"
+        case .E_PSI_MDM_CONFAIL:
+            return "Modem cannot connect to remote modem"
+        case .E_PSI_MDM_BUSY:
+            return "Remote modem busy"
+        case .E_PSI_MDM_NOANS:
+            return "Remote modem did not answer"
+        case .E_PSI_MDM_BLACKLIST:
+            return "Number disallowed by the modem"
+        case .E_PSI_FILE_NOTREADY:
+            return "Drive not ready"
+        case .E_PSI_FILE_UNKNOWN:
+            return "Unknown media"
+        case .E_PSI_FILE_DIRFULL:
+            return "Directory full"
+        case .E_PSI_FILE_PROTECT:
+            return "Write-protected"
+        case .E_PSI_FILE_CORRUPT:
+            return "Media corrupt"
+        case .E_PSI_FILE_ABORT:
+            return "Aborted operation"
+        case .E_PSI_FILE_ERASE:
+            return "Failed to erase flash media"
+        case .E_PSI_FILE_INVALID:
+            return "Invalid file for DBF system"
+        case .E_PSI_GEN_POWER:
+            return "Power failure"
+        case .E_PSI_FILE_TOOBIG:
+            return "Too big"
+        case .E_PSI_GEN_DESCR:
+            return "Dad descriptor"
+        case .E_PSI_GEN_LIB:
+            return "Bad entry point"
+        case .E_PSI_FILE_NDISC:
+            return "Could not disconnect"
+        case .E_PSI_FILE_DRIVER:
+            return "Bad driver"
+        case .E_PSI_FILE_COMPLETION:
+            return "Operation not completed"
+        case .E_PSI_GEN_BUSY:
+            return "Server busy"
+        case .E_PSI_GEN_TERMINATED:
+            return "Terminated"
+        case .E_PSI_GEN_DIED:
+            return "Died"
+        case .E_PSI_FILE_HANDLE:
+            return "Bad handle"
+
+        // Special error codes.
+        case .E_PSI_NOT_SIBO:
+            return "Operation not permitted in EPOC16"
+        case .E_PSI_INTERNAL:
+            return "Internal error"
+        }
     }
 
 }

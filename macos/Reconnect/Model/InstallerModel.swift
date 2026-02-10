@@ -153,7 +153,7 @@ class InstallerModel: Runnable {
             do {
                 // Determine which device we're using.
                 guard self.device != nil else {
-                    throw PLPToolsError.unitDisconnected
+                    throw PLPToolsError.E_PSI_FILE_DISC
                 }
 
                 // Load the installer details.
@@ -202,10 +202,10 @@ class InstallerModel: Runnable {
         func showConfigurationQuery(sis: Sis.File, driveRequired: Bool) throws(PLPToolsError) -> Sis.BeginResult {
             dispatchPrecondition(condition: .notOnQueue(.main))
             guard let device else {
-                throw .unitDisconnected
+                throw .E_PSI_FILE_DISC
             }
             guard let installDirectory = device.installDirectory else {
-                throw .notSupported
+                throw .E_PSI_GEN_NSUP
             }
             let drives = try device.fileServer.drives().filter { driveInfo in
                 driveInfo.mediaType != .rom
@@ -290,13 +290,13 @@ extension InstallerModel: SisInstallIoHandler {
 
         do {
             guard let device else {
-                throw PLPToolsError.unitDisconnected
+                throw PLPToolsError.E_PSI_FILE_DISC
             }
             let installDirectory = DispatchQueue.main.sync {
                 return device.installDirectory
             }
             guard let installDirectory else {
-                throw PLPToolsError.notSupported
+                throw PLPToolsError.E_PSI_GEN_NSUP
             }
 
             // Ensure the install directory exists on the Psion.
@@ -317,7 +317,7 @@ extension InstallerModel: SisInstallIoHandler {
                 return .epocError(error.rawValue)
             } else {
                 print("Encountered unmapped internal plptools error during install '\(error)'.")
-                return .epocError(PLPToolsError.unknown.rawValue)
+                return .epocError(PLPToolsError.E_PSI_FILE_UNKNOWN.rawValue)
             }
         }
     }
@@ -388,7 +388,7 @@ extension InstallerModel: SisInstallIoHandler {
         dispatchPrecondition(condition: .notOnQueue(.main))
         print("Perform operation \(operation)...")
         guard let device else {
-            return .epocError(PLPToolsError.unitDisconnected.rawValue)
+            return .epocError(PLPToolsError.E_PSI_FILE_DISC.rawValue)
         }
         return device.fileServer.fsop(operation) { progress in
             DispatchQueue.main.sync {
