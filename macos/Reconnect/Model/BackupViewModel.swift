@@ -22,10 +22,40 @@ import Interact
 import ReconnectCore
 
 @Observable
-class BackupModel: Runnable {
+class BackupViewModel: Runnable {
+
+    struct DriveQuery: Identifiable {
+
+        let id = UUID()
+        let drives: [FileServer.DriveInfo]
+        let defaultSelection: Set<FileServer.DriveInfo>
+        let platform: Platform
+
+        private let completion: (Result<Set<FileServer.DriveInfo>, Error>) -> Void
+
+        init(drives: [FileServer.DriveInfo],
+             defaultSelection: Set<FileServer.DriveInfo>,
+             platform: Platform,
+             completion: @escaping (Result<Set<FileServer.DriveInfo>, Error>) -> Void) {
+            self.drives = drives
+            self.defaultSelection = defaultSelection
+            self.platform = platform
+            self.completion = completion
+        }
+
+        func `continue`(drives: Set<FileServer.DriveInfo>) {
+            completion(.success(drives))
+        }
+
+        func cancel() {
+            completion(.failure(ReconnectError.cancelled))
+        }
+
+    }
 
     enum Page {
         case loading
+        case selectDrives(DriveQuery)
         case progress(Progress, CancellationToken)
         case error(Error)
         case complete
@@ -61,19 +91,31 @@ class BackupModel: Runnable {
     private func backup() throws {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
-        // TODO: Query for the backup configuration.
-
-        let progress = Progress()
-        let cancellationToken = CancellationToken()
+        // Show the drive picker.
+        let sem = DispatchSemaphore(value: 0)
+        var result: Result<Set<FileServer.DriveInfo>, Error> = .failure(ReconnectError.cancelled)
+        let driveQuery = DriveQuery(drives: deviceModel.drives,
+                                    defaultSelection: [deviceModel.internalDrive],
+                                    platform: deviceModel.platform) { completionResult in
+            result = completionResult
+            sem.signal()
+        }
+        DispatchQueue.main.sync {
+            self.page = .selectDrives(driveQuery)
+        }
+        sem.wait()
+        let drives = try result.get()
 
         // Show the progress page.
         // Since this observes the progress object we've injected in, we don't need to do anything to ensure it updates.
+        let progress = Progress()
+        let cancellationToken = CancellationToken()
         DispatchQueue.main.sync {
             self.page = .progress(progress, cancellationToken)
         }
 
         // Perform the backup.
-        _ = try deviceModel.backUp(progress: progress, cancellationToken: cancellationToken)
+        _ = try deviceModel.backUp(drives: drives, progress: progress, cancellationToken: cancellationToken)
 
         // Show complete page.
         DispatchQueue.main.sync {

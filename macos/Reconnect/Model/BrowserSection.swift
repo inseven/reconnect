@@ -59,21 +59,9 @@ extension BrowserSection {
         case .disconnected:
             return "Disconnected16"
         case .drive(_, let driveInfo, let platform):
-            switch platform {
-            case .epoc16:
-                if driveInfo.drive == "A" || driveInfo.drive == "B" {
-                    return "SSD16"
-                } else {
-                    return "Drive16"
-                }
-            case .epoc32:
-                switch driveInfo.mediaType {
-                case .disk:
-                    return "Disk16"
-                default:
-                    return "Drive16"
-                }
-            }
+            return DisplayHelpers.imageForDrive(driveInfo.drive,
+                                                mediaType: driveInfo.mediaType,
+                                                platform: platform)
         case .directory:
             return "Folder16"
         case .device:
