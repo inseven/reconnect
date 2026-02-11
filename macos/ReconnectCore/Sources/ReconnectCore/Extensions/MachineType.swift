@@ -20,29 +20,38 @@ import SwiftUI
 
 extension RemoteCommandServicesClient.MachineType {
 
+    public var isEpoc32: Bool {
+        switch self {
+        case .PSI_MACH_S5, .PSI_MACH_WINC:
+            return true
+        default:
+            return false
+        }
+    }
+
     public var localizedNameKey: LocalizedStringKey {
         switch self {
-        case .unknown:
+        case .PSI_MACH_UNKNOWN:
             return "Unknown"
-        case .pc:
+        case .PSI_MACH_PC:
             return "PC"
-        case .mc:
+        case .PSI_MACH_MC:
             return "MC"
-        case .hc:
+        case .PSI_MACH_HC:
             return "HC"
-        case .series3:
+        case .PSI_MACH_S3:
             return "Series 3"
-        case .series3acmx:
+        case .PSI_MACH_S3A:
             return "Series 3a / Series 3c / Series 3mx"
-        case .workabout:
+        case .PSI_MACH_WORKABOUT:
             return "Workabout"
-        case .siena:
+        case .PSI_MACH_SIENNA:
             return "Siena"
-        case .series3c:
+        case .PSI_MACH_S3C:
             return "Series 3c"
-        case .series5:
+        case .PSI_MACH_S5:
             return "Series 5 / Series 5mx / Series 7 / netBook"
-        case .winC:
+        case .PSI_MACH_WINC:
             return "WinC"
         }
 

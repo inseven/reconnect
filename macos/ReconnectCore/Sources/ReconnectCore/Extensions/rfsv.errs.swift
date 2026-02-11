@@ -20,17 +20,12 @@ import Foundation
 
 import ncp
 
-extension rfsv.errs {
+extension PLPToolsError {
 
     public func check() throws(PLPToolsError) {
-        guard rawValue != 0 else {
-            return
+        if self != .E_PSI_GEN_NONE {
+            throw self
         }
-        guard let error = PLPToolsError(rawValue: rawValue) else {
-            print("Encountered unknown plptools error code (\(rawValue).")
-            throw .unknown
-        }
-        throw error
     }
 
 }

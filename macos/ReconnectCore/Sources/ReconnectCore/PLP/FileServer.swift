@@ -230,7 +230,7 @@ public class FileServer: @unchecked Sendable {
 
     private func workQueue_connect() throws(PLPToolsError) {
         guard self.client.connect(self.host, self.port) else {
-            throw PLPToolsError.unitDisconnected
+            throw PLPToolsError.E_PSI_FILE_DISC  // Disconnected.
         }
     }
 
@@ -284,7 +284,7 @@ public class FileServer: @unchecked Sendable {
             return true
         } catch {
             switch error {
-            case .noSuchFile, .noSuchDirectory, .driveNotReady, .noSuchDevice:
+            case .E_PSI_FILE_NXIST, .E_PSI_FILE_DIR, .E_PSI_FILE_NOTREADY, .E_PSI_FILE_DEVICE:
                 return false
             default:
                 throw error
@@ -411,7 +411,7 @@ public class FileServer: @unchecked Sendable {
         var driveInfo = PlpDrive()
         try client.devinfo(d, &driveInfo).check()
         guard let mediaType = MediaType(rawValue: driveInfo.getMediaType()) else {
-            throw PLPToolsError.unknownMedia
+            throw .E_PSI_FILE_UNKNOWN  // Unknown media.
         }
         let driveAttributes = DriveAttributes(rawValue: driveInfo.getDriveAttribute())
         let name = string_cstr(driveInfo.getName())!
@@ -427,7 +427,7 @@ public class FileServer: @unchecked Sendable {
         for drive in try self.workQueue_devlist() {
             do {
                 result.append(try self.workQueue_devinfo(drive: drive))
-            } catch PLPToolsError.driveNotReady {
+            } catch .E_PSI_FILE_NOTREADY {  // Drive not ready.
                 continue
             }
         }
@@ -600,16 +600,16 @@ extension FileServer {
                 return .err(.notReady)
                 
             }
-        } catch PLPToolsError.inUse {
+        } catch PLPToolsError.E_PSI_GEN_INUSE {
             return .err(.inUse)
-        } catch PLPToolsError.noSuchFile,
-                PLPToolsError.noSuchDevice,
-                PLPToolsError.noSuchRecord,
-                PLPToolsError.noSuchDirectory {
+        } catch PLPToolsError.E_PSI_FILE_NXIST,
+                PLPToolsError.E_PSI_FILE_DEVICE,
+                PLPToolsError.E_PSI_FILE_RECORD,
+                PLPToolsError.E_PSI_FILE_DIR {
             return .err(.notFound)
-        } catch PLPToolsError.fileAlreadyExists {
+        } catch PLPToolsError.E_PSI_FILE_EXIST {
             return .err(.alreadyExists)
-        } catch PLPToolsError.notReady {
+        } catch PLPToolsError.E_PSI_GEN_START {
             return .err(.notReady)
         } catch {
             if let error = error as? PLPToolsError {

@@ -69,7 +69,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
                 // 2) Get the internal drive.
                 guard let internalDrive = drives.first(where: { $0.driveAttributes.contains(.internal) }) else {
-                    throw PLPToolsError.driveNotReady
+                    throw PLPToolsError.E_PSI_FILE_NOTREADY
                 }
 
                 // 3) Infer that we're talking to an EPOC16 device by the presence of a RAM-drive labeled M.
@@ -161,32 +161,21 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
     var canCaptureScreenshot: Bool {
         switch machineType {
-        case .unknown, .pc, .mc, .hc, .winC:
+        case .PSI_MACH_UNKNOWN, .PSI_MACH_PC, .PSI_MACH_MC, .PSI_MACH_HC, .PSI_MACH_WINC:
             return false
-        case .series3, .series3acmx, .workabout, .siena, .series3c:
+        case .PSI_MACH_S3, .PSI_MACH_S3A, .PSI_MACH_WORKABOUT, .PSI_MACH_SIENNA, .PSI_MACH_S3C:
             return false
-        case .series5:
+        case .PSI_MACH_S5:
             return true
         }
     }
 
     var platform: Platform {
-        if machineType.isEpoc32 {
-            return .epoc32
-        } else {
-            return .epoc16
-        }
+        return machineType.isEpoc32 ? .epoc32 : .epoc16
     }
 
     var installDirectory: String? {
-        switch machineType {
-        case .unknown, .pc, .mc, .hc, .winC:
-            return nil
-        case .series3, .series3acmx, .workabout, .siena, .series3c:
-            return .epoc16InstallDirectory
-        case .series5:
-            return .epoc32InstallDirectory
-        }
+        return machineType.isEpoc32 ? .epoc32InstallDirectory : .epoc16InstallDirectory
     }
 
     @ObservationIgnored
@@ -636,7 +625,7 @@ extension DeviceModel {
 
             // Double-check that the file is contained by our (case-insensitive) directory.
             guard file.path.lowercased().hasPrefix(sourcePath.lowercased()) else {
-                throw PLPToolsError.invalidFileName
+                throw PLPToolsError.E_PSI_FILE_NAME
             }
 
             // Determine the destination path.
@@ -744,7 +733,7 @@ extension DeviceModel {
 
             // Double-check that the file is contained by our directory.
             guard file.path.hasPrefix(sourceURL.path) else {
-                throw PLPToolsError.invalidFileName
+                throw PLPToolsError.E_PSI_FILE_NAME
             }
 
             // Determine the destination path.
