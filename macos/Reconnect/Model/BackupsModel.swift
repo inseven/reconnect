@@ -45,7 +45,7 @@ extension String {
 @Observable
 class BackupsModel {
 
-    enum Alert: Identifiable {
+    enum Prompt: Identifiable {
         case delete(DeleteConfirmation)
 
         var id: String {
@@ -75,7 +75,7 @@ class BackupsModel {
     private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
 
     var backupSets: [BackupSet] = []
-    var alert: Alert? = nil
+    var prompt: Prompt? = nil
 
     @ObservationIgnored
     weak public var delegate: BackupsModelDelegate?
@@ -151,7 +151,7 @@ class BackupsModel {
      */
     func delete(backup: Backup) {
         dispatchPrecondition(condition: .onQueue(.main))
-        alert = .delete(DeleteConfirmation(backup: backup, perform: { [self] in
+        prompt = .delete(DeleteConfirmation(backup: backup, perform: { [self] in
             performDelete(backup: backup)
         }))
     }

@@ -101,10 +101,10 @@ struct BrowserView: View {
             ToolbarSpacer(id: "spacer-2")
             RefreshToolbar()
         }
-        .alertable($backupsModel.alert) { alert in
-            switch alert {
+        .prompt(item: $backupsModel.prompt) { prompt in
+            switch prompt {
             case .delete(let deleteConfirmation):
-                Alert("Delete Backup") {
+                Prompt("Delete Backup") {
                     Button("Delete", role: .destructive) {
                         deleteConfirmation.perform()
                     }
@@ -114,45 +114,6 @@ struct BrowserView: View {
             }
         }
         .frame(minWidth: 800, minHeight: 600)
-    }
-
-}
-
-protocol AlertProtocol {
-
-    associatedtype Actions: View
-    associatedtype Message: View
-
-    var title: String { get }
-    var actions: Actions { get }
-    var message: Message { get }
-
-}
-
-struct Alert<Actions: View, Message: View>: AlertProtocol {
-
-    let title: String
-    let actions: Actions
-    let message: Message
-
-    init(_ title: String, @ViewBuilder actions: () -> Actions, @ViewBuilder message: () -> Message) {
-        self.title = title
-        self.actions = actions()
-        self.message = message()
-    }
-
-}
-
-extension View {
-
-    func alertable<T: Identifiable, A: AlertProtocol>(_ item: Binding<T?>, alert: @escaping (T) -> A) -> some View {
-        self.alert(item.wrappedValue.map(alert)?.title ?? "",
-                   isPresented: item.bool(),
-                   presenting: item.wrappedValue) { item in
-            alert(item).actions
-        } message: { item in
-            alert(item).message
-        }
     }
 
 }
