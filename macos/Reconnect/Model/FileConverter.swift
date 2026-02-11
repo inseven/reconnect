@@ -46,7 +46,7 @@ class FileConverter {
 
     private static let converters: [Conversion] = [
 
-        // MBM
+        // Multiple Bitmap Images (*.mbm).
         Conversion { entry in
             return entry.fileType == .mbm || entry.pathExtension.lowercased() == "mbm"
         } filename: { entry in
@@ -61,7 +61,7 @@ class FileConverter {
             return outputURL
         },
 
-        // WRD
+        // Psion Word (*.wrd).
         Conversion { entry in
             return entry.pathExtension.lowercased() == "wrd"
         } filename: { entry in
@@ -76,7 +76,25 @@ class FileConverter {
             let output = try PsionWord.processFile(data).get()
             try output.write(to: outputURL, atomically: true, encoding: .utf8)
             return outputURL
-        }
+        },
+
+        // Text files (*.txt, *.md). Convert Windows line endings to Unix line endings.
+        Conversion { entry in
+            return entry.pathExtension.lowercased() == "txt" || entry.pathExtension.lowercased() == "md"
+        } filename: { entry in
+            return entry.name
+        } perform: { sourceURL, destinationURL in
+            let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
+                                                                  conformingTo: .plainText)
+            let data = try Data(contentsOf: sourceURL)
+            guard let contents = String(data: data, encoding: .ascii) else {
+                throw ReconnectError.unknown
+            }
+            let output = contents.replacingOccurrences(of: "\r\n", with: "\n")
+            try output.write(to: outputURL, atomically: true, encoding: .utf8)
+            return outputURL
+        },
+
     ]
 
     private static func converter(for directoryEntry: FileServer.DirectoryEntry) -> Conversion? {
