@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import Interact
+
 import ReconnectCore
 
 @MainActor
@@ -26,6 +28,7 @@ struct BrowserView: View {
     @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(BackupsModel.self) private var backupsModel
     @Environment(TransfersModel.self) private var transfersModel
     @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
@@ -46,6 +49,7 @@ struct BrowserView: View {
     }
 
     var body: some View {
+        @Bindable var backupsModel = backupsModel
 
         NavigationSplitView {
             Sidebar()
@@ -96,6 +100,24 @@ struct BrowserView: View {
             FileToolbar()
             ToolbarSpacer(id: "spacer-2")
             RefreshToolbar()
+        }
+        .prompt(item: $backupsModel.prompt) { prompt in
+            switch prompt {
+            case .deleteConfirmation(let deleteConfirmation):
+                Prompt("Delete Backup") {
+                    Button("Delete", role: .destructive) {
+                        deleteConfirmation.perform()
+                    }
+                } message: {
+                    Text("Are you sure you want to delete this backup?")
+                }
+            case .deleteFailure(let error):
+                Prompt("Delete Backup Failed") {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(error.localizedDescription)
+                }
+            }
         }
         .frame(minWidth: 800, minHeight: 600)
     }
