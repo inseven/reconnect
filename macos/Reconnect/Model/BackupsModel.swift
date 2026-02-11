@@ -45,10 +45,37 @@ extension String {
 @Observable
 class BackupsModel {
 
+    enum Alert: Identifiable {
+        case delete(DeleteConfirmation)
+
+        var id: String {
+            switch self {
+            case .delete(let deleteConfirmation):
+                return "delete-\(deleteConfirmation.id.uuidString)"
+            }
+        }
+
+    }
+
+    struct DeleteConfirmation: Identifiable {
+
+        let id = UUID()
+
+        let backup: Backup
+        let perform: () -> Void
+
+        init(backup: Backup, perform: @escaping () -> Void) {
+            self.backup = backup
+            self.perform = perform
+        }
+
+    }
+
     private let rootURL: URL
     private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
 
     var backupSets: [BackupSet] = []
+    var alert: Alert? = nil
 
     @ObservationIgnored
     weak public var delegate: BackupsModelDelegate?
@@ -103,6 +130,30 @@ class BackupsModel {
                 print("Failed to enumerate directories with error \(error).")
             }
         }
+    }
+
+    /**
+     * Actually performs the backup deletion.
+     */
+    private func performDelete(backup: Backup) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        do {
+            let fileManager = FileManager.default
+            try fileManager.removeItem(at: backup.url)
+            update()
+        } catch {
+            print("Failed to delete backup with error.")
+        }
+    }
+
+    /**
+     * Presents a confirmation to the user, asking them if they want to delete the backup.
+     */
+    func delete(backup: Backup) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        alert = .delete(DeleteConfirmation(backup: backup, perform: { [self] in
+            performDelete(backup: backup)
+        }))
     }
 
 }

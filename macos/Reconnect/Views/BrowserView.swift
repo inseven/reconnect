@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import Interact
+
 import ReconnectCore
 
 @MainActor
@@ -26,6 +28,7 @@ struct BrowserView: View {
     @Environment(\.openWindow) private var openWindow
 
     @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(BackupsModel.self) private var backupsModel
     @Environment(TransfersModel.self) private var transfersModel
     @Environment(NavigationModel<BrowserSection>.self) private var navigationModel
 
@@ -46,6 +49,7 @@ struct BrowserView: View {
     }
 
     var body: some View {
+        @Bindable var backupsModel = backupsModel
 
         NavigationSplitView {
             Sidebar()
@@ -97,7 +101,58 @@ struct BrowserView: View {
             ToolbarSpacer(id: "spacer-2")
             RefreshToolbar()
         }
+        .alertable($backupsModel.alert) { alert in
+            switch alert {
+            case .delete(let deleteConfirmation):
+                Alert("Delete Backup") {
+                    Button("Delete", role: .destructive) {
+                        deleteConfirmation.perform()
+                    }
+                } message: {
+                    Text("Are you sure you want to delete this backup?")
+                }
+            }
+        }
         .frame(minWidth: 800, minHeight: 600)
+    }
+
+}
+
+protocol AlertProtocol {
+
+    associatedtype Actions: View
+    associatedtype Message: View
+
+    var title: String { get }
+    var actions: Actions { get }
+    var message: Message { get }
+
+}
+
+struct Alert<Actions: View, Message: View>: AlertProtocol {
+
+    let title: String
+    let actions: Actions
+    let message: Message
+
+    init(_ title: String, @ViewBuilder actions: () -> Actions, @ViewBuilder message: () -> Message) {
+        self.title = title
+        self.actions = actions()
+        self.message = message()
+    }
+
+}
+
+extension View {
+
+    func alertable<T: Identifiable, A: AlertProtocol>(_ item: Binding<T?>, alert: @escaping (T) -> A) -> some View {
+        self.alert(item.wrappedValue.map(alert)?.title ?? "",
+                   isPresented: item.bool(),
+                   presenting: item.wrappedValue) { item in
+            alert(item).actions
+        } message: { item in
+            alert(item).message
+        }
     }
 
 }

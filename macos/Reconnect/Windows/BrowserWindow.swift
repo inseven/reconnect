@@ -27,16 +27,13 @@ struct BrowserWindow: Scene {
     static let id = "browser"
 
     private let applicationModel: ApplicationModel
-    private let transfersModel: TransfersModel
     private let libraryModel: LibraryModel
     private let navigationModel: NavigationModel<BrowserSection>
 
     init(applicationModel: ApplicationModel,
-         transfersModel: TransfersModel,
          libraryModel: LibraryModel,
          navigationModel: NavigationModel<BrowserSection>) {
         self.applicationModel = applicationModel
-        self.transfersModel = transfersModel
         self.libraryModel = libraryModel
         self.navigationModel = navigationModel
     }
@@ -57,7 +54,8 @@ struct BrowserWindow: Scene {
             DeviceCommands()
         }
         .environment(applicationModel)
-        .environment(transfersModel)
+        .environment(applicationModel.backupsModel)
+        .environment(applicationModel.transfersModel)
         .environment(navigationModel)
         .handlesExternalEvents(matching: [.browser, .settings, .settingsGeneral, .settingsDevices])
     }

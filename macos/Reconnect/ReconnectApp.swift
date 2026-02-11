@@ -30,7 +30,6 @@ struct ReconnectApp: App {
     var body: some Scene {
 
         BrowserWindow(applicationModel: appDelegate.applicationModel,
-                      transfersModel: appDelegate.applicationModel.transfersModel,
                       libraryModel: appDelegate.applicationModel.libraryModel,
                       navigationModel: appDelegate.applicationModel.navigationModel)
 
