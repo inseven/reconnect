@@ -304,6 +304,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
                 // Create the target directory.
                 let driveBackupURL = backupURL.appendingPathComponent(drive.drive, isDirectory: true)
+                try fileManager.createDirectory(at: driveBackupURL, withIntermediateDirectories: true)
 
                 // Copy the files.
                 for file in driveFiles {
@@ -608,7 +609,7 @@ extension DeviceModel {
 
         // Create a temporary directory to download to.
         let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
-        let temporaryURL = temporaryDirectoryURL.appendingPathComponent(sourceDirectoryEntry.path)
+        let temporaryURL = temporaryDirectoryURL.appendingPathComponent(sourceDirectoryEntry.name)
         defer {
             try? fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
         }
