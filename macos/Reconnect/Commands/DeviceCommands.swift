@@ -37,24 +37,20 @@ public struct DeviceCommands: Commands {
 
         CommandMenu("Device") {
 
-            Button {
+            Button("Back Up...", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90") {
                 deviceProxy?.deviceModel.backUp()
-            } label: {
-                Label("Back Up...", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
             }
             .keyboardShortcut("B", modifiers: [.command])
 
-            Button {
+            Button("Capture Screenshot", systemImage: "camera.viewfinder") {
                 deviceProxy?.deviceModel.captureScreenshot()
-            } label: {
-                Label("Capture Screenshot", systemImage: "camera.viewfinder")
             }
             .keyboardShortcut("S", modifiers: [.command, .shift])
             .disabled(!canCaptureScreenshot)
 
             Divider()
 
-            Button("Install Reconnect Tools...") {
+            Button("Install Reconnect Tools...", systemImage: "shippingbox") {
                 applicationModel.installGuestTools()
             }
             .disabled(deviceProxy == nil)
