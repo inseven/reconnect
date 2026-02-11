@@ -103,13 +103,19 @@ struct BrowserView: View {
         }
         .prompt(item: $backupsModel.prompt) { prompt in
             switch prompt {
-            case .delete(let deleteConfirmation):
+            case .deleteConfirmation(let deleteConfirmation):
                 Prompt("Delete Backup") {
                     Button("Delete", role: .destructive) {
                         deleteConfirmation.perform()
                     }
                 } message: {
                     Text("Are you sure you want to delete this backup?")
+                }
+            case .deleteFailure(let error):
+                Prompt("Delete Backup Failed") {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text(error.localizedDescription)
                 }
             }
         }

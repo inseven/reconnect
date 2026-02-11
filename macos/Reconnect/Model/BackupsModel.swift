@@ -46,12 +46,15 @@ extension String {
 class BackupsModel {
 
     enum Prompt: Identifiable {
-        case delete(DeleteConfirmation)
+        case deleteConfirmation(DeleteConfirmation)
+        case deleteFailure(Error)
 
         var id: String {
             switch self {
-            case .delete(let deleteConfirmation):
-                return "delete-\(deleteConfirmation.id.uuidString)"
+            case .deleteConfirmation(let deleteConfirmation):
+                return "delete-confirmation-\(deleteConfirmation.id.uuidString)"
+            case .deleteFailure:
+                return "delete-failure"
             }
         }
 
@@ -142,7 +145,9 @@ class BackupsModel {
             try fileManager.removeItem(at: backup.url)
             update()
         } catch {
-            print("Failed to delete backup with error.")
+            DispatchQueue.main.async {
+                self.prompt = .deleteFailure(error)
+            }
         }
     }
 
@@ -151,7 +156,7 @@ class BackupsModel {
      */
     func delete(backup: Backup) {
         dispatchPrecondition(condition: .onQueue(.main))
-        prompt = .delete(DeleteConfirmation(backup: backup, perform: { [self] in
+        prompt = .deleteConfirmation(DeleteConfirmation(backup: backup, perform: { [self] in
             performDelete(backup: backup)
         }))
     }
