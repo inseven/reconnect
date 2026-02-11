@@ -18,7 +18,33 @@
 
 import Foundation
 
-public enum Platform: String, Codable {
-    case epoc16
-    case epoc32
+public struct DisplayHelpers {
+
+    public static func displayNameForDrive(_ drive: String, name: String?) -> String {
+        if let name {
+            return "\(name) (\(drive):)"
+        } else {
+            return "\(drive):"
+        }
+    }
+
+    public static func imageForDrive(_ drive: String, mediaType: FileServer.MediaType, platform: Platform) -> String {
+        switch platform {
+        case .epoc16:
+            if drive == "A" || drive == "B" {
+                return "SSD16"
+            } else {
+                return "Drive16"
+            }
+        case .epoc32:
+            switch mediaType {
+            case .disk:
+                return "Disk16"
+            default:
+                return "Drive16"
+            }
+        }
+
+    }
+
 }

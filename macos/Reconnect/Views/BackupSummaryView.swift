@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct BackupSummaryView: View {
 
     let backup: Backup
@@ -32,10 +34,22 @@ struct BackupSummaryView: View {
 
             TabularDetailsSection("Summary") {
                 LabeledContent {
-                    Text(backup.manifest.date, format: .dateTime)
+                    Text(backup.manifest.date, format: Date.FormatStyle(date: .long))
                 } label: {
                     Text("Date:")
                 }
+                LabeledContent {
+                    Text(backup.manifest.date, format: Date.FormatStyle(time: .standard))
+                } label: {
+                    Text("Time:")
+                }
+            }
+
+            TabularDetailsSection("Drives") {
+                ForEach(backup.manifest.drives.sorted(by: { $0.drive.localizedCaseInsensitiveCompare($1.drive) == .orderedAscending })) { drive in
+                        Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
+                              image: DisplayHelpers.imageForDrive(drive.drive, mediaType: drive.mediaType, platform: backup.manifest.platform ?? .epoc32))
+                    }
             }
 
             HStack {

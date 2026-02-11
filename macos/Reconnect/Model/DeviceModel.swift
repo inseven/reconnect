@@ -239,8 +239,9 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         applicationModel?.showBackupWindow(deviceModel: self)
     }
 
-    // TODO: Accept a configuration and drives to back up.
-    func backUp(progress: Progress, cancellationToken: CancellationToken) throws -> Backup {
+    func backUp(drives: Set<FileServer.DriveInfo>,
+                progress: Progress,
+                cancellationToken: CancellationToken) throws -> Backup {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
         let backupIdentifier = UUID()
@@ -271,26 +272,85 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
             // Back up to a temporary directory to ensure partial backups don't pollute the backups directory.
             let backupURL = try fileManager.createTemporaryDirectory()
-            defer { try? FileManager.default.removeItem(at: backupURL) }
+            defer {
+                try? FileManager.default.removeItem(at: backupURL)
+                // Check to see if we need to delete the temporary directory (in case of a failure).
+                if fileManager.fileExists(at: backupURL) {
+                    try? fileManager.removeItemLoggingErrors(at: backupURL)
+                }
+            }
 
             // TODO: Quit running apps.
+            //       This needs some kind of mechanism to allow the user to force-close apps if necessary.
 
-            // Create the target directory for the drive.
-            let driveBackupURL = backupURL.appendingPathComponent(internalDrive.drive, isDirectory: true)
-            _ = try _downloadDirectory(sourcePath: internalDrive.path,
-                                       destinationURL: driveBackupURL,
-                                       context: .backup,
-                                       progress: progress,
-                                       cancellationToken: cancellationToken)
+            // Recursively list all the files to be backed up, across all drives.
+            // We do this all at once to allow us to report the progress more cleanly.
+            progress.localizedDescription = "Listing files..."
+            var files: [FileServer.DriveInfo: [FileServer.DirectoryEntry]] = [:]
+            for drive in drives {
+                files[drive] = try transfersFileServer.dir(path: drive.path,
+                                                           recursive: true,
+                                                           cancellationToken: cancellationToken)
+                try cancellationToken.checkCancellation()
+            }
 
-            // Write a manifest.
-            // We should use NCP_GET_UNIQUE_ID to include drive identifiers when we support removable drives.
+            // Update the progress for the new file count.
+            let fileCount = files.map { $1.count }.reduce(0, +)
+            progress.totalUnitCount = Int64(fileCount)
+            progress.localizedDescription = "Copying files..."
+
+            // Iterate over the drives again, this time copying the files.
+            for (drive, driveFiles) in files {
+
+                // Create the target directory.
+                let driveBackupURL = backupURL.appendingPathComponent(drive.drive, isDirectory: true)
+
+                // Copy the files.
+                for file in driveFiles {
+
+                    // Double-check that the file is contained by our (case-insensitive) directory.
+                    guard file.path.lowercased().hasPrefix(drive.path.lowercased()) else {
+                        throw PLPToolsError.E_PSI_FILE_NAME
+                    }
+
+                    // Determine the destination path.
+                    let relativePath = String(file.path.dropFirst(drive.path.count))
+                    let innerDestinationURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
+
+                    // Create the destination directory, or copy the file.
+                    progress.localizedAdditionalDescription = file.path
+                    if file.path.isWindowsDirectory {
+                        try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
+                        progress.completedUnitCount += 1
+                    } else {
+                        let copyProgress = Progress()
+                        progress.addChild(copyProgress, withPendingUnitCount: 1)
+                        _ = try _downloadFile(sourceDirectoryEntry: file,
+                                              destinationURL: innerDestinationURL,
+                                              context: .backup,
+                                              progress: copyProgress,
+                                              cancellationToken: cancellationToken)
+                    }
+
+                    // Check to see if we've been cancelled.
+                    try cancellationToken.checkCancellation()
+
+                }
+            }
+
+            // Write the manifest.
             try cancellationToken.checkCancellation()
-            let drive = BackupManifest.Drive(drive: internalDrive.drive,
-                                             mediaType: internalDrive.mediaType,
-                                             driveAttributes: internalDrive.driveAttributes,
-                                             name: internalDrive.name)
-            let manifest = BackupManifest(device: deviceConfiguration, date: .now, drives: [drive])
+            let driveManifests = drives.map { drive in
+                // TODO: We should consider including NCP_GET_UNIQUE_ID for incremental backups.
+                return BackupManifest.Drive(drive: drive.drive,
+                                            mediaType: drive.mediaType,
+                                            driveAttributes: drive.driveAttributes,
+                                            name: drive.name)
+            }
+            let manifest = BackupManifest(device: deviceConfiguration,
+                                          platform: platform,
+                                          date: .now,
+                                          drives: driveManifests)
             try manifest.write(to: backupURL.appending(path: String.manifestFilename))
 
             // Move the backup to the final destination.
@@ -606,7 +666,10 @@ extension DeviceModel {
         // Create a temporary destination directory (we move this to the destination URL once the download is complete).
         let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
         defer {
-            try? fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
+            // Check to see if we need to delete the temporary directory (in case of a failure).
+            if fileManager.fileExists(at: temporaryDirectoryURL) {
+                try? fileManager.removeItemLoggingErrors(at: temporaryDirectoryURL)
+            }
         }
 
         // Recursively list the files to work out what we need to download.

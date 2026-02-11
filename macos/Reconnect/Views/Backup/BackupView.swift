@@ -17,20 +17,21 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import SwiftUI
-import Interact
+
+import ReconnectCore
 
 struct BackupView: View {
 
     @Environment(\.closeWindow) private var closeWindow
     @Environment(\.window) private var window
 
-    @State private var backupModel: BackupModel
+    @State private var backupModel: BackupViewModel
 
     private var applicationModel: ApplicationModel
 
     init(applicationModel: ApplicationModel, deviceModel: DeviceModel) {
         self.applicationModel = applicationModel
-        _backupModel = State(initialValue: BackupModel(applicationModel: applicationModel, deviceModel: deviceModel))
+        _backupModel = State(initialValue: BackupViewModel(applicationModel: applicationModel, deviceModel: deviceModel))
     }
 
     var body: some View {
@@ -46,6 +47,8 @@ struct BackupView: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
+            case .selectDrives(let driveQuery):
+                BackupDrivePickerPage(driveQuery: driveQuery)
             case .progress(let progress, let cancellationToken):
                 WizardPage {
                     VStack {
