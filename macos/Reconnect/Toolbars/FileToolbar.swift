@@ -34,6 +34,14 @@ struct FileToolbar: CustomizableToolbarContent {
             .disabled(!(fileManageableProxy?.canCreateNewFolder ?? false))
         }
 
+        ToolbarItem(id: "upload") {
+            Button("Upload", systemImage: "arrow.up.document") {
+                fileManageableProxy?.upload()
+            }
+            .help("Upload files and folders")
+            .disabled(!(fileManageableProxy?.canUpload ?? false))
+        }
+
         ToolbarItem(id: "download") {
             Button {
                 fileManageableProxy?.download()

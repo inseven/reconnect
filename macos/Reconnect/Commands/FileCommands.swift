@@ -34,6 +34,12 @@ public struct FileCommands: Commands {
             .keyboardShortcut("N", modifiers: [.command, .shift])
             .disabled(!(fileManageableProxy?.canCreateNewFolder ?? false))
 
+            Button("Upload...", systemImage: "arrow.up.document") {
+                fileManageableProxy?.upload()
+            }
+            .keyboardShortcut("U", modifiers: [.command])
+            .disabled(!(fileManageableProxy?.canUpload ?? false))
+
             Button {
                 fileManageableProxy?.openSelection()
             } label: {

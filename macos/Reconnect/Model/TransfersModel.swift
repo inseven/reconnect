@@ -29,7 +29,7 @@ class TransfersModel {
     init() {
     }
 
-    func newTransfer(fileReference: FileReference) -> Transfer {
+    nonisolated func newTransfer(fileReference: FileReference) -> Transfer {
         TransfersWindow.reveal()
         let transfer = Transfer(item: fileReference)
         DispatchQueue.main.async {

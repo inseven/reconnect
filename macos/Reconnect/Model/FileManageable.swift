@@ -44,4 +44,10 @@ protocol FileManageable {
     @MainActor
     func download()
 
+    @MainActor
+    var canUpload: Bool { get }
+
+    @MainActor
+    func upload()
+
 }
