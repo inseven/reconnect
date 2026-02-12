@@ -76,22 +76,40 @@ struct SettingsView: View {
             }
             .tag(SettingsSection.general)
 
-            Form {
+            VStack {
 
-                LabeledContent {
-                    VStack(alignment: .leading) {
-                        Toggle("Drag and drop", isOn: $applicationModel.convertDraggedFiles)
-                        Text("Always convert files when dragging to other applications.")
-                            .multilineTextAlignment(.leading)
-                            .font(.footnote)
-                            .frame(width: 300, alignment: .leading)
-                            .fixedSize(horizontal: false, vertical: true)
+                Table(Array(FileConverter.converters.keys)) {
+                    TableColumn("Type") { key in
+                        Text(key.localizedDescription)
                     }
-                } label: {
-                    Text("Convert Files:")
-                        .font(.headline)
+                    TableColumn("Conversion") { key in
+                        Text(FileConverter.converters[key]!.localizedDescription)
+                    }
                 }
+                .frame(minHeight: 200)
 
+                Form {
+                    LabeledContent {
+                        VStack(alignment: .leading) {
+                            Toggle("Download", isOn: $applicationModel.convertFiles)
+                            Text("Convert files when downloading from the menu or toolbar item.")
+                                .multilineTextAlignment(.leading)
+                                .font(.footnote)
+                                .frame(width: 300, alignment: .leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Toggle("Drag and drop", isOn: $applicationModel.convertDraggedFiles)
+                            Text("Convert files when dragging to other applications.")
+                                .multilineTextAlignment(.leading)
+                                .font(.footnote)
+                                .frame(width: 300, alignment: .leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    } label: {
+                        Text("Convert Files:")
+                            .font(.headline)
+                    }
+                }
+                .padding()
             }
             .scenePadding()
             .tabItem {
