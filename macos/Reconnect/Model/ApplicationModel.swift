@@ -136,7 +136,7 @@ class ApplicationModel: NSObject {
 
     // Queue of devices that are being loaded; we keep them in a separate queue to ensure we don't present them in the
     // UI until they're ready to be fully displayed.
-    private var connectingDevices: [CancellationToken] = []
+    private var connectingDevices: [UUID: CancellationToken] = [:]
 
     var devices: [DeviceModel] = []
 
@@ -364,7 +364,11 @@ extension ApplicationModel: DaemonClientDelegate {
         DeviceModel.initialize(applicationModel: self,
                                connectionDetails: connectionDetails,
                                cancellationToken: cancellationToken) { result in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [self] in
+
+                // Remove our cancellation token.
+                _ = connectingDevices.removeValue(forKey: connectionDetails.id)
+
                 // Check the cancellation token to ensure we weren't cancelled while being dispatched.
                 guard !cancellationToken.isCancelled else {
                     return
@@ -376,37 +380,34 @@ extension ApplicationModel: DaemonClientDelegate {
                     deviceModel.delegate = self
 
                     // Update the back up identifier for this device, and re-enumerate the backups.
-                    let deviceBackupsURL = self.backupsURL
+                    let deviceBackupsURL = backupsURL
                         .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
                     let configURL = deviceBackupsURL.appending(path: "config.ini")
                     if !FileManager.default.fileExists(at: deviceBackupsURL) {
                         try? FileManager.default.createDirectory(at: deviceBackupsURL, withIntermediateDirectories: true)
                     }
                     try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
-                    self.backupsModel.update()
+                    backupsModel.update()
 
-                    self.devices = [deviceModel]
-                    self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
+                    devices = [deviceModel]
+                    connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                     print("Device \(deviceModel.id.uuidString) connected.")
                 case .failure(let error):
                     print("Failed to initialize device with error \(error).")
                 }
             }
         }
-        self.connectingDevices.append(cancellationToken)
+        self.connectingDevices[connectionDetails.id] = cancellationToken
     }
 
     func daemonClient(_ daemonClient: DaemonClient, deviceDidDisconnect connectionDetails: DeviceConnectionDetails) {
         dispatchPrecondition(condition: .onQueue(.main))
-
-        for deviceModel in self.devices {
+        if let deviceModel = self.devices.first(where: { $0.connectionDetails.id == connectionDetails.id }) {
             connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
         }
-        for cancellationToken in self.connectingDevices {
+        if let cancellationToken = connectingDevices.removeValue(forKey: connectionDetails.id) {
             cancellationToken.cancel()
         }
-        self.connectingDevices = []
-        self.devices = []
     }
 
 }
