@@ -61,7 +61,7 @@ class Daemon: NSObject {
             }
         }
     }
-    private var connectedDevices: [DeviceConnectionDetails] = []
+    private var connectedDevices: Set<DeviceConnectionDetails> = []
 
     override init() {
         super.init()
