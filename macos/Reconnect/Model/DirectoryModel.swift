@@ -90,6 +90,7 @@ class DirectoryModel {
     }
 
     private func update() {
+        dispatchPrecondition(condition: .onQueue(.main))
         self.isLoading = true
         self.files = []
         self.run { [path, deviceModel] in
@@ -190,12 +191,14 @@ class DirectoryModel {
                              completion: completion)
     }
 
-    func upload(url: URL, context: FileTransferContext) {
-        deviceModel.upload(sourceURL: url,
-                           destinationPath: path + url.lastPathComponent,
-                           context: context) { result in
-            DispatchQueue.main.async {
-                self.refresh()
+    func upload(urls: [URL], context: FileTransferContext) {
+        deviceModel.upload(sourceURLs: urls,
+                           destinationDirectoryPath: path,
+                           context: context) { [self] result in
+            dispatchPrecondition(condition: .onQueue(.main))
+            refresh()
+            if case .success(let directoryEntries) = result {
+                fileSelection = Set(directoryEntries.map { $0.id })
             }
         }
     }
@@ -288,6 +291,31 @@ extension DirectoryModel: FileManageable {
 
     func download() {
         download(destinationDirectoryURL: applicationModel.downloadsURL, context: .interactive)
+    }
+
+    var canUpload: Bool {
+        return driveInfo.isWriteable
+    }
+
+    func upload() {
+        dispatchPrecondition(condition: .onQueue(.main))
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = true
+        openPanel.canChooseDirectories = true
+        openPanel.canCreateDirectories = true
+        openPanel.allowsMultipleSelection = true
+        guard openPanel.runModal() ==  NSApplication.ModalResponse.OK else {
+            return
+        }
+        deviceModel.upload(sourceURLs: openPanel.urls,
+                           destinationDirectoryPath: path,
+                           context: .interactive) { [self] result in
+            dispatchPrecondition(condition: .onQueue(.main))
+            refresh()
+            if case .success(let directoryEntries) = result {
+                fileSelection = Set(directoryEntries.map { $0.id })
+            }
+        }
     }
 
 }

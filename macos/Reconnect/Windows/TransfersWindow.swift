@@ -22,7 +22,7 @@ import Interact
 
 struct TransfersWindow: Scene {
 
-    static func reveal() {
+    nonisolated static func reveal() {
         DispatchQueue.main.async {
             NSWorkspace.shared.open(.transfers)
         }

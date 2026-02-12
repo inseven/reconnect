@@ -503,31 +503,57 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     }
 
     @MainActor
-    func upload(sourceURL: URL,
-                destinationPath: String,
+    func upload(sourceURLs: [URL],
+                destinationDirectoryPath: String,
                 context: FileTransferContext,
-                completion: @escaping (Result<FileServer.DirectoryEntry, Error>) -> Void = { _ in }) {
+                completion: @escaping (Result<[FileServer.DirectoryEntry], Error>) -> Void = { _ in }) {
         guard let transfersModel = applicationModel?.transfersModel else {
             completion(.failure(ReconnectError.cancelled))
             return
         }
-        let transfer = transfersModel.newTransfer(fileReference: .local(sourceURL))
-        transfersQueue.async { [self] in
-            do {
-                let progress = Progress()
-                transfer.setStatus(.active(progress))
-                let directoryEntry = try _upload(sourceURL: sourceURL,
-                                                 destinationPath: destinationPath,
-                                                 context: context,
-                                                 progress: progress,
-                                                 cancellationToken: transfer.cancellationToken)
-                let result = Transfer.FileDetails(remoteDirectoryEntry: directoryEntry,
-                                                  size: UInt64(directoryEntry.size))
-                transfer.setStatus(.complete(result))
-                completion(.success(directoryEntry))
-            } catch {
-                transfer.setStatus(.failed(error))
-                completion(.failure(error))
+
+        // We use a dispatch group to coordinate results so we can report them in the same completion handler.
+        let dispatchGroup = DispatchGroup()
+        var directoryEntries: [FileServer.DirectoryEntry] = []
+        var mostRecentError: Error? = nil
+
+        for sourceURL in sourceURLs {
+            dispatchGroup.enter()
+
+            // Create and register the model that will represent the transfer in the UI.
+            let transfer = transfersModel.newTransfer(fileReference: .local(sourceURL))
+
+            // Dispatch the work to the transfers queue.
+            transfersQueue.async { [self] in
+                do {
+                    try transfer.withThrowing { progress in
+                        let progress = Progress()
+                        transfer.setStatus(.active(progress))
+                        let destinationPath = destinationDirectoryPath
+                            .appendingWindowsPathComponent(sourceURL.lastPathComponent)
+                        let directoryEntry = try _upload(sourceURL: sourceURL,
+                                                         destinationPath: destinationPath,
+                                                         context: context,
+                                                         progress: progress,
+                                                         cancellationToken: transfer.cancellationToken)
+                        directoryEntries.append(directoryEntry)
+                        return Transfer.FileDetails(remoteDirectoryEntry: directoryEntry,
+                                                    size: UInt64(directoryEntry.size))
+                    }
+                    dispatchGroup.leave()
+                } catch {
+                    mostRecentError = error
+                    dispatchGroup.leave()
+                }
+            }
+        }
+
+        // Once all the transfers our complete, our dispatch group will be notified.
+        dispatchGroup.notify(queue: .main) {
+            if let mostRecentError {
+                completion(.failure(mostRecentError))
+            } else {
+                completion(.success(directoryEntries))
             }
         }
     }

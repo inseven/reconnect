@@ -36,6 +36,10 @@ class FileManageableProxy: ObservableObject, FileManageable {
         return _canDownload()
     }
 
+    var canUpload: Bool {
+        return _canUpload()
+    }
+
     private let _canOpenSelection: @MainActor () -> Bool
     private let _openSelection: @MainActor () -> Void
     private let _canCreateNewFolder: @MainActor () -> Bool
@@ -44,6 +48,8 @@ class FileManageableProxy: ObservableObject, FileManageable {
     private let _delete: @MainActor () -> Void
     private let _canDownload: @MainActor () -> Bool
     private let _download: @MainActor () -> Void
+    private let _canUpload: @MainActor () -> Bool
+    private let _upload: @MainActor () -> Void
 
     init(_ fileManageable: FileManageable) {
         _canOpenSelection = {
@@ -70,6 +76,12 @@ class FileManageableProxy: ObservableObject, FileManageable {
         _download = {
             fileManageable.download()
         }
+        _canUpload = {
+            return fileManageable.canUpload
+        }
+        _upload = {
+            fileManageable.upload()
+        }
     }
 
     func openSelection() {
@@ -86,6 +98,10 @@ class FileManageableProxy: ObservableObject, FileManageable {
 
     func download() {
         _download()
+    }
+
+    func upload() {
+        _upload()
     }
 
 }

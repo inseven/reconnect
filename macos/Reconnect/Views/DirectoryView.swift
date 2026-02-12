@@ -169,15 +169,23 @@ struct DirectoryView: View {
             }
         }
         .onDrop(of: [.fileURL], isTargeted: $isTargeted) { providers in
+            let dispatchGroup = DispatchGroup()
+            var urls: [URL] = []
             for provider in providers {
+                dispatchGroup.enter()
                 _ = provider.loadObject(ofClass: URL.self) { url, _ in
                     guard let url = url else {
+                        dispatchGroup.leave()
                         return
                     }
-                    DispatchQueue.main.sync {
-                        directoryModel.upload(url: url, context: .drag)
+                    DispatchQueue.main.async {
+                        urls.append(url)
+                        dispatchGroup.leave()
                     }
                 }
+            }
+            dispatchGroup.notify(queue: .main) {
+                directoryModel.upload(urls: urls, context: .drag)
             }
             return true
         }
