@@ -38,30 +38,30 @@ class Daemon: NSObject {
     // Dynamic property generating an array of SerialDevice instances that represent the union of available and
     // previously enabled devices. Intended as a convenience for updating connected clients.
     private var serialDevices: [SerialDevice] {
-        return Set(knownDevices.keys)
-            .union(connectedDevices)
+        return Set(knownSerialDevices.keys)
+            .union(connectedSerialDevices)
             .sorted()
             .map { path in
                 return SerialDevice(path: path,
-                                    isAvailable: connectedDevices.contains(path),
-                                    configuration: knownDevices[path] ?? SerialDeviceConfiguration())
+                                    isAvailable: connectedSerialDevices.contains(path),
+                                    configuration: knownSerialDevices[path] ?? SerialDeviceConfiguration())
             }
     }
 
     // Synchronized on main thread.
     private var connections: [NSXPCConnection] = []
     private var count: Int = 0
-    private var connectedDevices: Set<String> = []
-    private var knownDevices: [String: SerialDeviceConfiguration] = [:] {
+    private var connectedSerialDevices: Set<String> = []
+    private var knownSerialDevices: [String: SerialDeviceConfiguration] = [:] {
         didSet {
             do {
-                try settings.set(codable: knownDevices, forKey: .knownDevices)
+                try settings.set(codable: knownSerialDevices, forKey: .knownDevices)
             } catch {
                 logger.error("Failed to save known serial devices with error \(error).")
             }
         }
     }
-    private var isConnected: Bool = false
+    private var connectedDevices: [DeviceConnectionDetails] = []
 
     override init() {
         super.init()
@@ -69,10 +69,10 @@ class Daemon: NSObject {
         serialDeviceMonitor.delegate = self
         sessionManager.delegate = self
         do {
-            knownDevices = try settings.codable(forKey: .knownDevices, default: [:])
+            knownSerialDevices = try settings.codable(forKey: .knownDevices, default: [:])
         } catch {
             logger.error("Failed to load known serial devices with error \(error).")
-            knownDevices = [:]
+            knownSerialDevices = [:]
         }
     }
 
@@ -129,16 +129,16 @@ class Daemon: NSObject {
 
     func reconfigureSessionManager() {
         dispatchPrecondition(condition: .onQueue(.main))
-        if connectedDevices.isEmpty {
+        if connectedSerialDevices.isEmpty {
             self.sessionManager.setDevices([])
         } else {
-            let devices = self.knownDevices.compactMap { path, configuration -> NCPSessionManager.DeviceConfiguration? in
+            let devices = self.knownSerialDevices.compactMap { path, configuration -> NCPSessionManager.DeviceConfiguration? in
                 guard configuration.isEnabled else {  // Remove disabled devices.
                     return nil
                 }
                 return NCPSessionManager.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
             }.filter { configuration in
-                return self.connectedDevices.contains(configuration.path)
+                return self.connectedSerialDevices.contains(configuration.path)
             }
             self.sessionManager.setDevices(devices)
         }
@@ -174,7 +174,9 @@ extension Daemon: NSXPCListenerDelegate {
 
             // Send the current state.
             proxy.setSerialDevices(serialDevices)
-            proxy.setIsConnected(isConnected)
+            for connectionDetails in connectedDevices {
+                proxy.deviceDidConnect(connectionDetails)
+            }
 
             // Update the session manager state.
             reconfigureSessionManager()
@@ -190,7 +192,7 @@ extension Daemon: SerialDeviceMonitorDelegate {
     func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
         dispatchPrecondition(condition: .onQueue(.main))
         logger.notice("Serial device added '\(device)'.")
-        connectedDevices.insert(device)
+        connectedSerialDevices.insert(device)
         reconfigureSessionManager()
         updateConnectedDevices()
     }
@@ -198,7 +200,7 @@ extension Daemon: SerialDeviceMonitorDelegate {
     func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
         dispatchPrecondition(condition: .onQueue(.main))
         logger.notice("Serial device removed '\(device)'")
-        connectedDevices.remove(device)
+        connectedSerialDevices.remove(device)
         reconfigureSessionManager()
         updateConnectedDevices()
     }
@@ -210,9 +212,20 @@ extension Daemon: NCPSessionManagerDelegate {
     func sessionManager(_ sessionManager: NCPSessionManager, didChangeConnectionState isConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
         logger.notice("Device connection state changed (isConnected = \(isConnected)).")
-        self.isConnected = isConnected
-        withConnections { proxy in
-            proxy.setIsConnected(isConnected)
+        if isConnected {
+            let connectionDetails = DeviceConnectionDetails(port: 7501)
+            connectedDevices = [connectionDetails]
+            withConnections { proxy in
+                proxy.deviceDidConnect(connectionDetails)
+            }
+        } else {
+            guard let connectionDetails = connectedDevices.first else {
+                return
+            }
+            connectedDevices = []
+            withConnections { proxy in
+                proxy.deviceDidDisconnect(connectionDetails)
+            }
         }
     }
 
@@ -230,7 +243,7 @@ extension Daemon: DaemonInterface {
     func configureSerialDevice(path: String, configuration: SerialDeviceConfiguration) {
         logger.notice("Configure serial device (path = '\(path)', configuration = \(configuration))...")
         DispatchQueue.main.async {
-            self.knownDevices[path] = configuration
+            self.knownSerialDevices[path] = configuration
             self.reconfigureSessionManager()
             self.updateConnectedDevices()
         }

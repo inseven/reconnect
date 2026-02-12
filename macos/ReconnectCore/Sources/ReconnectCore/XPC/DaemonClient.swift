@@ -26,8 +26,9 @@ public protocol DaemonClientDelegate: NSObject {
 
     func daemonClientDidConnect(_ daemonClient: DaemonClient)
     func daemonClientDidDisconnect(_ daemonClient: DaemonClient)
-    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool)
     func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice])
+    func daemonClient(_ daemonClient: DaemonClient, deviceDidConnect connectionDetails: DeviceConnectionDetails)
+    func daemonClient(_ daemonClient: DaemonClient, deviceDidDisconnect connectionDetails: DeviceConnectionDetails)
 
 }
 
@@ -157,12 +158,6 @@ public class DaemonClient {
 
 extension DaemonClient: DaemonClientInterface {
 
-    public func setIsConnected(_ isConnected: Bool) {
-        DispatchQueue.main.async {
-            self.delegate?.daemonClient(self, didUpdateDeviceConnectionState: isConnected)
-        }
-    }
-
     public func setSerialDevices(_ devices: [SerialDevice]) {
         DispatchQueue.main.async {
             self.delegate?.daemonClient(self, didUpdateSerialDevices: devices)
@@ -171,6 +166,18 @@ extension DaemonClient: DaemonClientInterface {
 
     public func keepalive(count: Int) {
         logger.notice("Received daemon keepalive (\(count)).")
+    }
+
+    public func deviceDidConnect(_ deviceConnectionDetails: DeviceConnectionDetails) {
+        DispatchQueue.main.async {
+            self.delegate?.daemonClient(self, deviceDidConnect: deviceConnectionDetails)
+        }
+    }
+
+    public func deviceDidDisconnect(_ deviceConnectionDetails: DeviceConnectionDetails) {
+        DispatchQueue.main.async {
+            self.delegate?.daemonClient(self, deviceDidDisconnect: deviceConnectionDetails)
+        }
     }
 
 }

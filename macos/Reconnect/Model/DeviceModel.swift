@@ -46,6 +46,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
      * The completion block is called on a background queue.
      */
     static func initialize(applicationModel: ApplicationModel,
+                           connectionDetails: DeviceConnectionDetails,
                            cancellationToken: CancellationToken = CancellationToken(),
                            completion: @escaping (Result<DeviceModel, Error>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
@@ -60,8 +61,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
                 // Create the servers for communicating with the Psion. These will be handed off, on success, to the
                 // new device model.
-                let fileServer = FileServer()
-                let remoteCommandServicesClient = RemoteCommandServicesClient()
+                let fileServer = FileServer(port: connectionDetails.port)
+                let remoteCommandServicesClient = RemoteCommandServicesClient(port: connectionDetails.port)
 
                 // 1) Perform a drive listing. We know we can always safely do this.
                 try cancellationToken.checkCancellation()
@@ -129,9 +130,11 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 //    or EPOC32 and, conditionally create a section file server to use for file transfers on EPOC32;
                 //    since EPOC16 only supports a single file server, we have to share it between tasks on these
                 //    machines.
+                let transfersFileServer = machineType.isEpoc32 ? FileServer(port: connectionDetails.port) : fileServer
                 let deviceModel = DeviceModel(applicationModel: applicationModel,
+                                              connectionDetails: connectionDetails,
                                               fileServer: fileServer,
-                                              transfersFileServer: machineType.isEpoc32 ? FileServer() : fileServer,
+                                              transfersFileServer: transfersFileServer,
                                               remoteCommandServicesClient: remoteCommandServicesClient,
                                               deviceConfiguration: deviceConfiguration,
                                               machineType: machineType,
@@ -184,6 +187,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     @ObservationIgnored
     weak var delegate: DeviceModelDelegate?
 
+    let connectionDetails: DeviceConnectionDetails
     let fileServer: FileServer
     let transfersFileServer: FileServer
     let remoteCommandServicesClient: RemoteCommandServicesClient
@@ -198,6 +202,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     private let transfersQueue = DispatchQueue(label: "DeviceModel.transfersQueue")
 
     private init(applicationModel: ApplicationModel,
+                 connectionDetails: DeviceConnectionDetails,
                  fileServer: FileServer,
                  transfersFileServer: FileServer,
                  remoteCommandServicesClient: RemoteCommandServicesClient,
@@ -207,6 +212,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                  drives: [FileServer.DriveInfo],
                  internalDrive: FileServer.DriveInfo) {
         self.applicationModel = applicationModel
+        self.connectionDetails = connectionDetails
         self.fileServer = fileServer
         self.transfersFileServer = transfersFileServer
         self.remoteCommandServicesClient = remoteCommandServicesClient

@@ -349,63 +349,64 @@ extension ApplicationModel: DaemonClientDelegate {
         self.devices = []
     }
 
-    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
-        dispatchPrecondition(condition: .onQueue(.main))
-
-        if isDeviceConnected {  // Connection.
-
-            // Create a new `DeviceModel` that encapsulates all PLP sessions with the newly attached Psion.
-            // We inject a cancellation token to allow us to cancel the initialization mid-flow if we need to.
-            let cancellationToken = CancellationToken()
-            DeviceModel.initialize(applicationModel: self, cancellationToken: cancellationToken) { result in
-                DispatchQueue.main.async {
-                    // Check the cancellation token to ensure we weren't cancelled while being dispatched.
-                    guard !cancellationToken.isCancelled else {
-                        return
-                    }
-                    switch result {
-                    case .success(let deviceModel):
-
-                        // Set the delegate.
-                        deviceModel.delegate = self
-
-                        // Update the back up identifier for this device, and re-enumerate the backups.
-                        let deviceBackupsURL = self.backupsURL
-                            .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
-                        let configURL = deviceBackupsURL.appending(path: "config.ini")
-                        if !FileManager.default.fileExists(at: deviceBackupsURL) {
-                            try? FileManager.default.createDirectory(at: deviceBackupsURL, withIntermediateDirectories: true)
-                        }
-                        try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
-                        self.backupsModel.update()
-
-                        self.devices = [deviceModel]
-                        self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
-                        print("Device \(deviceModel.id.uuidString) connected.")
-                    case .failure(let error):
-                        print("Failed to initialize device with error \(error).")
-                    }
-                }
-            }
-            self.connectingDevices.append(cancellationToken)
-
-        } else {  // Disconnection.
-
-            for deviceModel in self.devices {
-                connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
-            }
-            for cancellationToken in self.connectingDevices {
-                cancellationToken.cancel()
-            }
-            self.connectingDevices = []
-            self.devices = []
-
-        }
-    }
-
-    func daemonClient(_ daemonClient: ReconnectCore.DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
+    func daemonClient(_ daemonClient: ReconnectCore.DaemonClient,
+                      didUpdateSerialDevices serialDevices: [SerialDevice]) {
         dispatchPrecondition(condition: .onQueue(.main))
         self.serialDevices = serialDevices
+    }
+
+    func daemonClient(_ daemonClient: DaemonClient, deviceDidConnect connectionDetails: DeviceConnectionDetails) {
+        dispatchPrecondition(condition: .onQueue(.main))
+
+        // Create a new `DeviceModel` that encapsulates all PLP sessions with the newly attached Psion.
+        // We inject a cancellation token to allow us to cancel the initialization mid-flow if we need to.
+        let cancellationToken = CancellationToken()
+        DeviceModel.initialize(applicationModel: self,
+                               connectionDetails: connectionDetails,
+                               cancellationToken: cancellationToken) { result in
+            DispatchQueue.main.async {
+                // Check the cancellation token to ensure we weren't cancelled while being dispatched.
+                guard !cancellationToken.isCancelled else {
+                    return
+                }
+                switch result {
+                case .success(let deviceModel):
+
+                    // Set the delegate.
+                    deviceModel.delegate = self
+
+                    // Update the back up identifier for this device, and re-enumerate the backups.
+                    let deviceBackupsURL = self.backupsURL
+                        .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
+                    let configURL = deviceBackupsURL.appending(path: "config.ini")
+                    if !FileManager.default.fileExists(at: deviceBackupsURL) {
+                        try? FileManager.default.createDirectory(at: deviceBackupsURL, withIntermediateDirectories: true)
+                    }
+                    try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
+                    self.backupsModel.update()
+
+                    self.devices = [deviceModel]
+                    self.connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
+                    print("Device \(deviceModel.id.uuidString) connected.")
+                case .failure(let error):
+                    print("Failed to initialize device with error \(error).")
+                }
+            }
+        }
+        self.connectingDevices.append(cancellationToken)
+    }
+
+    func daemonClient(_ daemonClient: DaemonClient, deviceDidDisconnect connectionDetails: DeviceConnectionDetails) {
+        dispatchPrecondition(condition: .onQueue(.main))
+
+        for deviceModel in self.devices {
+            connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
+        }
+        for cancellationToken in self.connectingDevices {
+            cancellationToken.cancel()
+        }
+        self.connectingDevices = []
+        self.devices = []
     }
 
 }
