@@ -523,16 +523,20 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     func upload(sourceURLs: [URL],
                 destinationDirectoryPath: String,
                 context: FileTransferContext,
-                completion: @escaping (Result<[FileServer.DirectoryEntry], Error>) -> Void = { _ in }) {
+                completion: @escaping ([Result<FileServer.DirectoryEntry, Error>]) -> Void = { _ in }) {
         guard let transfersModel = applicationModel?.transfersModel else {
-            completion(.failure(ReconnectError.cancelled))
+            let errors = sourceURLs.map { _ -> Result<FileServer.DirectoryEntry, Error> in
+                return .failure(PLPToolsError.E_PSI_FILE_CANCEL)
+            }
+            DispatchQueue.main.async {
+                completion(errors)
+            }
             return
         }
 
         // We use a dispatch group to coordinate results so we can report them in the same completion handler.
         let dispatchGroup = DispatchGroup()
-        var directoryEntries: [FileServer.DirectoryEntry] = []
-        var mostRecentError: Error? = nil
+        var results: [Result<FileServer.DirectoryEntry, Error>] = []
 
         for sourceURL in sourceURLs {
             dispatchGroup.enter()
@@ -553,13 +557,13 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                                                          context: context,
                                                          progress: progress,
                                                          cancellationToken: transfer.cancellationToken)
-                        directoryEntries.append(directoryEntry)
+                        results.append(.success(directoryEntry))
                         return Transfer.FileDetails(remoteDirectoryEntry: directoryEntry,
                                                     size: UInt64(directoryEntry.size))
                     }
                     dispatchGroup.leave()
                 } catch {
-                    mostRecentError = error
+                    results.append(.failure(error))
                     dispatchGroup.leave()
                 }
             }
@@ -567,11 +571,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
         // Once all the transfers our complete, our dispatch group will be notified.
         dispatchGroup.notify(queue: .main) {
-            if let mostRecentError {
-                completion(.failure(mostRecentError))
-            } else {
-                completion(.success(directoryEntries))
-            }
+            completion(results)
         }
     }
 

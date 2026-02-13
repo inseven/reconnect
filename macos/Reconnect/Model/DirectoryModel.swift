@@ -194,12 +194,16 @@ class DirectoryModel {
     func upload(urls: [URL], context: FileTransferContext) {
         deviceModel.upload(sourceURLs: urls,
                            destinationDirectoryPath: path,
-                           context: context) { [self] result in
+                           context: context) { [self] results in
             dispatchPrecondition(condition: .onQueue(.main))
             refresh()
-            if case .success(let directoryEntries) = result {
-                fileSelection = Set(directoryEntries.map { $0.id })
+            let directoryEntries = results.compactMap { result -> FileServer.DirectoryEntry? in
+                guard case .success(let directoryEntry) = result else {
+                    return nil
+                }
+                return directoryEntry
             }
+            fileSelection = Set(directoryEntries.map { $0.id })
         }
     }
 
@@ -309,12 +313,16 @@ extension DirectoryModel: FileManageable {
         }
         deviceModel.upload(sourceURLs: openPanel.urls,
                            destinationDirectoryPath: path,
-                           context: .interactive) { [self] result in
+                           context: .interactive) { [self] results in
             dispatchPrecondition(condition: .onQueue(.main))
             refresh()
-            if case .success(let directoryEntries) = result {
-                fileSelection = Set(directoryEntries.map { $0.id })
+            let directoryEntries = results.compactMap { result -> FileServer.DirectoryEntry? in
+                guard case .success(let directoryEntry) = result else {
+                    return nil
+                }
+                return directoryEntry
             }
+            fileSelection = Set(directoryEntries.map { $0.id })
         }
     }
 
