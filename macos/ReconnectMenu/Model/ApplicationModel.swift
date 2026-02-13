@@ -32,7 +32,11 @@ class ApplicationModel: NSObject {
 
     // Daemon state; synchronized on main.
     var isDaemonConnected = false
-    var isDeviceConnected = false
+    var connectedDevices: Set<DeviceConnectionDetails> = []
+
+    var isDeviceConnected: Bool {
+        return !connectedDevices.isEmpty
+    }
 
     override init() {
         super.init()
@@ -90,14 +94,18 @@ extension ApplicationModel: DaemonClientDelegate {
         self.isDaemonConnected = false
     }
 
-    func daemonClient(_ daemonClient: DaemonClient, didUpdateDeviceConnectionState isDeviceConnected: Bool) {
-        dispatchPrecondition(condition: .onQueue(.main))
-        self.isDeviceConnected = isDeviceConnected
-
-    }
-    
     func daemonClient(_ daemonClient: DaemonClient, didUpdateSerialDevices serialDevices: [SerialDevice]) {
         dispatchPrecondition(condition: .onQueue(.main))
+    }
+
+    func daemonClient(_ daemonClient: DaemonClient, deviceDidConnect connectionDetails: DeviceConnectionDetails) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        connectedDevices.insert(connectionDetails)
+    }
+
+    func daemonClient(_ daemonClient: DaemonClient, deviceDidDisconnect connectionDetails: DeviceConnectionDetails) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        connectedDevices.remove(connectionDetails)
     }
 
 }

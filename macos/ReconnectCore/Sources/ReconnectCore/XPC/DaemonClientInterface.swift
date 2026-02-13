@@ -23,17 +23,25 @@ public protocol DaemonClientInterface {
 
     func keepalive(count: Int)
     func setSerialDevices(_ devices: [SerialDevice])
-    func setIsConnected(_ isConnected: Bool)
-    
+    func deviceDidConnect(_ deviceConnectionDetails: DeviceConnectionDetails)
+    func deviceDidDisconnect(_ deviceConnectionDetails: DeviceConnectionDetails)
+
 }
 
 extension NSXPCInterface {
 
     static var daemonClientInterface: NSXPCInterface {
         let interface = NSXPCInterface(with: DaemonClientInterface.self)
-        let allowedClasses = [NSArray.self, SerialDevice.self, SerialDeviceConfiguration.self] as NSSet as Set
-        interface.setClasses(allowedClasses,
+        interface.setClasses([NSArray.self, SerialDevice.self, SerialDeviceConfiguration.self] as NSSet as Set,
                              for: #selector(DaemonClientInterface.setSerialDevices(_:)),
+                             argumentIndex: 0,
+                             ofReply: false)
+        interface.setClasses([DeviceConnectionDetails.self] as NSSet as Set,
+                             for: #selector(DaemonClientInterface.deviceDidConnect(_:)),
+                             argumentIndex: 0,
+                             ofReply: false)
+        interface.setClasses([DeviceConnectionDetails.self] as NSSet as Set,
+                             for: #selector(DaemonClientInterface.deviceDidDisconnect(_:)),
                              argumentIndex: 0,
                              ofReply: false)
         return interface
