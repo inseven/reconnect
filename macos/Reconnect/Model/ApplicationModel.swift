@@ -45,6 +45,8 @@ class ApplicationModel: NSObject {
         case revealScreenshots
     }
 
+    var error: Error? = nil
+
     var convertDraggedFiles: Bool {
         didSet {
             keyedDefaults.set(convertDraggedFiles, forKey: .convertDraggedFiles)
@@ -138,6 +140,7 @@ class ApplicationModel: NSObject {
     // UI until they're ready to be fully displayed.
     private var connectingDevices: [UUID: CancellationToken] = [:]
 
+    // TODO: This should be a set.
     var devices: [DeviceModel] = []
 
     /**
@@ -389,11 +392,13 @@ extension ApplicationModel: DaemonClientDelegate {
                     try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
                     backupsModel.update()
 
-                    devices = [deviceModel]
+//                    devices = [deviceModel]
+                    devices.append(deviceModel)
                     connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                     print("Device \(deviceModel.id.uuidString) connected.")
                 case .failure(let error):
                     print("Failed to initialize device with error \(error).")
+                    self.error = error
                 }
             }
         }
@@ -402,8 +407,9 @@ extension ApplicationModel: DaemonClientDelegate {
 
     func daemonClient(_ daemonClient: DaemonClient, deviceDidDisconnect connectionDetails: DeviceConnectionDetails) {
         dispatchPrecondition(condition: .onQueue(.main))
-        if let deviceModel = self.devices.first(where: { $0.connectionDetails.id == connectionDetails.id }) {
+        if let deviceModel = devices.first(where: { $0.connectionDetails.id == connectionDetails.id }) {
             connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
+            devices.removeAll { $0.id == deviceModel.id }
         }
         if let cancellationToken = connectingDevices.removeValue(forKey: connectionDetails.id) {
             cancellationToken.cancel()

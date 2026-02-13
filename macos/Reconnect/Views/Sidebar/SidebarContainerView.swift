@@ -95,6 +95,9 @@ class SidebarContainerView: NSView {
     private let outlineView: NSOutlineView
     private let treeController: NSTreeController
 
+    @objc dynamic private var contents: [Node] = []
+    private var devices: [DeviceModel] = []  // Shadow state to make managing connected devices easier.
+
     private var treeControllerObserver: NSKeyValueObservation?
 
     private var _selectedSection: BrowserSection = .disconnected
@@ -120,8 +123,6 @@ class SidebarContainerView: NSView {
             treeController.selectSection(newValue)
         }
     }
-
-    @objc dynamic var contents: [Node] = []
 
     init() {
 
@@ -283,21 +284,25 @@ extension SidebarContainerView: NSOutlineViewDelegate {
 
 extension SidebarContainerView: ApplicationModelConnectionDelegate {
 
-    // N.B. This implementation assumes that we'll get matched connections and disconnections for single devices.
-    // It will need to be updated in the future if we grow support for multiple connected devices.
-
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidConnect deviceModel: DeviceModel) {
         dispatchPrecondition(condition: .onQueue(.main))
 
-        // Remove the disconnected entry.
-        treeController.removeObject(atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
+        // If `devices` is empty, then we know that this is the first device to connect and we ned to remove the
+        // 'Not Connected' sidebar entry.
+        if devices.isEmpty {
+            treeController.removeObject(atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
+        }
+
+        // Add this device to the list.
+        // We should probably track these by id in the future.
+        devices.append(deviceModel)
 
         // Construct and insert the new device entry.
         let drives = deviceModel.drives.map { driveInfo in
             Node(section: .drive(deviceModel.id, driveInfo, deviceModel.platform))
         }
         treeController.insert(Node(section: .device(deviceModel.id, deviceModel.deviceConfiguration.name), children: drives),
-                              atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
+                              atArrangedObjectIndexPath: IndexPath(indexes: [0, devices.count - 1]))
 
         // Select the internal drive.
         selectedSection = .drive(deviceModel.id, deviceModel.internalDrive, deviceModel.platform)
@@ -306,12 +311,22 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
     func applicationModel(_ applicationModel: ApplicationModel, deviceDidDisconnect deviceModel: DeviceModel) {
         dispatchPrecondition(condition: .onQueue(.main))
 
-        // Remove the existing device entry.
-        treeController.removeObject(atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
+        // Work out the index of the device being removed.
+        guard let index = devices.firstIndex(where: { $0.id == deviceModel.id }) else {
+            return
+        }
 
-        // Insert the disconnected entry.
-        treeController.insert(Node(section: .disconnected),
-                              atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
+        // Remove the device.
+        devices.remove(at: index)
+
+        // Remove the existing device entry.
+        treeController.removeObject(atArrangedObjectIndexPath: IndexPath(indexes: [0, index]))
+
+        // Insert the disconnected entry if necessary.
+        if devices.isEmpty {
+            treeController.insert(Node(section: .disconnected),
+                                  atArrangedObjectIndexPath: IndexPath(indexes: [0, 0]))
+        }
     }
 
 }

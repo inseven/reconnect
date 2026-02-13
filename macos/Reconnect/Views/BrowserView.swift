@@ -38,8 +38,8 @@ struct BrowserView: View {
         _libraryModel = ObservedObject(wrappedValue: libraryModel)
     }
 
-    @ViewBuilder func withDeviceModel(@ViewBuilder content: (DeviceModel) -> some View) -> some View {
-        if let deviceModel = applicationModel.devices.first {
+    @ViewBuilder func withDeviceModel(_ deviceId: UUID, @ViewBuilder content: (DeviceModel) -> some View) -> some View {
+        if let deviceModel = applicationModel.devices.first(where: { $0.id == deviceId }) {
             content(deviceModel)
                 .environment(deviceModel)
                 .focusedSceneObject(DeviceModelProxy(deviceModel: deviceModel))
@@ -49,6 +49,7 @@ struct BrowserView: View {
     }
 
     var body: some View {
+        @Bindable var applicationModel = applicationModel
         @Bindable var backupsModel = backupsModel
 
         NavigationSplitView {
@@ -58,7 +59,7 @@ struct BrowserView: View {
             case .disconnected:
                 DisconnectedView()
             case .drive(let deviceId, let driveInfo, _):
-                withDeviceModel { deviceModel in
+                withDeviceModel(deviceId) { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
                                   transfersModel: transfersModel,
                                   navigationModel: navigationModel,
@@ -68,7 +69,7 @@ struct BrowserView: View {
                 }
                 .id("\(deviceId)\(driveInfo.path)")
             case .directory(let deviceId, let driveInfo, let path):
-                withDeviceModel { deviceModel in
+                withDeviceModel(deviceId) { deviceModel in
                     DirectoryView(applicationModel: applicationModel,
                                   transfersModel: transfersModel,
                                   navigationModel: navigationModel,
@@ -77,10 +78,11 @@ struct BrowserView: View {
                                   path: path)
                 }
                 .id("\(deviceId)\(driveInfo.path)\(path)")
-            case .device:
-                withDeviceModel { _ in
+            case .device(let deviceId, _):
+                withDeviceModel(deviceId) { _ in
                     DeviceView()
                 }
+                .id(deviceId)
             case .softwareIndex:
                 ProgramsView()
                     .environmentObject(libraryModel)
@@ -119,6 +121,7 @@ struct BrowserView: View {
                 }
             }
         }
+        .presents($applicationModel.error)
         .frame(minWidth: 800, minHeight: 600)
     }
 

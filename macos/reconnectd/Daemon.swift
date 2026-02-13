@@ -33,7 +33,7 @@ class Daemon: NSObject {
     private let settings = KeyedDefaults<SettingsKey>()
     private let listener = NSXPCListener(machServiceName: .daemonSericeName)
     private let serialDeviceMonitor = SerialDeviceMonitor()
-    private let sessionManager = NCPSessionManager()
+    private var sessions: [NCP.DeviceConfiguration: NCP] = [:]  // Synchronized on main.
 
     // Dynamic property generating an array of SerialDevice instances that represent the union of available and
     // previously enabled devices. Intended as a convenience for updating connected clients.
@@ -67,7 +67,6 @@ class Daemon: NSObject {
         super.init()
         listener.delegate = self
         serialDeviceMonitor.delegate = self
-        sessionManager.delegate = self
         do {
             knownSerialDevices = try settings.codable(forKey: .knownDevices, default: [:])
         } catch {
@@ -80,7 +79,6 @@ class Daemon: NSObject {
         logger.notice("Starting reconnectd...")
         listener.resume()
         serialDeviceMonitor.start()
-        sessionManager.start()
         ping()
     }
 
@@ -129,18 +127,41 @@ class Daemon: NSObject {
 
     func reconfigureSessionManager() {
         dispatchPrecondition(condition: .onQueue(.main))
-        if connectedSerialDevices.isEmpty {
-            self.sessionManager.setDevices([])
-        } else {
-            let devices = self.knownSerialDevices.compactMap { path, configuration -> NCPSessionManager.DeviceConfiguration? in
+
+        let activeDeviceConfigurations = self.knownSerialDevices
+            .compactMap { path, configuration -> NCP.DeviceConfiguration? in
                 guard configuration.isEnabled else {  // Remove disabled devices.
                     return nil
                 }
-                return NCPSessionManager.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
-            }.filter { configuration in
+                return NCP.DeviceConfiguration(path: path, baudRate: configuration.baudRate)
+            }
+            .filter { configuration in
                 return self.connectedSerialDevices.contains(configuration.path)
             }
-            self.sessionManager.setDevices(devices)
+
+        // 1) Stop the ncpd sessions that aren't available any more.
+        let removedDeviceConfigurations = sessions.filter { !activeDeviceConfigurations.contains($0.key) }
+        for (deviceConfiguration, ncp) in removedDeviceConfigurations {
+            logger.notice("Stopping ncpd for \(deviceConfiguration.path) on port \(ncp.port)...")
+            ncp.stop()
+            logger.notice("Stopped ncpd for \(deviceConfiguration.path) on port \(ncp.port).")
+            sessions.removeValue(forKey: deviceConfiguration)
+        }
+
+        // 2) Create new ncpd sesisons and start them, allocating the next free TCP port.
+        let ports = Set(sessions.map({ $0.value.port }))
+        var nextPort: Int32 = 7501
+        for deviceConfiguration in activeDeviceConfigurations {
+            if sessions[deviceConfiguration] == nil {
+                while ports.contains(nextPort) {
+                    nextPort += 1
+                }
+                logger.notice("Starting ncpd for \(deviceConfiguration.path) on port \(nextPort)...", )
+                let ncp = NCP(device: deviceConfiguration, port: nextPort)
+                ncp.delegate = self
+                sessions[deviceConfiguration] = ncp
+                ncp.start()
+            }
         }
     }
 
@@ -207,22 +228,27 @@ extension Daemon: SerialDeviceMonitorDelegate {
 
 }
 
-extension Daemon: NCPSessionManagerDelegate {
+extension Daemon: NCPDelegate {
 
-    func sessionManager(_ sessionManager: NCPSessionManager, didChangeConnectionState isConnected: Bool) {
+    func ncp(_ ncp: NCP, didChangeConnectionState isConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
-        logger.notice("Device connection state changed (isConnected = \(isConnected)).")
         if isConnected {
-            let connectionDetails = DeviceConnectionDetails(port: 7501)
-            connectedDevices = [connectionDetails]
+            logger.notice("Device connected on port \(ncp.port).")
+            let connectionDetails = DeviceConnectionDetails(port: ncp.port)
+            connectedDevices.insert(connectionDetails)
+            let count = connectedDevices.count
+            logger.notice("\(count) connected devices")
             withConnections { proxy in
                 proxy.deviceDidConnect(connectionDetails)
             }
         } else {
-            guard let connectionDetails = connectedDevices.first else {
+            logger.notice("Device disconnected on port \(ncp.port).")
+            guard let connectionDetails = connectedDevices.first(where: { $0.port == ncp.port }) else {
                 return
             }
-            connectedDevices = []
+            connectedDevices.remove(connectionDetails)
+            let count = connectedDevices.count
+            logger.notice("\(count) connected devices")
             withConnections { proxy in
                 proxy.deviceDidDisconnect(connectionDetails)
             }
