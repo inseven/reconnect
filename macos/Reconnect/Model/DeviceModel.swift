@@ -166,7 +166,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         switch machineType {
         case .PSI_MACH_UNKNOWN, .PSI_MACH_PC, .PSI_MACH_MC, .PSI_MACH_HC, .PSI_MACH_WINC:
             return false
-        case .PSI_MACH_S3, .PSI_MACH_S3A, .PSI_MACH_WORKABOUT, .PSI_MACH_SIENNA, .PSI_MACH_S3C:
+        case .PSI_MACH_S3, .PSI_MACH_S3A, .PSI_MACH_WORKABOUT, .PSI_MACH_SIENA, .PSI_MACH_S3C:
             return false
         case .PSI_MACH_S5:
             return true

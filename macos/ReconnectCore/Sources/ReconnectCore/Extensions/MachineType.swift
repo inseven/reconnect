@@ -45,7 +45,7 @@ extension RemoteCommandServicesClient.MachineType {
             return "Series 3a / Series 3c / Series 3mx"
         case .PSI_MACH_WORKABOUT:
             return "Workabout"
-        case .PSI_MACH_SIENNA:
+        case .PSI_MACH_SIENA:
             return "Siena"
         case .PSI_MACH_S3C:
             return "Series 3c"
