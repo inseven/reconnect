@@ -349,14 +349,24 @@ extension SidebarContainerView: BackupsModelDelegate {
                     }
                 return Node(section: .backupSet(backupSet.device), children: children)
             }
-        let selection = treeController.selectionIndexPath  // Read the current selection so we can restore it later.
-        let node = Node(header: "Backups", children: children)
+
+        // Read the current selection so we can restore it later.
+        let selection = treeController.selectionIndexPath
+
+        // Remove the existing backups section if it exists.
         if (treeController.arrangedObjects.children?.count ?? 0) > 2 {
             treeController.removeObject(atArrangedObjectIndexPath: IndexPath(indexes: [2]))
         }
-        treeController.insert(node, atArrangedObjectIndexPath: IndexPath(indexes: [2]))
-        outlineView.expandItem(treeController.arrangedObjects.children![2], expandChildren: true)
-        treeController.setSelectionIndexPath(selection)  // Restore selection.
+
+        // Insert the new backups section if there are backups to display.
+        if !children.isEmpty {
+            let node = Node(header: "Backups", children: children)
+            treeController.insert(node, atArrangedObjectIndexPath: IndexPath(indexes: [2]))
+            outlineView.expandItem(treeController.arrangedObjects.children![2], expandChildren: false)
+        }
+
+        // Restore selection.
+        treeController.setSelectionIndexPath(selection)
     }
 
 }
