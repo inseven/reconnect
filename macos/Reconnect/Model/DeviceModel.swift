@@ -477,6 +477,11 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
     /**
      * Download a remote Psion file or directory, displaying progress in the transfers window.
+     *
+     * This is a high-level wrapper which is intended to be used directly by the UI and has some side effects not
+     * present in the lower level internal functions. Specifically, upon completion, it will move the temporary files
+     * to the first available free filename (computed by appending an index to the filename). This is intended to match
+     * the download behavior in apps like Safari.
      */
     @MainActor
     func download(sourceDirectoryEntry: FileServer.DirectoryEntry,
@@ -492,19 +497,25 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             let progress = Progress()
             transfer.setStatus(.active(progress))
             do {
+                let fileManager = FileManager.default
+                let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
+                defer {
+                    try? fileManager.removeItem(at: temporaryDirectoryURL)
+                }
+                let temporaryURL = temporaryDirectoryURL.appendingPathComponent(sourceDirectoryEntry.name)
                 let url = try _download(sourceDirectoryEntry: sourceDirectoryEntry,
-                                        destinationURL: destinationURL,
+                                        destinationURL: temporaryURL,
                                         context: context,
                                         progress: progress,
                                         cancellationToken: transfer.cancellationToken)
-                let result = Transfer.FileDetails(localURL: (url))
+                let finalURL = try fileManager.safelyMoveItem(at: url, toPreferredURL: destinationURL)
+                let result = Transfer.FileDetails(localURL: (finalURL))
                 transfer.setStatus(.complete(result))
-                completion(.success(url))
+                completion(.success(finalURL))
             } catch {
                 transfer.setStatus(.failed(error))
                 completion(.failure(error))
             }
-
         }
     }
 
