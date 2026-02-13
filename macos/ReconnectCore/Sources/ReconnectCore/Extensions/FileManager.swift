@@ -62,13 +62,20 @@ extension FileManager {
     }
 
     public func safelyMoveItem(at sourceURL: URL, toDirectory destinationDirectoryURL: URL) throws -> URL {
+        let preferredURL = destinationDirectoryURL.appendingPathComponent(sourceURL.lastPathComponent)
+        return try safelyMoveItem(at: sourceURL, toPreferredURL: preferredURL)
+    }
+
+    public func safelyMoveItem(at sourceURL: URL, toPreferredURL preferredURL: URL) throws -> URL {
+        let basename = preferredURL.lastPathComponent.deletingPathExtension
+        let ext = preferredURL.lastPathComponent.pathExtension
         for index in 1... {
             let filename = if index == 1 {
-                sourceURL.lastPathComponent
+                ext.isEmpty ? basename : "\(basename).\(ext)"
             } else {
-                "\(sourceURL.lastPathComponent.deletingPathExtension) \(index).\(sourceURL.lastPathComponent.pathExtension)"
+                ext.isEmpty ? "\(basename) \(index)" : "\(basename) \(index).\(ext)"
             }
-            let destinationURL = destinationDirectoryURL.appendingPathComponent(filename)
+            let destinationURL = preferredURL.deletingLastPathComponent().appendingPathComponent(filename)
             guard !fileExists(at: destinationURL) else {
                 continue
             }
