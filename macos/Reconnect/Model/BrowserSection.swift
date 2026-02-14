@@ -54,26 +54,32 @@ extension BrowserSection {
         }
     }
 
-    var image: String {
+    @ViewBuilder var icon: some View {
         switch self {
         case .disconnected:
-            return "Disconnected16"
+            Image(.disconnected16)
         case .drive(_, let driveInfo, let platform):
-            return DisplayHelpers.imageForDrive(driveInfo.drive,
-                                                mediaType: driveInfo.mediaType,
-                                                platform: platform)
+            Image(DisplayHelpers.imageForDrive(driveInfo.drive,
+                                               mediaType: driveInfo.mediaType,
+                                               platform: platform))
         case .directory:
-            return "Folder16"
+            Image(.folder16)
         case .device:
-            return "Psion16"
+            Image(.psion16)
         case .softwareIndex:
-            return "Install16"
-        case .program:
-            return "FileUnknown16"
+            Image(.install16)
+        case .program(let program):
+            if let iconURL = program.iconURL {
+                FixedSizeAsyncImage(url: iconURL, size: CGSize(width: 16, height: 16)) {
+                    Image(.fileUnknown16)
+                }
+            } else {
+                Image(.fileUnknown16)
+            }
         case .backupSet(_):
-            return "Backup16"
+            Image(.backup16)
         case .backup(_):
-            return "Backups16"
+            Image(.backup16)
         }
     }
 
