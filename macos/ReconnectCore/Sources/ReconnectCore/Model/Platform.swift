@@ -18,7 +18,6 @@
 
 import Foundation
 
-public enum Platform: String, Codable {
-    case epoc16
-    case epoc32
-}
+import OpoLuaCore
+
+public typealias Platform = Sis.Target

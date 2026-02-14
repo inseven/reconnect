@@ -26,6 +26,28 @@ import ReconnectCore
 @Observable
 class InstallerModel: Runnable {
 
+    struct InstallQuery: Identifiable {
+
+        let id = UUID()
+        let sis: Sis.File
+
+        private let completion: (Result<DeviceModel.ID, Error>) -> Void
+
+        init(sis: Sis.File, completion: @escaping (Result<DeviceModel.ID, Error>) -> Void) {
+            self.sis = sis
+            self.completion = completion
+        }
+
+        func `continue`(deviceId: DeviceModel.ID) {
+            completion(.success(deviceId))
+        }
+
+        func cancel() {
+            completion(.failure(ReconnectError.cancelled))
+        }
+
+    }
+
     struct ConfigurationQuery: Identifiable {
 
         let id = UUID()
@@ -107,15 +129,6 @@ class InstallerModel: Runnable {
 
     }
 
-    enum Page {
-        case loading
-        case ready
-        case checkingInstalledPackages(Double)
-        case operation(Fs.Operation, Progress)
-        case error(Error)
-        case complete
-    }
-
     enum Query: Identifiable {
 
         var id: UUID {
@@ -134,6 +147,15 @@ class InstallerModel: Runnable {
         case text(TextQuery)
     }
 
+    enum Page {
+        case loading
+        case installQuery(InstallQuery)
+        case checkingInstalledPackages(Double)
+        case operation(Fs.Operation, Progress)
+        case error(Error)
+        case complete
+    }
+
     private let applicationModel: ApplicationModel
     private var device: DeviceModel?
     private let url: URL
@@ -148,22 +170,26 @@ class InstallerModel: Runnable {
     }
 
     func start() {
-        device = applicationModel.devices.first
         DispatchQueue.global(qos: .userInteractive).async {
             do {
-                // Determine which device we're using.
-                guard self.device != nil else {
-                    throw PLPToolsError.E_PSI_FILE_DISC
-                }
-
                 // Load the installer details.
                 let sis = try PsiLuaEnv().loadSisFile(url: self.url)
+
+                // Show the installer details and the device picker (if necessary).
+                let deviceIdFuture = UnsafeFuture<UUID, Error>()
+                let installQuery = InstallQuery(sis: sis) { result in
+                    deviceIdFuture.resolve(result: result)
+                }
+                DispatchQueue.main.async {
+                    self.page = .installQuery(installQuery)
+                }
+                let deviceId = try deviceIdFuture.get()
 
                 // Indicate that we're ready and kick off the install process.
                 DispatchQueue.main.sync {
                     self.sis = sis
-                    self.page = .ready
-                    self.install()
+                    self.page = .loading
+                    self.install(deviceId: deviceId)
                 }
             } catch {
                 DispatchQueue.main.async {
@@ -177,11 +203,20 @@ class InstallerModel: Runnable {
 
     }
 
-    func install() {
-        DispatchQueue.global(qos: .userInteractive).async {
+    func install(deviceId: DeviceModel.ID) {
+        DispatchQueue.global(qos: .userInteractive).async { [self] in
             do {
+
+                // Look up the device and ensure it's non-nil.
+                self.device = DispatchQueue.main.sync {
+                    return applicationModel.devices.first { $0.id == deviceId }
+                }
+                guard device != nil else {
+                    throw PLPToolsError.E_PSI_FILE_DISC
+                }
+
                 let interpreter = PsiLuaEnv()
-                try interpreter.installSisFile(path: self.url.path, handler: self)
+                try interpreter.installSisFile(path: url.path, handler: self)
                 DispatchQueue.main.async {
                     self.page = .complete
                 }
