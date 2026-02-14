@@ -232,8 +232,13 @@ extension Daemon: NCPDelegate {
 
     func ncp(_ ncp: NCP, didChangeConnectionState isConnected: Bool) {
         dispatchPrecondition(condition: .onQueue(.main))
+        // Right now it connections and disconnections don't seem to be perfectly matched so we explicitly gate these
+        // on our internal state to ensure we give clients matched pairs of events.
         if isConnected {
             logger.notice("Device connected on port \(ncp.port).")
+            guard !connectedDevices.contains(where: { $0.port == ncp.port }) else {
+                return
+            }
             let connectionDetails = DeviceConnectionDetails(port: ncp.port)
             connectedDevices.insert(connectionDetails)
             let count = connectedDevices.count
