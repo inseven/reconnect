@@ -49,8 +49,8 @@ struct TransfersView: View {
             VStack(spacing: 0) {
                 Divider()
                 HStack {
-                    Toggle("Convert Files", isOn: $applicationModel.convertFiles)
-                    
+                    SettingsButton("Settings...", section: .conversions)
+
                     Spacer()
 
                     Button("Clear") {
