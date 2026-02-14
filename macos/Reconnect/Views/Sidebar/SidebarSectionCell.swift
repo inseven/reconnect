@@ -17,10 +17,17 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import AppKit
+import SwiftUI
 
 class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
 
+    struct LayoutMetrics {
+        static let horizontalMargin: CGFloat = 5.0
+    }
+
     static let identifier = NSUserInterfaceItemIdentifier(rawValue: "SidebarSectionCell")
+
+    private var hostingView: NSHostingView<SectionLabel>?
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -47,9 +54,28 @@ class SidebarSectionCell: NSTableCellView, ConfigurableSidebarCell {
         guard case .section(let section) = node.type else {
             fatalError("Unsupported node type \(node.type).")
         }
-        textField?.stringValue = section.title
-        imageView?.image = NSImage(named: section.image)
-        textField?.isEditable = false
+        host(SectionLabel(section: section))
+    }
+
+    private func host(_ content: SectionLabel) {
+        if let hostingView = hostingView {
+            hostingView.rootView = content
+        } else {
+            let newHostingView = NSHostingView(rootView: content)
+            newHostingView.translatesAutoresizingMaskIntoConstraints = false
+            self.addSubview(newHostingView)
+            setupConstraints(for: newHostingView)
+            self.hostingView = newHostingView
+        }
+    }
+
+    func setupConstraints(for view: NSView) {
+        NSLayoutConstraint.activate([
+            view.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: LayoutMetrics.horizontalMargin),
+            view.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -LayoutMetrics.horizontalMargin),
+            view.topAnchor.constraint(equalTo: self.topAnchor),
+            view.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+        ])
     }
 
 }

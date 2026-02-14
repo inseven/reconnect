@@ -27,7 +27,12 @@ struct SectionLabel: View {
     }
 
     var body: some View {
-        Label(section.title, image: section.image)
+        Label {
+            Text(section.title)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        } icon: {
+            section.icon
+        }
     }
 
 }
