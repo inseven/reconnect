@@ -79,8 +79,8 @@ struct BrowserView: View {
                 }
                 .id("\(deviceId)\(driveInfo.path)\(path)")
             case .device(let deviceId, _):
-                withDeviceModel(deviceId) { _ in
-                    DeviceView()
+                withDeviceModel(deviceId) { deviceModel in
+                    DeviceView(deviceModel: deviceModel)
                 }
                 .id(deviceId)
             case .softwareIndex:

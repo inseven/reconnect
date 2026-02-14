@@ -187,6 +187,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     @ObservationIgnored
     weak var delegate: DeviceModelDelegate?
 
+    var ownerInfo: String? = nil
+
     let connectionDetails: DeviceConnectionDetails
     let fileServer: FileServer
     let transfersFileServer: FileServer
@@ -221,6 +223,19 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         self.machineInfo = machineInfo
         self.drives = drives
         self.internalDrive = internalDrive
+    }
+
+    func start() {
+        DispatchQueue.global(qos: .userInitiated).async { [self] in
+            do {
+                let ownerInfo = try remoteCommandServicesClient.getOwnerInfo()
+                DispatchQueue.main.async {
+                    self.ownerInfo = ownerInfo.joined(separator: "\n")
+                }
+            } catch {
+                print("Failed to get owner info with error \(error).")
+            }
+        }
     }
 
     private func runInBackground(perform: @escaping () throws -> Void) {
