@@ -29,7 +29,10 @@ struct InstallerView: View {
 
     @State var installerModel: InstallerModel
 
+    private let applicationModel: ApplicationModel
+
     init(applicationModel: ApplicationModel, url: URL) {
+        self.applicationModel = applicationModel
         _installerModel = State(initialValue: InstallerModel(applicationModel: applicationModel, url: url))
     }
 
@@ -46,16 +49,8 @@ struct InstallerView: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
-            case .ready:
-                WizardPage {
-                    VStack {
-                        Image("Installer")
-                    }
-                } actions: {
-                    Button("Continue") {}
-                        .keyboardShortcut(.defaultAction)
-                        .disabled(true)
-                }
+            case .installQuery(let installQuery):
+                InstallQueryInstallerPage(applicationModel: applicationModel, installQuery: installQuery)
             case .checkingInstalledPackages(let progress):
                 WizardPage {
                     VStack {
