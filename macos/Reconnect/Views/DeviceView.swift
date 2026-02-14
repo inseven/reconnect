@@ -20,17 +20,52 @@ import SwiftUI
 
 struct DeviceView: View {
 
-    @Environment(DeviceModel.self) private var deviceModel
+    private var deviceModel: DeviceModel
+
+    init(deviceModel: DeviceModel) {
+        self.deviceModel = deviceModel
+    }
 
     var body: some View {
         InformationView {
 
             TabularDetailsSection("Device") {
+
                 LabeledContent("Name:", value: deviceModel.deviceConfiguration.name)
                 LabeledContent("Sync Identiifer:", value: deviceModel.deviceConfiguration.id.uuidString)
+
+                Spacer()
+
+                LabeledContent {
+                    Text(deviceModel.machineType.localizedNameKey)
+                } label: {
+                    Text("Type:")
+                }
+
+                if let machineInfo = deviceModel.machineInfo {
+
+                    Spacer()
+
+                    LabeledContent("Software Version:", value: machineInfo.softwareVersion)
+                    LabeledContent("Language:", value: machineInfo.language)
+                    LabeledContent("Unique Id:", value: machineInfo.machineUIDString)
+
+                    Spacer()
+
+                    LabeledContent("Resolution:", value: machineInfo.resolution)
+                }
+
             }
 
-            MachineDetailsGroup(machineInfo: deviceModel.machineInfo)
+            if let ownerInfo = deviceModel.ownerInfo {
+                DetailsSection("Owner") {
+                    HStack {
+                        Text(ownerInfo)
+                        Spacer()
+                    }
+                    .padding()
+                }
+            }
 
             DetailsSection("Installed Programs") {
                 ProgramManagerView(deviceModel: deviceModel)

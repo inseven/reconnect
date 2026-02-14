@@ -392,10 +392,10 @@ extension ApplicationModel: DaemonClientDelegate {
                     try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
                     backupsModel.update()
 
-//                    devices = [deviceModel]
                     devices.append(deviceModel)
                     connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                     print("Device \(deviceModel.id.uuidString) connected.")
+                    deviceModel.start()
                 case .failure(let error):
                     print("Failed to initialize device with error \(error).")
                     self.error = error
