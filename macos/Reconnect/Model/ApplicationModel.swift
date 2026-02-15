@@ -299,14 +299,7 @@ class ApplicationModel: NSObject {
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            do {
-                window = try NSInstallerWindow(applicationModel: self, file: file)
-            } catch {
-                let alert = NSAlert()
-                alert.messageText = "Error"
-                alert.informativeText = error.localizedDescription
-                alert.runModal()
-            }
+            window = NSInstallerWindow(applicationModel: self, file: file)
             window?.center()
         }
 

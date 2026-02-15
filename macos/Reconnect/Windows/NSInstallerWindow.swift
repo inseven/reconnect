@@ -24,7 +24,7 @@ class NSInstallerWindow: NSWindow {
 
     var file: File?
 
-    convenience init(applicationModel: ApplicationModel, file: File) throws {
+    convenience init(applicationModel: ApplicationModel, file: File) {
         let windowProxy = WindowProxy()
         let rootView = InstallerView(applicationModel: applicationModel, url: file.url)
             .environment(applicationModel)
