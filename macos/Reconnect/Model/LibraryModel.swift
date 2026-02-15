@@ -38,7 +38,7 @@ protocol LibraryModelDelegate: AnyObject {
     public struct Item {
 
         public let sourceURL: URL
-        public let url: URL
+        public let file: File
 
     }
 
@@ -156,18 +156,15 @@ protocol LibraryModelDelegate: AnyObject {
                     throw error ?? ReconnectError.unknownDownloadFailure
                 }
 
-                // Create a temporary directory and move the downloaded contents to ensure it has the correct filename.
-                let fileManager = FileManager.default
-                let temporaryDirectory = fileManager.temporaryDirectory.appendingPathComponent((UUID().uuidString))
-                try fileManager.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true)
-                let itemURL = temporaryDirectory.appendingPathComponent(release.filename)
-                try fileManager.moveItem(at: url, to: itemURL)
+                // Create a managed copy of the dowloaded file and clean up the original.
+                let file = try File(taking: url, filename: release.filename)
 
                 // Call our delegate.
-                let item = Item(sourceURL: downloadURL, url: itemURL)
+                let item = Item(sourceURL: downloadURL, file: file)
                 DispatchQueue.main.async {
                     self.delegate?.libraryModel(libraryModel: self, didSelectItem: item)
                 }
+
             } catch {
                 DispatchQueue.main.async {
                     self.error = error

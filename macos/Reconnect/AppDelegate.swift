@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
@@ -26,7 +28,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
             if url.isFileURL {
-                applicationModel.showInstallerWindow(url: url)
+                applicationModel.showInstallerWindow(file: File(referencing: url))
             } else if url == .update {
                 applicationModel.updaterController.updater.checkForUpdates()
             } else {
