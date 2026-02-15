@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+import Glitter
 import Interact
 
 import ReconnectCore
@@ -44,7 +45,7 @@ struct BrowserWindow: Scene {
                 .opensSettings()
         }
         .commands {
-            SparkleCommands(applicationModel: applicationModel)
+            UpdateCommands(updater: applicationModel.updaterController.updater)
             HelpCommands()
             FileCommands()
             RefreshCommands()
