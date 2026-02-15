@@ -11,6 +11,7 @@ Psion connectivity for macOS.
 Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
 
 - [Diligence](https://github.com/inseven/diligence), MIT License
+- [Glitter](https://github.com/inseven/glitter), MIT License
 - [Interact](https://github.com/inseven/interact), MIT License
 - [Licensable](https://github.com/inseven/licensable), MIT License
 - [Lua](https://www.lua.org), MIT License
