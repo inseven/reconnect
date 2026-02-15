@@ -130,32 +130,30 @@ public class FileServer: @unchecked Sendable {
 
     public struct DirectoryEntry: Identifiable, Hashable, Sendable {
 
-        public var id: String {
-            return path
-        }
-
         public var isDirectory: Bool {
             return attributes.contains(.directory)
         }
 
-        public var path: String
-        public var name: String
-        public var size: UInt32
-        public var attributes: FileAttributes
-        public var modificationDate: Date
+        public let id: String
+        public let path: String
+        public let name: String
+        public let size: UInt32
+        public let attributes: FileAttributes
+        public let modificationDate: Date
 
-        public var uid1: UInt32
-        public var uid2: UInt32
-        public var uid3: UInt32
+        public let uid1: UInt32
+        public let uid2: UInt32
+        public let uid3: UInt32
 
         public init(path: String,
-             name: String,
-             size: UInt32,
-             attributes: FileAttributes,
-             modificationDate: Date,
-             uid1: UInt32,
-             uid2: UInt32,
-             uid3: UInt32) {
+                    name: String,
+                    size: UInt32,
+                    attributes: FileAttributes,
+                    modificationDate: Date,
+                    uid1: UInt32,
+                    uid2: UInt32,
+                    uid3: UInt32) {
+            self.id = path.lowercased()
             self.path = path
             self.name = name
             self.size = size
@@ -176,6 +174,7 @@ public class FileServer: @unchecked Sendable {
             let modificationTimeInterval = TimeInterval(modificationTime.getTime())
             let modificationDate = Date(timeIntervalSince1970: modificationTimeInterval)
 
+            self.id = filePath.lowercased()
             self.path = filePath
             self.name = name
             self.size = entry.getSize()

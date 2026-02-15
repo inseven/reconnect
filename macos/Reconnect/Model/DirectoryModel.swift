@@ -132,9 +132,14 @@ class DirectoryModel {
                 throw error
             }
             DispatchQueue.main.sync {
-                var newFile = file
-                newFile.path = newPath
-                newFile.name = newName
+                let newFile = FileServer.DirectoryEntry(path: newPath,
+                                                        name: newName,
+                                                        size: file.size,
+                                                        attributes: file.attributes,
+                                                        modificationDate: file.modificationDate,
+                                                        uid1: file.uid1,
+                                                        uid2: file.uid2,
+                                                        uid3: file.uid3)
                 var updatedFiles = self.files
                 updatedFiles.removeAll { $0.path == file.path }
                 let index = updatedFiles.partitioningIndex {
