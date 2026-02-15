@@ -18,19 +18,21 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 class NSInstallerWindow: NSWindow {
 
-    var url: URL?
+    var file: File?
 
-    convenience init(applicationModel: ApplicationModel, url: URL) {
+    convenience init(applicationModel: ApplicationModel, file: File) throws {
         let windowProxy = WindowProxy()
-        let rootView = InstallerView(applicationModel: applicationModel, url: url)
+        let rootView = InstallerView(applicationModel: applicationModel, url: file.url)
             .environment(applicationModel)
             .environment(\.window, windowProxy)
         self.init(contentViewController: NSHostingController(rootView: rootView))
-        self.url = url
+        self.file = file
         windowProxy.nsWindow = self
-        title = url.displayName
+        title = file.url.displayName
         styleMask.remove([.closable, .resizable, .borderless, .fullSizeContentView])
         setContentSize(CGSize(width: 800, height: 600))
     }

@@ -199,7 +199,8 @@ class ApplicationModel: NSObject {
     }
 
     func installGuestTools() {
-        showInstallerWindow(url: Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis")!)
+        let installerURL = Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis")!
+        showInstallerWindow(file: File(referencing: installerURL))
     }
 
     func openInstaller() {
@@ -213,7 +214,7 @@ class ApplicationModel: NSObject {
             return
         }
         for url in openPanel.urls {
-            showInstallerWindow(url: url)
+            showInstallerWindow(file: File(referencing: url))
         }
     }
 
@@ -281,10 +282,10 @@ class ApplicationModel: NSObject {
         return hashes.first
     }
 
-    func showInstallerWindow(url: URL) {
+    func showInstallerWindow(file: File) {
 
         // Ignore urls used for launching Reconnect from the menu bar.
-        guard url.isFileURL else {
+        guard file.url.isFileURL else {
             return
         }
 
@@ -293,12 +294,19 @@ class ApplicationModel: NSObject {
             guard let window = window as? NSInstallerWindow else {
                 return false
             }
-            return window.url == url
+            return window.file?.url == file.url
         }
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            window = NSInstallerWindow(applicationModel: self, url: url)
+            do {
+                window = try NSInstallerWindow(applicationModel: self, file: file)
+            } catch {
+                let alert = NSAlert()
+                alert.messageText = "Error"
+                alert.informativeText = error.localizedDescription
+                alert.runModal()
+            }
             window?.center()
         }
 
@@ -443,13 +451,7 @@ extension ApplicationModel: LibraryModelDelegate {
     }
 
     func libraryModel(libraryModel: LibraryModel, didSelectItem item: LibraryModel.Item) {
-        do {
-            let url = try FileManager.default.safelyMoveItem(at: item.url, toDirectory: .downloadsDirectory)
-            showInstallerWindow(url: url)
-        } catch {
-            // TODO: Handle these errors!
-            print("Failed to handle download with error \(error).")
-        }
+        showInstallerWindow(file: item.file)
     }
 
 }
