@@ -157,9 +157,7 @@ protocol LibraryModelDelegate: AnyObject {
                 }
 
                 // Create a managed copy of the dowloaded file and clean up the original.
-                let fileManager = FileManager.default
-                let file = try File(copying: url, filename: release.filename)
-                try fileManager.removeItem(at: url)
+                let file = try File(taking: url, filename: release.filename)
 
                 // Call our delegate.
                 let item = Item(sourceURL: downloadURL, file: file)

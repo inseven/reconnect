@@ -30,6 +30,9 @@ public class File {
 
     private let temporaryDirectoryURL: URL?
 
+    /**
+     * File will be copied to a temporary directory which is deleted upon deinit.
+     */
     public init(copying url: URL, filename: String? = nil) throws {
         let fileManager = FileManager.default
         let filename = filename ?? url.lastPathComponent
@@ -39,6 +42,21 @@ public class File {
         try fileManager.copyItem(at: url, to: self.url)
     }
 
+    /**
+     * File will be moved to a temporary directory on init and deleted upon deinit.
+     */
+    public init(taking url: URL, filename: String? = nil) throws {
+        let fileManager = FileManager.default
+        let filename = filename ?? url.lastPathComponent
+        let temporaryDirectoryURL = try fileManager.createTemporaryDirectory()
+        self.url = temporaryDirectoryURL.appendingPathComponent(filename)
+        self.temporaryDirectoryURL = temporaryDirectoryURL
+        try fileManager.moveItem(at: url, to: self.url)
+    }
+
+    /**
+     * File will deleted upon deinit.
+     */
     public init(referencing url: URL) {
         self.url = url
         self.temporaryDirectoryURL = nil
