@@ -48,7 +48,7 @@ struct Sidebar: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> SidebarContainerView {
-        let sidebarContainerView = SidebarContainerView()
+        let sidebarContainerView = SidebarContainerView(applicationModel: applicationModel)
         sidebarContainerView.delegate = context.coordinator
         applicationModel.connectionDelegate = sidebarContainerView
         applicationModel.backupsModel.delegate = sidebarContainerView
@@ -57,6 +57,7 @@ struct Sidebar: NSViewRepresentable {
 
     func updateNSView(_ sidebarContainerView: SidebarContainerView, context: Context) {
         sidebarContainerView.selectedSection = navigationModel.current
+        sidebarContainerView.applicationModel = applicationModel
     }
 
 }

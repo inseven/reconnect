@@ -30,15 +30,15 @@ struct InstallQueryInstallerPage: View {
     init(applicationModel: ApplicationModel, installQuery: InstallerModel.InstallQuery) {
         self.applicationModel = applicationModel
         self.installQuery = installQuery
-        _selection = State(initialValue: applicationModel.devices.first(where: {$0.platform == installQuery.sis.target })?.id)
+        _selection = State(initialValue: applicationModel.deviceModels.first(where: {$0.platform == installQuery.sis.target })?.id)
     }
 
     func updateSelection() {
         // Don't make any changes if the currently selected device is still available.
-        guard !applicationModel.devices.contains(where: { $0.id == selection }) else {
+        guard !applicationModel.deviceModels.contains(where: { $0.id == selection }) else {
             return
         }
-        selection = applicationModel.devices.first(where: {$0.platform == installQuery.sis.target })?.id
+        selection = applicationModel.deviceModels.first(where: {$0.platform == installQuery.sis.target })?.id
     }
 
     var body: some View {
@@ -67,17 +67,17 @@ struct InstallQueryInstallerPage: View {
 
                 LabeledContent("Device") {
                     Menu {
-                        ForEach(applicationModel.devices) { deviceModel in
+                        ForEach(applicationModel.deviceModels) { deviceModel in
                             Button {
                                 selection = deviceModel.id
                             } label: {
-                                Text(deviceModel.deviceConfiguration.name)
+                                Text(deviceModel.name)
                             }
                             .disabled(deviceModel.platform != installQuery.sis.target)
                         }
                     } label: {
-                        if let deviceModel = applicationModel.devices.first(where: { $0.id == selection }) {
-                            Text(deviceModel.deviceConfiguration.name)
+                        if let deviceModel = applicationModel.deviceModels.first(where: { $0.id == selection }) {
+                            Text(deviceModel.name)
                         } else {
                             Text("No Compatible Devices")
                         }
@@ -97,7 +97,7 @@ struct InstallQueryInstallerPage: View {
             .keyboardShortcut(.defaultAction)
             .disabled(selection == nil)
         }
-        .onChange(of: applicationModel.devices) {
+        .onChange(of: applicationModel.deviceModels) {
             updateSelection()
         }
     }

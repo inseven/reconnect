@@ -27,9 +27,12 @@ struct BackupSetView: View {
     var body: some View {
         InformationView {
 
-            TabularDetailsSection("Device") {
-                LabeledContent("Name:", value: device.name)
-                LabeledContent("Sync Identiifer:", value: device.id.uuidString)
+            DetailsSection("Device") {
+                Form {
+                    LabeledContent("Name:", value: device.name)
+                    LabeledContent("Sync Identiifer:", value: device.id.uuidString)
+                }
+                .padding()
             }
 
         }

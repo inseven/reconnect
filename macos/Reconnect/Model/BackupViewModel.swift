@@ -67,8 +67,9 @@ class BackupViewModel: Runnable {
     private let applicationModel: ApplicationModel
     private let deviceModel: DeviceModel
 
+    @MainActor
     var name: String {
-        return deviceModel.deviceConfiguration.name
+        return deviceModel.name
     }
 
     init(applicationModel: ApplicationModel, deviceModel: DeviceModel) {

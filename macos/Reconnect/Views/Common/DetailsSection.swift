@@ -18,36 +18,42 @@
 
 import SwiftUI
 
-struct DetailsSection<Content: View, Label: View>: View {
+struct DetailsSection<Content: View, Header: View, Footer: View>: View {
 
     let content: Content
-    let label: Label
+    let header: Header
+    let footer: Footer
 
-    init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> Label) {
+    init(@ViewBuilder content: () -> Content, @ViewBuilder header: () -> Header, @ViewBuilder footer: () -> Footer) {
         self.content = content()
-        self.label = label()
+        self.header = header()
+        self.footer = footer()
     }
 
     var body: some View {
         VStack(alignment: .leading) {
-            label
+            header
                 .font(.title)
             VStack {
                 content
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding()
             .frame(maxWidth: .infinity)
             .modifier(DetailsGroupBackground())
+            footer
         }
     }
 
 }
 
-extension DetailsSection where Label == Text {
+extension DetailsSection where Header == Text, Footer == EmptyView {
 
     init(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) {
         self.init(content: content) {
             Text(title)
+        } footer: {
+            EmptyView()
         }
     }
 
@@ -55,6 +61,18 @@ extension DetailsSection where Label == Text {
     init(_ title: String, @ViewBuilder content: () -> Content) {
         self.init(content: content) {
             Text(title)
+        } footer: {
+            EmptyView()
+        }
+    }
+
+}
+
+extension DetailsSection where Footer == EmptyView {
+
+    init(@ViewBuilder content: () -> Content, @ViewBuilder header: () -> Header) {
+        self.init(content: content, header: header) {
+            EmptyView()
         }
     }
 

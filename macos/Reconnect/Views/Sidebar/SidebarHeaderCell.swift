@@ -45,8 +45,11 @@ class SidebarHeaderCell: NSTableCellView, ConfigurableSidebarCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(_ node: SidebarContainerView.Node) {
-        textField?.stringValue = node.name
+    func configure(applicationModel: ApplicationModel, node: SidebarContainerView.Node) {
+        guard case .header(let name) = node.type else {
+            fatalError("Unsupported node type \(node.type).")
+        }
+        textField?.stringValue = name
     }
 
 }

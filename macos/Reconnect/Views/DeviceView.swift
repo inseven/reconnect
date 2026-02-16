@@ -20,6 +20,17 @@ import SwiftUI
 
 struct DeviceView: View {
 
+    enum Sheet: Identifiable {
+
+        case edit
+
+        var id: Self {
+            return self
+        }
+    }
+
+    @State private var sheet: Sheet? = nil
+
     private var deviceModel: DeviceModel
 
     init(deviceModel: DeviceModel) {
@@ -28,42 +39,41 @@ struct DeviceView: View {
 
     var body: some View {
         InformationView {
-
-            TabularDetailsSection("Device") {
-
-                LabeledContent("Name:", value: deviceModel.deviceConfiguration.name)
-                LabeledContent("Sync Identiifer:", value: deviceModel.deviceConfiguration.id.uuidString)
-
-                Spacer()
-
-                LabeledContent {
-                    Text(deviceModel.machineType.localizedNameKey)
-                } label: {
-                    Text("Type:")
-                }
-
-                if let machineInfo = deviceModel.machineInfo {
-
+            DetailsSection {
+                Form {
+                    LabeledContent("Name:", value: deviceModel.name)
                     Spacer()
-
-                    LabeledContent("Software Version:", value: machineInfo.softwareVersion)
-                    LabeledContent("Language:", value: machineInfo.language)
-                    LabeledContent("Unique Id:", value: machineInfo.machineUIDString)
-
+                    LabeledContent("Sync Identiifer:", value: deviceModel.id.uuidString)
                     Spacer()
-
-                    LabeledContent("Resolution:", value: machineInfo.resolution)
+                    LabeledContent("Type:") {
+                        Text(deviceModel.machineType.localizedNameKey)
+                    }
+                    if let machineInfo = deviceModel.machineInfo {
+                        Spacer()
+                        LabeledContent("Software Version:", value: machineInfo.softwareVersion)
+                        LabeledContent("Language:", value: machineInfo.language)
+                        LabeledContent("Unique Id:", value: machineInfo.machineUIDString)
+                        Spacer()
+                        LabeledContent("Resolution:", value: machineInfo.resolution)
+                    }
                 }
-
+                .padding()
+            } header: {
+                Text("Device")
+            } footer: {
+                HStack {
+                    Spacer()
+                    Button("Edit...") {
+                        sheet = .edit
+                    }
+                }
             }
 
             if let ownerInfo = deviceModel.ownerInfo {
                 DetailsSection("Owner") {
-                    HStack {
-                        Text(ownerInfo)
-                        Spacer()
-                    }
-                    .padding()
+                    Text(ownerInfo)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
                 }
             }
 
@@ -74,7 +84,13 @@ struct DeviceView: View {
             }
             
         }
-        .navigationTitle("My Psion")
+        .sheet(item: $sheet) { sheet in
+            switch sheet {
+            case .edit:
+                DeviceEditView(deviceModel: deviceModel)
+            }
+        }
+        .navigationTitle(deviceModel.name)
         .showsDeviceProgress()
     }
 
