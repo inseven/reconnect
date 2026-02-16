@@ -6,6 +6,12 @@ Psion connectivity for macOS.
 
 <img width="1078" src="images/screenshot@2x.png">
 
+## Contributing
+
+We invite and welcome contributions! There's a pretty comprehensive list of [issues](https://github.com/inseven/reconnect/issues) to get you started, and our documentation is always in need of some care and attention.
+
+Please recognize Reconnect is a labour of love, and be respectful of others in your communications. We will not accept racism, sexism, or any form of discrimination in our community.
+
 ## License
 
 Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
