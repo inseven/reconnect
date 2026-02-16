@@ -14,9 +14,9 @@
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
 		D84271C32E332731006224FE /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D851ED2D2E2C33C70067E0CD /* ReconnectCore */; };
-		D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = D88FA14D2C2CE0FA00805DBD /* Sparkle */; };
 		D89071912C4B025D00C11DE8 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = D89071902C4B025D00C11DE8 /* ArgumentParser */; };
 		D89071932C4B02D900C11DE8 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D89071922C4B02D900C11DE8 /* ReconnectCore */; };
+		D8A0EE482F4286370026201D /* Glitter in Frameworks */ = {isa = PBXBuildFile; productRef = D8A0EE472F4286370026201D /* Glitter */; };
 		D8A8A8082DE19312007A657B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = D8A8A8072DE19312007A657B /* Algorithms */; };
 		D8B1AC452E0F4C220084BFD5 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8B1AC442E0F4C220084BFD5 /* Quartz.framework */; };
 		D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -201,12 +201,12 @@
 			files = (
 				D8A8A8082DE19312007A657B /* Algorithms in Frameworks */,
 				D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */,
+				D8A0EE482F4286370026201D /* Glitter in Frameworks */,
 				D8EBFD572F35349E008D7F47 /* Word2text in Frameworks */,
 				D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */,
 				D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */,
 				D83B17D02F33B8F7001864E5 /* Word2text in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
-				D88FA14E2C2CE0FA00805DBD /* Sparkle in Frameworks */,
 				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,13 +333,13 @@
 			packageProductDependencies = (
 				D8D3E79E2C2540D9003E696D /* Interact */,
 				D8E31EB22C26E09500350082 /* Diligence */,
-				D88FA14D2C2CE0FA00805DBD /* Sparkle */,
 				D8CBAC642C4A02580035FC3D /* ReconnectCore */,
 				D8A8A8072DE19312007A657B /* Algorithms */,
 				D83BD9652DE862AB0075902D /* SwiftyGif */,
 				D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */,
 				D83B17CF2F33B8F7001864E5 /* Word2text */,
 				D8EBFD562F35349E008D7F47 /* Word2text */,
+				D8A0EE472F4286370026201D /* Glitter */,
 			);
 			productName = PsiMac;
 			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
@@ -532,12 +532,12 @@
 			packageReferences = (
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
-				D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */,
 				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 				D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */,
 				D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */,
+				D8A0EE462F4286370026201D /* XCRemoteSwiftPackageReference "glitter" */,
 			);
 			preferredProjectObjectVersion = 56;
 			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
@@ -1228,20 +1228,20 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sparkle-project/Sparkle";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.6.3;
-			};
-		};
 		D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.5.0;
+			};
+		};
+		D8A0EE462F4286370026201D /* XCRemoteSwiftPackageReference "glitter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/inseven/glitter.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.2;
 			};
 		};
 		D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
@@ -1290,11 +1290,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
 		};
-		D88FA14D2C2CE0FA00805DBD /* Sparkle */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D88FA14C2C2CE0FA00805DBD /* XCRemoteSwiftPackageReference "Sparkle" */;
-			productName = Sparkle;
-		};
 		D89071902C4B025D00C11DE8 /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
@@ -1303,6 +1298,11 @@
 		D89071922C4B02D900C11DE8 /* ReconnectCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
+		};
+		D8A0EE472F4286370026201D /* Glitter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8A0EE462F4286370026201D /* XCRemoteSwiftPackageReference "glitter" */;
+			productName = Glitter;
 		};
 		D8A8A8072DE19312007A657B /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;

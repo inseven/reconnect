@@ -18,6 +18,7 @@
 
 import Foundation
 
+import Glitter
 import Interact
 import Licensable
 import OpoLuaCore
@@ -29,15 +30,6 @@ fileprivate let plptoolsLicense = License(id: "https://github.com/rrthomas/plpto
                                           attributes: [
                                             .url(URL(string: "https://github.com/rrthomas/plptools")!, title: "GitHub"),
                                           ])
-
-fileprivate let sparkleLicense = License(id: "https://github.com/sparkle-project/Sparkle",
-                                         name: "Sparkle",
-                                         author: "Sparkle Project",
-                                         text: String(contentsOfResource: "sparkle-license"),
-                                         attributes: [
-                                            .url(URL(string: "https://github.com/sparkle-project/Sparkle")!, title: "GitHub"),
-                                            .url(URL(string: "https://sparkle-project.org")!, title: "Website"),
-                                         ])
 
 fileprivate let swiftAlgorithmsLicense = License(id: "https://github.com/apple/swift-algorithms",
                                                  name: "Swift Algorithms",
@@ -77,7 +69,6 @@ fileprivate let word2TextLicense = License(id: "https://github.com/smittytone/Wo
 extension Licensable where Self == License {
 
     fileprivate static var plptools: License { plptoolsLicense }
-    fileprivate static var sparkle: License { sparkleLicense }
     fileprivate static var swiftAlgorithms: License { swiftAlgorithmsLicense }
     fileprivate static var swiftArgumentParser: License { swiftArgumentParserLicense }
     fileprivate static var swiftNumerics: License { swiftNumericsLicense }
@@ -93,11 +84,11 @@ fileprivate let reconnectLicense = License(id: "https://github.com/inseven/recon
                                                .url(URL(string: "https://github.com/inseven/reconnect")!, title: "GitHub"),
                                            ],
                                            licenses: [
+                                               .glitter,
                                                .interact,
                                                .licensable,
                                                .opolua,
                                                .plptools,
-                                               .sparkle,
                                                .swiftAlgorithms,
                                                .swiftArgumentParser,
                                                .word2Text,
