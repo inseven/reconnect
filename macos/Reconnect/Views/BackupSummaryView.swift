@@ -33,16 +33,12 @@ struct BackupSummaryView: View {
     var body: some View {
         InformationView {
 
-            DetailsSection("Device") {
+            DetailsSection {
                 Form {
                     LabeledContent("Name:", value: backup.manifest.device.name)
+                    Spacer()
                     LabeledContent("Sync Identiifer:", value: backup.manifest.device.id.uuidString)
-                }
-                .padding()
-            }
-
-            DetailsSection("Summary") {
-                Form {
+                    Spacer()
                     LabeledContent {
                         Text(backup.manifest.date, format: Date.FormatStyle(date: .long))
                     } label: {
@@ -55,6 +51,19 @@ struct BackupSummaryView: View {
                     }
                 }
                 .padding()
+            } header: {
+                Text("Summary")
+            } footer: {
+                HStack {
+                    Spacer()
+                    Button("Delete", role: .destructive) {
+                        backupsModel.delete(backup: backup)
+
+                    }
+                    Button("Show in Finder...") {
+                        NSWorkspace.shared.open(backup.url)
+                    }
+                }
             }
 
             DetailsSection("Drives") {
@@ -66,17 +75,6 @@ struct BackupSummaryView: View {
                           image: DisplayHelpers.imageForDrive(drive.drive, mediaType: drive.mediaType, platform: backup.manifest.platform ?? .epoc32))
                 }
                 .padding()
-            }
-
-            HStack {
-                Spacer()
-                Button("Delete", role: .destructive) {
-                    backupsModel.delete(backup: backup)
-
-                }
-                Button("Show in Finder...") {
-                    NSWorkspace.shared.open(backup.url)
-                }
             }
 
         }
