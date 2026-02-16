@@ -65,6 +65,7 @@ struct BackupDrivePickerPage: View {
             Button("Continue") {
                 driveQuery.continue(drives: selectedDrives)
             }
+            .keyboardShortcut(.defaultAction)
         }
     }
 

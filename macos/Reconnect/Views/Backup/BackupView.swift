@@ -62,6 +62,9 @@ struct BackupView: View {
                         cancellationToken.cancel()
                     }
                     .disabled(cancellationToken.isCancelled)
+                    Button("Continue") {}
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(true)
                 }
 
             case .error(let error):

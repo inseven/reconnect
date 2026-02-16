@@ -620,30 +620,39 @@ extension FileServer {
         }
     }
 
-    public func getStubs(installDirectory: String, callback: (Progress) -> ProgressResponse) throws -> [Sis.Stub] {
+    public func getStubs(installDirectory: String,
+                         progress: Progress,
+                         cancellationToken: CancellationToken) throws -> [Sis.Stub] {
         guard try exists(path: installDirectory) else {
             return []
         }
-        let fileManager = FileManager.default
+        progress.localizedDescription = "Checking installed packages..."
+
         let paths = try dir(path: installDirectory)
             .filter { $0.pathExtension.lowercased() == "sis" }
+        try cancellationToken.checkCancellation()
+
+        let fileManager = FileManager.default
         var stubs: [Sis.Stub] = []
-        let progress = Progress(totalUnitCount: Int64(paths.count))
+        progress.totalUnitCount = Int64(paths.count)
         for file in paths {
+            progress.localizedAdditionalDescription = file.path
             let temporaryURL = fileManager.temporaryURL()
             defer {
                 try? fileManager.removeItem(at: temporaryURL)
             }
-            try copyFile(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { _, _ in
-                return .continue
+            let copyProgress = Progress()
+            progress.addChild(copyProgress, withPendingUnitCount: 1)
+            try copyFile(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { current, total in
+                copyProgress.totalUnitCount = Int64(total)
+                copyProgress.completedUnitCount = Int64(current)
+                return cancellationToken.isCancelled ? .cancel : .continue
             }
             let contents = try Data(contentsOf: temporaryURL)
-            progress.completedUnitCount += 1
-            guard callback(progress) == .continue else {
-                break
-            }
             stubs.append(Sis.Stub(path: file.path, contents: contents))
+            try cancellationToken.checkCancellation()
         }
+
         return stubs
     }
 

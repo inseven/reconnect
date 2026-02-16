@@ -150,7 +150,7 @@ class InstallerModel: Runnable {
     enum Page {
         case loading
         case installQuery(InstallQuery)
-        case checkingInstalledPackages(Double)
+        case checkingInstalledPackages(Progress, CancellationToken)
         case operation(Fs.Operation, Progress)
         case error(Error)
         case complete
@@ -340,12 +340,14 @@ extension InstallerModel: SisInstallIoHandler {
             }
 
             // Index the existing stubs.
-            let stubs = try device.fileServer.getStubs(installDirectory: installDirectory) { progress in
-                DispatchQueue.main.sync {
-                    self.page = .checkingInstalledPackages(progress.fractionCompleted)
-                }
-                return .continue
+            let progress = Progress()
+            let cancellationToken = CancellationToken()
+            DispatchQueue.main.sync {
+                self.page = .checkingInstalledPackages(progress, cancellationToken)
             }
+            let stubs = try device.fileServer.getStubs(installDirectory: installDirectory,
+                                                       progress: progress,
+                                                       cancellationToken: cancellationToken)
             return .stubs(stubs)
         } catch {
             if let error = error as? PLPToolsError {

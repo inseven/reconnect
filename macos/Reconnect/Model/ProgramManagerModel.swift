@@ -86,12 +86,15 @@ class ProgramManagerModel: Runnable, @unchecked Sendable {
             }
 
             // Get the installed stubs.
-            let stubs = try deviceModel.fileServer.getStubs(installDirectory: installDirectory) { progress in
-                DispatchQueue.main.sync {
-                    self.state = .checkingInstalledPackages(progress)
-                }
-                return .continue
+            let progress = Progress()
+            let cancellationToken = CancellationToken()
+            DispatchQueue.main.sync {
+                self.state = .checkingInstalledPackages(progress)
             }
+            let stubs = try deviceModel.fileServer.getStubs(installDirectory: installDirectory,
+                                                            progress: progress,
+                                                            cancellationToken: cancellationToken)
+
             // Parse them to determine the program names and versions.
             let interpreter = PsiLuaEnv()
             let installedPrograms = try stubs.map { stub in
