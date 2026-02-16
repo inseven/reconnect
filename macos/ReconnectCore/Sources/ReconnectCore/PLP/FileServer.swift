@@ -648,6 +648,7 @@ extension FileServer {
                 copyProgress.completedUnitCount = Int64(current)
                 return cancellationToken.isCancelled ? .cancel : .continue
             }
+            copyProgress.completedUnitCount = copyProgress.totalUnitCount
             let contents = try Data(contentsOf: temporaryURL)
             stubs.append(Sis.Stub(path: file.path, contents: contents))
             try cancellationToken.checkCancellation()
