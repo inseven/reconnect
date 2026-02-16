@@ -48,4 +48,5 @@ extension NSImage {
 
         return nil
     }
+
 }

@@ -24,13 +24,18 @@ import OpoLuaCore
 
 extension PsiLuaEnv {
 
-    // TODO: Rename source and destination
-    public func convertMultiBitmap(at url: URL, to: URL, type: UTType = .tiff) throws {
-        let bitmaps = PsiLuaEnv().getMbmBitmaps(path: url.path) ?? []
+    // TODO: This should probably throw.
+    public func imagesFromMultiBitmap(at url: URL) -> [CGImage] {
+        let bitmaps = getMbmBitmaps(path: url.path) ?? []
         let images = bitmaps.map { bitmap in
             return CGImage.from(bitmap: bitmap)
         }
-        try CGImageWrite(destinationURL: to, images: images, type: type)
+        return images
+    }
+
+    public func convertMultiBitmap(sourceURL: URL, destinationURL: URL, type: UTType = .tiff) throws {
+        let images = imagesFromMultiBitmap(at: sourceURL)
+        try CGImageWrite(destinationURL: destinationURL, images: images, type: type)
     }
 
     public func loadSisFile(url: URL) throws -> Sis.File {

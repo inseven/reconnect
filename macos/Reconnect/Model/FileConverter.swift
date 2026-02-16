@@ -21,7 +21,6 @@ import SwiftUI
 import OpoLuaCore
 
 import ReconnectCore
-import Word2text
 
 enum FileType: String, Identifiable {
 
@@ -33,6 +32,7 @@ enum FileType: String, Identifiable {
     case word
     case text
     case markdown
+    case pic
 
 }
 
@@ -48,6 +48,8 @@ extension FileType {
             return "Text (.txt)"
         case .markdown:
             return "Markdown (.md)"
+        case .pic:
+            return "EPOC16 Image (.pic)"
         }
     }
 
@@ -65,6 +67,8 @@ extension FileType {
             return directoryEntry.pathExtension.lowercased() == "txt"
         case .markdown:
             return directoryEntry.pathExtension.lowercased() == "md"
+        case .pic:
+            return directoryEntry.pathExtension.lowercased() == "pic"
         }
     }
 
@@ -76,6 +80,7 @@ enum ConversionIdentifier: String {
     case mbmToTiff
     case wordToText
     case windowsAsciiToUnixUnicode
+    case picToPng
 
 }
 
@@ -91,6 +96,8 @@ extension ConversionIdentifier {
             return .wordConversion
         case .windowsAsciiToUnixUnicode:
             return .textConversion
+        case .picToPng:
+            return .picConversion
         }
     }
 
@@ -105,61 +112,9 @@ extension ConversionIdentifier {
             return "Text"
         case .windowsAsciiToUnixUnicode:
             return "UTF8 with Unix Line Endings"
+        case .picToPng:
+            return "PNG"
         }
-    }
-
-}
-
-fileprivate struct Conversion {
-    let filename: (FileServer.DirectoryEntry) -> String
-    let perform: (URL, URL) throws -> URL
-}
-
-
-extension Conversion {
-
-    fileprivate static let none: Self = Self { entry in
-        return entry.name
-    } perform: { sourceURL, destinationURL in
-        return sourceURL
-    }
-
-    fileprivate static let mbmConversion: Self = Self { entry in
-        return entry.name
-            .deletingPathExtension
-            .appendingPathExtension("tiff")
-    } perform: { sourceURL, destinationURL in
-        let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
-                                                              conformingTo: .tiff)
-        try PsiLuaEnv().convertMultiBitmap(at: sourceURL, to: outputURL)
-        try FileManager.default.removeItem(at: sourceURL)
-        return outputURL
-    }
-
-    fileprivate static let wordConversion: Self = Self { entry in
-        return entry
-            .name
-            .deletingPathExtension
-            .appendingPathExtension("txt")
-    } perform: { sourceURL, destinationURL in
-        let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
-                                                              conformingTo: .plainText)
-        let data = try Data(contentsOf: sourceURL)
-        let output = try PsionWord.processFile(data).get()
-        try output.write(to: outputURL, atomically: true, encoding: .utf8)
-        return outputURL
-    }
-
-    fileprivate static let textConversion: Self = Self { entry in
-        return entry.name
-    } perform: { sourceURL, destinationURL in
-        let data = try Data(contentsOf: sourceURL)
-        guard let contents = String(data: data, encoding: .ascii) else {
-            throw ReconnectError.unknown
-        }
-        let output = contents.replacingOccurrences(of: "\r\n", with: "\n")
-        try output.write(to: sourceURL, atomically: true, encoding: .utf8)
-        return sourceURL
     }
 
 }
@@ -184,6 +139,7 @@ class FileConverter {
         .word: .wordToText,
         .text: .windowsAsciiToUnixUnicode,
         .markdown: .windowsAsciiToUnixUnicode,
+        .pic: .picToPng,
     ]
 
     private static func converter(for directoryEntry: FileServer.DirectoryEntry) -> Conversion? {
