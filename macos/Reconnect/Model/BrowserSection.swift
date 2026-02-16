@@ -24,63 +24,9 @@ enum BrowserSection: Hashable {
     case disconnected
     case drive(UUID, FileServer.DriveInfo, Platform)
     case directory(UUID, FileServer.DriveInfo, String)
-    case device(UUID, String)
+    case device(UUID)
     case softwareIndex
     case program(SoftwareIndex.Program)
     case backupSet(DeviceConfiguration)
     case backup(Backup)
-}
-
-extension BrowserSection {
-
-    var title: String {
-        switch self {
-        case .disconnected:
-            return "Not Connected"
-        case .drive(_, let driveInfo, _):
-            return driveInfo.displayName
-        case .directory(_, _, let path):
-            return path.lastWindowsPathComponent
-        case .device(_, let name):
-            return name
-        case .softwareIndex:
-            return "Software Index"
-        case .program(let program):
-            return program.name
-        case .backupSet(let device):
-            return device.name
-        case .backup(let backup):
-            return backup.manifest.date.formatted()
-        }
-    }
-
-    @ViewBuilder var icon: some View {
-        switch self {
-        case .disconnected:
-            Image(.disconnected16)
-        case .drive(_, let driveInfo, let platform):
-            Image(DisplayHelpers.imageForDrive(driveInfo.drive,
-                                               mediaType: driveInfo.mediaType,
-                                               platform: platform))
-        case .directory:
-            Image(.folder16)
-        case .device:
-            Image(.psion16)
-        case .softwareIndex:
-            Image(.install16)
-        case .program(let program):
-            if let iconURL = program.iconURL {
-                FixedSizeAsyncImage(url: iconURL, size: CGSize(width: 16, height: 16)) {
-                    Image(.fileUnknown16)
-                }
-            } else {
-                Image(.fileUnknown16)
-            }
-        case .backupSet(_):
-            Image(.backup16)
-        case .backup(_):
-            Image(.backup16)
-        }
-    }
-
 }

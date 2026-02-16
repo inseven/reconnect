@@ -18,20 +18,72 @@
 
 import SwiftUI
 
+import ReconnectCore
+
 struct SectionLabel: View {
 
+    let applicationModel: ApplicationModel
     let section: BrowserSection
 
-    init(section: BrowserSection) {
+    init(applicationModel: ApplicationModel, section: BrowserSection) {
+        self.applicationModel = applicationModel
         self.section = section
     }
 
     var body: some View {
         Label {
-            Text(section.title)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            Group {
+                switch section {
+                case .disconnected:
+                    Text("Not Connected")
+                case .drive(_, let driveInfo, _):
+                    Text(driveInfo.displayName)
+                case .directory(_, _, let path):
+                    Text(path.lastWindowsPathComponent)
+                case .device(let deviceId):
+                    if let deviceModel = applicationModel.deviceModel(for: deviceId) {
+                        Text(deviceModel.name)
+                    } else {
+                        Text("Unknown")
+                    }
+                case .softwareIndex:
+                    Text("Software Index")
+                case .program(let program):
+                    Text(program.name)
+                case .backupSet(let device):
+                    Text(device.name)
+                case .backup(let backup):
+                    Text(backup.manifest.date, format: .dateTime)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         } icon: {
-            section.icon
+            switch section {
+            case .disconnected:
+                Image(.disconnected16)
+            case .drive(_, let driveInfo, let platform):
+                Image(DisplayHelpers.imageForDrive(driveInfo.drive,
+                                                   mediaType: driveInfo.mediaType,
+                                                   platform: platform))
+            case .directory:
+                Image(.folder16)
+            case .device:
+                Image(.psion16)
+            case .softwareIndex:
+                Image(.install16)
+            case .program(let program):
+                if let iconURL = program.iconURL {
+                    FixedSizeAsyncImage(url: iconURL, size: CGSize(width: 16, height: 16)) {
+                        Image(.fileUnknown16)
+                    }
+                } else {
+                    Image(.fileUnknown16)
+                }
+            case .backupSet(_):
+                Image(.backup16)
+            case .backup(_):
+                Image(.backup16)
+            }
         }
     }
 

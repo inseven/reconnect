@@ -33,29 +33,39 @@ struct BackupSummaryView: View {
     var body: some View {
         InformationView {
 
-            TabularDetailsSection("Device") {
-                LabeledContent("Name:", value: backup.manifest.device.name)
-                LabeledContent("Sync Identiifer:", value: backup.manifest.device.id.uuidString)
+            DetailsSection("Device") {
+                Form {
+                    LabeledContent("Name:", value: backup.manifest.device.name)
+                    LabeledContent("Sync Identiifer:", value: backup.manifest.device.id.uuidString)
+                }
+                .padding()
             }
 
-            TabularDetailsSection("Summary") {
-                LabeledContent {
-                    Text(backup.manifest.date, format: Date.FormatStyle(date: .long))
-                } label: {
-                    Text("Date:")
-                }
-                LabeledContent {
-                    Text(backup.manifest.date, format: Date.FormatStyle(time: .standard))
-                } label: {
-                    Text("Time:")
-                }
-            }
-
-            TabularDetailsSection("Drives") {
-                ForEach(backup.manifest.drives.sorted(by: { $0.drive.localizedCaseInsensitiveCompare($1.drive) == .orderedAscending })) { drive in
-                        Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
-                              image: DisplayHelpers.imageForDrive(drive.drive, mediaType: drive.mediaType, platform: backup.manifest.platform ?? .epoc32))
+            DetailsSection("Summary") {
+                Form {
+                    LabeledContent {
+                        Text(backup.manifest.date, format: Date.FormatStyle(date: .long))
+                    } label: {
+                        Text("Date:")
                     }
+                    LabeledContent {
+                        Text(backup.manifest.date, format: Date.FormatStyle(time: .standard))
+                    } label: {
+                        Text("Time:")
+                    }
+                }
+                .padding()
+            }
+
+            DetailsSection("Drives") {
+                let drives = backup.manifest.drives.sorted { lhs, rhs in
+                    lhs.drive.localizedCaseInsensitiveCompare(rhs.drive) == .orderedAscending
+                }
+                ForEach(drives) { drive in
+                    Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
+                          image: DisplayHelpers.imageForDrive(drive.drive, mediaType: drive.mediaType, platform: backup.manifest.platform ?? .epoc32))
+                }
+                .padding()
             }
 
             HStack {

@@ -140,8 +140,7 @@ class ApplicationModel: NSObject {
     // UI until they're ready to be fully displayed.
     private var connectingDevices: [UUID: CancellationToken] = [:]
 
-    // TODO: This should be a set.
-    var devices: [DeviceModel] = []
+    var deviceModels: [DeviceModel] = []
 
     /**
      * Indciates whether there's a device currently connecting.
@@ -195,6 +194,12 @@ class ApplicationModel: NSObject {
         // and view model hierarchy around managing multiple connected devices.
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
             self.launching = false
+        }
+    }
+
+    func deviceModel(for deviceId: UUID) -> DeviceModel? {
+        return deviceModels.first { deviceModel in
+            deviceModel.id == deviceId
         }
     }
 
@@ -350,7 +355,7 @@ extension ApplicationModel: DaemonClientDelegate {
     func daemonClientDidDisconnect(_ daemonClient: DaemonClient) {
         dispatchPrecondition(condition: .onQueue(.main))
         self.isDaemonConnected = false
-        self.devices = []
+        self.deviceModels = []
     }
 
     func daemonClient(_ daemonClient: ReconnectCore.DaemonClient,
@@ -379,21 +384,8 @@ extension ApplicationModel: DaemonClientDelegate {
                 }
                 switch result {
                 case .success(let deviceModel):
-
-                    // Set the delegate.
                     deviceModel.delegate = self
-
-                    // Update the back up identifier for this device, and re-enumerate the backups.
-                    let deviceBackupsURL = backupsURL
-                        .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
-                    let configURL = deviceBackupsURL.appending(path: "config.ini")
-                    if !FileManager.default.fileExists(at: deviceBackupsURL) {
-                        try? FileManager.default.createDirectory(at: deviceBackupsURL, withIntermediateDirectories: true)
-                    }
-                    try? deviceModel.deviceConfiguration.data().write(to: configURL, options: .atomic)
-                    backupsModel.update()
-
-                    devices.append(deviceModel)
+                    deviceModels.append(deviceModel)
                     connectionDelegate?.applicationModel(self, deviceDidConnect: deviceModel)
                     print("Device \(deviceModel.id.uuidString) connected.")
                     deviceModel.start()
@@ -408,9 +400,9 @@ extension ApplicationModel: DaemonClientDelegate {
 
     func daemonClient(_ daemonClient: DaemonClient, deviceDidDisconnect connectionDetails: DeviceConnectionDetails) {
         dispatchPrecondition(condition: .onQueue(.main))
-        if let deviceModel = devices.first(where: { $0.connectionDetails.id == connectionDetails.id }) {
+        if let deviceModel = deviceModels.first(where: { $0.connectionDetails.id == connectionDetails.id }) {
             connectionDelegate?.applicationModel(self, deviceDidDisconnect: deviceModel)
-            devices.removeAll { $0.id == deviceModel.id }
+            deviceModels.removeAll { $0.id == deviceModel.id }
         }
         if let cancellationToken = connectingDevices.removeValue(forKey: connectionDetails.id) {
             cancellationToken.cancel()
@@ -421,6 +413,20 @@ extension ApplicationModel: DaemonClientDelegate {
 
 // TODO: @MainActor here doesn't appear to do anything other than silence the compiler?
 extension ApplicationModel: @MainActor DeviceModelDelegate {
+
+    func deviceModel(deviceModel: DeviceModel, didUpdateName name: String) {
+
+        // Update the back up identifier for this device, and re-enumerate the backups.
+        let deviceBackupsURL = backupsURL
+            .appending(path: deviceModel.id.uuidString, directoryHint: .isDirectory)
+        let configURL = deviceBackupsURL.appending(path: "config.ini")
+        if !FileManager.default.fileExists(at: deviceBackupsURL) {
+            try? FileManager.default.createDirectory(at: deviceBackupsURL, withIntermediateDirectories: true)
+        }
+        let configuration = DeviceConfiguration(id: deviceModel.id, name: deviceModel.name)
+        try? configuration.data().write(to: configURL, options: .atomic)
+        backupsModel.update()
+    }
 
     func deviceModel(deviceModel: DeviceModel, willStartBackupWithIdentifier identifier: UUID) {
         self.longRunningOperations.insert(identifier)
@@ -455,9 +461,9 @@ extension ApplicationModel: @MainActor NavigationModelDelegate {
                                      canNavigateToItem item: BrowserSection) -> Bool {
         switch item {
         case .disconnected:
-            return self.devices.isEmpty
-        case .drive(let deviceId, _, _), .directory(let deviceId, _, _), .device(let deviceId, _):
-            return self.devices.first?.id == deviceId
+            return self.deviceModels.isEmpty
+        case .drive(let deviceId, _, _), .directory(let deviceId, _, _), .device(let deviceId):
+            return self.deviceModels.first?.id == deviceId
         case .softwareIndex, .program(_):
             return true
         case .backupSet(_):

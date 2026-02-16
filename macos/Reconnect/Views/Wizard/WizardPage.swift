@@ -60,7 +60,9 @@ struct WizardPage<Content: View, Actions: View>: View {
                     Spacer()
                 }
                 .padding()
-                Divider()
+                if #unavailable(macOS 26) {
+                    Divider()
+                }
             }
             content
                 .textSelection(.enabled)

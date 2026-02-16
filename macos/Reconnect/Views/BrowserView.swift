@@ -39,7 +39,7 @@ struct BrowserView: View {
     }
 
     @ViewBuilder func withDeviceModel(_ deviceId: UUID, @ViewBuilder content: (DeviceModel) -> some View) -> some View {
-        if let deviceModel = applicationModel.devices.first(where: { $0.id == deviceId }) {
+        if let deviceModel = applicationModel.deviceModel(for: deviceId) {
             content(deviceModel)
                 .environment(deviceModel)
                 .focusedSceneObject(DeviceModelProxy(deviceModel: deviceModel))
@@ -78,7 +78,7 @@ struct BrowserView: View {
                                   path: path)
                 }
                 .id("\(deviceId)\(driveInfo.path)\(path)")
-            case .device(let deviceId, _):
+            case .device(let deviceId):
                 withDeviceModel(deviceId) { deviceModel in
                     DeviceView(deviceModel: deviceModel)
                 }

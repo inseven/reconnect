@@ -40,7 +40,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                         Button {
                             navigationModel.navigate(to: item)
                         } label: {
-                            SectionLabel(section: item.element)
+                            SectionLabel(applicationModel: applicationModel, section: item.element)
                         }
                         .disabled(!navigationModel.canNavigate(to: item))
                     }
@@ -59,7 +59,7 @@ struct NavigationToolbar: CustomizableToolbarContent {
                         Button {
                             navigationModel.navigate(to: item)
                         } label: {
-                            SectionLabel(section: item.element)
+                            SectionLabel(applicationModel: applicationModel, section: item.element)
                         }
                         .disabled(!navigationModel.canNavigate(to: item))
                     }

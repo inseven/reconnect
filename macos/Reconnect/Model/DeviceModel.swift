@@ -22,15 +22,15 @@ import OpoLuaCore
 
 import ReconnectCore
 
+// Called on main.
 protocol DeviceModelDelegate: AnyObject {
 
+    func deviceModel(deviceModel: DeviceModel, didUpdateName name: String)
     func deviceModel(deviceModel: DeviceModel, willStartBackupWithIdentifier identifier: UUID)
     func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup)
     func deviceModel(deviceModel: DeviceModel, didFailBackupWithIdentifier identifier: UUID, error: Error)
 
 }
-
-
 
 @Observable
 class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
@@ -156,7 +156,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         return lhs.id != rhs.id
     }
 
-    @MainActor var isCapturingScreenshot: Bool = false
+    @MainActor
+    var isCapturingScreenshot: Bool = false
 
     var id: UUID {
         return deviceConfiguration.id
@@ -187,18 +188,23 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     @ObservationIgnored
     weak var delegate: DeviceModelDelegate?
 
+    @MainActor
     var ownerInfo: String? = nil
+
+    @MainActor
+    var name: String
 
     let connectionDetails: DeviceConnectionDetails
     let fileServer: FileServer
     let transfersFileServer: FileServer
     let remoteCommandServicesClient: RemoteCommandServicesClient
 
-    let deviceConfiguration: DeviceConfiguration
     let machineType: RemoteCommandServicesClient.MachineType
     let machineInfo: RemoteCommandServicesClient.MachineInfo?
     let drives: [FileServer.DriveInfo]
     let internalDrive: FileServer.DriveInfo
+
+    private let deviceConfiguration: DeviceConfiguration
 
     private let workQueue = DispatchQueue(label: "DeviceModel.workQueue")
     private let transfersQueue = DispatchQueue(label: "DeviceModel.transfersQueue")
@@ -219,6 +225,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         self.transfersFileServer = transfersFileServer
         self.remoteCommandServicesClient = remoteCommandServicesClient
         self.deviceConfiguration = deviceConfiguration
+        _name = deviceConfiguration.name
         self.machineType = machineType
         self.machineInfo = machineInfo
         self.drives = drives
@@ -226,6 +233,9 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     }
 
     func start() {
+        DispatchQueue.main.async { [self] in
+            delegate?.deviceModel(deviceModel: self, didUpdateName: name)
+        }
         DispatchQueue.global(qos: .userInitiated).async { [self] in
             do {
                 let ownerInfo = try remoteCommandServicesClient.getOwnerInfo()
@@ -254,6 +264,26 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         dateFormatter.timeZone = .gmt
         return dateFormatter
     }()
+
+    func setName(_ name: String, completion: @escaping (Error?) -> Void) {
+        DispatchQueue.global(qos: .userInteractive).async { [self] in
+            do {
+                let configPath: String = platform == .epoc16 ? .epoc16ConfigPath : .epoc32ConfigPath
+                let deviceConfiguration = DeviceConfiguration(id: id, name: name)
+                let data = try deviceConfiguration.data()
+                try fileServer.writeFile(path: configPath, data: data)
+                DispatchQueue.main.async { [self] in
+                    self.name = name
+                    completion(nil)
+                    delegate?.deviceModel(deviceModel: self, didUpdateName: name)
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(error)
+                }
+            }
+        }
+    }
 
     @MainActor
     func backUp() {

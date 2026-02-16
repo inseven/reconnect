@@ -39,13 +39,11 @@ class SidebarContainerView: NSView {
 
         @objc dynamic var children: [Node]
 
-        var name: String {
-            switch type {
-            case .header(let name):
-                return name
-            case .section(let section):
-                return section.title
+        var name: String? {
+            guard case .header(let name) = type else {
+                return nil
             }
+            return name
         }
 
         var isHeader: Bool {
@@ -91,6 +89,8 @@ class SidebarContainerView: NSView {
 
     weak var delegate: SidebarContainerViewDelegate?
 
+    var applicationModel: ApplicationModel? = nil
+
     private let scrollView: NSScrollView
     private let outlineView: NSOutlineView
     private let treeController: NSTreeController
@@ -124,7 +124,9 @@ class SidebarContainerView: NSView {
         }
     }
 
-    init() {
+    init(applicationModel: ApplicationModel) {
+
+        self.applicationModel = applicationModel
 
         scrollView = NSScrollView()
         outlineView = NSOutlineView()
@@ -276,7 +278,7 @@ extension SidebarContainerView: NSOutlineViewDelegate {
         } else {
             view(for: SidebarSectionCell.identifier)
         }
-        view.configure(node)
+        view.configure(applicationModel: applicationModel!, node: node)
         return view
     }
 
@@ -301,7 +303,7 @@ extension SidebarContainerView: ApplicationModelConnectionDelegate {
         let drives = deviceModel.drives.map { driveInfo in
             Node(section: .drive(deviceModel.id, driveInfo, deviceModel.platform))
         }
-        treeController.insert(Node(section: .device(deviceModel.id, deviceModel.deviceConfiguration.name), children: drives),
+        treeController.insert(Node(section: .device(deviceModel.id), children: drives),
                               atArrangedObjectIndexPath: IndexPath(indexes: [0, devices.count - 1]))
 
         // Select the internal drive.

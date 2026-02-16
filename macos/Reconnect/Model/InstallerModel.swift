@@ -209,7 +209,7 @@ class InstallerModel: Runnable {
 
                 // Look up the device and ensure it's non-nil.
                 self.device = DispatchQueue.main.sync {
-                    return applicationModel.devices.first { $0.id == deviceId }
+                    return applicationModel.deviceModel(for: deviceId)
                 }
                 guard device != nil else {
                     throw PLPToolsError.E_PSI_FILE_DISC
