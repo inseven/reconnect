@@ -501,7 +501,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
                 // Manually convert the file.
                 let outputURL = screenshotsURL.appendingPathComponent(name, conformingTo: .png)
-                try PsiLuaEnv().convertMultiBitmap(at: temporaryFileURL, to: outputURL, type: .png)
+                try PsiLuaEnv().convertMultiBitmap(sourceURL: temporaryFileURL, destinationURL: outputURL, type: .png)
 
                 // Cleanup.
                 try fileServer.remove(path: screenshotPath)
@@ -527,6 +527,11 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
      * present in the lower level internal functions. Specifically, upon completion, it will move the temporary files
      * to the first available free filename (computed by appending an index to the filename). This is intended to match
      * the download behavior in apps like Safari.
+     *
+     * This is a hard API to hold correctly because, as implemented, the calling code and the internal conversion have
+     * to agree on the output name and extension. This is a side effect of how hard it is to hold Apple's drag-and-drop
+     * `NSItemProvider` APIs to support on-demand user-interactive file conversion. Hopefully I can find a way to use
+     * those APIs better that will make it easier to drop the `destinationURL` from this API.
      */
     @MainActor
     func download(sourceDirectoryEntry: FileServer.DirectoryEntry,
@@ -553,7 +558,9 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                                         context: context,
                                         progress: progress,
                                         cancellationToken: transfer.cancellationToken)
-                let finalURL = try fileManager.safelyMoveItem(at: url, toPreferredURL: destinationURL)
+
+                let destinationFilename = destinationURL.lastPathComponent.replacingPathExtension(url.pathExtension)
+                let finalURL = try fileManager.safelyMoveItem(at: url, toPreferredURL: destinationURL.deletingLastPathComponent().appendingPathComponent(destinationFilename))
                 let result = Transfer.FileDetails(localURL: (finalURL))
                 transfer.setStatus(.complete(result))
                 completion(.success(finalURL))

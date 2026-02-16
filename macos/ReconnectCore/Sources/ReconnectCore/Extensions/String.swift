@@ -94,4 +94,12 @@ public extension String {
         }
     }
 
+    func replacingPathExtension(_ pathExtension: String) -> String {
+        guard !pathExtension.isEmpty else {
+            return deletingPathExtension
+        }
+        return deletingPathExtension
+            .appendingPathExtension(pathExtension)
+    }
+
 }
