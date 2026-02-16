@@ -268,7 +268,6 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     func setName(_ name: String, completion: @escaping (Error?) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async { [self] in
             do {
-                throw ReconnectError.cancelled
                 let configPath: String = platform == .epoc16 ? .epoc16ConfigPath : .epoc32ConfigPath
                 let deviceConfiguration = DeviceConfiguration(id: id, name: name)
                 let data = try deviceConfiguration.data()
