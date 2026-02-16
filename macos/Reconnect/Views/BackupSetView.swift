@@ -30,6 +30,7 @@ struct BackupSetView: View {
             DetailsSection("Device") {
                 Form {
                     LabeledContent("Name:", value: device.name)
+                    Spacer()
                     LabeledContent("Sync Identiifer:", value: device.id.uuidString)
                 }
                 .padding()
