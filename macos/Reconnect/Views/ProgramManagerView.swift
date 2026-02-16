@@ -32,8 +32,7 @@ struct ProgramManagerView: View {
         VStack(spacing: 0) {
             if case ProgramManagerModel.State.checkingInstalledPackages(let progress) = programManagerModel.state {
                 VStack {
-                    Text("Checking installed packages...")
-                    ProgressView(value: progress.fractionCompleted)
+                    ProgressView(progress)
                 }
                 .padding()
                 .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)

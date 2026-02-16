@@ -709,6 +709,7 @@ extension DeviceModel {
             progress.totalUnitCount = Int64(total)
             return cancellationToken.isCancelled ? .cancel : .continue
         }
+        progress.completedUnitCount = progress.totalUnitCount
 
         // Check to see if we've been cancelled.
         try cancellationToken.checkCancellation()

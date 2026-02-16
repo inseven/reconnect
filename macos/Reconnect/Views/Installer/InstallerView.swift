@@ -45,22 +45,28 @@ struct InstallerView: View {
                         ProgressView()
                     }
                 } actions: {
+                    Button("Cancel", role: .destructive) {}
+                        .disabled(true)
                     Button("Continue") {}
                         .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
             case .installQuery(let installQuery):
                 InstallQueryInstallerPage(applicationModel: applicationModel, installQuery: installQuery)
-            case .checkingInstalledPackages(let progress):
+            case .checkingInstalledPackages(let progress, let cancellationToken):
                 WizardPage {
                     VStack {
-                        Text("Checking installed packages...")
-                        ProgressView(value: progress)
+                        ProgressView(progress)
                     }
                     .padding()
                     .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
                 } actions: {
-                    Button("Cancel", role: .destructive) {}
+                    Button("Cancel", role: .destructive) {
+                        cancellationToken.cancel()
+                    }
+                    .disabled(cancellationToken.isCancelled)
+                    Button("Continue") {}
+                        .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
             case .operation(let operation, let progress):
