@@ -126,32 +126,35 @@ class DirectoryModel {
                 .deletingLastWindowsPathComponent
                 .appendingWindowsPathComponent(newName, isDirectory: file.isDirectory)
             do {
-                try deviceModel.fileServer.rename(from: file.path, to: newPath)
+                try deviceModel.fileServer.rename(from: file.path.ensuringTrailingWindowsPathSeparator(isPresent: false),
+                                                  to: newPath.ensuringTrailingWindowsPathSeparator(isPresent: false))
+                DispatchQueue.main.sync {
+                    let newFile = FileServer.DirectoryEntry(path: newPath,
+                                                            name: newName,
+                                                            size: file.size,
+                                                            attributes: file.attributes,
+                                                            modificationDate: file.modificationDate,
+                                                            uid1: file.uid1,
+                                                            uid2: file.uid2,
+                                                            uid3: file.uid3)
+                    var updatedFiles = self.files
+                    updatedFiles.removeAll { $0.path == file.path }
+                    let index = updatedFiles.partitioningIndex {
+                        return newFile.name.localizedStandardCompare($0.name) == .orderedAscending
+                    }
+                    updatedFiles.insert(newFile, at: index)
+                    self.files = updatedFiles
+                    if self.fileSelection.contains(file.id) {
+                        self.fileSelection = self.fileSelection
+                            .subtracting([file.id])
+                            .union([newFile.id])
+                    }
+                }
             } catch {
-                self.refresh()
+                DispatchQueue.main.async {
+                    self.refresh()
+                }
                 throw error
-            }
-            DispatchQueue.main.sync {
-                let newFile = FileServer.DirectoryEntry(path: newPath,
-                                                        name: newName,
-                                                        size: file.size,
-                                                        attributes: file.attributes,
-                                                        modificationDate: file.modificationDate,
-                                                        uid1: file.uid1,
-                                                        uid2: file.uid2,
-                                                        uid3: file.uid3)
-                var updatedFiles = self.files
-                updatedFiles.removeAll { $0.path == file.path }
-                let index = updatedFiles.partitioningIndex {
-                    return newFile.name.localizedStandardCompare($0.name) == .orderedAscending
-                }
-                updatedFiles.insert(newFile, at: index)
-                self.files = updatedFiles
-                if self.fileSelection.contains(file.id) {
-                    self.fileSelection = self.fileSelection
-                        .subtracting([file.id])
-                        .union([newFile.id])
-                }
             }
         }
     }
