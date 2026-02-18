@@ -78,12 +78,11 @@ extension Conversion {
         let images = bitmaps.map { bitmap in
             return CGImage.from(bitmap: bitmap)
         }
-
         guard
             images.count == 2,
             let image = CGImage.composite(greyPlane: images[1], blackPlane: images[0])
         else {
-            throw ReconnectError.unknown
+            throw ReconnectError.unknown  // TODO: FIX THIS ERROR.
         }
         try CGImageWrite(destinationURL: outputURL, images: [image], type: .png)
         return outputURL

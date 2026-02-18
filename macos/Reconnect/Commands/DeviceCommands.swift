@@ -25,9 +25,7 @@ public struct DeviceCommands: Commands {
     @FocusedObject private var deviceProxy: DeviceModelProxy?
 
     var canCaptureScreenshot: Bool {
-        guard let deviceModel = deviceProxy?.deviceModel,
-              deviceModel.canCaptureScreenshot,
-              !deviceModel.isCapturingScreenshot else {
+        guard let deviceModel = deviceProxy?.deviceModel, !deviceModel.isCapturingScreenshot else {
             return false
         }
         return true

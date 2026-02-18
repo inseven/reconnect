@@ -38,6 +38,20 @@ extension PsiLuaEnv {
         try CGImageWrite(destinationURL: destinationURL, images: images, type: type)
     }
 
+    public func convertPicToPNG(sourceURL: URL, destinationURL: URL) throws {
+        let bitmaps = PsiLuaEnv().getMbmBitmaps(path: sourceURL.path) ?? []
+        let images = bitmaps.map { bitmap in
+            return CGImage.from(bitmap: bitmap)
+        }
+        guard
+            images.count == 2,
+            let image = CGImage.composite(greyPlane: images[1], blackPlane: images[0])
+        else {
+            throw ReconnectError.unknown  // TODO: FIX THIS ERROR.
+        }
+        try CGImageWrite(destinationURL: destinationURL, images: [image], type: .png)
+    }
+
     public func loadSisFile(url: URL) throws -> Sis.File {
         let info = getFileInfo(path: url.path)
         guard case let .sis(sis) = info else {

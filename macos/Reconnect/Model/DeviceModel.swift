@@ -162,24 +162,21 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     var id: UUID {
         return deviceConfiguration.id
     }
-
-    var canCaptureScreenshot: Bool {
-        switch machineType {
-        case .PSI_MACH_UNKNOWN, .PSI_MACH_PC, .PSI_MACH_MC, .PSI_MACH_HC, .PSI_MACH_WINC:
-            return false
-        case .PSI_MACH_S3, .PSI_MACH_S3A, .PSI_MACH_WORKABOUT, .PSI_MACH_SIENA, .PSI_MACH_S3C:
-            return false
-        case .PSI_MACH_S5:
-            return true
-        }
-    }
-
+    
     var platform: Platform {
         return machineType.isEpoc32 ? .epoc32 : .epoc16
     }
 
     var installDirectory: String? {
         return machineType.isEpoc32 ? .epoc32InstallDirectory : .epoc16InstallDirectory
+    }
+
+    var screenshotPath: String {
+        return machineType.isEpoc32 ? .epoc32ScreenshotPath : .epoc16ScreenshotPath
+    }
+
+    var screenshotToolPath: String {
+        return machineType.isEpoc32 ? .epoc32ScreenshotToolPath : .epoc16ScreenshotToolPath
     }
 
     @ObservationIgnored
@@ -244,6 +241,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 }
             } catch {
                 print("Failed to get owner info with error \(error).")
+                let alert = NSAlert(error: error)
+                alert.runModal()
             }
         }
     }
@@ -254,6 +253,12 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 try perform()
             } catch {
                 print("Failed to perform background operation with error \(error).")
+                DispatchQueue.main.async {
+                    let alert = NSAlert()
+                    alert.messageText = "Error"
+                    alert.informativeText = error.localizedDescription
+                    alert.runModal()
+                }
             }
         }
     }
@@ -449,19 +454,13 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 }
             }
 
-            let nameFormatter = DateFormatter()
-            nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
-
-            let fileManager = FileManager.default
-            let fileServer = FileServer()
-            let client = RemoteCommandServicesClient()
-
             // Check to see if the guest tools are installed.
-            guard try fileServer.exists(path: .reconnectToolsStubPath) else {
+            guard try fileServer.exists(path: screenshotToolPath) else {
                 throw ReconnectError.missingTools
             }
 
             // Create a temporary directory.
+            let fileManager = FileManager.default
             let temporaryDirectory = try fileManager.createTemporaryDirectory()
             defer {
                 try? fileManager.removeItemLoggingErrors(at: temporaryDirectory)
@@ -469,13 +468,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
             // Take a screenshot.
             let timestamp = Date.now
-            try client.execProgram(program: .screenshotToolPath, args: "")
+            try remoteCommandServicesClient.execProgram(program: screenshotToolPath, args: "")
             sleep(5)
-
-            // Rename the screenshot before transferring it to allow us to defer renaming to the transfers model.
-            let name = nameFormatter.string(from: timestamp)
-            let screenshotPath = "C:\\\(name).mbm"
-            try fileServer.rename(from: .screenshotPath, to: screenshotPath)
 
             // Perhaps the transfer model can use some paired down reference which includes the type?
             let screenshotDetails = try fileServer.getExtendedAttributes(path: screenshotPath)
@@ -500,8 +494,15 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                                       cancellationToken: transfer.cancellationToken)
 
                 // Manually convert the file.
+                let nameFormatter = DateFormatter()
+                nameFormatter.dateFormat = "'Reconnect Screenshot' yyyy-MM-dd 'at' HH.mm.ss"
+                let name = nameFormatter.string(from: timestamp)
                 let outputURL = screenshotsURL.appendingPathComponent(name, conformingTo: .png)
-                try PsiLuaEnv().convertMultiBitmap(sourceURL: temporaryFileURL, destinationURL: outputURL, type: .png)
+                if machineType.isEpoc32 {
+                    try PsiLuaEnv().convertMultiBitmap(sourceURL: temporaryFileURL, destinationURL: outputURL, type: .png)
+                } else {
+                    try PsiLuaEnv().convertPicToPNG(sourceURL: temporaryFileURL, destinationURL: outputURL)
+                }
 
                 // Cleanup.
                 try fileServer.remove(path: screenshotPath)
