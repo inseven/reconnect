@@ -47,7 +47,7 @@ extension PsiLuaEnv {
             images.count == 2,
             let image = CGImage.composite(greyPlane: images[1], blackPlane: images[0])
         else {
-            throw ReconnectError.unknown  // TODO: FIX THIS ERROR.
+            throw ReconnectError.unsupportedImageFormat
         }
         try CGImageWrite(destinationURL: destinationURL, images: [image], type: .png)
     }

@@ -74,17 +74,8 @@ extension Conversion {
     } perform: { sourceURL, destinationURL in
         let outputURL = destinationURL.appendingPathComponent(sourceURL.lastPathComponent.deletingPathExtension,
                                                               conformingTo: .png)
-        let bitmaps = PsiLuaEnv().getMbmBitmaps(path: sourceURL.path) ?? []
-        let images = bitmaps.map { bitmap in
-            return CGImage.from(bitmap: bitmap)
-        }
-        guard
-            images.count == 2,
-            let image = CGImage.composite(greyPlane: images[1], blackPlane: images[0])
-        else {
-            throw ReconnectError.unknown  // TODO: FIX THIS ERROR.
-        }
-        try CGImageWrite(destinationURL: outputURL, images: [image], type: .png)
+        try PsiLuaEnv().convertPicToPNG(sourceURL: sourceURL, destinationURL: outputURL)
+        try FileManager.default.removeItem(at: sourceURL)
         return outputURL
     }
 
