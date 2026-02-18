@@ -20,19 +20,20 @@ import Foundation
 
 public class PsionClient {
 
-    let fileServer = FileServer()
-    let remoteCommandServices = RemoteCommandServicesClient()
+    let fileServer: FileServer
+    let remoteCommandServicesClient: RemoteCommandServicesClient
 
-    public init() {
-        
+    public init(fileServer: FileServer, remoteCommandServicesClient: RemoteCommandServicesClient) {
+        self.fileServer = fileServer
+        self.remoteCommandServicesClient = remoteCommandServicesClient
     }
 
     public func runProgram(path: String) throws {
         let attributes = try fileServer.getExtendedAttributes(path: path)
         if attributes.uid1 == .dynamicLibraryUid {
-            try remoteCommandServices.execProgram(program: path)
+            try remoteCommandServicesClient.execProgram(program: path)
         } else {
-            try remoteCommandServices.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + path)
+            try remoteCommandServicesClient.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + path)
         }
     }
 
