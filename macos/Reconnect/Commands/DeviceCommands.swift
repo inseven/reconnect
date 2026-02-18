@@ -49,7 +49,7 @@ public struct DeviceCommands: Commands {
             Divider()
 
             Button("Install Reconnect Tools...", systemImage: "shippingbox") {
-                applicationModel.installGuestTools()
+                deviceProxy?.deviceModel.installGuestTools()
             }
             .disabled(deviceProxy == nil)
 

@@ -521,6 +521,16 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
     }
 
+    @MainActor
+    func installGuestTools() {
+        let installerURL = if machineType.isEpoc32 {
+            Bundle.main.url(forResource: "ReconnectTools.sis", withExtension: nil)!
+        } else {
+            Bundle.main.url(forResource: "RCONNECT.SIS", withExtension: nil)!
+        }
+        applicationModel?.showInstallerWindow(file: File(referencing: installerURL))
+    }
+
     /**
      * Download a remote Psion file or directory, displaying progress in the transfers window.
      *
