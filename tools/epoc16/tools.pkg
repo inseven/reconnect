@@ -1,4 +1,4 @@
 ; target: epoc16
 &EN
 #{"Reconnect Tools"},(0x100092cb),0,1,0
-"screenshot\scrnshot.img"-"M:\RCONNECT\SCRNSHOT.IMG"
+"scrnshot\scrnshot.img"-"M:\RCONNECT\SCRNSHOT.IMG"

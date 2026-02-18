@@ -27,7 +27,7 @@ ROOT_DIRECTORY="$( cd "$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )" &> /dev/
 TOOLS_DIRECTORY="$ROOT_DIRECTORY/tools"
 EPOC16_TOOLS_DIRECTORY="$TOOLS_DIRECTORY/epoc16"
 
-cd "$EPOC16_TOOLS_DIRECTORY/screenshot"
+cd "$EPOC16_TOOLS_DIRECTORY/scrnshot"
 tsc /m scrnshot
 cd "$EPOC16_TOOLS_DIRECTORY"
 makesis.lua tools.pkg "RCONNECT.SIS"

@@ -25,7 +25,7 @@ public extension String {
     static let epoc16InstallDirectory = "M:\\Install\\"
     static let epoc32InstallDirectory = "C:\\System\\Install\\"
     static let reconnectToolsStubPath = "C:\\System\\Install\\ReconnectTools.sis"
-    static let epoc16ScreenshotPath = "M:\\SCRNSHOT.PIC"
+    static let epoc16ScreenshotPath = "M:\\RCONNECT\\SCRNSHOT.PIC"
     static let epoc32ScreenshotPath = "C:\\screenshot.mbm"
     static let epoc16ScreenshotToolPath = "M:\\RCONNECT\\SCRNSHOT.IMG"
     static let epoc32ScreenshotToolPath = "C:\\System\\Reconnect\\screenshot.exe"
