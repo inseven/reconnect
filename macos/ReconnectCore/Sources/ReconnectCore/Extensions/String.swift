@@ -25,8 +25,10 @@ public extension String {
     static let epoc16InstallDirectory = "M:\\Install\\"
     static let epoc32InstallDirectory = "C:\\System\\Install\\"
     static let reconnectToolsStubPath = "C:\\System\\Install\\ReconnectTools.sis"
-    static let screenshotPath = "C:\\screenshot.mbm"
-    static let screenshotToolPath = "C:\\System\\Reconnect\\screenshot.exe"
+    static let epoc16ScreenshotPath = "M:\\RCONNECT\\SCRNSHOT.PIC"
+    static let epoc32ScreenshotPath = "C:\\screenshot.mbm"
+    static let epoc16ScreenshotToolPath = "M:\\RCONNECT\\SCRNSHOT.IMG"
+    static let epoc32ScreenshotToolPath = "C:\\System\\Reconnect\\screenshot.exe"
     static let windowsPathSeparator = "\\"
 
     static let browserApplicationBundleIdentifier = "uk.co.jbmorley.reconnect.apps.apple"

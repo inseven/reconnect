@@ -24,9 +24,10 @@ import OpoLuaCore
 
 extension PsiLuaEnv {
 
-    // TODO: This should probably throw.
-    public func imagesFromMultiBitmap(at url: URL) -> [CGImage] {
-        let bitmaps = getMbmBitmaps(path: url.path) ?? []
+    public func imagesFromMultiBitmap(at url: URL) throws -> [CGImage] {
+        guard let bitmaps = getMbmBitmaps(path: url.path) else {
+            throw ReconnectError.unsupportedImageFormat
+        }
         let images = bitmaps.map { bitmap in
             return CGImage.from(bitmap: bitmap)
         }
@@ -34,8 +35,19 @@ extension PsiLuaEnv {
     }
 
     public func convertMultiBitmap(sourceURL: URL, destinationURL: URL, type: UTType = .tiff) throws {
-        let images = imagesFromMultiBitmap(at: sourceURL)
+        let images = try imagesFromMultiBitmap(at: sourceURL)
         try CGImageWrite(destinationURL: destinationURL, images: images, type: type)
+    }
+
+    public func convertPicToPNG(sourceURL: URL, destinationURL: URL) throws {
+        let images = try imagesFromMultiBitmap(at: sourceURL)
+        guard
+            images.count == 2,
+            let image = CGImage.composite(greyPlane: images[1], blackPlane: images[0])
+        else {
+            throw ReconnectError.unsupportedImageFormat
+        }
+        try CGImageWrite(destinationURL: destinationURL, images: [image], type: .png)
     }
 
     public func loadSisFile(url: URL) throws -> Sis.File {

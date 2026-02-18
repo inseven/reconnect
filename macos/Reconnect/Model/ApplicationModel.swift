@@ -203,11 +203,6 @@ class ApplicationModel: NSObject {
         }
     }
 
-    func installGuestTools() {
-        let installerURL = Bundle.main.url(forResource: "ReconnectTools", withExtension: "sis")!
-        showInstallerWindow(file: File(referencing: installerURL))
-    }
-
     func openInstaller() {
         let openPanel = NSOpenPanel()
         openPanel.canChooseFiles = true

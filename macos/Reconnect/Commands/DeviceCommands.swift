@@ -25,9 +25,7 @@ public struct DeviceCommands: Commands {
     @FocusedObject private var deviceProxy: DeviceModelProxy?
 
     var canCaptureScreenshot: Bool {
-        guard let deviceModel = deviceProxy?.deviceModel,
-              deviceModel.canCaptureScreenshot,
-              !deviceModel.isCapturingScreenshot else {
+        guard let deviceModel = deviceProxy?.deviceModel, !deviceModel.isCapturingScreenshot else {
             return false
         }
         return true
@@ -51,7 +49,7 @@ public struct DeviceCommands: Commands {
             Divider()
 
             Button("Install Reconnect Tools...", systemImage: "shippingbox") {
-                applicationModel.installGuestTools()
+                deviceProxy?.deviceModel.installGuestTools()
             }
             .disabled(deviceProxy == nil)
 
