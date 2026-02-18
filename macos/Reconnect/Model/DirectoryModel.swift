@@ -113,8 +113,8 @@ class DirectoryModel {
                     try deviceModel.fileServer.remove(path: path)
                 }
                 DispatchQueue.main.sync {
-                    self.files.removeAll { $0.path == path }
-                    self.fileSelection.remove(path)
+                    self.files.removeAll { $0.id == path.lowercased() }
+                    self.fileSelection.remove(path.lowercased())
                 }
             }
         }
