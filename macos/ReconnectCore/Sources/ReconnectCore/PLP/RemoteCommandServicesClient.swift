@@ -32,7 +32,7 @@ public class RemoteCommandServicesClient {
 
     private var client = RPCSClient()
 
-    public init(host: String = "127.0.0.1", port: Int32 = 7501) {
+    public init(host: String = "127.0.0.1", port: Int32) {
         self.host = host
         self.port = port
     }
