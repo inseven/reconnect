@@ -407,9 +407,7 @@ extension InstallerModel: SisInstallIoHandler {
             guard let device else {
                 throw PLPToolsError.E_PSI_FILE_DISC
             }
-            let services = PsionClient(fileServer: device.fileServer,
-                                       remoteCommandServicesClient: device.remoteCommandServicesClient)
-            try services.runProgram(path: path)
+            try device.runProgram(path: path)
         } catch {
             print("Failed to run path '\(path)' with error '\(error)'.")
         }

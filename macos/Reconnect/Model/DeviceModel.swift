@@ -638,6 +638,15 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         }
     }
 
+    public func runProgram(path: String) throws {
+        let attributes = try fileServer.getExtendedAttributes(path: path)
+        if attributes.uid1 == .dynamicLibraryUid {
+            try remoteCommandServicesClient.execProgram(program: path)
+        } else {
+            try remoteCommandServicesClient.execProgram(program: "Z:\\System\\Apps\\OPL\\OPL.app", args: "A" + path)
+        }
+    }
+
     /**
      * Return a new folder name with a specific count.
      *
