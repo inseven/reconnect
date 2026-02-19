@@ -22,8 +22,8 @@ import IOKit.serial
 
 public protocol SerialDeviceMonitorDelegate: NSObject {
 
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String)
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String)
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevices devices: [String])
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevices devices: [String])
 
 }
 
@@ -36,6 +36,8 @@ public class SerialDeviceMonitor {
     }
 
     public func start() {
+        dispatchPrecondition(condition: .onQueue(.main))
+
         let matchingDict = IOServiceMatching(kIOSerialBSDServiceValue)
         var notifyPort: IONotificationPortRef?
         var addedIterator: io_iterator_t = 0
@@ -88,15 +90,33 @@ public class SerialDeviceMonitor {
         // https://developer.apple.com/documentation/iokit/1514362-ioserviceaddmatchingnotification
 
         // Handle existing removals.
+        var removals: [String] = []
         while case let service = IOIteratorNext(removedIterator), service != 0 {
-            deviceRemoved(service: service)
+            defer { IOObjectRelease(service) }
+            guard let deviceName = name(for: service) else {
+                continue
+            }
+            removals.append(deviceName)
         }
+        delegate?.serialDeviceMonitor(serialDeviceMonitor: self, didRemoveDevices: removals)
 
         // Handle existing additions.
+        var additions: [String] = []
         while case let service = IOIteratorNext(addedIterator), service != 0 {
-            deviceAdded(service: service)
+            defer { IOObjectRelease(service) }
+            guard let deviceName = name(for: service) else {
+                continue
+            }
+            additions.append(deviceName)
         }
+        delegate?.serialDeviceMonitor(serialDeviceMonitor: self, didAddDevices: additions)
 
+    }
+
+    func name(for service: io_object_t) -> String? {
+        return IORegistryEntryCreateCFProperty(service,
+                                               kIOCalloutDeviceKey as CFString,
+                                               kCFAllocatorDefault, 0)?.takeUnretainedValue() as? String
     }
 
     func stop() {
@@ -105,26 +125,20 @@ public class SerialDeviceMonitor {
 
     func deviceAdded(service: io_object_t) {
         dispatchPrecondition(condition: .onQueue(.main))
-        defer {
-            IOObjectRelease(service)
+        defer { IOObjectRelease(service) }
+        guard let deviceName = name(for: service) else {
+            return
         }
-        if let deviceName = IORegistryEntryCreateCFProperty(service,
-                                                            kIOCalloutDeviceKey as CFString,
-                                                            kCFAllocatorDefault, 0)?.takeUnretainedValue() as? String {
-            delegate?.serialDeviceMonitor(serialDeviceMonitor: self, didAddDevice: deviceName)
-        }
+        delegate?.serialDeviceMonitor(serialDeviceMonitor: self, didAddDevices: [deviceName])
     }
 
     func deviceRemoved(service: io_object_t) {
         dispatchPrecondition(condition: .onQueue(.main))
-        defer {
-            IOObjectRelease(service)
+        defer { IOObjectRelease(service) }
+        guard let deviceName = name(for: service) else {
+            return
         }
-        if let deviceName = IORegistryEntryCreateCFProperty(service,
-                                                            kIOCalloutDeviceKey as CFString,
-                                                            kCFAllocatorDefault, 0)?.takeUnretainedValue() as? String {
-            delegate?.serialDeviceMonitor(serialDeviceMonitor: self, didRemoveDevice: deviceName)
-        }
+        delegate?.serialDeviceMonitor(serialDeviceMonitor: self, didRemoveDevices: [deviceName])
     }
 
 }

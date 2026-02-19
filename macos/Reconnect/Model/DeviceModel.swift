@@ -241,8 +241,10 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 }
             } catch {
                 print("Failed to get owner info with error \(error).")
-                let alert = NSAlert(error: error)
-                alert.runModal()
+                DispatchQueue.main.async {
+                    let alert = NSAlert(error: error)
+                    alert.runModal()
+                }
             }
         }
     }

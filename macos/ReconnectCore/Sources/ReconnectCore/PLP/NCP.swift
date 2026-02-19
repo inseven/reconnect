@@ -29,6 +29,7 @@ public protocol NCPDelegate: NSObject {
 }
 
 // TODO: NCPSession?
+
 public class NCP {
 
     public struct DeviceConfiguration: Equatable, Hashable {
@@ -48,77 +49,42 @@ public class NCP {
     public let device: DeviceConfiguration
     public let port: Int32
 
-    private let lock = NSLock()
     private let logger = Logger(subsystem: "PLP", category: "Server")
+    private var state: OpaquePointer?  // Synchronized on main.
 
-    // Synchronized with lock.
-    private var threadID: pthread_t? = nil
-    private var isCancelled: Bool = false
+    private var callback: statusCallback_t?
 
-    func threadEntryPoint() {
+    public func start() {
 
-        setup_signal_handlers()
-
-        lock.withLock {
-            threadID = pthread_self()
-        }
-
+        // Set up the callback.
         let context = Unmanaged.passRetained(self).toOpaque()
-        let callback: statusCallback_t = { context, status in
+        callback = { context, status in
             guard let context else {
                 return
             }
             let ncp = Unmanaged<NCP>.fromOpaque(context).takeUnretainedValue()
-            DispatchQueue.main.sync {
+            // We dispatch async here to ensure we can't deadlock against `stop` calls on the main queue.
+            DispatchQueue.main.async {
                 let isConnected = status == 1 ? true : false
                 ncp.delegate?.ncp(ncp, didChangeConnectionState: isConnected)
             }
         }
 
-        while true {
-            logger.notice("Starting NCP for device '\(self.device.path)' baud rate \(self.device.baudRate)...")
-            ncpd(port, device.baudRate, "127.0.0.1", device.path, 0x0000, callback, context)
-            DispatchQueue.main.async {
-                self.delegate?.ncp(self, didChangeConnectionState: false)
-            }
-            logger.notice("NCP session ended.")
-
-            // Check to see if we need to exit.
-            let isCancelled: Bool = lock.withLock {
-                return self.isCancelled
-            }
-            if isCancelled {
-                logger.notice("NCP thread exiting.")
-                return
-            }
-        }
+        logger.notice("Starting NCP for device '\(self.device.path)' baud rate \(self.device.baudRate)...")
+        state = ncp_init()
+        ncp_start(port, device.baudRate, "127.0.0.1", device.path, 0x0000, callback, context, state)
     }
 
     public init(device: DeviceConfiguration, port: Int32) {
         self.device = device
         self.port = port
-
-    }
-
-    public func start() {
-        let thread = Thread(block: threadEntryPoint)
-        thread.start()
     }
 
     public func stop() {
-
-        // Cancel the thread and get its id.
-        let threadID = lock.withLock {
-            isCancelled = true
-            return self.threadID
-        }
-        guard let threadID = threadID else {
+        guard let state else {
             return
         }
-
-        // Signal the thread to stop it and then join it to ensure it's stopped.
-        pthread_kill(threadID, SIGINT)
-        pthread_join(threadID, nil)
+        ncp_stop(state)
     }
 
 }
