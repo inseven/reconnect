@@ -19,7 +19,7 @@
 import os
 import Foundation
 
-import ncp
+import plptools
 
 // Callbacks on main.
 public protocol NCPDelegate: NSObject {
@@ -50,9 +50,9 @@ public class NCP {
     public let port: Int32
 
     private let logger = Logger(subsystem: "PLP", category: "Server")
-    private var state: OpaquePointer?  // Synchronized on main.
+    private var session: UnsafeMutableRawPointer?  // Synchronized on main.
 
-    private var callback: statusCallback_t?
+    private var callback: NCPStatusCallback?
 
     public func start() {
 
@@ -71,8 +71,8 @@ public class NCP {
         }
 
         logger.notice("Starting NCP for device '\(self.device.path)' baud rate \(self.device.baudRate)...")
-        state = ncp_init()
-        ncp_start(port, device.baudRate, "127.0.0.1", device.path, 0x0000, callback, context, state)
+        session = ncp_session_init(port, device.baudRate, "127.0.0.1", device.path, false, 0, callback, context)
+        ncp_session_start(session)
     }
 
     public init(device: DeviceConfiguration, port: Int32) {
@@ -81,10 +81,12 @@ public class NCP {
     }
 
     public func stop() {
-        guard let state else {
+        guard let session else {
             return
         }
-        ncp_stop(state)
+        ncp_session_cancel(session)
+        ncp_session_wait(session)
+        self.session = nil
     }
 
 }

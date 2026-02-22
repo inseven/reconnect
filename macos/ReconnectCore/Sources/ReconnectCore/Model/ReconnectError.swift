@@ -18,7 +18,7 @@
 
 import Foundation
 
-import ncp
+import plptools
 
 public enum ReconnectError: Error {
     case unknown

@@ -1,0 +1,15 @@
+{
+  "originHash" : "e579449baab131bb5b24393fc14b027af359789d472d38e8811577b7e49dda6a",
+  "pins" : [
+    {
+      "identity" : "licensable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/inseven/licensable",
+      "state" : {
+        "revision" : "a8ad62c6fde5aca29a47459b0687e580eee203dd",
+        "version" : "0.0.13"
+      }
+    }
+  ],
+  "version" : 3
+}

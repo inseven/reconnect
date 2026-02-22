@@ -9,23 +9,23 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "ncp",
+            name: "plptools",
             targets: [
-                "ncp"
+                "plptools"
             ]
         ),
     ],
     dependencies: [],
     targets: [
-        // Don't be tempted to combine targets---we need to build C code as a separate target to stop SwiftPM being
-        // clever and trying to build our C++ with the C compiler.
+        // Don't be tempted to combine targets---we need to build C code (aka libgnu) as a separate target to stop
+        // SwiftPM being clever and trying to build our C++ with the C compiler.
         .target(
             name: "libgnu",
             dependencies: [],
             path: "plptools",
             sources: [
-                "libgnu/yesno.c",
-                "libgnu/string-buffer.c",
+                "gnulib/lib/yesno.c",
+                "gnulib/lib/string-buffer.c",
                 "ncpd/mp_serial.c",
             ],
             cSettings: [
@@ -36,11 +36,6 @@ let package = Package(
             name: "core",
             dependencies: [],
             path: "plptools",
-            exclude: [
-                "lib/Makefile.am",
-                "lib/Makefile.in",
-                "lib/Makefile",
-            ],
             sources: [
                 "lib/bufferarray.cc",
                 "lib/bufferstore.cc",
@@ -61,39 +56,63 @@ let package = Package(
                 "lib/rpcs32.cc",
                 "lib/rpcsfactory.cc",
                 "lib/wprt.cc",
-
-                "lib/libplp.cc",
             ],
             publicHeadersPath: "lib",
             cSettings: [
-                // .headerSearchPath("."),  // TODO: This lets us build without copying config.h around but not our dependencies.
                 .headerSearchPath("gnulib/lib"),
-                .unsafeFlags(["-Wno-int-conversion", "-Wno-deprecated-declarations"]),  // TODO: Automatically add this to all targets.
+                .unsafeFlags(["-Wno-int-conversion", "-Wno-deprecated-declarations"]),
             ],
+            cxxSettings: [
+                .headerSearchPath("include")
+            ]
         ),
         .target(
             name: "ncp",
-            dependencies: [
-                "core",
-                "libgnu",
-            ],
+            dependencies: [],
             path: "plptools",
             sources: [
                 "ncpd/channel.cc",
                 "ncpd/link.cc",
                 "ncpd/linkchan.cc",
-                "ncpd/maina.cc",
                 "ncpd/ncp.cc",
+                "ncpd/ncp_log.cc",
+                "ncpd/ncp_session.cc",
                 "ncpd/packet.cc",
                 "ncpd/socketchan.cc",
             ],
             publicHeadersPath: "ncpd",
             cSettings: [
-                .headerSearchPath("lib"),  // TODO: Put the config in an extra directory here?
+                .headerSearchPath("lib"),
                 .headerSearchPath("gnulib/lib"),
                 .unsafeFlags(["-Wno-int-conversion", "-Wno-deprecated-declarations"]),
+            ],
+            cxxSettings: [
+                .headerSearchPath("include")
             ]
-            // swiftSettings: [.interoperabilityMode(.Cxx)]  // TODO: Would this allow combining C and C++ code?
+        ),
+        .target(
+            name: "plptools",
+            dependencies: [
+                "core",
+                "libgnu",
+                "ncp",
+            ],
+            path: "plptools",
+            sources: [
+                "swift/daemon.cc",
+                "swift/rfsvclient.cc",
+                "swift/rpcsclient.cc",
+            ],
+            publicHeadersPath: "swift",
+            cSettings: [
+                .headerSearchPath("lib"),
+                .headerSearchPath("gnulib/lib"),
+                .unsafeFlags(["-Wno-int-conversion", "-Wno-deprecated-declarations"]),
+            ],
+            cxxSettings: [
+                .headerSearchPath("include")
+            ],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
         ),
     ]
 )
