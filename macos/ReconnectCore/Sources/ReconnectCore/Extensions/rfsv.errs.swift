@@ -18,7 +18,7 @@
 
 import Foundation
 
-import ncp
+import plptools
 
 extension PLPToolsError {
 
