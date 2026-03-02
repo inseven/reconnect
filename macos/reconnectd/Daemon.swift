@@ -33,7 +33,7 @@ class Daemon: NSObject {
     private let settings = KeyedDefaults<SettingsKey>()
     private let listener = NSXPCListener(machServiceName: .daemonSericeName)
     private let serialDeviceMonitor = SerialDeviceMonitor()
-    private var sessions: [NCP.DeviceConfiguration: NCP] = [:]  // Synchronized on main.
+    private let sessionManager = SessionManager()
 
     // Dynamic property generating an array of SerialDevice instances that represent the union of available and
     // previously enabled devices. Intended as a convenience for updating connected clients.
@@ -67,6 +67,7 @@ class Daemon: NSObject {
         super.init()
         listener.delegate = self
         serialDeviceMonitor.delegate = self
+        sessionManager.delegate = self
         do {
             knownSerialDevices = try settings.codable(forKey: .knownDevices, default: [:])
         } catch {
@@ -139,32 +140,7 @@ class Daemon: NSObject {
                 return self.connectedSerialDevices.contains(configuration.path)
             }
 
-        // 1) Stop the ncpd sessions that aren't available any more.
-        let removedDeviceConfigurations = sessions.filter { !activeDeviceConfigurations.contains($0.key) }
-        for (deviceConfiguration, ncp) in removedDeviceConfigurations {
-            logger.notice("Stopping ncpd for \(deviceConfiguration.path) on port \(ncp.port)...")
-            ncp.stop()
-            logger.notice("Stopped ncpd for \(deviceConfiguration.path) on port \(ncp.port).")
-            sessions.removeValue(forKey: deviceConfiguration)
-        }
-
-        // 2) Create new ncpd sesisons and start them, allocating the next free TCP port.
-        logger.notice("Restarting sessions for \(activeDeviceConfigurations.count) devices.")
-        var ports = Set(sessions.map({ $0.value.port }))
-        var nextPort: Int32 = 7501
-        for deviceConfiguration in activeDeviceConfigurations {
-            if sessions[deviceConfiguration] == nil {
-                while ports.contains(nextPort) {
-                    nextPort += 1
-                }
-                ports.insert(nextPort)
-                logger.notice("Starting ncpd for \(deviceConfiguration.path) on port \(nextPort)...")
-                let ncp = NCP(device: deviceConfiguration, port: nextPort)
-                ncp.delegate = self
-                sessions[deviceConfiguration] = ncp
-                ncp.start()
-            }
-        }
+        sessionManager.update(activeDeviceConfigurations)
     }
 
 }
