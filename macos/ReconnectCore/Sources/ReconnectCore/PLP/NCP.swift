@@ -50,11 +50,12 @@ public class NCP {
     public let port: Int32
 
     private let logger = Logger(subsystem: "PLP", category: "Server")
-    private var session: UnsafeMutableRawPointer?  // Synchronized on main.
+    private var session: UnsafeMutableRawPointer?
 
     private var callback: NCPStatusCallback?
 
     public func start() {
+        dispatchPrecondition(condition: .notOnQueue(.main))
 
         // Set up the callback.
         let context = Unmanaged.passRetained(self).toOpaque()
@@ -72,7 +73,15 @@ public class NCP {
 
         logger.notice("Starting NCP for device '\(self.device.path)' baud rate \(self.device.baudRate)...")
         session = ncp_session_init(port, device.baudRate, "127.0.0.1", device.path, false, 0, callback, context)
-        ncp_session_start(session)
+
+        // While it's pretty grim, but we to the main thread to start each ncp session. This ensures we inherit the
+        // correct thread priority when the session is started using `pthread_create`, without having to change the
+        // internal plptools implementation. Thankfully, this does almost no work except for setting up the thread state
+        // and starting it.
+        DispatchQueue.main.sync {
+            ncp_session_start(self.session)
+        }
+
     }
 
     public init(device: DeviceConfiguration, port: Int32) {
@@ -81,6 +90,7 @@ public class NCP {
     }
 
     public func stop() {
+        dispatchPrecondition(condition: .notOnQueue(.main))
         guard let session else {
             return
         }

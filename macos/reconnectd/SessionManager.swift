@@ -59,14 +59,7 @@ class SessionManager: NSObject {
                     let ncp = NCP(device: deviceConfiguration, port: nextPort)
                     ncp.delegate = self
                     sessions[deviceConfiguration] = ncp
-
-                    // While it's pretty grim, but we dispatch blocking back to the main thread to start each ncp
-                    // session. This ensures we inherit the correct thread priority when the session is started using
-                    // `pthread_create`, without having to change the internal plptools implementation. Thankfully,
-                    // this does almost no work except for setting up the thread state and starting it.
-                    DispatchQueue.main.sync {
-                        ncp.start()
-                    }
+                    ncp.start()
                 }
             }
         }
