@@ -23,15 +23,17 @@ public class DeviceConnectionDetails: NSObject, NSSecureCoding, Identifiable {
     enum CodingKeys: String {
         case id
         case port
+        case protocolVersion
     }
 
     public static let supportsSecureCoding = true
 
     public let id: UUID
     public let port: Int32
+    public let protocolVersion: Int32
 
     public override var debugDescription: String {
-        return "{id = \(id.uuidString), port = \(port)}"
+        return "{id = \(id.uuidString), port = \(port), protocolVersion = \(protocolVersion)}"
     }
 
     public override var hash: Int {
@@ -40,9 +42,10 @@ public class DeviceConnectionDetails: NSObject, NSSecureCoding, Identifiable {
         return hasher.finalize()
     }
 
-    public init(port: Int32) {
+    public init(port: Int32, protocolVersion: Int32) {
         self.id = UUID()
         self.port = port
+        self.protocolVersion = protocolVersion
     }
 
     public required init?(coder: NSCoder) {
@@ -54,11 +57,13 @@ public class DeviceConnectionDetails: NSObject, NSSecureCoding, Identifiable {
         }
         self.id = id
         self.port = coder.decodeInt32(forKey: CodingKeys.port.rawValue)
+        self.protocolVersion = coder.decodeInt32(forKey: CodingKeys.protocolVersion.rawValue)
     }
 
     public func encode(with coder: NSCoder) {
         coder.encode(id.uuidString, forKey: CodingKeys.id.rawValue)
         coder.encode(port, forKey: CodingKeys.port.rawValue)
+        coder.encode(protocolVersion, forKey: CodingKeys.protocolVersion.rawValue)
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -66,7 +71,8 @@ public class DeviceConnectionDetails: NSObject, NSSecureCoding, Identifiable {
             return false
         }
         return (object.id == id &&
-                object.port == port)
+                object.port == port &&
+                object.protocolVersion == protocolVersion)
     }
 
 }

@@ -24,7 +24,7 @@ import plptools
 // Callbacks on main.
 public protocol NCPDelegate: NSObject {
 
-    func ncp(_ ncp: NCP, didChangeConnectionState isConnected: Bool)
+    func ncp(_ ncp: NCP, didChangeConnectionState isConnected: Bool, protocolVersion: Int32)
 
 }
 
@@ -59,15 +59,14 @@ public class NCP {
 
         // Set up the callback.
         let context = Unmanaged.passRetained(self).toOpaque()
-        callback = { context, status in
+        callback = { context, isConnected, protocolVersion in
             guard let context else {
                 return
             }
             let ncp = Unmanaged<NCP>.fromOpaque(context).takeUnretainedValue()
             // We dispatch async here to ensure we can't deadlock against `stop` calls on the main queue.
             DispatchQueue.main.async {
-                let isConnected = status == 1 ? true : false
-                ncp.delegate?.ncp(ncp, didChangeConnectionState: isConnected)
+                ncp.delegate?.ncp(ncp, didChangeConnectionState: isConnected, protocolVersion: protocolVersion)
             }
         }
 

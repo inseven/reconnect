@@ -212,7 +212,7 @@ extension Daemon: SerialDeviceMonitorDelegate {
 
 extension Daemon: NCPDelegate {
 
-    func ncp(_ ncp: NCP, didChangeConnectionState isConnected: Bool) {
+    func ncp(_ ncp: NCP, didChangeConnectionState isConnected: Bool, protocolVersion: Int32) {
         dispatchPrecondition(condition: .onQueue(.main))
         // Right now it connections and disconnections don't seem to be perfectly matched so we explicitly gate these
         // on our internal state to ensure we give clients matched pairs of events.
@@ -221,7 +221,7 @@ extension Daemon: NCPDelegate {
             guard !connectedDevices.contains(where: { $0.port == ncp.port }) else {
                 return
             }
-            let connectionDetails = DeviceConnectionDetails(port: ncp.port)
+            let connectionDetails = DeviceConnectionDetails(port: ncp.port, protocolVersion: protocolVersion)
             connectedDevices.insert(connectionDetails)
             let count = connectedDevices.count
             logger.notice("\(count) connected devices")
