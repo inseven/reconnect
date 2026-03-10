@@ -43,7 +43,7 @@ struct DeviceView: View {
                 Form {
                     LabeledContent("Name:", value: deviceModel.name)
                     Spacer()
-                    LabeledContent("Sync Identiifer:", value: deviceModel.id.uuidString)
+                    LabeledContent("Sync Identifier:", value: deviceModel.id.uuidString)
                     Spacer()
                     LabeledContent("Type:") {
                         Text(deviceModel.machineType.localizedNameKey)
