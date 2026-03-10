@@ -29,7 +29,7 @@ public extension RemoteCommandServicesClient.MachineInfo {
     }
 
     var machineUIDString: String {
-        let s = String(format: "%llX", machineUID)
+        let s = String(format: "%016llX", machineUID)
         let chunks = stride(from: 0, to: s.count, by: 4).map { i -> String in
             let start = s.index(s.startIndex, offsetBy: i)
             let end = s.index(start, offsetBy: 4, limitedBy: s.endIndex) ?? s.endIndex
