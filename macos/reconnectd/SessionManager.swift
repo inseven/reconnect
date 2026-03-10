@@ -69,9 +69,9 @@ class SessionManager: NSObject {
 
 extension SessionManager: NCPDelegate {
 
-    func ncp(_ ncp: ReconnectCore.NCP, didChangeConnectionState isConnected: Bool) {
+    func ncp(_ ncp: ReconnectCore.NCP, didChangeConnectionState isConnected: Bool, protocolVersion: Int32) {
         dispatchPrecondition(condition: .onQueue(.main))
-        delegate?.ncp(ncp, didChangeConnectionState: isConnected)
+        delegate?.ncp(ncp, didChangeConnectionState: isConnected, protocolVersion: protocolVersion)
     }
 
 }

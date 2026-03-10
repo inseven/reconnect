@@ -48,6 +48,8 @@ struct DeviceView: View {
                     LabeledContent("Type:") {
                         Text(deviceModel.machineType.localizedNameKey)
                     }
+                    Spacer()
+                    LabeledContent("Protocol Version:", value: String(deviceModel.connectionDetails.protocolVersion))
                     if let machineInfo = deviceModel.machineInfo {
                         Spacer()
                         LabeledContent("Software Version:", value: machineInfo.softwareVersion)
