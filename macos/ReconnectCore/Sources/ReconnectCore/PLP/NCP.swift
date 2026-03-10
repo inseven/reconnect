@@ -19,7 +19,7 @@
 import os
 import Foundation
 
-import ncp
+import plptools
 
 // Callbacks on main.
 public protocol NCPDelegate: NSObject {
@@ -29,6 +29,7 @@ public protocol NCPDelegate: NSObject {
 }
 
 // TODO: NCPSession?
+
 public class NCP {
 
     public struct DeviceConfiguration: Equatable, Hashable {
@@ -48,77 +49,54 @@ public class NCP {
     public let device: DeviceConfiguration
     public let port: Int32
 
-    private let lock = NSLock()
     private let logger = Logger(subsystem: "PLP", category: "Server")
+    private var session: UnsafeMutableRawPointer?
 
-    // Synchronized with lock.
-    private var threadID: pthread_t? = nil
-    private var isCancelled: Bool = false
+    private var callback: NCPStatusCallback?
 
-    func threadEntryPoint() {
+    public func start() {
+        dispatchPrecondition(condition: .notOnQueue(.main))
 
-        setup_signal_handlers()
-
-        lock.withLock {
-            threadID = pthread_self()
-        }
-
+        // Set up the callback.
         let context = Unmanaged.passRetained(self).toOpaque()
-        let callback: statusCallback_t = { context, status in
+        callback = { context, status in
             guard let context else {
                 return
             }
             let ncp = Unmanaged<NCP>.fromOpaque(context).takeUnretainedValue()
-            DispatchQueue.main.sync {
+            // We dispatch async here to ensure we can't deadlock against `stop` calls on the main queue.
+            DispatchQueue.main.async {
                 let isConnected = status == 1 ? true : false
                 ncp.delegate?.ncp(ncp, didChangeConnectionState: isConnected)
             }
         }
 
-        while true {
-            logger.notice("Starting NCP for device '\(self.device.path)' baud rate \(self.device.baudRate)...")
-            ncpd(port, device.baudRate, "127.0.0.1", device.path, 0x0000, callback, context)
-            DispatchQueue.main.async {
-                self.delegate?.ncp(self, didChangeConnectionState: false)
-            }
-            logger.notice("NCP session ended.")
+        logger.notice("Starting NCP for device '\(self.device.path)' baud rate \(self.device.baudRate)...")
+        session = ncp_session_init(port, device.baudRate, "127.0.0.1", device.path, false, 0, callback, context)
 
-            // Check to see if we need to exit.
-            let isCancelled: Bool = lock.withLock {
-                return self.isCancelled
-            }
-            if isCancelled {
-                logger.notice("NCP thread exiting.")
-                return
-            }
+        // While it's pretty grim, but we to the main thread to start each ncp session. This ensures we inherit the
+        // correct thread priority when the session is started using `pthread_create`, without having to change the
+        // internal plptools implementation. Thankfully, this does almost no work except for setting up the thread state
+        // and starting it.
+        DispatchQueue.main.sync {
+            ncp_session_start(self.session)
         }
+
     }
 
     public init(device: DeviceConfiguration, port: Int32) {
         self.device = device
         self.port = port
-
-    }
-
-    public func start() {
-        let thread = Thread(block: threadEntryPoint)
-        thread.start()
     }
 
     public func stop() {
-
-        // Cancel the thread and get its id.
-        let threadID = lock.withLock {
-            isCancelled = true
-            return self.threadID
-        }
-        guard let threadID = threadID else {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+        guard let session else {
             return
         }
-
-        // Signal the thread to stop it and then join it to ensure it's stopped.
-        pthread_kill(threadID, SIGINT)
-        pthread_join(threadID, nil)
+        ncp_session_cancel(session)
+        ncp_session_wait(session)
+        self.session = nil
     }
 
 }

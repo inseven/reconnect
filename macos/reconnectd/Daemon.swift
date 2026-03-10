@@ -33,7 +33,7 @@ class Daemon: NSObject {
     private let settings = KeyedDefaults<SettingsKey>()
     private let listener = NSXPCListener(machServiceName: .daemonSericeName)
     private let serialDeviceMonitor = SerialDeviceMonitor()
-    private var sessions: [NCP.DeviceConfiguration: NCP] = [:]  // Synchronized on main.
+    private let sessionManager = SessionManager()
 
     // Dynamic property generating an array of SerialDevice instances that represent the union of available and
     // previously enabled devices. Intended as a convenience for updating connected clients.
@@ -67,6 +67,7 @@ class Daemon: NSObject {
         super.init()
         listener.delegate = self
         serialDeviceMonitor.delegate = self
+        sessionManager.delegate = self
         do {
             knownSerialDevices = try settings.codable(forKey: .knownDevices, default: [:])
         } catch {
@@ -116,7 +117,7 @@ class Daemon: NSObject {
         }
     }
 
-    func updateConnectedDevices() {
+    func updateConnectedSerialDevices() {
         dispatchPrecondition(condition: .onQueue(.main))
         let count = connections.count
         logger.notice("Sending updated serial devices to \(count) clients...")
@@ -139,30 +140,7 @@ class Daemon: NSObject {
                 return self.connectedSerialDevices.contains(configuration.path)
             }
 
-        // 1) Stop the ncpd sessions that aren't available any more.
-        let removedDeviceConfigurations = sessions.filter { !activeDeviceConfigurations.contains($0.key) }
-        for (deviceConfiguration, ncp) in removedDeviceConfigurations {
-            logger.notice("Stopping ncpd for \(deviceConfiguration.path) on port \(ncp.port)...")
-            ncp.stop()
-            logger.notice("Stopped ncpd for \(deviceConfiguration.path) on port \(ncp.port).")
-            sessions.removeValue(forKey: deviceConfiguration)
-        }
-
-        // 2) Create new ncpd sesisons and start them, allocating the next free TCP port.
-        let ports = Set(sessions.map({ $0.value.port }))
-        var nextPort: Int32 = 7501
-        for deviceConfiguration in activeDeviceConfigurations {
-            if sessions[deviceConfiguration] == nil {
-                while ports.contains(nextPort) {
-                    nextPort += 1
-                }
-                logger.notice("Starting ncpd for \(deviceConfiguration.path) on port \(nextPort)...", )
-                let ncp = NCP(device: deviceConfiguration, port: nextPort)
-                ncp.delegate = self
-                sessions[deviceConfiguration] = ncp
-                ncp.start()
-            }
-        }
+        sessionManager.update(activeDeviceConfigurations)
     }
 
 }
@@ -210,20 +188,24 @@ extension Daemon: NSXPCListenerDelegate {
 
 extension Daemon: SerialDeviceMonitorDelegate {
 
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevice device: String) {
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didAddDevices devices: [String]) {
         dispatchPrecondition(condition: .onQueue(.main))
-        logger.notice("Serial device added '\(device)'.")
-        connectedSerialDevices.insert(device)
+        for device in devices {
+            logger.notice("Serial device added '\(device)'.")
+            connectedSerialDevices.insert(device)
+        }
         reconfigureSessionManager()
-        updateConnectedDevices()
+        updateConnectedSerialDevices()
     }
 
-    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevice device: String) {
+    func serialDeviceMonitor(serialDeviceMonitor: SerialDeviceMonitor, didRemoveDevices devices: [String]) {
         dispatchPrecondition(condition: .onQueue(.main))
-        logger.notice("Serial device removed '\(device)'")
-        connectedSerialDevices.remove(device)
+        for device in devices {
+            logger.notice("Serial device removed '\(device)'")
+            connectedSerialDevices.remove(device)
+        }
         reconfigureSessionManager()
-        updateConnectedDevices()
+        updateConnectedSerialDevices()
     }
 
 }
@@ -276,7 +258,7 @@ extension Daemon: DaemonInterface {
         DispatchQueue.main.async {
             self.knownSerialDevices[path] = configuration
             self.reconfigureSessionManager()
-            self.updateConnectedDevices()
+            self.updateConnectedSerialDevices()
         }
     }
 

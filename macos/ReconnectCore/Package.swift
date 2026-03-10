@@ -28,7 +28,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Diligence", package: "diligence"),
                 .product(name: "OpoLuaCore", package: "opolua"),
-                .product(name: "ncp", package: "plptools"),
+                .product(name: "plptools", package: "plptools"),
             ],
             resources: [
                 .process("Resources"),
