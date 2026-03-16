@@ -101,7 +101,7 @@ public class RemoteCommandServicesClient {
 
 extension Data {
 
-    init(store: bufferStore) {
+    init(store: BufferStore) {
         var bytes: [UInt8] = []
         for i in 0..<store.getLen() {
             bytes.append(store.getByte(Int(i)))
