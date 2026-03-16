@@ -77,7 +77,7 @@ let package = Package(
                 "ncpd/ncp.cc",
                 "ncpd/ncp_log.cc",
                 "ncpd/ncp_session.cc",
-                "ncpd/packet.cc",
+                "ncpd/datalink.cc",
                 "ncpd/socketchannel.cc",
             ],
             publicHeadersPath: "ncpd",
