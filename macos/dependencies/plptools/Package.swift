@@ -73,7 +73,7 @@ let package = Package(
             sources: [
                 "ncpd/channel.cc",
                 "ncpd/link.cc",
-                "ncpd/linkchan.cc",
+                "ncpd/linkchannel.cc",
                 "ncpd/ncp.cc",
                 "ncpd/ncp_log.cc",
                 "ncpd/ncp_session.cc",

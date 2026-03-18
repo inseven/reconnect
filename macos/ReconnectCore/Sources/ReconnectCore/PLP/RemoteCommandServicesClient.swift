@@ -70,7 +70,7 @@ public class RemoteCommandServicesClient {
     // TODO: Inject the code page?
     public func getOwnerInfo() throws -> [String] {
         return try withClient { client in
-            var buf: bufferArray = bufferArray()
+            var buf: BufferArray = BufferArray()
             try client.getOwnerInfo(&buf).check()
             var ownerInfo = [String]()
             while !buf.empty() {
