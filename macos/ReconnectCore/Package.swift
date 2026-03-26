@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         .package(path: "../dependencies/diligence"),
         .package(path: "../dependencies/opolua"),
-        .package(path: "../dependencies/plptools/plptools"),
+        .package(path: "../dependencies/plptools"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
