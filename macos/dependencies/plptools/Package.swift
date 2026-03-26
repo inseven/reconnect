@@ -26,7 +26,7 @@ let package = Package(
             sources: [
                 "gnulib/lib/yesno.c",
                 "gnulib/lib/string-buffer.c",
-                "ncpd/mp_serial.c",
+                "lib/mp_serial.c",
             ],
             cSettings: [
                 .headerSearchPath("."),
@@ -71,14 +71,14 @@ let package = Package(
             dependencies: [],
             path: "plptools",
             sources: [
-                "ncpd/channel.cc",
-                "ncpd/link.cc",
-                "ncpd/linkchannel.cc",
-                "ncpd/ncp.cc",
-                "ncpd/ncp_log.cc",
-                "ncpd/ncp_session.cc",
-                "ncpd/datalink.cc",
-                "ncpd/socketchannel.cc",
+                "lib/channel.cc",
+                "lib/link.cc",
+                "lib/linkchannel.cc",
+                "lib/ncp.cc",
+                "lib/ncp_log.cc",
+                "lib/ncp_session.cc",
+                "lib/datalink.cc",
+                "lib/socketchannel.cc",
             ],
             publicHeadersPath: "ncpd",
             cSettings: [
