@@ -8,7 +8,7 @@
 	path = macos/dependencies/diligence
 	url = https://github.com/inseven/diligence.git
 [submodule "dependencies/plptools"]
-	path = macos/dependencies/plptools/plptools
+	path = macos/dependencies/plptools
 	url = https://github.com/jbmorley/plptools.git
 [submodule "dependencies/interact"]
 	path = macos/dependencies/interact
