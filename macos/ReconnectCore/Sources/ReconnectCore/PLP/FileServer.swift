@@ -401,16 +401,10 @@ public class FileServer: @unchecked Sendable {
         let d = drive.cString(using: .ascii)!.first!
         var driveInfo = Drive()
         try client.devinfo(d, &driveInfo).check()
-        guard let mediaType = MediaType(rawValue: driveInfo.getMediaType().rawValue) else {
-            throw .E_PSI_FILE_UNKNOWN  // Unknown media.
-        }
-        let driveAttributes = DriveAttributes(rawValue: driveInfo.getDriveAttributes())
-        let name = string_cstr(driveInfo.getName())!
-
         return DriveInfo(drive: drive,
-                         mediaType: mediaType,
-                         driveAttributes: driveAttributes,
-                         name: String(cString: name))
+                         mediaType: driveInfo.getMediaType(),
+                         driveAttributes: DriveAttributes(rawValue: driveInfo.getDriveAttributes()),
+                         name: String(cString: string_cstr(driveInfo.getName())!))
     }
 
     func workQueue_drives() throws(PLPToolsError) -> [DriveInfo] {
