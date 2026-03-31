@@ -482,14 +482,13 @@ public class FileServer: @unchecked Sendable {
     }
 
     public func mkdir(path: String) throws(PLPToolsError) {
-        dispatchPrecondition(condition: .notOnQueue(workQueue))
         try perform { () throws(PLPToolsError) in
             try self.workQueue_mkdir(path: path)
         }
     }
 
-    public func rmdir(path: String) throws {
-        try perform {
+    public func rmdir(path: String) throws(PLPToolsError) {
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_rmdir(path: path)
         }
     }
@@ -500,8 +499,8 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func rename(from fromPath: String, to toPath: String) throws {
-        try perform {
+    public func rename(from fromPath: String, to toPath: String) throws(PLPToolsError) {
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
     }
