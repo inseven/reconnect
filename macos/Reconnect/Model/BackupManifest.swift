@@ -18,6 +18,8 @@
 
 import Foundation
 
+import plptools
+
 import ReconnectCore
 
 struct BackupManifest: Equatable, Hashable, Codable {
@@ -29,7 +31,7 @@ struct BackupManifest: Equatable, Hashable, Codable {
         }
 
         let drive: String
-        let mediaType: FileServer.MediaType
+        let mediaType: MediaType
         let driveAttributes: FileServer.DriveAttributes
         let name: String?
     }

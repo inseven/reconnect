@@ -243,7 +243,7 @@ class InstallerModel: Runnable {
                 throw .E_PSI_GEN_NSUP
             }
             let drives = try device.fileServer.drives().filter { driveInfo in
-                driveInfo.mediaType != .rom
+                driveInfo.mediaType != .ROM
             }
             let sem = DispatchSemaphore(value: 0)
             let defaultLanguage = try! Locale.selectLanguage(sis.languages)

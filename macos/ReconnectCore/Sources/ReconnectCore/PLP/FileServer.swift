@@ -21,23 +21,13 @@ import Foundation
 import plptools
 import OpoLuaCore
 
+extension MediaType: @retroactive Codable {}
+
 // Thread-safe FileServer implementation.
 // This intentionally provides a blocking API to make it easy to perform sequential operations without relying on the
 // new async/await concurrency model. This is driven by the need to support OpoLua blocking callbacks as Apple
 // documentation says you shouldn't be using traditional concurrency mechanisms to make async/await operations blocking.
 public class FileServer: @unchecked Sendable {
-
-    public enum MediaType: UInt32, Codable {
-        case notPresent = 0
-        case unknown = 1
-        case floppy = 2
-        case disk = 3
-        case compactDisc = 4
-        case ram = 5
-        case flashDisk = 6
-        case rom = 7
-        case remote = 8
-    }
 
     public enum ProgressResponse: Int32 {
         case cancel = 0
@@ -107,14 +97,16 @@ public class FileServer: @unchecked Sendable {
                 return true
             case .compactDisc:
                 return false
-            case .ram:
+            case .RAM:
                 return true
             case .flashDisk:
                 return true
-            case .rom:
+            case .ROM:
                 return false
             case .remote:
                 return true
+            @unknown default:
+                return false
             }
         }
 
