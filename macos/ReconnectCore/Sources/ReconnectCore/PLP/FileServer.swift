@@ -474,7 +474,6 @@ public class FileServer: @unchecked Sendable {
     }
 
     public func exists(path: String) throws(PLPToolsError) -> Bool {
-        dispatchPrecondition(condition: .notOnQueue(workQueue))
         return try perform { () throws(PLPToolsError) in
             let result = try self.workQueue_exists(path: path)
             return result
