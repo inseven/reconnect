@@ -407,12 +407,12 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         let d = drive.cString(using: .ascii)!.first!
-        var driveInfo = PlpDrive()
+        var driveInfo = Drive()
         try client.devinfo(d, &driveInfo).check()
-        guard let mediaType = MediaType(rawValue: driveInfo.getMediaType()) else {
+        guard let mediaType = MediaType(rawValue: driveInfo.getMediaType().rawValue) else {
             throw .E_PSI_FILE_UNKNOWN  // Unknown media.
         }
-        let driveAttributes = DriveAttributes(rawValue: driveInfo.getDriveAttribute())
+        let driveAttributes = DriveAttributes(rawValue: driveInfo.getDriveAttributes())
         let name = string_cstr(driveInfo.getName())!
 
         return DriveInfo(drive: drive,

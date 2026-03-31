@@ -20,7 +20,7 @@ import Foundation
 
 import plptools
 
-public typealias PLPToolsError = rfsv.errs
+public typealias PLPToolsError = RFSV.errs
 
 extension PLPToolsError: @retroactive _BridgedNSError {}
 extension PLPToolsError: @retroactive _ObjectiveCBridgeableError {}
