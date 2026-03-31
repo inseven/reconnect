@@ -429,7 +429,7 @@ public class FileServer: @unchecked Sendable {
 
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(PLPToolsError) {
         return try perform { () throws(PLPToolsError) in
             try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
@@ -440,7 +440,6 @@ public class FileServer: @unchecked Sendable {
     public func copyFile(fromLocalPath localSourcePath: String,
                          toRemotePath remoteDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
-        dispatchPrecondition(condition: .notOnQueue(workQueue))
         try perform {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
@@ -482,7 +481,7 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func mkdir(path: String) throws {
+    public func mkdir(path: String) throws(PLPToolsError) {
         dispatchPrecondition(condition: .notOnQueue(workQueue))
         try perform { () throws(PLPToolsError) in
             try self.workQueue_mkdir(path: path)
