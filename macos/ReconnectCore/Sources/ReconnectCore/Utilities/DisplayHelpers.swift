@@ -18,6 +18,8 @@
 
 import Foundation
 
+import plptools
+
 public struct DisplayHelpers {
 
     public static func displayNameForDrive(_ drive: String, name: String?) -> String {
@@ -28,7 +30,7 @@ public struct DisplayHelpers {
         }
     }
 
-    public static func imageForDrive(_ drive: String, mediaType: FileServer.MediaType, platform: Platform) -> String {
+    public static func imageForDrive(_ drive: String, mediaType: MediaType, platform: Platform) -> String {
         switch platform {
         case .epoc16:
             if drive == "A" || drive == "B" {

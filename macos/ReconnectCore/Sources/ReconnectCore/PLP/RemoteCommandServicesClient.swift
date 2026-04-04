@@ -22,8 +22,8 @@ import plptools
 
 public class RemoteCommandServicesClient {
 
-    public typealias MachineType = rpcs.machs
-    public typealias MachineInfo = rpcs.machineInfo
+    public typealias MachineType = RPCS.machs
+    public typealias MachineInfo = RPCS.machineInfo
 
     private let host: String
     private let port: Int32
@@ -61,7 +61,7 @@ public class RemoteCommandServicesClient {
 
     public func getMachineInfo() throws -> MachineInfo {
         return try withClient { client in
-            var machineInfo = rpcs.machineInfo()
+            var machineInfo = RPCS.machineInfo()
             try client.getMachineInfo(&machineInfo).check()
             return machineInfo
         }

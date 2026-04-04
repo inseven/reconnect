@@ -21,23 +21,13 @@ import Foundation
 import plptools
 import OpoLuaCore
 
+extension MediaType: @retroactive Codable {}
+
 // Thread-safe FileServer implementation.
 // This intentionally provides a blocking API to make it easy to perform sequential operations without relying on the
 // new async/await concurrency model. This is driven by the need to support OpoLua blocking callbacks as Apple
 // documentation says you shouldn't be using traditional concurrency mechanisms to make async/await operations blocking.
 public class FileServer: @unchecked Sendable {
-
-    public enum MediaType: UInt32, Codable {
-        case notPresent = 0
-        case unknown = 1
-        case floppy = 2
-        case disk = 3
-        case compactDisc = 4
-        case ram = 5
-        case flashDisk = 6
-        case rom = 7
-        case remote = 8
-    }
 
     public enum ProgressResponse: Int32 {
         case cancel = 0
@@ -107,11 +97,11 @@ public class FileServer: @unchecked Sendable {
                 return true
             case .compactDisc:
                 return false
-            case .ram:
+            case .RAM:
                 return true
             case .flashDisk:
                 return true
-            case .rom:
+            case .ROM:
                 return false
             case .remote:
                 return true
@@ -407,18 +397,12 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         let d = drive.cString(using: .ascii)!.first!
-        var driveInfo = PlpDrive()
+        var driveInfo = Drive()
         try client.devinfo(d, &driveInfo).check()
-        guard let mediaType = MediaType(rawValue: driveInfo.getMediaType()) else {
-            throw .E_PSI_FILE_UNKNOWN  // Unknown media.
-        }
-        let driveAttributes = DriveAttributes(rawValue: driveInfo.getDriveAttribute())
-        let name = string_cstr(driveInfo.getName())!
-
         return DriveInfo(drive: drive,
-                         mediaType: mediaType,
-                         driveAttributes: driveAttributes,
-                         name: String(cString: name))
+                         mediaType: driveInfo.getMediaType(),
+                         driveAttributes: DriveAttributes(rawValue: driveInfo.getDriveAttributes()),
+                         name: String(cString: string_cstr(driveInfo.getName())!))
     }
 
     func workQueue_drives() throws(PLPToolsError) -> [DriveInfo] {
@@ -443,7 +427,7 @@ public class FileServer: @unchecked Sendable {
 
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(PLPToolsError) {
         return try perform { () throws(PLPToolsError) in
             try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
@@ -454,7 +438,6 @@ public class FileServer: @unchecked Sendable {
     public func copyFile(fromLocalPath localSourcePath: String,
                          toRemotePath remoteDestinationPath: String,
                          callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
-        dispatchPrecondition(condition: .notOnQueue(workQueue))
         try perform {
             try self.workQueue_copyFile(fromLocalPath: localSourcePath,
                                         toRemotePath: remoteDestinationPath,
@@ -489,22 +472,19 @@ public class FileServer: @unchecked Sendable {
     }
 
     public func exists(path: String) throws(PLPToolsError) -> Bool {
-        dispatchPrecondition(condition: .notOnQueue(workQueue))
         return try perform { () throws(PLPToolsError) in
-            let result = try self.workQueue_exists(path: path)
-            return result
+            return try self.workQueue_exists(path: path)
         }
     }
 
-    public func mkdir(path: String) throws {
-        dispatchPrecondition(condition: .notOnQueue(workQueue))
+    public func mkdir(path: String) throws(PLPToolsError) {
         try perform { () throws(PLPToolsError) in
             try self.workQueue_mkdir(path: path)
         }
     }
 
-    public func rmdir(path: String) throws {
-        try perform {
+    public func rmdir(path: String) throws(PLPToolsError) {
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_rmdir(path: path)
         }
     }
@@ -515,8 +495,8 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func rename(from fromPath: String, to toPath: String) throws {
-        try perform {
+    public func rename(from fromPath: String, to toPath: String) throws(PLPToolsError) {
+        try perform { () throws(PLPToolsError) in
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
     }
