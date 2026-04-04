@@ -105,8 +105,6 @@ public class FileServer: @unchecked Sendable {
                 return false
             case .remote:
                 return true
-            @unknown default:
-                return false
             }
         }
 
