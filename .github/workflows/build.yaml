@@ -69,7 +69,7 @@ jobs:
         git submodule update --init --depth 1 docs/_theme
 
     - name: Install the tool dependencies
-      uses: jdx/mise-action@v2
+      uses: jdx/mise-action@v4
 
     - name: Install dependencies
       run: scripts/install-dependencies.sh
