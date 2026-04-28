@@ -43,6 +43,12 @@ extension URL {
         return URL(address: "support@jbmorley.co.uk", subject: subject)!
     }()
 
+    public var isDirectory: Bool {
+        get throws {
+            (try resourceValues(forKeys: [.isDirectoryKey])).isDirectory == true
+        }
+    }
+
     public func appendingPathComponents(_ pathComponents: [String]) -> URL {
         return pathComponents.reduce(self) { url, pathComponent in
             return url.appendingPathComponent(pathComponent)

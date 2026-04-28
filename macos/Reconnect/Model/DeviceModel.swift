@@ -903,7 +903,13 @@ extension DeviceModel {
         let fileManager = FileManager.default
 
         // Recursively list the files to work out what we need to upload.
-        let files = try fileManager.contentsOfDirectory(at: sourceURL, includingPropertiesForKeys: [.isDirectoryKey])
+        guard let enumerator = fileManager.enumerator(at: sourceURL,
+                                                      includingPropertiesForKeys: [.nameKey, .isDirectoryKey])
+        else {
+            throw ReconnectError.directoryListingError
+        }
+        let files = enumerator
+            .compactMap { $0 as? URL }
             .filter { $0.lastPathComponent != ".DS_Store" }
 
         // Create the directory to upload to.
@@ -924,7 +930,7 @@ extension DeviceModel {
 
             // Create the destination directory, or copy the file.
             progress.localizedAdditionalDescription = file.path
-            if file.hasDirectoryPath {
+            if try file.isDirectory {
                 try transfersFileServer.mkdir(path: innerDestinationPath)
                 progress.completedUnitCount += 1
             } else {
