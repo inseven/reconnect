@@ -189,6 +189,7 @@ struct DirectoryView: View {
             }
             return true
         }
+        .disabled(directoryModel.isLoading)
         .navigationTitle(directoryModel.navigationTitle ?? "My Psion")
         .presents($directoryModel.lastError)
         .task {

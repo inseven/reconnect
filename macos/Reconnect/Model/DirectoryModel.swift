@@ -105,6 +105,7 @@ class DirectoryModel {
     }
 
     func delete(_ selection: Set<FileServer.DirectoryEntry.ID>) {
+        self.isLoading = true
         run { [deviceModel] in
             for path in selection {
                 if path.isWindowsDirectory {
@@ -115,6 +116,7 @@ class DirectoryModel {
                 DispatchQueue.main.sync {
                     self.files.removeAll { $0.id == path.lowercased() }
                     self.fileSelection.remove(path.lowercased())
+                    self.isLoading = false
                 }
             }
         }
