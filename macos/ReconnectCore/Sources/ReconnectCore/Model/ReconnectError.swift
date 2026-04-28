@@ -35,6 +35,7 @@ public enum ReconnectError: Error {
     case cancelled
     case unknownDownloadFailure
     case unsupportedImageFormat
+    case directoryListingError
 }
 
 extension ReconnectError: LocalizedError {
@@ -69,6 +70,8 @@ extension ReconnectError: LocalizedError {
             return "Unknown download failure."
         case .unsupportedImageFormat:
             return "Unsupported image format."
+        case .directoryListingError:
+            return "Failed to list directory."
         }
     }
 
