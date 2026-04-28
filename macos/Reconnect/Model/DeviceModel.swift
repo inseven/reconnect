@@ -799,7 +799,7 @@ extension DeviceModel {
 
         // Update the progress accordingly.
         progress.totalUnitCount = Int64(files.count)
-        progress.localizedDescription = "Copying files..."
+        progress.localizedDescription = "Downloading files..."
 
         // Iterate over the files and copy each one in turn.
         try cancellationToken.checkCancellation()
@@ -912,6 +912,10 @@ extension DeviceModel {
             .compactMap { $0 as? URL }
             .filter { $0.lastPathComponent != ".DS_Store" }
 
+        // Update the progress accordingly.
+        progress.totalUnitCount = Int64(files.count)
+        progress.localizedDescription = "Uploading files..."
+
         // Create the directory to upload to.
         try transfersFileServer.mkdir(path: destinationPath)
 
@@ -936,20 +940,11 @@ extension DeviceModel {
             } else {
                 let copyProgress = Progress()
                 progress.addChild(copyProgress, withPendingUnitCount: 1)
-
-                // Read the local file size so we can set the progress total unit count.
-                let attributes = try fileManager.attributesOfItem(atPath: sourceURL.path)
-                let size = attributes[.size] as! Int64
-                copyProgress.totalUnitCount = size
-
-                // Upload the file.
-                try transfersFileServer.copyFile(fromLocalPath: file.path,
-                                                 toRemotePath: innerDestinationPath) { current, total in
-                    copyProgress.completedUnitCount = Int64(current)
-                    copyProgress.totalUnitCount = Int64(total)
-                    return cancellationToken.isCancelled ? .cancel : .continue
-                }
-                copyProgress.completedUnitCount = copyProgress.totalUnitCount
+                _ = try _uploadFile(sourceURL: file,
+                                    destinationPath: innerDestinationPath,
+                                    context: context,
+                                    progress: copyProgress,
+                                    cancellationToken: cancellationToken)
             }
 
             // Check to see if we've been cancelled.
