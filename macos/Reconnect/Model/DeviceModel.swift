@@ -799,7 +799,7 @@ extension DeviceModel {
 
         // Update the progress accordingly.
         progress.totalUnitCount = Int64(files.count)
-        progress.localizedDescription = "Copying files..."
+        progress.localizedDescription = "Downloading files..."
 
         // Iterate over the files and copy each one in turn.
         try cancellationToken.checkCancellation()
@@ -914,7 +914,7 @@ extension DeviceModel {
 
         // Update the progress accordingly.
         progress.totalUnitCount = Int64(files.count)
-        progress.localizedDescription = "Copying files..."
+        progress.localizedDescription = "Uploading files..."
 
         // Create the directory to upload to.
         try transfersFileServer.mkdir(path: destinationPath)

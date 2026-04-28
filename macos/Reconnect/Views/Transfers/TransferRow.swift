@@ -109,6 +109,8 @@ struct TransferRow: View {
                 case .active(let progress):
                     ProgressView(progress)
                         .controlSize(.small)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
                 case .complete, .cancelled, .failed:
                     EmptyView()
                 }
