@@ -27,6 +27,37 @@ import ReconnectCore
 @MainActor @Observable
 class DirectoryModel {
 
+
+    struct DeleteConfirmation: Identifiable {
+
+        let id = UUID()
+        let identifiers: Set<FileServer.DirectoryEntry.ID>
+
+        private let completion: () -> Void
+
+        init(identifiers: Set<FileServer.DirectoryEntry.ID>, completion: @escaping () -> Void) {
+            self.identifiers = identifiers
+            self.completion = completion
+        }
+
+        func perform() {
+            completion()
+        }
+
+    }
+
+    enum Query: Identifiable {
+
+        var id: UUID {
+            switch self {
+            case .deleteConfirmation(let deleteConfirmation):
+                return deleteConfirmation.id
+            }
+        }
+
+        case deleteConfirmation(DeleteConfirmation)
+    }
+
     var navigationTitle: String? {
         return name(for: path)
     }
@@ -43,6 +74,7 @@ class DirectoryModel {
     var isLoading: Bool = true
     var files: [FileServer.DirectoryEntry] = []
     var fileSelection = Set<FileServer.DirectoryEntry.ID>()
+    var query: Query? = nil
 
     nonisolated let driveInfo: FileServer.DriveInfo
     nonisolated let path: String
@@ -296,7 +328,13 @@ extension DirectoryModel: FileManageable {
     }
 
     func delete() {
-        delete(fileSelection)
+        let fileSelection = self.fileSelection
+        query = .deleteConfirmation(DeleteConfirmation(identifiers: fileSelection) { [weak self] in
+            guard let self else {
+                return
+            }
+            self.delete(fileSelection)
+        })
     }
 
     var canDownload: Bool {
@@ -364,6 +402,26 @@ extension DirectoryModel: Refreshable {
 
     func refresh() {
         update()
+    }
+
+}
+
+extension DirectoryModel.DeleteConfirmation {
+
+    var title: String {
+        if identifiers.count == 1 {
+            return "Delete '\(identifiers.first!)'"
+        } else {
+            return "Delete \(identifiers.count) Files"
+        }
+    }
+
+    var message: String {
+        if identifiers.count == 1 {
+            return "This item will be deleted immediately. You can't undo this action."
+        } else {
+            return "These items will be deleted immediately. You can't undo this action."
+        }
     }
 
 }
