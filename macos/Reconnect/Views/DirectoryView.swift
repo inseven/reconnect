@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+import Interact
+
 import ReconnectCore
 
 struct DirectoryView: View {
@@ -192,6 +194,18 @@ struct DirectoryView: View {
         .disabled(directoryModel.isLoading)
         .navigationTitle(directoryModel.navigationTitle ?? "My Psion")
         .presents($directoryModel.lastError)
+        .prompt(item: $directoryModel.query) { prompt in
+            switch prompt {
+            case .deleteConfirmation(let deleteConfirmation):
+                Prompt(deleteConfirmation.title) {
+                    Button("Delete", role: .destructive) {
+                        deleteConfirmation.perform()
+                    }
+                } message: {
+                    Text(deleteConfirmation.message)
+                }
+            }
+        }
         .task {
             await directoryModel.start()
         }
