@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import SwiftUI
+
 import Interact
 import OpoLuaCore
 
@@ -31,14 +32,6 @@ struct InstallQueryInstallerPage: View {
         self.applicationModel = applicationModel
         self.installQuery = installQuery
         _selection = State(initialValue: applicationModel.deviceModels.first(where: {$0.platform == installQuery.sis.target })?.id)
-    }
-
-    func updateSelection() {
-        // Don't make any changes if the currently selected device is still available.
-        guard !applicationModel.deviceModels.contains(where: { $0.id == selection }) else {
-            return
-        }
-        selection = applicationModel.deviceModels.first(where: {$0.platform == installQuery.sis.target })?.id
     }
 
     var body: some View {
@@ -65,24 +58,10 @@ struct InstallQueryInstallerPage: View {
                 }
                 .padding(.bottom)
 
-                LabeledContent("Device") {
-                    Menu {
-                        ForEach(applicationModel.deviceModels) { deviceModel in
-                            Button {
-                                selection = deviceModel.id
-                            } label: {
-                                Text(deviceModel.name)
-                            }
-                            .disabled(deviceModel.platform != installQuery.sis.target)
-                        }
-                    } label: {
-                        if let deviceModel = applicationModel.deviceModels.first(where: { $0.id == selection }) {
-                            Text(deviceModel.name)
-                        } else {
-                            Text("No Compatible Devices")
-                        }
-                    }
+                DevicePicker(selection: $selection) { deviceModel in
+                    return deviceModel.platform == installQuery.sis.target
                 }
+
             }
         } actions: {
             Button("Cancel", role: .destructive) {
@@ -96,9 +75,6 @@ struct InstallQueryInstallerPage: View {
             }
             .keyboardShortcut(.defaultAction)
             .disabled(selection == nil)
-        }
-        .onChange(of: applicationModel.deviceModels) {
-            updateSelection()
         }
     }
 
