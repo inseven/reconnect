@@ -36,6 +36,11 @@ public enum ReconnectError: Error {
     case unknownDownloadFailure
     case unsupportedImageFormat
     case directoryListingError
+    case epocError(PLPToolsError)
+    case transferError(PLPToolsError, String, String)
+    case existenceCheckError(PLPToolsError, String)
+    case createDirectoryError(PLPToolsError, String)
+    case extendedAttributesError(PLPToolsError, String)
 }
 
 extension ReconnectError: LocalizedError {
@@ -72,6 +77,81 @@ extension ReconnectError: LocalizedError {
             return "Unsupported image format."
         case .directoryListingError:
             return "Failed to list directory."
+        case .epocError(let epocError):
+            return epocError.errorDescription
+        case .transferError(let epocError, let source, let destination):
+            if let description = epocError.errorDescription {
+                return "Failed to transfer file '\(source)' to '\(destination)' with error '\(description)'."
+            } else {
+                return "Failed to upload file '\(source)' to '\(destination)'."
+            }
+        case .existenceCheckError(let epocError, let path):
+            if let description = epocError.errorDescription {
+                return "Failed to check file '\(path)' exists with error '\(description)'."
+            } else {
+                return "Failed to check file '\(path)' exists."
+            }
+        case .createDirectoryError(let epocError, let path):
+            if let description = epocError.errorDescription {
+                return "Failed to create directory '\(path)' with error '\(description)'."
+            } else {
+                return "Failed to create directory '\(path)'."
+            }
+        case .extendedAttributesError(let epocError, let path):
+            if let description = epocError.errorDescription {
+                return "Failed to get extended attributes for file '\(path)' with error '\(description)'."
+            } else {
+                return "Failed to get extended attributes for file '\(path)'."
+            }
+        }
+    }
+
+}
+
+extension ReconnectError {
+
+    public var mappedToEpocErrorCode: Int32 {
+        switch self {
+        case .unknown:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .invalidFilePath:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .unknownFileSize:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .imageSaveError:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .invalidLocalization:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .invalidSisFile:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .invalidFileReference:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .missingTools:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .invalidDaemonProxy:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .configurationDencodeError:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .configurationEncodeError:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .cancelled:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .unknownDownloadFailure:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .unsupportedImageFormat:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .directoryListingError:
+            return PLPToolsError.E_PSI_GEN_FAIL.rawValue
+        case .epocError(let epocError):
+            return epocError.rawValue
+        case .transferError(let epocError, _, _):
+            return epocError.rawValue
+        case .existenceCheckError(let epocError, _):
+            return epocError.rawValue
+        case .createDirectoryError(let epocError, _):
+            return epocError.rawValue
+        case .extendedAttributesError(let epocError, _):
+            return epocError.rawValue
         }
     }
 

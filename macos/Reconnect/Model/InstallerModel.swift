@@ -234,13 +234,13 @@ class InstallerModel: Runnable {
 
         // We pull this functionality out into a separate function because the Swift compiler (poor thing) fails to
         // realize the only error this can throw is a `PLPToolsError` if we use it directly in the `do` block.
-        func showConfigurationQuery(sis: Sis.File, driveRequired: Bool) throws(PLPToolsError) -> Sis.BeginResult {
+        func showConfigurationQuery(sis: Sis.File, driveRequired: Bool) throws(ReconnectError) -> Sis.BeginResult {
             dispatchPrecondition(condition: .notOnQueue(.main))
             guard let device else {
-                throw .E_PSI_FILE_DISC
+                throw ReconnectError.epocError(.E_PSI_FILE_DISC)
             }
             guard let installDirectory = device.installDirectory else {
-                throw .E_PSI_GEN_NSUP
+                throw ReconnectError.epocError(.E_PSI_GEN_NSUP)
             }
             let drives = try device.fileServer.drives().filter { driveInfo in
                 driveInfo.mediaType != .ROM
@@ -269,8 +269,10 @@ class InstallerModel: Runnable {
         }
         do {
             return try showConfigurationQuery(sis: sis, driveRequired: driveRequired)
-        } catch {
-            return .epocError(error.rawValue)
+        } catch ReconnectError.epocError(let epocError) {
+            return .epocError(epocError.rawValue)
+        } catch  {
+            return .epocError(error.mappedToEpocErrorCode)
         }
     }
 
