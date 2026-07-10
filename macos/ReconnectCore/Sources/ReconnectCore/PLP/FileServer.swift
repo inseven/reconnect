@@ -292,6 +292,21 @@ public class FileServer: @unchecked Sendable {
     private func workQueue_getExtendedAttributes(path: String) throws(ReconnectError) -> DirectoryEntry {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
+
+        // EPOC16 and EPOC32 will barf if we ask for the extended attributes of a volume root so we intercept this and
+        // return something sane to make this API safer and less brittle for clients.
+        if path.isRoot {
+            let driveInfo = try workQueue_devinfo(drive: path)
+            return FileServer.DirectoryEntry(path: path,
+                                             name: driveInfo.name ?? "",
+                                             size: 0,
+                                             attributes: .directory,
+                                             modificationDate: .fatEpoch,
+                                             uid1: 0,
+                                             uid2: 0,
+                                             uid3: 0)
+        }
+
         var entry = PlpDirent()
         let result = client.fgeteattr(path, &entry)
         guard result == .E_PSI_GEN_NONE else {
