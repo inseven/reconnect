@@ -48,20 +48,7 @@ struct BackupView: View {
             case .selectDrives(let driveQuery):
                 BackupDrivePickerPage(driveQuery: driveQuery)
             case .progress(let progress, let cancellationToken):
-                WizardPage {
-                    ProgressAnimation("back")
-                    ProgressView(progress)
-                } actions: {
-                    Button("Cancel", role: .destructive) {
-                        cancellationToken.cancel()
-                    }
-                    .disabled(cancellationToken.isCancelled)
-                    Button("Continue") {}
-                        .keyboardShortcut(.defaultAction)
-                        .disabled(true)
-                }
-                .wizardPageStyle(.narrow)
-
+                WizardProgressPage("back", progress: progress, cancellationToken: cancellationToken)
             case .error(let error):
                 WizardErrorPage(error: error)
             case .complete:
