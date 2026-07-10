@@ -282,6 +282,27 @@ class ApplicationModel: NSObject {
         return hashes.first
     }
 
+    func showBackupWindow(deviceModel: DeviceModel) {
+
+        // Check to see if there's already an open window for the installer.
+        var window = NSApplication.shared.windows.first { window in
+            guard let window = window as? NSBackupWindow else {
+                return false
+            }
+            return window.deviceModelId == deviceModel.id
+        }
+
+
+        // Create a new window and center if one doesn't exist.
+        if window == nil {
+            window = NSBackupWindow(applicationModel: self, deviceModel: deviceModel)
+            window?.center()
+        }
+
+        // Foreground the window.
+        window?.makeKeyAndOrderFront(nil)
+    }
+
     func showInstallerWindow(file: File) {
 
         // Ignore urls used for launching Reconnect from the menu bar.
@@ -307,20 +328,19 @@ class ApplicationModel: NSObject {
         window?.makeKeyAndOrderFront(nil)
     }
 
-    func showBackupWindow(deviceModel: DeviceModel) {
+    func showRestoreWindow(backup: Backup) {
 
         // Check to see if there's already an open window for the installer.
         var window = NSApplication.shared.windows.first { window in
-            guard let window = window as? NSBackupWindow else {
+            guard let window = window as? NSRestoreWindow else {
                 return false
             }
-            return window.deviceModelId == deviceModel.id
+            return window.backup == backup
         }
-
 
         // Create a new window and center if one doesn't exist.
         if window == nil {
-            window = NSBackupWindow(applicationModel: self, deviceModel: deviceModel)
+            window = NSRestoreWindow(applicationModel: self, backup: backup)
             window?.center()
         }
 

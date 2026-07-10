@@ -297,6 +297,37 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         applicationModel?.showBackupWindow(deviceModel: self)
     }
 
+    func restore(backup: Backup,
+                 drives: Set<BackupManifest.Drive>,
+                 progress: Progress,
+                 cancellationToken: CancellationToken) throws {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+
+        // Iterate over the drives to be restored, constructing the URL of the backup path, and then kicking off a
+        // transfer.
+        for drive in drives {
+            let url = backup.url.appendingPathComponent(drive.drive)
+
+            // Delete everything.
+            let files = try transfersFileServer.dir(path: drive.drive + ":\\", recursive: true)
+            for file in files.reversed() {
+                print("Deleting '\(file.path)'...")
+                if file.path.isWindowsDirectory {
+                    try transfersFileServer.rmdir(path: file.path.ensuringTrailingWindowsPathSeparator())
+                } else {
+                    try transfersFileServer.remove(path: file.path)
+                }
+            }
+
+            // Copy everything.
+            _ = try _upload(sourceURL: url, destinationPath: drive.drive + ":",
+                            context: .backup,
+                            progress: progress,
+                            cancellationToken: cancellationToken)
+        }
+
+    }
+
     func backUp(drives: Set<FileServer.DriveInfo>,
                 progress: Progress,
                 cancellationToken: CancellationToken) throws -> Backup {
@@ -918,7 +949,15 @@ extension DeviceModel {
         progress.localizedDescription = "Uploading files..."
 
         // Create the directory to upload to.
-        try transfersFileServer.mkdir(path: destinationPath)
+        // TODO: Check if it's actually a directory.
+
+        let isRoot = destinationPath.isRoot
+        if (!isRoot) {
+            let exists = try transfersFileServer.exists(path: destinationPath)
+            if (!exists) {
+                try transfersFileServer.mkdir(path: destinationPath)
+            }
+        }
 
         // Iterate over the files and copy each one in turn.
         try cancellationToken.checkCancellation()
