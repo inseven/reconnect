@@ -34,7 +34,7 @@ class NSInstallerWindow: NSWindow {
         windowProxy.nsWindow = self
         title = file.url.displayName
         styleMask.remove([.closable, .resizable, .borderless, .fullSizeContentView])
-        setContentSize(CGSize(width: 800, height: 600))
+        setContentSize(.wizard)
     }
 
 }
