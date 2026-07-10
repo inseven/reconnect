@@ -30,29 +30,25 @@ struct WizardErrorPage: View {
 
     var body: some View {
         WizardPage {
-            VStack {
-                Image(systemName: "xmark.circle")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: WizardLayoutMetrics.symbolSize)
-                    .foregroundStyle(.red)
-                if error.isCancel {
-                    Text("Cancelled")
-                        .font(.headline)
-                } else {
-                    Text("Error")
-                        .font(.headline)
-                    Text(error.localizedDescription)
-                }
+            Image(systemName: "xmark.circle")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: WizardLayoutMetrics.symbolSize)
+                .foregroundStyle(.red)
+            if error.isCancel {
+                Text("Cancelled")
+                    .font(.headline)
+            } else {
+                Text("Error")
+                    .font(.headline)
+                Text(error.localizedDescription)
             }
-            .padding()
         } actions: {
             Button("Close") {
                 closeWindow()
             }
             .keyboardShortcut(.defaultAction)
         }
-
     }
 
 }

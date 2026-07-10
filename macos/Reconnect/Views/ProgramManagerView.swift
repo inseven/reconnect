@@ -31,12 +31,7 @@ struct ProgramManagerView: View {
     var body: some View {
         VStack(spacing: 0) {
             if case ProgramManagerModel.State.checkingInstalledPackages(let progress) = programManagerModel.state {
-                VStack {
-                    ProgressView(progress)
-                }
-                .padding()
-                .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ProgressView(progress)
             } else {
                 Table(of: ProgramManagerModel.ProgramDetails.self) {
                     TableColumn("Program") { programDetails in
@@ -58,6 +53,7 @@ struct ProgramManagerView: View {
                 }
             }
         }
+        .wizardPageStyle(.narrow)
         .background(.textBackgroundColor)
         .disabled(!programManagerModel.isReady)
         .runs(programManagerModel)

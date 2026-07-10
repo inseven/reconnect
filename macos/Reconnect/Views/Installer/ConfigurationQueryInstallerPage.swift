@@ -59,8 +59,6 @@ struct ConfigurationQueryInstallerPage: View {
                         }
                     }
                 }
-                .padding()
-                .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
             } actions: {
                 Button("Cancel", role: .destructive) {
                     query.cancel()
@@ -70,6 +68,7 @@ struct ConfigurationQueryInstallerPage: View {
                 }
                 .keyboardShortcut(.defaultAction)
             }
+            .wizardPageStyle(.narrow)
         }
     }
 

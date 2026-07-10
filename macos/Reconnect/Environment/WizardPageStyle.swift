@@ -18,31 +18,19 @@
 
 import SwiftUI
 
-struct WizardCompletePage: View {
+enum WizardPageStyle {
+    case full
+    case narrow
+}
 
-    @Environment(\.closeWindow) private var closeWindow
+extension EnvironmentValues {
+    @Entry var wizardPageStyle: WizardPageStyle = .narrow
+}
 
-    let title: LocalizedStringKey
+extension View {
 
-    init(_ title: LocalizedStringKey) {
-        self.title = title
-    }
-
-    var body: some View {
-        WizardPage {
-            Image(systemName: "checkmark.circle")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: WizardLayoutMetrics.symbolSize)
-                .foregroundStyle(.green)
-            Text(title)
-                .font(.headline)
-        } actions: {
-            Button("Close") {
-                closeWindow()
-            }
-            .keyboardShortcut(.defaultAction)
-        }
+    func wizardPageStyle(_ wizardPageStyle: WizardPageStyle) -> some View {
+        return self.environment(\.wizardPageStyle, wizardPageStyle)
     }
 
 }

@@ -40,8 +40,6 @@ struct DeviceEditView: View {
             Form {
                 TextField("Name", text: $name)
             }
-            .padding()
-            .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
         } actions: {
             Button("Cancel", role: .destructive) {
                 dismiss()
@@ -59,6 +57,7 @@ struct DeviceEditView: View {
             .keyboardShortcut(.defaultAction)
             .disabled(name == deviceModel.name || isSaving)
         }
+        .wizardPageStyle(.narrow)
         .presents($error)
     }
 
