@@ -93,19 +93,16 @@ class BackupViewModel: Runnable {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
         // Show the drive picker.
-        let sem = DispatchSemaphore(value: 0)
-        var result: Result<Set<FileServer.DriveInfo>, Error> = .failure(ReconnectError.cancelled)
+        let drivesFuture = UnsafeFuture<Set<FileServer.DriveInfo>, Error>()
         let driveQuery = DriveQuery(drives: deviceModel.drives,
                                     defaultSelection: [deviceModel.internalDrive],
-                                    platform: deviceModel.platform) { completionResult in
-            result = completionResult
-            sem.signal()
+                                    platform: deviceModel.platform) { result in
+            drivesFuture.resolve(result: result)
         }
         DispatchQueue.main.sync {
             self.page = .selectDrives(driveQuery)
         }
-        sem.wait()
-        let drives = try result.get()
+        let drives = try drivesFuture.get()
 
         // Show the progress page.
         // Since this observes the progress object we've injected in, we don't need to do anything to ensure it updates.
