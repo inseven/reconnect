@@ -904,7 +904,8 @@ extension DeviceModel {
 
         // Recursively list the files to work out what we need to upload.
         guard let enumerator = fileManager.enumerator(at: sourceURL,
-                                                      includingPropertiesForKeys: [.nameKey, .isDirectoryKey])
+                                                      includingPropertiesForKeys: [.nameKey, .isDirectoryKey],
+                                                      options: [.producesRelativePathURLs])
         else {
             throw ReconnectError.directoryListingError
         }
@@ -929,8 +930,7 @@ extension DeviceModel {
             }
 
             // Determine the destination path.
-            let relativePath = String(file.path.dropFirst(sourceURL.path().count))
-            let innerDestinationPath = destinationPath.appendingWindowsPathComponent(relativePath)
+            let innerDestinationPath = destinationPath.appendingWindowsPathComponent(file.relativePath.windowsPath)
 
             // Create the destination directory, or copy the file.
             progress.localizedAdditionalDescription = file.path
