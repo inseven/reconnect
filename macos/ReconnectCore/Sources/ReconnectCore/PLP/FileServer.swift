@@ -217,15 +217,15 @@ public class FileServer: @unchecked Sendable {
         return try result.get()
     }
 
-    private func workQueue_connect() throws(PLPToolsError) {
+    private func workQueue_connect() throws(ReconnectError) {
         guard self.client.connect(self.host, self.port) else {
-            throw PLPToolsError.E_PSI_FILE_DISC  // Disconnected.
+            throw ReconnectError.epocError(PLPToolsError.E_PSI_FILE_DISC)
         }
     }
 
     private func workQueue_dir(path: String,
                                recursive: Bool,
-                               cancellationToken: CancellationToken) throws(PLPToolsError) -> [DirectoryEntry] {
+                               cancellationToken: CancellationToken) throws(ReconnectError) -> [DirectoryEntry] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var details = PlpDir()
@@ -243,19 +243,19 @@ public class FileServer: @unchecked Sendable {
         for entry in entries {
             result.append(entry)
             if entry.isDirectory {
-                try cancellationToken.checkCancellation()
+                try cancellationToken.checkCancellationReconnectError()
                 result.append(contentsOf: try workQueue_dir(path: entry.path,
                                                             recursive: true,
                                                             cancellationToken: cancellationToken))
             }
         }
 
-        try cancellationToken.checkCancellation()
+        try cancellationToken.checkCancellationReconnectError()
 
         return result
     }
 
-    private func workQueue_exists(path: String) throws(PLPToolsError) -> Bool {
+    private func workQueue_exists(path: String) throws(ReconnectError) -> Bool {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         do {
@@ -271,17 +271,17 @@ public class FileServer: @unchecked Sendable {
                 _ = try workQueue_getAttributes(path: path)
             }
             return true
-        } catch {
-            switch error {
-            case .E_PSI_FILE_NXIST, .E_PSI_FILE_DIR, .E_PSI_FILE_NOTREADY, .E_PSI_FILE_DEVICE:
-                return false
-            default:
-                throw error
-            }
+        } catch .epocError(.E_PSI_FILE_NXIST),
+                .epocError(.E_PSI_FILE_DIR),
+                .epocError(.E_PSI_FILE_NOTREADY),
+                .epocError(.E_PSI_FILE_DEVICE) {
+            return false
+        } catch .epocError(let epocError) {
+            throw .existenceCheckError(epocError, path)
         }
     }
 
-    private func workQueue_getAttributes(path: String) throws(PLPToolsError) -> UInt32 {
+    private func workQueue_getAttributes(path: String) throws(ReconnectError) -> UInt32 {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var attributes: UInt32 = 0
@@ -289,17 +289,20 @@ public class FileServer: @unchecked Sendable {
         return attributes
     }
 
-    private func workQueue_getExtendedAttributes(path: String) throws(PLPToolsError) -> DirectoryEntry {
+    private func workQueue_getExtendedAttributes(path: String) throws(ReconnectError) -> DirectoryEntry {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var entry = PlpDirent()
-        try client.fgeteattr(path, &entry).check()
+        let result = client.fgeteattr(path, &entry)
+        guard result == .E_PSI_GEN_NONE else {
+            throw .extendedAttributesError(result, path)
+        }
         return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
     }
 
     private func workQueue_copyFile(fromRemotePath remoteSourcePath: String,
                                     toLocalPath localDestinationPath: String,
-                                    callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(PLPToolsError) {
+                                    callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
 
@@ -313,7 +316,9 @@ public class FileServer: @unchecked Sendable {
             let o = Unmanaged<FileTransferContext>.fromOpaque(context).takeUnretainedValue()
             return o.callback(status, o.size).rawValue
         }
-        try result.check()
+        guard result == .E_PSI_GEN_NONE else {
+            throw ReconnectError.transferError(result, remoteSourcePath, localDestinationPath)
+        }
     }
 
     private func workQueue_copyFile(fromLocalPath localSourcePath: String,
@@ -334,19 +339,24 @@ public class FileServer: @unchecked Sendable {
             let o = Unmanaged<FileTransferContext>.fromOpaque(context).takeUnretainedValue()
             return o.callback(status, o.size).rawValue
         }
-        try result.check()
+        guard result == .E_PSI_GEN_NONE else {
+            throw ReconnectError.transferError(result, localSourcePath, remoteDestinationPath)
+        }
     }
 
-    func workQueue_mkdir(path: String) throws(PLPToolsError) {
+    func workQueue_mkdir(path: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        try client.mkdir(path).check()
+        let result = client.mkdir(path)
+        guard result == .E_PSI_GEN_NONE else {
+            throw .createDirectoryError(result, path)
+        }
     }
 
     // This deviates from the plptools implementation (and the underlying RFSV implementation) in that it recursively
     // deletes the contents of the directory prior to attempting to delete the directory. This better matches, to me
     // at least, the calling expectation of a function named rmdir.
-    func workQueue_rmdir(path: String) throws(PLPToolsError) {
+    func workQueue_rmdir(path: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
 
@@ -366,19 +376,19 @@ public class FileServer: @unchecked Sendable {
         try client.rmdir(path).check()
     }
 
-    func workQueue_remove(path: String) throws(PLPToolsError) {
+    func workQueue_remove(path: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         try client.remove(path).check()
     }
 
-    func workQueue_rename(from fromPath: String, to toPath: String) throws(PLPToolsError) {
+    func workQueue_rename(from fromPath: String, to toPath: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         try client.rename(fromPath, toPath).check()
     }
 
-    func workQueue_devlist() throws(PLPToolsError) -> [String] {
+    func workQueue_devlist() throws(ReconnectError) -> [String] {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var devbits: UInt32 = 0
@@ -393,7 +403,7 @@ public class FileServer: @unchecked Sendable {
             }
     }
 
-    func workQueue_devinfo(drive: String) throws(PLPToolsError) -> DriveInfo {
+    func workQueue_devinfo(drive: String) throws(ReconnectError) -> DriveInfo {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         let d = drive.cString(using: .ascii)!.first!
@@ -405,12 +415,12 @@ public class FileServer: @unchecked Sendable {
                          name: String(cString: string_cstr(driveInfo.getName())!))
     }
 
-    func workQueue_drives() throws(PLPToolsError) -> [DriveInfo] {
+    func workQueue_drives() throws(ReconnectError) -> [DriveInfo] {
         var result: [DriveInfo] = []
         for drive in try self.workQueue_devlist() {
             do {
                 result.append(try self.workQueue_devinfo(drive: drive))
-            } catch .E_PSI_FILE_NOTREADY {  // Drive not ready.
+            } catch ReconnectError.epocError(.E_PSI_FILE_NOTREADY) {  // Drive not ready.
                 continue
             }
         }
@@ -419,16 +429,16 @@ public class FileServer: @unchecked Sendable {
 
     public func dir(path: String,
                     recursive: Bool = false,
-                    cancellationToken: CancellationToken = CancellationToken()) throws(PLPToolsError) -> [DirectoryEntry] {
-        return try perform { () throws(PLPToolsError) -> [DirectoryEntry] in
+                    cancellationToken: CancellationToken = CancellationToken()) throws(ReconnectError) -> [DirectoryEntry] {
+        return try perform { () throws(ReconnectError) -> [DirectoryEntry] in
             return try self.workQueue_dir(path: path, recursive: recursive, cancellationToken: cancellationToken)
         }
     }
 
     public func copyFile(fromRemotePath remoteSourcePath: String,
                          toLocalPath localDestinationPath: String,
-                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(PLPToolsError) {
-        return try perform { () throws(PLPToolsError) in
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(ReconnectError) {
+        return try perform { () throws(ReconnectError) in
             try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
                                         toLocalPath: localDestinationPath,
                                         callback: callback)
@@ -465,44 +475,50 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
+    public func getAttributes(path: String) throws -> UInt32 {
+        return try perform { () throws(ReconnectError) in
+            return try self.workQueue_getAttributes(path: path)
+        }
+    }
+
     public func getExtendedAttributes(path: String) throws -> DirectoryEntry {
-        return try perform { () throws(PLPToolsError) in
+        return try perform { () throws(ReconnectError) in
             return try self.workQueue_getExtendedAttributes(path: path)
         }
     }
 
-    public func exists(path: String) throws(PLPToolsError) -> Bool {
-        return try perform { () throws(PLPToolsError) in
+    public func exists(path: String) throws(ReconnectError) -> Bool {
+        return try perform { () throws(ReconnectError) in
             return try self.workQueue_exists(path: path)
         }
     }
 
-    public func mkdir(path: String) throws(PLPToolsError) {
-        try perform { () throws(PLPToolsError) in
+    public func mkdir(path: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
             try self.workQueue_mkdir(path: path)
         }
     }
 
-    public func rmdir(path: String) throws(PLPToolsError) {
-        try perform { () throws(PLPToolsError) in
+    public func rmdir(path: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
             try self.workQueue_rmdir(path: path)
         }
     }
 
-    public func remove(path: String) throws(PLPToolsError) {
-        try perform { () throws(PLPToolsError) in
+    public func remove(path: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
             try self.workQueue_remove(path: path)
         }
     }
 
-    public func rename(from fromPath: String, to toPath: String) throws(PLPToolsError) {
-        try perform { () throws(PLPToolsError) in
+    public func rename(from fromPath: String, to toPath: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
             try self.workQueue_rename(from: fromPath, to: toPath)
         }
     }
 
-    public func drives() throws(PLPToolsError) -> [DriveInfo] {
-        return try perform { () throws(PLPToolsError) -> [DriveInfo] in
+    public func drives() throws(ReconnectError) -> [DriveInfo] {
+        return try perform { () throws(ReconnectError) -> [DriveInfo] in
             return try self.workQueue_drives()
         }
     }

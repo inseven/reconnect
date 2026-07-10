@@ -22,9 +22,9 @@ import plptools
 
 extension PLPToolsError {
 
-    public func check() throws(PLPToolsError) {
+    public func check() throws(ReconnectError) {
         if self != .E_PSI_GEN_NONE {
-            throw self
+            throw ReconnectError.epocError(self)
         }
     }
 

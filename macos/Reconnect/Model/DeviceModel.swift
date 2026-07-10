@@ -240,7 +240,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                     self.ownerInfo = ownerInfo.joined(separator: "\n")
                 }
             } catch {
-                print("Failed to get owner info with error \(error).")
+                print("Failed to get owner info with error '\(error.localizedDescription)'.")
                 DispatchQueue.main.async {
                     let alert = NSAlert(error: error)
                     alert.runModal()

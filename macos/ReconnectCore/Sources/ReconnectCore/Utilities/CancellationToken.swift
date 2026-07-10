@@ -46,4 +46,11 @@ public class CancellationToken {
         throw .E_PSI_FILE_CANCEL
     }
 
+    public func checkCancellationReconnectError() throws(ReconnectError) {
+        guard isCancelled else {
+            return
+        }
+        throw ReconnectError.epocError(.E_PSI_FILE_CANCEL)
+    }
+
 }
