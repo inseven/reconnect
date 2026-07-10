@@ -60,12 +60,23 @@ public extension String {
         return windowsPathComponents.last ?? ""
     }
 
+    /// Components of a macOS path (using / path separator).
+    var pathComponents: [String] {
+        return NSString(string: self).pathComponents
+    }
+
     var pathExtension: String {
         return (self as NSString).pathExtension
     }
 
+    /// Components of a Windows path (using \ path separator).
     var windowsPathComponents: [String] {
-        return components(separatedBy: "\\").filter { !$0.isEmpty }
+        return components(separatedBy: String.windowsPathSeparator).filter { !$0.isEmpty }
+    }
+
+    /// Convert macOS path separators to Windows path separators.
+    var windowsPath: String {
+        return pathComponents.joined(separator: .windowsPathSeparator)
     }
 
     init(contentsOfResource resource: String) {

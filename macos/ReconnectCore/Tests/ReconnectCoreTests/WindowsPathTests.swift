@@ -44,4 +44,13 @@ final class WindowsPathTests: XCTestCase {
         XCTAssertEqual("C:\\Foo\\".ensuringTrailingWindowsPathSeparator(isPresent: false), "C:\\Foo")
     }
 
+    func testWindowsPath() {
+
+        XCTAssertEqual("foo/bar".windowsPath, "foo\\bar")
+        XCTAssertEqual("foo/bar/baz".windowsPath, "foo\\bar\\baz")
+        XCTAssertEqual("foo\\bar\\baz".windowsPath, "foo\\bar\\baz")
+        XCTAssertEqual("foo/bar\\baz".windowsPath, "foo\\bar\\baz")
+
+    }
+
 }
