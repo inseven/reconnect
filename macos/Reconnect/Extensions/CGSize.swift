@@ -16,27 +16,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-import SwiftUI
+import CoreGraphics
 
-class NSBackupWindow: NSWindow {
+extension CGSize {
 
-    var deviceModelId: UUID?
-
-    convenience init(applicationModel: ApplicationModel,
-                     deviceModel: DeviceModel) {
-        let windowProxy = WindowProxy()
-        let rootView = BackupView(applicationModel: applicationModel, deviceModel: deviceModel)
-            .environment(applicationModel)
-            .environment(deviceModel)
-            .environment(\.window, windowProxy)
-        self.init(contentViewController: NSHostingController(rootView: rootView))
-        self.deviceModelId = deviceModel.id
-        windowProxy.nsWindow = self
-        title = "Backup"
-        styleMask.remove([.closable, .resizable, .borderless, .fullSizeContentView])
-        setContentSize(.wizard)
-    }
+    static let wizard = CGSize(width: 800, height: 600)
 
 }
-
-
