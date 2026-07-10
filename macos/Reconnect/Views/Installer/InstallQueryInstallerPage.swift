@@ -31,38 +31,34 @@ struct InstallQueryInstallerPage: View {
     init(applicationModel: ApplicationModel, installQuery: InstallerModel.InstallQuery) {
         self.applicationModel = applicationModel
         self.installQuery = installQuery
-        _selection = State(initialValue: applicationModel.deviceModels.first(where: {$0.platform == installQuery.sis.target })?.id)
     }
 
     var body: some View {
         WizardPage {
             VStack {
-
-                VStack {
-                    Image("Installer")
-                        .padding(.bottom)
-                    Text(installQuery.sis.localizedDisplayName)
-                        .font(.title)
-                    if installQuery.sis.version != .zero {
-                        Text(installQuery.sis.version.description)
-                            .font(.title2)
-                            .frame(maxWidth: .infinity)
-                    }
-                    if installQuery.sis.uid != 0 {
-                        Text(String(format: "0x%08X", installQuery.sis.uid))
-                            .foregroundStyle(.secondary)
-                            .monospaced()
-                    }
-                    Text(installQuery.sis.target.localizedStringResource)
+                Image("Installer")
+                    .padding(.bottom)
+                Text(installQuery.sis.localizedDisplayName)
+                    .font(.title)
+                if installQuery.sis.version != .zero {
+                    Text(installQuery.sis.version.description)
+                        .font(.title2)
+                        .frame(maxWidth: .infinity)
+                }
+                if installQuery.sis.uid != 0 {
+                    Text(String(format: "0x%08X", installQuery.sis.uid))
                         .foregroundStyle(.secondary)
+                        .monospaced()
                 }
-                .padding(.bottom)
-
-                DevicePicker(selection: $selection) { deviceModel in
-                    return deviceModel.platform == installQuery.sis.target
-                }
-
+                Text(installQuery.sis.target.localizedStringResource)
+                    .foregroundStyle(.secondary)
             }
+            .padding(.bottom)
+
+            DevicePicker(selection: $selection) { deviceModel in
+                return deviceModel.platform == installQuery.sis.target
+            }
+            
         } actions: {
             Button("Cancel", role: .destructive) {
                 installQuery.cancel()

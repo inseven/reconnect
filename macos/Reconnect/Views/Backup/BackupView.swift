@@ -39,9 +39,7 @@ struct BackupView: View {
             switch backupModel.page {
             case .loading:
                 WizardPage {
-                    VStack {
-                        ProgressView()
-                    }
+                    ProgressView()
                 } actions: {
                     Button("Continue") {}
                         .keyboardShortcut(.defaultAction)
@@ -51,12 +49,8 @@ struct BackupView: View {
                 BackupDrivePickerPage(driveQuery: driveQuery)
             case .progress(let progress, let cancellationToken):
                 WizardPage {
-                    VStack {
-                        ProgressAnimation("back")
-                        ProgressView(progress)
-                    }
-                    .padding()
-                    .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
+                    ProgressAnimation("back")
+                    ProgressView(progress)
                 } actions: {
                     Button("Cancel", role: .destructive) {
                         cancellationToken.cancel()
@@ -66,6 +60,7 @@ struct BackupView: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
+                .wizardPageStyle(.narrow)
 
             case .error(let error):
                 WizardErrorPage(error: error)

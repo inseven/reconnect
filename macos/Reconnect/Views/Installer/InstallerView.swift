@@ -41,9 +41,7 @@ struct InstallerView: View {
             switch installerModel.page {
             case .loading:
                 WizardPage {
-                    VStack {
-                        ProgressView()
-                    }
+                    ProgressView()
                 } actions: {
                     Button("Cancel", role: .destructive) {}
                         .disabled(true)
@@ -55,11 +53,7 @@ struct InstallerView: View {
                 InstallQueryInstallerPage(applicationModel: applicationModel, installQuery: installQuery)
             case .checkingInstalledPackages(let progress, let cancellationToken):
                 WizardPage {
-                    VStack {
-                        ProgressView(progress)
-                    }
-                    .padding()
-                    .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
+                    ProgressView(progress)
                 } actions: {
                     Button("Cancel", role: .destructive) {
                         cancellationToken.cancel()
@@ -69,28 +63,26 @@ struct InstallerView: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(true)
                 }
+                .wizardPageStyle(.narrow)
             case .operation(let operation, let progress):
                 WizardPage {
-                    VStack {
-                        switch operation.type {
-                        case .write:
-                            Text("Copying '\(operation.path)'...")
-                        case .delete:
-                            Text("Deleting '\(operation.path)'...")
-                        case .mkdir:
-                            Text("Creating directory '\(operation.path)'...")
-                        default:
-                            Text(operation.path)
-                        }
-                        ProgressAnimation("install")
-                        ProgressView(value: progress.fractionCompleted)
+                    switch operation.type {
+                    case .write:
+                        Text("Copying '\(operation.path)'...")
+                    case .delete:
+                        Text("Deleting '\(operation.path)'...")
+                    case .mkdir:
+                        Text("Creating directory '\(operation.path)'...")
+                    default:
+                        Text(operation.path)
                     }
-                    .padding()
-                    .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
+                    ProgressAnimation("install")
+                    ProgressView(value: progress.fractionCompleted)
                 } actions: {
                     Button("Cancel", role: .destructive) {}
                         .disabled(true)
                 }
+                .wizardPageStyle(.narrow)
             case .complete:
                 WizardCompletePage("Installation Complete")
             case .error(let error):

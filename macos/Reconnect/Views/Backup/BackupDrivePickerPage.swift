@@ -56,8 +56,6 @@ struct BackupDrivePickerPage: View {
                     }
                 }
             }
-            .padding()
-            .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
         } actions: {
             Button("Cancel", role: .destructive) {
                 driveQuery.cancel()
@@ -67,6 +65,7 @@ struct BackupDrivePickerPage: View {
             }
             .keyboardShortcut(.defaultAction)
         }
+        .wizardPageStyle(.narrow)
     }
 
 }

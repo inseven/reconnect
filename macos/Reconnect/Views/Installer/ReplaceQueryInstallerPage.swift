@@ -37,8 +37,6 @@ struct ReplaceQueryInstallerPage: View {
                         .multilineTextAlignment(.leading)
                     Spacer()
                 }
-                .padding()
-                .frame(maxWidth: WizardLayoutMetrics.maximumContentWidth)
             } actions: {
                 Button("No", role: .destructive) {
                     query.resume(false)
@@ -48,6 +46,7 @@ struct ReplaceQueryInstallerPage: View {
                 }
                 .keyboardShortcut(.defaultAction)
             }
+            .wizardPageStyle(.narrow)
         }
     }
 

@@ -64,9 +64,11 @@ struct WizardPage<Content: View, Actions: View>: View {
                     Divider()
                 }
             }
-            content
-                .textSelection(.enabled)
-                .frame(maxHeight: .infinity)
+            WizardContent {
+                content
+            }
+            .textSelection(.enabled)
+            .frame(maxHeight: .infinity)
             Divider()
             HStack {
                 Spacer()
