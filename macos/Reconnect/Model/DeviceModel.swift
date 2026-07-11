@@ -297,6 +297,66 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
         applicationModel?.showBackupWindow(deviceModel: self)
     }
 
+    func restore(backup: Backup,
+                 drives: Set<BackupManifest.Drive>,
+                 progress: Progress,
+                 cancellationToken: CancellationToken) throws {
+        dispatchPrecondition(condition: .notOnQueue(.main))
+
+        progress.totalUnitCount = Int64(drives.count) * 3
+
+        // Restore each drive in turn.
+        for drive in drives {
+            let driveDescription = drive.drive + ":\\"
+            let url = backup.url.appendingPathComponent(drive.drive)
+
+            // List the files on the drive.
+            progress.localizedDescription = "Listing files on \(driveDescription)..."
+            progress.localizedAdditionalDescription = ""
+            let listProgress = Progress()
+            progress.addChild(listProgress, withPendingUnitCount: 1)
+            listProgress.totalUnitCount = 1
+            let files = try transfersFileServer.dir(path: driveDescription, recursive: true)
+            try cancellationToken.checkCancellationReconnectError()
+            listProgress.completedUnitCount = 1
+
+            // Delete everything.
+            progress.localizedDescription = "Deleting existing files on \(driveDescription)..."
+            let deleteProgress = Progress()
+            progress.addChild(deleteProgress, withPendingUnitCount: 1)
+            deleteProgress.totalUnitCount = Int64(files.count)
+            for file in files.reversed() {
+                progress.localizedAdditionalDescription = file.path
+                if file.path.isWindowsDirectory {
+                    try transfersFileServer.rmdir(path: file.path.ensuringTrailingWindowsPathSeparator())
+                } else {
+                    try transfersFileServer.remove(path: file.path)
+                }
+                try cancellationToken.checkCancellationReconnectError()
+                deleteProgress.completedUnitCount += 1
+            }
+
+            // Copy everything.
+            progress.localizedDescription = "Copying files to \(driveDescription)..."
+            progress.localizedAdditionalDescription = ""
+            let uploadProgress = Progress()
+            progress.addChild(uploadProgress, withPendingUnitCount: 1)
+
+            // Use KVO to update the our top-level description with the details from the child upload progress.
+            // (You'd think AppKit and SwiftUI might do this for us, but no, apparently not. 😔)
+            let observation = uploadProgress.observe(\.localizedAdditionalDescription, options: [.new]) { child, _ in
+                progress.localizedAdditionalDescription = child.localizedAdditionalDescription
+            }
+            defer { observation.invalidate() }
+
+            _ = try _upload(sourceURL: url, destinationPath: drive.drive + ":",
+                            context: .backup,
+                            progress: uploadProgress,
+                            cancellationToken: cancellationToken)
+        }
+
+    }
+
     func backUp(drives: Set<FileServer.DriveInfo>,
                 progress: Progress,
                 cancellationToken: CancellationToken) throws -> Backup {
@@ -918,7 +978,11 @@ extension DeviceModel {
         progress.localizedDescription = "Uploading files..."
 
         // Create the directory to upload to.
-        try transfersFileServer.mkdir(path: destinationPath)
+        // Note that we do not attempt to recreate a drive root as it's guaranteed to exist. This guard exists primarily
+        // for the restore functionality which copies a set of files directly to the root of a drive.
+        if (!destinationPath.isRoot) {
+            try transfersFileServer.mkdir(path: destinationPath)
+        }
 
         // Iterate over the files and copy each one in turn.
         try cancellationToken.checkCancellation()

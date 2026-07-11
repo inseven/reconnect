@@ -22,6 +22,7 @@ import ReconnectCore
 
 struct BackupSummaryView: View {
 
+    @Environment(ApplicationModel.self) private var applicationModel
     @Environment(BackupsModel.self) private var backupsModel
 
     private let backup: Backup
@@ -56,12 +57,15 @@ struct BackupSummaryView: View {
             } footer: {
                 HStack {
                     Spacer()
+                    Button("Show in Finder...") {
+                        NSWorkspace.shared.open(backup.url)
+                    }
+                    Button("Restore...") {
+                        applicationModel.showRestoreWindow(backup: backup)
+                    }
                     Button("Delete", role: .destructive) {
                         backupsModel.delete(backup: backup)
 
-                    }
-                    Button("Show in Finder...") {
-                        NSWorkspace.shared.open(backup.url)
                     }
                 }
             }
