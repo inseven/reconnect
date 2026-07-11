@@ -303,26 +303,56 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                  cancellationToken: CancellationToken) throws {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
+        progress.totalUnitCount = Int64(drives.count) * 3
+
         // Iterate over the drives to be restored, constructing the URL of the backup path, and then kicking off a
         // transfer.
         for drive in drives {
+            let driveDescription = drive.drive + ":\\"
             let url = backup.url.appendingPathComponent(drive.drive)
 
+            // List the files on the drive.
+            progress.localizedDescription = "Listing files on \(driveDescription)..."
+            progress.localizedAdditionalDescription = ""
+            let listProgress = Progress()
+            progress.addChild(listProgress, withPendingUnitCount: 1)
+            listProgress.totalUnitCount = 1
+            let files = try transfersFileServer.dir(path: driveDescription, recursive: true)
+            try cancellationToken.checkCancellationReconnectError()
+            listProgress.completedUnitCount = 1
+
             // Delete everything.
-            let files = try transfersFileServer.dir(path: drive.drive + ":\\", recursive: true)
+            progress.localizedDescription = "Deleting existing files on \(driveDescription)..."
+            let deleteProgress = Progress()
+            progress.addChild(deleteProgress, withPendingUnitCount: 1)
+            deleteProgress.totalUnitCount = Int64(files.count)
             for file in files.reversed() {
-                print("Deleting '\(file.path)'...")
+                progress.localizedAdditionalDescription = file.path
                 if file.path.isWindowsDirectory {
                     try transfersFileServer.rmdir(path: file.path.ensuringTrailingWindowsPathSeparator())
                 } else {
                     try transfersFileServer.remove(path: file.path)
                 }
+                try cancellationToken.checkCancellationReconnectError()
+                deleteProgress.completedUnitCount += 1
             }
 
             // Copy everything.
+            progress.localizedDescription = "Copying files to \(driveDescription)..."
+            progress.localizedAdditionalDescription = ""
+            let uploadProgress = Progress()
+            progress.addChild(uploadProgress, withPendingUnitCount: 1)
+
+            // Use KVO to update the our top-level description with the details from the child upload progress.
+            // (You'd think AppKit and SwiftUI might do this for us, but no, apparently not. 😔)
+            let observation = uploadProgress.observe(\.localizedAdditionalDescription, options: [.new]) { child, _ in
+                progress.localizedAdditionalDescription = child.localizedAdditionalDescription
+            }
+            defer { observation.invalidate() }
+
             _ = try _upload(sourceURL: url, destinationPath: drive.drive + ":",
                             context: .backup,
-                            progress: progress,
+                            progress: uploadProgress,
                             cancellationToken: cancellationToken)
         }
 
@@ -949,14 +979,10 @@ extension DeviceModel {
         progress.localizedDescription = "Uploading files..."
 
         // Create the directory to upload to.
-        // TODO: Check if it's actually a directory.
-
-        let isRoot = destinationPath.isRoot
-        if (!isRoot) {
-            let exists = try transfersFileServer.exists(path: destinationPath)
-            if (!exists) {
-                try transfersFileServer.mkdir(path: destinationPath)
-            }
+        // Note that we do not attempt to recreate a drive root as it's guaranteed to exist. This guard exists primarily
+        // for the restore functionality which copies a set of files directly to the root of a drive.
+        if (!destinationPath.isRoot) {
+            try transfersFileServer.mkdir(path: destinationPath)
         }
 
         // Iterate over the files and copy each one in turn.
