@@ -74,9 +74,11 @@ struct BackupSummaryView: View {
                 let drives = backup.manifest.drives.sorted { lhs, rhs in
                     lhs.drive.localizedCaseInsensitiveCompare(rhs.drive) == .orderedAscending
                 }
-                ForEach(drives) { drive in
-                    Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
-                          image: DisplayHelpers.imageForDrive(drive.drive, mediaType: drive.mediaType, platform: backup.manifest.platform ?? .epoc32))
+                VStack(alignment: .leading) {
+                    ForEach(drives) { drive in
+                        Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
+                              image: DisplayHelpers.imageForDrive(drive.drive, mediaType: drive.mediaType, platform: backup.manifest.platform ?? .epoc32))
+                    }
                 }
                 .padding()
             }
