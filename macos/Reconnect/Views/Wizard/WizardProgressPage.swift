@@ -35,6 +35,8 @@ struct WizardProgressPage: View {
         WizardPage {
             ProgressAnimation(animation)
             ProgressView(progress)
+                .lineLimit(1)
+                .truncationMode(.middle)
         } actions: {
             Button("Cancel", role: .destructive) {
                 cancellationToken.cancel()

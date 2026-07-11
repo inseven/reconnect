@@ -351,6 +351,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
             _ = try _upload(sourceURL: url, destinationPath: drive.drive + ":",
                             context: .backup,
+                            options: [.allowExistingDirectories],
                             progress: uploadProgress,
                             cancellationToken: cancellationToken)
         }
@@ -902,6 +903,7 @@ extension DeviceModel {
     func _upload(sourceURL: URL,
                  destinationPath: String,
                  context: FileTransferContext,
+                 options: CopyOptions = [],
                  progress: Progress,
                  cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
         dispatchPrecondition(condition: .notOnQueue(.main))
@@ -909,6 +911,7 @@ extension DeviceModel {
             return try _uploadDirectory(sourceURL: sourceURL,
                                         destinationPath: destinationPath,
                                         context: context,
+                                        options: options,
                                         progress: progress,
                                         cancellationToken: cancellationToken)
         } else {
@@ -952,9 +955,33 @@ extension DeviceModel {
         return directoryEntry
     }
 
+    struct CopyOptions: OptionSet {
+        let rawValue: Int
+
+        static let allowExistingDirectories = Self(rawValue: 1 << 0)
+    }
+
+    // Inlining this code crashes the Swift compiler. Thankfully, it seems OK in a function all on its lonesome.
+    private func createDirectoryThatDoesntCrashTheSwiftCompiler(path: String,
+                                                                options: CopyOptions) throws(ReconnectError) {
+        do {
+            try transfersFileServer.mkdir(path: path)
+        } catch .createDirectoryError(let epocError, let path) {
+            guard epocError == .E_PSI_FILE_DIR && options.contains(.allowExistingDirectories) else {
+                return
+            }
+            print("Unhandled error \(epocError).")
+            throw ReconnectError.createDirectoryError(epocError, path)
+        } catch {
+            print("Unhandled error \(error).")
+            throw error
+        }
+    }
+
     func _uploadDirectory(sourceURL: URL,
                           destinationPath: String,
                           context: FileTransferContext,
+                          options: CopyOptions = [],
                           progress: Progress,
                           cancellationToken: CancellationToken) throws -> FileServer.DirectoryEntry {
         dispatchPrecondition(condition: .notOnQueue(.main))
@@ -965,8 +992,7 @@ extension DeviceModel {
         // Recursively list the files to work out what we need to upload.
         guard let enumerator = fileManager.enumerator(at: sourceURL,
                                                       includingPropertiesForKeys: [.nameKey, .isDirectoryKey],
-                                                      options: [.producesRelativePathURLs])
-        else {
+                                                      options: [.producesRelativePathURLs]) else {
             throw ReconnectError.directoryListingError
         }
         let files = enumerator
@@ -978,11 +1004,7 @@ extension DeviceModel {
         progress.localizedDescription = "Uploading files..."
 
         // Create the directory to upload to.
-        // Note that we do not attempt to recreate a drive root as it's guaranteed to exist. This guard exists primarily
-        // for the restore functionality which copies a set of files directly to the root of a drive.
-        if (!destinationPath.isRoot) {
-            try transfersFileServer.mkdir(path: destinationPath)
-        }
+        try createDirectoryThatDoesntCrashTheSwiftCompiler(path: destinationPath, options: options)
 
         // Iterate over the files and copy each one in turn.
         try cancellationToken.checkCancellation()
@@ -999,7 +1021,7 @@ extension DeviceModel {
             // Create the destination directory, or copy the file.
             progress.localizedAdditionalDescription = file.path
             if try file.isDirectory {
-                try transfersFileServer.mkdir(path: innerDestinationPath)
+                try createDirectoryThatDoesntCrashTheSwiftCompiler(path: innerDestinationPath, options: options)
                 progress.completedUnitCount += 1
             } else {
                 let copyProgress = Progress()
