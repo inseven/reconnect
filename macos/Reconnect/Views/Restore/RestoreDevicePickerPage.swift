@@ -41,11 +41,6 @@ struct RestoreDevicePickerPage: View {
 
     var body: some View {
         WizardPage {
-            VStack {
-                Image("Installer")
-                    .padding(.bottom)
-            }
-            .padding(.bottom)
             DevicePicker(selection: $selection) { device in
                 device.platform == deviceQuery.backup.manifest.platform
             }
