@@ -305,8 +305,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
         progress.totalUnitCount = Int64(drives.count) * 3
 
-        // Iterate over the drives to be restored, constructing the URL of the backup path, and then kicking off a
-        // transfer.
+        // Restore each drive in turn.
         for drive in drives {
             let driveDescription = drive.drive + ":\\"
             let url = backup.url.appendingPathComponent(drive.drive)

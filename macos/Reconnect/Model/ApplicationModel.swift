@@ -292,7 +292,6 @@ class ApplicationModel: NSObject {
             return window.deviceModelId == deviceModel.id
         }
 
-
         // Create a new window and center if one doesn't exist.
         if window == nil {
             window = NSBackupWindow(applicationModel: self, deviceModel: deviceModel)
