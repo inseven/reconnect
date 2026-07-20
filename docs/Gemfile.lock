@@ -3,6 +3,11 @@ PATH
   specs:
     theme (0.5.0)
       jekyll (~> 4.2)
+      jekyll-environment-variables
+      jekyll-feed (~> 0.12)
+      jekyll-gfm-admonitions
+      jekyll-image-size (~> 1.2)
+      jekyll-toc
 
 GEM
   remote: https://rubygems.org/

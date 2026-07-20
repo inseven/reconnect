@@ -28,12 +28,6 @@ footer:
   - title: More Software
     href: https://jbmorley.co.uk/software/
 
-plugins:
-  - jekyll-environment-variables
-  - jekyll-feed
-  - jekyll-gfm-admonitions
-  - jekyll-image-size
-  - jekyll-toc
 destination: ../_site
 
 toc:
