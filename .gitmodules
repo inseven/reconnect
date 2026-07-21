@@ -1,9 +1,11 @@
 [submodule "scripts/changes"]
 	path = scripts/changes
 	url = https://github.com/jbmorley/changes.git
+	branch = main
 [submodule "scripts/build-tools"]
 	path = scripts/build-tools
 	url = https://github.com/jbmorley/build-tools.git
+	branch = main
 [submodule "dependencies/diligence"]
 	path = macos/dependencies/diligence
 	url = https://github.com/inseven/diligence.git
