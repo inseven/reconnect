@@ -9,12 +9,14 @@
 [submodule "dependencies/diligence"]
 	path = macos/dependencies/diligence
 	url = https://github.com/inseven/diligence.git
+	branch = main
 [submodule "dependencies/plptools"]
 	path = macos/dependencies/plptools
 	url = https://github.com/jbmorley/plptools.git
 [submodule "dependencies/interact"]
 	path = macos/dependencies/interact
 	url = https://github.com/inseven/interact.git
+	branch = main
 [submodule "scripts/Sparkle"]
 	path = scripts/Sparkle
 	url = https://github.com/sparkle-project/Sparkle
