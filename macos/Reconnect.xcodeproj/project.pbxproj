@@ -1,0 +1,1237 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 74;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
+		D815EC862E3D9F04000A26B1 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D815EC852E3D9F04000A26B1 /* Interact */; };
+		D83B17D02F33B8F7001864E5 /* Word2text in Frameworks */ = {isa = PBXBuildFile; productRef = D83B17CF2F33B8F7001864E5 /* Word2text */; };
+		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
+		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
+		D84271C32E332731006224FE /* Reconnect Menu.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D851ED2D2E2C33C70067E0CD /* ReconnectCore */; };
+		D8A0EE482F4286370026201D /* Glitter in Frameworks */ = {isa = PBXBuildFile; productRef = D8A0EE472F4286370026201D /* Glitter */; };
+		D8A8A8082DE19312007A657B /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = D8A8A8072DE19312007A657B /* Algorithms */; };
+		D8B1AC452E0F4C220084BFD5 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8B1AC442E0F4C220084BFD5 /* Quartz.framework */; };
+		D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */; };
+		D8B2B2692E308DAF00F4B27E /* reconnectd in Resources */ = {isa = PBXBuildFile; fileRef = D851ED232E2C31B60067E0CD /* reconnectd */; };
+		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
+		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
+		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
+		D8EBFD572F35349E008D7F47 /* Word2text in Frameworks */ = {isa = PBXBuildFile; productRef = D8EBFD562F35349E008D7F47 /* Word2text */; };
+		D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8F1A5B72C4A4F8000931C00 /* Interact */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D809546C2C4AAC7F00752BBC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8F1A59A2C4A4C9B00931C00;
+			remoteInfo = "Reconnect Menu";
+		};
+		D84964E82C1BFCB700405656 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D84964D52C1BFCB600405656;
+			remoteInfo = PsiMac;
+		};
+		D84964F22C1BFCB700405656 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D84964D52C1BFCB600405656;
+			remoteInfo = PsiMac;
+		};
+		D8B1AC502E0F4C220084BFD5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8B1AC422E0F4C220084BFD5;
+			remoteInfo = ReconnectPreviews;
+		};
+		D8B2B2612E307ADB00F4B27E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D84964CE2C1BFCB600405656 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D851ED222E2C31B60067E0CD;
+			remoteInfo = reconnectd;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D851ED192E2C30E80067E0CD /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D851ED212E2C31B60067E0CD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D851ED2F2E2C37760067E0CD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				D84271C32E332731006224FE /* Reconnect Menu.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B1AC522E0F4C220084BFD5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D8B1AC532E0F4C220084BFD5 /* ReconnectPreviews.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B2B2632E307AFD00F4B27E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchAgents;
+			dstSubfolderSpec = 1;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		D8068F6D2C4AFCE4004177F6 /* ReconnectCore */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ReconnectCore; sourceTree = "<group>"; };
+		D84964D62C1BFCB600405656 /* Reconnect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reconnect.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D84964E72C1BFCB700405656 /* ReconnectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReconnectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D851ED232E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = reconnectd; sourceTree = BUILT_PRODUCTS_DIR; };
+		D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.B.tbd; path = usr/lib/libSystem.B.tbd; sourceTree = SDKROOT; };
+		D876E60D2C22BAB9004A6881 /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
+		D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReconnectPreviews.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8B1AC442E0F4C220084BFD5 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Reconnect Menu.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */;
+		};
+		D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
+		};
+		D891AF102E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D84964D52C1BFCB600405656 /* Reconnect */;
+		};
+		D891AF112E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				/Localized/Localizable.strings,
+			);
+			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = D8B2B2632E307AFD00F4B27E /* CopyFiles */;
+			membershipExceptions = (
+				uk.co.jbmorley.reconnect.apps.apple.reconnectd.plist,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D851ED242E2C31B60067E0CD /* reconnectd */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8B2B2672E307B6400F4B27E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = reconnectd; sourceTree = "<group>"; };
+		D891AE502E13722A009EC465 /* ReconnectTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectTests; sourceTree = "<group>"; };
+		D891AE562E137239009EC465 /* ReconnectUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ReconnectUITests; sourceTree = "<group>"; };
+		D891AE6B2E13726F009EC465 /* ReconnectMenu */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D8079FBB2E2D62D200F26412 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectMenu; sourceTree = "<group>"; };
+		D891AE922E1373CE009EC465 /* ReconnectPreviews */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AE982E1373CE009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ReconnectPreviews; sourceTree = "<group>"; };
+		D891AEDA2E13741B009EC465 /* Reconnect */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (D891AF102E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, D891AF112E13741B009EC465 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Reconnect; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D84964D32C1BFCB600405656 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8A8A8082DE19312007A657B /* Algorithms in Frameworks */,
+				D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */,
+				D8A0EE482F4286370026201D /* Glitter in Frameworks */,
+				D8EBFD572F35349E008D7F47 /* Word2text in Frameworks */,
+				D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */,
+				D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */,
+				D83B17D02F33B8F7001864E5 /* Word2text in Frameworks */,
+				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
+				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84964E42C1BFCB700405656 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84964EE2C1BFCB700405656 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D851ED202E2C31B60067E0CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D815EC862E3D9F04000A26B1 /* Interact in Frameworks */,
+				D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B1AC402E0F4C220084BFD5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B1AC452E0F4C220084BFD5 /* Quartz.framework in Frameworks */,
+				D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F1A5982C4A4C9B00931C00 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */,
+				D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D84964CD2C1BFCB600405656 = {
+			isa = PBXGroup;
+			children = (
+				D8068F6D2C4AFCE4004177F6 /* ReconnectCore */,
+				D891AEDA2E13741B009EC465 /* Reconnect */,
+				D891AE502E13722A009EC465 /* ReconnectTests */,
+				D891AE562E137239009EC465 /* ReconnectUITests */,
+				D891AE6B2E13726F009EC465 /* ReconnectMenu */,
+				D891AE922E1373CE009EC465 /* ReconnectPreviews */,
+				D851ED242E2C31B60067E0CD /* reconnectd */,
+				D84964D72C1BFCB600405656 /* Products */,
+				D84965332C1C30E500405656 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D84964D72C1BFCB600405656 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D84964D62C1BFCB600405656 /* Reconnect.app */,
+				D84964E72C1BFCB700405656 /* ReconnectTests.xctest */,
+				D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */,
+				D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */,
+				D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */,
+				D851ED232E2C31B60067E0CD /* reconnectd */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D84965332C1C30E500405656 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D876E60D2C22BAB9004A6881 /* libSystem.tbd */,
+				D876E60C2C22BAA9004A6881 /* libSystem.B.tbd */,
+				D8B1AC442E0F4C220084BFD5 /* Quartz.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D84964D52C1BFCB600405656 /* Reconnect */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D84964FB2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "Reconnect" */;
+			buildPhases = (
+				D84964D22C1BFCB600405656 /* Sources */,
+				D84964D32C1BFCB600405656 /* Frameworks */,
+				D84964D42C1BFCB600405656 /* Resources */,
+				D8B1AC522E0F4C220084BFD5 /* Embed Foundation Extensions */,
+				D851ED192E2C30E80067E0CD /* Embed XPC Services */,
+				D851ED2F2E2C37760067E0CD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D809546D2C4AAC7F00752BBC /* PBXTargetDependency */,
+				D8B1AC512E0F4C220084BFD5 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D891AEDA2E13741B009EC465 /* Reconnect */,
+			);
+			name = Reconnect;
+			packageProductDependencies = (
+				D8D3E79E2C2540D9003E696D /* Interact */,
+				D8E31EB22C26E09500350082 /* Diligence */,
+				D8CBAC642C4A02580035FC3D /* ReconnectCore */,
+				D8A8A8072DE19312007A657B /* Algorithms */,
+				D83BD9652DE862AB0075902D /* SwiftyGif */,
+				D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */,
+				D83B17CF2F33B8F7001864E5 /* Word2text */,
+				D8EBFD562F35349E008D7F47 /* Word2text */,
+				D8A0EE472F4286370026201D /* Glitter */,
+			);
+			productName = PsiMac;
+			productReference = D84964D62C1BFCB600405656 /* Reconnect.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D84964E62C1BFCB700405656 /* ReconnectTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D84964FE2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectTests" */;
+			buildPhases = (
+				D84964E32C1BFCB700405656 /* Sources */,
+				D84964E42C1BFCB700405656 /* Frameworks */,
+				D84964E52C1BFCB700405656 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D84964E92C1BFCB700405656 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D891AE502E13722A009EC465 /* ReconnectTests */,
+			);
+			name = ReconnectTests;
+			productName = PsiMacTests;
+			productReference = D84964E72C1BFCB700405656 /* ReconnectTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D84964F02C1BFCB700405656 /* ReconnectUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D84965012C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectUITests" */;
+			buildPhases = (
+				D84964ED2C1BFCB700405656 /* Sources */,
+				D84964EE2C1BFCB700405656 /* Frameworks */,
+				D84964EF2C1BFCB700405656 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D84964F32C1BFCB700405656 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D891AE562E137239009EC465 /* ReconnectUITests */,
+			);
+			name = ReconnectUITests;
+			productName = PsiMacUITests;
+			productReference = D84964F12C1BFCB700405656 /* ReconnectUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		D851ED222E2C31B60067E0CD /* reconnectd */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D851ED272E2C31B60067E0CD /* Build configuration list for PBXNativeTarget "reconnectd" */;
+			buildPhases = (
+				D851ED1F2E2C31B60067E0CD /* Sources */,
+				D851ED202E2C31B60067E0CD /* Frameworks */,
+				D851ED212E2C31B60067E0CD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D851ED242E2C31B60067E0CD /* reconnectd */,
+			);
+			name = reconnectd;
+			packageProductDependencies = (
+				D851ED2D2E2C33C70067E0CD /* ReconnectCore */,
+				D815EC852E3D9F04000A26B1 /* Interact */,
+			);
+			productName = reconnectd;
+			productReference = D851ED232E2C31B60067E0CD /* reconnectd */;
+			productType = "com.apple.product-type.tool";
+		};
+		D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8B1AC572E0F4C220084BFD5 /* Build configuration list for PBXNativeTarget "ReconnectPreviews" */;
+			buildPhases = (
+				D8B1AC3F2E0F4C220084BFD5 /* Sources */,
+				D8B1AC402E0F4C220084BFD5 /* Frameworks */,
+				D8B1AC412E0F4C220084BFD5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D891AE922E1373CE009EC465 /* ReconnectPreviews */,
+			);
+			name = ReconnectPreviews;
+			packageProductDependencies = (
+				D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */,
+			);
+			productName = ReconnectPreviews;
+			productReference = D8B1AC432E0F4C220084BFD5 /* ReconnectPreviews.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8F1A5A92C4A4C9C00931C00 /* Build configuration list for PBXNativeTarget "Reconnect Menu" */;
+			buildPhases = (
+				D8F1A5972C4A4C9B00931C00 /* Sources */,
+				D8F1A5982C4A4C9B00931C00 /* Frameworks */,
+				D8F1A5992C4A4C9B00931C00 /* Resources */,
+				D8B2B2632E307AFD00F4B27E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8B2B2622E307ADB00F4B27E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D891AE6B2E13726F009EC465 /* ReconnectMenu */,
+			);
+			name = "Reconnect Menu";
+			packageProductDependencies = (
+				D8F1A5B72C4A4F8000931C00 /* Interact */,
+				D8068F6E2C4AFCF4004177F6 /* ReconnectCore */,
+			);
+			productName = "Reconnect Menu";
+			productReference = D8F1A59B2C4A4C9B00931C00 /* Reconnect Menu.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D84964CE2C1BFCB600405656 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					D84964D52C1BFCB600405656 = {
+						CreatedOnToolsVersion = 15.4;
+						LastSwiftMigration = 1540;
+					};
+					D84964E62C1BFCB700405656 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = D84964D52C1BFCB600405656;
+					};
+					D84964F02C1BFCB700405656 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = D84964D52C1BFCB600405656;
+					};
+					D851ED222E2C31B60067E0CD = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					D8B1AC422E0F4C220084BFD5 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					D8F1A59A2C4A4C9B00931C00 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = D84964D12C1BFCB600405656 /* Build configuration list for PBXProject "Reconnect" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D84964CD2C1BFCB600405656;
+			packageReferences = (
+				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
+				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
+				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+				D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */,
+				D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */,
+				D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */,
+				D8A0EE462F4286370026201D /* XCRemoteSwiftPackageReference "glitter" */,
+			);
+			preferredProjectObjectVersion = 56;
+			productRefGroup = D84964D72C1BFCB600405656 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D84964D52C1BFCB600405656 /* Reconnect */,
+				D84964E62C1BFCB700405656 /* ReconnectTests */,
+				D84964F02C1BFCB700405656 /* ReconnectUITests */,
+				D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */,
+				D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */,
+				D851ED222E2C31B60067E0CD /* reconnectd */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D84964D42C1BFCB600405656 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84964E52C1BFCB700405656 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84964EF2C1BFCB700405656 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B1AC412E0F4C220084BFD5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F1A5992C4A4C9B00931C00 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8B2B2692E308DAF00F4B27E /* reconnectd in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D84964D22C1BFCB600405656 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84964E32C1BFCB700405656 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D84964ED2C1BFCB700405656 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D851ED1F2E2C31B60067E0CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8B1AC3F2E0F4C220084BFD5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F1A5972C4A4C9B00931C00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D809546D2C4AAC7F00752BBC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8F1A59A2C4A4C9B00931C00 /* Reconnect Menu */;
+			targetProxy = D809546C2C4AAC7F00752BBC /* PBXContainerItemProxy */;
+		};
+		D84964E92C1BFCB700405656 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D84964D52C1BFCB600405656 /* Reconnect */;
+			targetProxy = D84964E82C1BFCB700405656 /* PBXContainerItemProxy */;
+		};
+		D84964F32C1BFCB700405656 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D84964D52C1BFCB600405656 /* Reconnect */;
+			targetProxy = D84964F22C1BFCB700405656 /* PBXContainerItemProxy */;
+		};
+		D8B1AC512E0F4C220084BFD5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8B1AC422E0F4C220084BFD5 /* ReconnectPreviews */;
+			targetProxy = D8B1AC502E0F4C220084BFD5 /* PBXContainerItemProxy */;
+		};
+		D8B2B2622E307ADB00F4B27E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D851ED222E2C31B60067E0CD /* reconnectd */;
+			targetProxy = D8B2B2612E307ADB00F4B27E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		D84964F92C1BFCB700405656 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D84964FA2C1BFCB700405656 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
+			};
+			name = Release;
+		};
+		D84964FC2C1BFCB700405656 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Reconnect/Reconnect.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Reconnect/Preview Content\"";
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Reconnect/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D84964FD2C1BFCB700405656 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Reconnect/Reconnect.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"Reconnect/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Reconnect/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_CODE_SIGN_FLAGS = "--deep";
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Reconnect Developer ID Profile";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D84964FF2C1BFCB700405656 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.PsiMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reconnect.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Reconnect";
+			};
+			name = Debug;
+		};
+		D84965002C1BFCB700405656 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.PsiMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Reconnect.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Reconnect";
+			};
+			name = Release;
+		};
+		D84965022C1BFCB700405656 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.PsiMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Reconnect;
+			};
+			name = Debug;
+		};
+		D84965032C1BFCB700405656 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.PsiMacUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Reconnect;
+			};
+			name = Release;
+		};
+		D851ED282E2C31B60067E0CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 0;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = reconnectd/Info.plist;
+				MARKETING_VERSION = 0.0.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D851ED292E2C31B60067E0CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				CURRENT_PROJECT_VERSION = 0;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = reconnectd/Info.plist;
+				MARKETING_VERSION = 0.0.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D8B1AC542E0F4C220084BFD5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ReconnectPreviews/ReconnectPreviews.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectPreviews/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ReconnectPreviews;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple.previews;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D8B1AC552E0F4C220084BFD5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ReconnectPreviews/ReconnectPreviews.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectPreviews/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ReconnectPreviews;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple.previews;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Reconnect Previews Developer ID Profile";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D8F1A5A72C4A4C9C00931C00 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ReconnectMenu/ReconnectMenu.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"ReconnectMenu/Preview Content\"";
+				DEVELOPMENT_TEAM = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectMenu/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple.menu;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D8F1A5A82C4A4C9C00931C00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ReconnectMenu/ReconnectMenu.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"ReconnectMenu/Preview Content\"";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = QS82QFHKWB;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReconnectMenu/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.co.jbmorley.reconnect.apps.apple.menu;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Reconnect Menu Developer ID Profile";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D84964D12C1BFCB600405656 /* Build configuration list for PBXProject "Reconnect" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D84964F92C1BFCB700405656 /* Debug */,
+				D84964FA2C1BFCB700405656 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D84964FB2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "Reconnect" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D84964FC2C1BFCB700405656 /* Debug */,
+				D84964FD2C1BFCB700405656 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D84964FE2C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D84964FF2C1BFCB700405656 /* Debug */,
+				D84965002C1BFCB700405656 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D84965012C1BFCB700405656 /* Build configuration list for PBXNativeTarget "ReconnectUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D84965022C1BFCB700405656 /* Debug */,
+				D84965032C1BFCB700405656 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D851ED272E2C31B60067E0CD /* Build configuration list for PBXNativeTarget "reconnectd" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D851ED282E2C31B60067E0CD /* Debug */,
+				D851ED292E2C31B60067E0CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8B1AC572E0F4C220084BFD5 /* Build configuration list for PBXNativeTarget "ReconnectPreviews" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8B1AC542E0F4C220084BFD5 /* Debug */,
+				D8B1AC552E0F4C220084BFD5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8F1A5A92C4A4C9C00931C00 /* Build configuration list for PBXNativeTarget "Reconnect Menu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F1A5A72C4A4C9C00931C00 /* Debug */,
+				D8F1A5A82C4A4C9C00931C00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = dependencies/interact;
+		};
+		D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = dependencies/diligence;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alexiscreuzot/SwiftyGif.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.4.5;
+			};
+		};
+		D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimformSolutionsPvtLtd/SSSwiftUIGIFView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+		D8A0EE462F4286370026201D /* XCRemoteSwiftPackageReference "glitter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/inseven/glitter.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.2;
+			};
+		};
+		D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.1;
+			};
+		};
+		D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/smittytone/Word2Text.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D8068F6E2C4AFCF4004177F6 /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
+		};
+		D815EC852E3D9F04000A26B1 /* Interact */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
+			productName = Interact;
+		};
+		D83B17CF2F33B8F7001864E5 /* Word2text */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Word2text;
+		};
+		D83BD9652DE862AB0075902D /* SwiftyGif */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */;
+			productName = SwiftyGif;
+		};
+		D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D83BD96C2DE86C100075902D /* XCRemoteSwiftPackageReference "SSSwiftUIGIFView" */;
+			productName = SSSwiftUIGIFView;
+		};
+		D851ED2D2E2C33C70067E0CD /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
+		};
+		D8A0EE472F4286370026201D /* Glitter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8A0EE462F4286370026201D /* XCRemoteSwiftPackageReference "glitter" */;
+			productName = Glitter;
+		};
+		D8A8A8072DE19312007A657B /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+		D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
+		};
+		D8CBAC642C4A02580035FC3D /* ReconnectCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ReconnectCore;
+		};
+		D8D3E79E2C2540D9003E696D /* Interact */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
+			productName = Interact;
+		};
+		D8E31EB22C26E09500350082 /* Diligence */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Diligence;
+		};
+		D8EBFD562F35349E008D7F47 /* Word2text */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */;
+			productName = Word2text;
+		};
+		D8F1A5B72C4A4F8000931C00 /* Interact */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
+			productName = Interact;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D84964CE2C1BFCB600405656 /* Project object */;
+}

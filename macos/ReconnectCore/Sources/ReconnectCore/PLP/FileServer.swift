@@ -1,0 +1,671 @@
+// Reconnect -- Psion connectivity for macOS
+//
+// Copyright (C) 2024-2026 Jason Morley
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+import Foundation
+
+import plptools
+import OpoLuaCore
+
+extension MediaType: @retroactive Codable {}
+
+// Thread-safe FileServer implementation.
+// This intentionally provides a blocking API to make it easy to perform sequential operations without relying on the
+// new async/await concurrency model. This is driven by the need to support OpoLua blocking callbacks as Apple
+// documentation says you shouldn't be using traditional concurrency mechanisms to make async/await operations blocking.
+public class FileServer: @unchecked Sendable {
+
+    public enum ProgressResponse: Int32 {
+        case cancel = 0
+        case `continue` = 1
+    }
+
+    public struct DriveAttributes: OptionSet, Equatable, Hashable, Codable {
+
+        public static let local = DriveAttributes(rawValue: 0x01)
+        public static let rom = DriveAttributes(rawValue: 0x02)
+        public static let redirected = DriveAttributes(rawValue: 0x04)
+        public static let substitued = DriveAttributes(rawValue: 0x08)
+        public static let `internal` = DriveAttributes(rawValue: 0x10)
+        public static let removable = DriveAttributes(rawValue: 0x20)
+
+        public let rawValue: UInt32
+
+        public init(rawValue: UInt32) {
+            self.rawValue = rawValue
+        }
+
+    }
+
+    public struct FileAttributes: OptionSet, Sendable {
+
+        public static let readOnly = FileAttributes(rawValue: 0x0001)
+        public static let hidden = FileAttributes(rawValue: 0x0002)
+        public static let system = FileAttributes(rawValue: 0x0004)
+        public static let directory = FileAttributes(rawValue: 0x0008)
+        public static let archive = FileAttributes(rawValue: 0x0010)
+        public static let volume = FileAttributes(rawValue: 0x0020)
+
+        // EPOC
+        public static let normal = FileAttributes(rawValue: 0x0040)
+        public static let temporary = FileAttributes(rawValue: 0x0080)
+        public static let compressed = FileAttributes(rawValue: 0x0100)
+
+        // SIBO
+        public static let read = FileAttributes(rawValue: 0x0200)
+        public static let exec = FileAttributes(rawValue: 0x0400)
+        public static let stream = FileAttributes(rawValue: 0x0800)
+        public static let text = FileAttributes(rawValue: 0x1000)
+
+        public let rawValue: UInt32
+
+        public init(rawValue: UInt32) {
+            self.rawValue = rawValue
+        }
+
+    }
+
+    public struct DriveInfo: Identifiable, Hashable {
+
+        public var id: String {
+            return drive
+        }
+
+        public var isWriteable: Bool {
+            switch self.mediaType {
+            case .notPresent:
+                return false
+            case .unknown:
+                return false
+            case .floppy:
+                return true
+            case .disk:
+                return true
+            case .compactDisc:
+                return false
+            case .RAM:
+                return true
+            case .flashDisk:
+                return true
+            case .ROM:
+                return false
+            case .remote:
+                return true
+            }
+        }
+
+        public let drive: String
+        public let mediaType: MediaType
+        public let driveAttributes: DriveAttributes
+        public let name: String?
+
+        public var path: String {
+            return "\(drive):\\"
+        }
+    }
+
+    public struct DirectoryEntry: Identifiable, Hashable, Sendable {
+
+        public var isDirectory: Bool {
+            return attributes.contains(.directory)
+        }
+
+        public let id: String
+        public let path: String
+        public let name: String
+        public let size: UInt32
+        public let attributes: FileAttributes
+        public let modificationDate: Date
+
+        public let uid1: UInt32
+        public let uid2: UInt32
+        public let uid3: UInt32
+
+        public init(path: String,
+                    name: String,
+                    size: UInt32,
+                    attributes: FileAttributes,
+                    modificationDate: Date,
+                    uid1: UInt32,
+                    uid2: UInt32,
+                    uid3: UInt32) {
+            self.id = path.lowercased()
+            self.path = path
+            self.name = name
+            self.size = size
+            self.attributes = attributes
+            self.modificationDate = modificationDate
+            self.uid1 = uid1
+            self.uid2 = uid2
+            self.uid3 = uid3
+        }
+
+        init(directoryPath: String, entry: PlpDirent) {
+            var entry = entry
+            let name = String(cString: plpdirent_get_name(&entry))
+            let attributes = FileAttributes(rawValue: entry.getAttr())
+            let filePath = directoryPath
+                .appendingWindowsPathComponent(name, isDirectory: attributes.contains(.directory))
+            var modificationTime = entry.getPsiTime()
+            let modificationTimeInterval = TimeInterval(modificationTime.getTime())
+            let modificationDate = Date(timeIntervalSince1970: modificationTimeInterval)
+
+            self.id = filePath.lowercased()
+            self.path = filePath
+            self.name = name
+            self.size = entry.getSize()
+            self.attributes = attributes
+            self.modificationDate = modificationDate
+            self.uid1 = entry.getUID(0)
+            self.uid2 = entry.getUID(1)
+            self.uid3 = entry.getUID(2)
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(path)
+        }
+
+    }
+
+    private class FileTransferContext {
+
+        let callback: (UInt32, UInt32) -> ProgressResponse
+        let size: UInt32
+
+        init(size: UInt32, callback: @escaping (UInt32, UInt32) -> ProgressResponse) {
+            self.size = size
+            self.callback = callback
+        }
+
+    }
+
+    static var drives: [String] = {
+        return Array(65..<91).map { String(UnicodeScalar($0)) }
+    }()
+
+    private let host: String
+    private let port: Int32
+
+    private let workQueue = DispatchQueue(label: "FileServer.workQueue")
+
+    private var client = RFSVClient()
+
+    public init(host: String = "127.0.0.1", port: Int32) {
+        self.host = host
+        self.port = port
+    }
+
+    private func perform<T, E: Error>(action: @escaping () throws(E) -> T) throws(E) -> T {
+        dispatchPrecondition(condition: .notOnQueue(workQueue))
+        let result: Result<T, E> = workQueue.sync {
+            return Result(catching: action)
+        }
+        return try result.get()
+    }
+
+    private func workQueue_connect() throws(ReconnectError) {
+        guard self.client.connect(self.host, self.port) else {
+            throw ReconnectError.epocError(PLPToolsError.E_PSI_FILE_DISC)
+        }
+    }
+
+    private func workQueue_dir(path: String,
+                               recursive: Bool,
+                               cancellationToken: CancellationToken) throws(ReconnectError) -> [DirectoryEntry] {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        var details = PlpDir()
+        try client.dir(path, &details).check()
+
+        var entries: [DirectoryEntry] = []
+        for i in 0..<details.count {
+            entries.append(DirectoryEntry(directoryPath: path, entry: details[i]))
+        }
+        guard recursive else {
+            return entries
+        }
+
+        var result: [DirectoryEntry] = []
+        for entry in entries {
+            result.append(entry)
+            if entry.isDirectory {
+                try cancellationToken.checkCancellationReconnectError()
+                result.append(contentsOf: try workQueue_dir(path: entry.path,
+                                                            recursive: true,
+                                                            cancellationToken: cancellationToken))
+            }
+        }
+
+        try cancellationToken.checkCancellationReconnectError()
+
+        return result
+    }
+
+    private func workQueue_exists(path: String) throws(ReconnectError) -> Bool {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        do {
+            if path.isWindowsDirectory {
+                // If the path is a directory (trailing forward slash) then this call will throw if the path is
+                // invalid (which we interpret below), and succeed if the directory path is valid and exists on the
+                // system.
+                try client.pathtest(path).check()
+            } else {
+                // Similarly to the directory case we treat a successful call to get file attributes as an
+                // indication that the file exists and massage any error returned into a meaningful response.
+                // Under the hood (in plptools), this uses `RFSV16_FINFO` on EPOC16 and `RFSV32_ATT` on EPOC32.
+                _ = try workQueue_getAttributes(path: path)
+            }
+            return true
+        } catch .epocError(.E_PSI_FILE_NXIST),
+                .epocError(.E_PSI_FILE_DIR),
+                .epocError(.E_PSI_FILE_NOTREADY),
+                .epocError(.E_PSI_FILE_DEVICE) {
+            return false
+        } catch .epocError(let epocError) {
+            throw .existenceCheckError(epocError, path)
+        }
+    }
+
+    private func workQueue_getAttributes(path: String) throws(ReconnectError) -> UInt32 {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        var attributes: UInt32 = 0
+        try client.fgetattr(path, &attributes).check()
+        return attributes
+    }
+
+    private func workQueue_getExtendedAttributes(path: String) throws(ReconnectError) -> DirectoryEntry {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+
+        // EPOC16 and EPOC32 will barf if we ask for the extended attributes of a volume root so we intercept this and
+        // return something sane to make this API safer and less brittle for clients.
+        if path.isRoot {
+            let driveInfo = try workQueue_devinfo(drive: path)
+            return FileServer.DirectoryEntry(path: path,
+                                             name: driveInfo.name ?? "",
+                                             size: 0,
+                                             attributes: .directory,
+                                             modificationDate: .fatEpoch,
+                                             uid1: 0,
+                                             uid2: 0,
+                                             uid3: 0)
+        }
+
+        var entry = PlpDirent()
+        let result = client.fgeteattr(path, &entry)
+        guard result == .E_PSI_GEN_NONE else {
+            throw .extendedAttributesError(result, path)
+        }
+        return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
+    }
+
+    private func workQueue_copyFile(fromRemotePath remoteSourcePath: String,
+                                    toLocalPath localDestinationPath: String,
+                                    callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(ReconnectError) {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+
+        let attributes = try workQueue_getExtendedAttributes(path: remoteSourcePath)
+        let o = FileTransferContext(size: attributes.size, callback: callback)
+        let context = Unmanaged.passUnretained(o).toOpaque()
+        let result = client.copyFromPsion(remoteSourcePath, localDestinationPath, context) { context, status in
+            guard let context else {
+                return 0
+            }
+            let o = Unmanaged<FileTransferContext>.fromOpaque(context).takeUnretainedValue()
+            return o.callback(status, o.size).rawValue
+        }
+        guard result == .E_PSI_GEN_NONE else {
+            throw ReconnectError.transferError(result, remoteSourcePath, localDestinationPath)
+        }
+    }
+
+    private func workQueue_copyFile(fromLocalPath localSourcePath: String,
+                                    toRemotePath remoteDestinationPath: String,
+                                    callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        let attributes = try FileManager.default.attributesOfItem(atPath: localSourcePath)
+        guard let size = attributes[.size] as? NSNumber else {
+            throw ReconnectError.unknownFileSize
+        }
+        let o = FileTransferContext(size: UInt32(size.intValue), callback: callback)
+        let context = Unmanaged.passUnretained(o).toOpaque()
+        let result = client.copyToPsion(localSourcePath, remoteDestinationPath, context) { context, status in
+            guard let context else {
+                return 0
+            }
+            let o = Unmanaged<FileTransferContext>.fromOpaque(context).takeUnretainedValue()
+            return o.callback(status, o.size).rawValue
+        }
+        guard result == .E_PSI_GEN_NONE else {
+            throw ReconnectError.transferError(result, localSourcePath, remoteDestinationPath)
+        }
+    }
+
+    func workQueue_mkdir(path: String) throws(ReconnectError) {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        let result = client.mkdir(path)
+        guard result == .E_PSI_GEN_NONE else {
+            throw .createDirectoryError(result, path)
+        }
+    }
+
+    // This deviates from the plptools implementation (and the underlying RFSV implementation) in that it recursively
+    // deletes the contents of the directory prior to attempting to delete the directory. This better matches, to me
+    // at least, the calling expectation of a function named rmdir.
+    func workQueue_rmdir(path: String) throws(ReconnectError) {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+
+        // List the contents of the directory.
+        let files = try workQueue_dir(path: path, recursive: true, cancellationToken: CancellationToken())
+
+        // Delete the directory contents; relies on the list of contents returned from a recursive `workQueue_dir` being
+        // given in a depth-first search order.
+        for file in files.reversed() {
+            if file.isDirectory {
+                try client.rmdir(file.path).check()
+            } else {
+                try client.remove(file.path).check()
+            }
+        }
+
+        try client.rmdir(path).check()
+    }
+
+    func workQueue_remove(path: String) throws(ReconnectError) {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        try client.remove(path).check()
+    }
+
+    func workQueue_rename(from fromPath: String, to toPath: String) throws(ReconnectError) {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        try client.rename(fromPath, toPath).check()
+    }
+
+    func workQueue_devlist() throws(ReconnectError) -> [String] {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        var devbits: UInt32 = 0
+        try client.devlist(&devbits).check()
+        return Self.drives
+            .enumerated()
+            .compactMap { index, drive -> String? in
+                guard (devbits & (0x01 << index)) > 0 else {
+                    return nil
+                }
+                return drive
+            }
+    }
+
+    func workQueue_devinfo(drive: String) throws(ReconnectError) -> DriveInfo {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        let d = drive.cString(using: .ascii)!.first!
+        var driveInfo = Drive()
+        try client.devinfo(d, &driveInfo).check()
+        return DriveInfo(drive: drive,
+                         mediaType: driveInfo.getMediaType(),
+                         driveAttributes: DriveAttributes(rawValue: driveInfo.getDriveAttributes()),
+                         name: String(cString: string_cstr(driveInfo.getName())!))
+    }
+
+    func workQueue_drives() throws(ReconnectError) -> [DriveInfo] {
+        var result: [DriveInfo] = []
+        for drive in try self.workQueue_devlist() {
+            do {
+                result.append(try self.workQueue_devinfo(drive: drive))
+            } catch ReconnectError.epocError(.E_PSI_FILE_NOTREADY) {  // Drive not ready.
+                continue
+            }
+        }
+        return result
+    }
+
+    public func dir(path: String,
+                    recursive: Bool = false,
+                    cancellationToken: CancellationToken = CancellationToken()) throws(ReconnectError) -> [DirectoryEntry] {
+        return try perform { () throws(ReconnectError) -> [DirectoryEntry] in
+            return try self.workQueue_dir(path: path, recursive: recursive, cancellationToken: cancellationToken)
+        }
+    }
+
+    public func copyFile(fromRemotePath remoteSourcePath: String,
+                         toLocalPath localDestinationPath: String,
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(ReconnectError) {
+        return try perform { () throws(ReconnectError) in
+            try self.workQueue_copyFile(fromRemotePath: remoteSourcePath,
+                                        toLocalPath: localDestinationPath,
+                                        callback: callback)
+        }
+    }
+
+    public func copyFile(fromLocalPath localSourcePath: String,
+                         toRemotePath remoteDestinationPath: String,
+                         callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws {
+        try perform {
+            try self.workQueue_copyFile(fromLocalPath: localSourcePath,
+                                        toRemotePath: remoteDestinationPath,
+                                        callback: callback)
+        }
+    }
+
+    public func readFile(path: String) throws -> Data {
+        let fileManager = FileManager.default
+        let temporaryURL = fileManager.temporaryURL()
+        defer { try? fileManager.removeItem(at: temporaryURL) }
+        try copyFile(fromRemotePath: path, toLocalPath: temporaryURL.path) { _, _ in
+            return .continue
+        }
+        return try Data(contentsOf: temporaryURL)
+    }
+
+    public func writeFile(path: String, data: Data) throws {
+        let fileManager = FileManager.default
+        let temporaryURL = fileManager.temporaryURL()
+        defer { try? fileManager.removeItem(at: temporaryURL) }
+        try data.write(to: temporaryURL, options: .atomic)
+        try copyFile(fromLocalPath: temporaryURL.path, toRemotePath: path) { _, _ in
+            return .continue
+        }
+    }
+
+    public func getAttributes(path: String) throws -> UInt32 {
+        return try perform { () throws(ReconnectError) in
+            return try self.workQueue_getAttributes(path: path)
+        }
+    }
+
+    public func getExtendedAttributes(path: String) throws -> DirectoryEntry {
+        return try perform { () throws(ReconnectError) in
+            return try self.workQueue_getExtendedAttributes(path: path)
+        }
+    }
+
+    public func exists(path: String) throws(ReconnectError) -> Bool {
+        return try perform { () throws(ReconnectError) in
+            return try self.workQueue_exists(path: path)
+        }
+    }
+
+    public func mkdir(path: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
+            try self.workQueue_mkdir(path: path)
+        }
+    }
+
+    public func rmdir(path: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
+            try self.workQueue_rmdir(path: path)
+        }
+    }
+
+    public func remove(path: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
+            try self.workQueue_remove(path: path)
+        }
+    }
+
+    public func rename(from fromPath: String, to toPath: String) throws(ReconnectError) {
+        try perform { () throws(ReconnectError) in
+            try self.workQueue_rename(from: fromPath, to: toPath)
+        }
+    }
+
+    public func drives() throws(ReconnectError) -> [DriveInfo] {
+        return try perform { () throws(ReconnectError) -> [DriveInfo] in
+            return try self.workQueue_drives()
+        }
+    }
+
+}
+
+extension FileServer {
+
+    public func fsop(_ operation: Fs.Operation, callback: @escaping (Progress) -> Void) -> Fs.Result {
+        do {
+            switch operation.type {
+            case .delete:
+
+                print("Delete '\(operation.path)'...")
+                let progress = Progress(totalUnitCount: 1)
+                callback(progress)
+                try remove(path: operation.path)
+                progress.completedUnitCount = 1
+                callback(progress)
+
+                return .success
+
+            case .mkdir:
+
+                print("Create directory '\(operation.path)'...")
+                let progress = Progress(totalUnitCount: 1)
+                callback(progress)
+                try mkdir(path: operation.path)
+                progress.completedUnitCount = 1
+                callback(progress)
+
+                return .success
+
+            case .rmdir:
+
+                return .err(.notReady)
+
+            case .write(let data):
+
+                let progress = Progress()
+                progress.totalUnitCount = Int64(data.count)
+                callback(progress)
+                let temporaryURL = FileManager.default.temporaryURL()
+                defer {
+                    do {
+                        try FileManager.default.removeItem(at: temporaryURL)
+                    } catch {
+                        print("Failed to clean up temporary file with error '\(error)'.")
+                    }
+                }
+                try data.write(to: temporaryURL)
+                try copyFile(fromLocalPath: temporaryURL.path, toRemotePath: operation.path) { completed, size in
+                    progress.totalUnitCount = Int64(size)
+                    progress.completedUnitCount = Int64(completed)
+                    callback(progress)
+                    return .continue
+                }
+                return .success
+
+            case .stat:
+
+                let attributes = try getExtendedAttributes(path: operation.path)
+                return .stat(Fs.Stat(size: UInt64(attributes.size),
+                                     lastModified: attributes.modificationDate,
+                                     isDirectory: attributes.isDirectory))
+
+            case .exists:
+
+                return try exists(path: operation.path) ? .success : .err(.notFound)
+
+            default:
+
+                print("Unsupported operation '\(operation.type)' '\(operation.path)'")
+                return .err(.notReady)
+                
+            }
+        } catch PLPToolsError.E_PSI_GEN_INUSE {
+            return .err(.inUse)
+        } catch PLPToolsError.E_PSI_FILE_NXIST,
+                PLPToolsError.E_PSI_FILE_DEVICE,
+                PLPToolsError.E_PSI_FILE_RECORD,
+                PLPToolsError.E_PSI_FILE_DIR {
+            return .err(.notFound)
+        } catch PLPToolsError.E_PSI_FILE_EXIST {
+            return .err(.alreadyExists)
+        } catch PLPToolsError.E_PSI_GEN_START {
+            return .err(.notReady)
+        } catch {
+            if let error = error as? PLPToolsError {
+                return .epocError(error.rawValue)
+            } else {
+                print("Encountered unmapped internal plptools error during install '\(error)'.")
+                return .err(.general)
+            }
+        }
+    }
+
+    public func getStubs(installDirectory: String,
+                         progress: Progress,
+                         cancellationToken: CancellationToken) throws -> [Sis.Stub] {
+        guard try exists(path: installDirectory) else {
+            return []
+        }
+        progress.localizedDescription = "Checking installed packages..."
+
+        let paths = try dir(path: installDirectory)
+            .filter { $0.pathExtension.lowercased() == "sis" }
+        try cancellationToken.checkCancellation()
+
+        let fileManager = FileManager.default
+        var stubs: [Sis.Stub] = []
+        progress.totalUnitCount = Int64(paths.count)
+        for file in paths {
+            progress.localizedAdditionalDescription = file.path
+            let temporaryURL = fileManager.temporaryURL()
+            defer {
+                try? fileManager.removeItem(at: temporaryURL)
+            }
+            let copyProgress = Progress()
+            progress.addChild(copyProgress, withPendingUnitCount: 1)
+            try copyFile(fromRemotePath: file.path, toLocalPath: temporaryURL.path) { current, total in
+                copyProgress.totalUnitCount = Int64(total)
+                copyProgress.completedUnitCount = Int64(current)
+                return cancellationToken.isCancelled ? .cancel : .continue
+            }
+            copyProgress.completedUnitCount = copyProgress.totalUnitCount
+            let contents = try Data(contentsOf: temporaryURL)
+            stubs.append(Sis.Stub(path: file.path, contents: contents))
+            try cancellationToken.checkCancellation()
+        }
+
+        return stubs
+    }
+
+}

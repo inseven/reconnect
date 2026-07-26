@@ -3,6 +3,11 @@ PATH
   specs:
     theme (0.5.0)
       jekyll (~> 4.2)
+      jekyll-environment-variables
+      jekyll-feed (~> 0.12)
+      jekyll-gfm-admonitions
+      jekyll-image-size (~> 1.2)
+      jekyll-toc
 
 GEM
   remote: https://rubygems.org/
@@ -94,11 +99,6 @@ PLATFORMS
 
 DEPENDENCIES
   jekyll (~> 4.2.0)
-  jekyll-environment-variables
-  jekyll-feed (~> 0.12)
-  jekyll-gfm-admonitions
-  jekyll-image-size (~> 1.2)
-  jekyll-toc
   theme!
   tzinfo (~> 1.2)
   tzinfo-data
@@ -106,4 +106,4 @@ DEPENDENCIES
   webrick (~> 1.7)
 
 BUNDLED WITH
-   2.2.18
+   2.6.9

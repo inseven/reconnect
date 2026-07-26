@@ -1,0 +1,25 @@
+#noedit
+#abort on
+#system epoc img
+#set epocinit=iplib
+#model small jpi
+
+#declare_compiler rc=
+'#split %%obj
+ #set obj = %%name.rsc
+ #set make=%%remake
+ #if %%make #then #run "RCOMP %%src" #endif'
+
+#declare_compiler ms=
+'#split %%obj
+ #set obj = %%name.shd
+ #set make=%%remake
+ #if %%make #then #run "MAKESHD %%src" #endif'
+
+#pragma optimize(speed=>off)
+#pragma debug(vid=>off)
+
+#compile scrnshot.c
+
+#pragma link(hwif.lib)
+#link scrnshot

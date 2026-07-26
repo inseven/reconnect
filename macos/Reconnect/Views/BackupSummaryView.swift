@@ -1,0 +1,90 @@
+// Reconnect -- Psion connectivity for macOS
+//
+// Copyright (C) 2024-2026 Jason Morley
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+import SwiftUI
+
+import ReconnectCore
+
+struct BackupSummaryView: View {
+
+    @Environment(ApplicationModel.self) private var applicationModel
+    @Environment(BackupsModel.self) private var backupsModel
+
+    private let backup: Backup
+
+    init(backup: Backup) {
+        self.backup = backup
+    }
+
+    var body: some View {
+        InformationView {
+
+            DetailsSection {
+                Form {
+                    LabeledContent("Name:", value: backup.manifest.device.name)
+                    Spacer()
+                    LabeledContent("Sync Identiifer:", value: backup.manifest.device.id.uuidString)
+                    Spacer()
+                    LabeledContent {
+                        Text(backup.manifest.date, format: Date.FormatStyle(date: .long))
+                    } label: {
+                        Text("Date:")
+                    }
+                    LabeledContent {
+                        Text(backup.manifest.date, format: Date.FormatStyle(time: .standard))
+                    } label: {
+                        Text("Time:")
+                    }
+                }
+                .padding()
+            } header: {
+                Text("Summary")
+            } footer: {
+                HStack {
+                    Spacer()
+                    Button("Show in Finder...") {
+                        NSWorkspace.shared.open(backup.url)
+                    }
+                    Button("Restore...") {
+                        applicationModel.showRestoreWindow(backup: backup)
+                    }
+                    Button("Delete", role: .destructive) {
+                        backupsModel.delete(backup: backup)
+
+                    }
+                }
+            }
+
+            DetailsSection("Drives") {
+                let drives = backup.manifest.drives.sorted { lhs, rhs in
+                    lhs.drive.localizedCaseInsensitiveCompare(rhs.drive) == .orderedAscending
+                }
+                VStack(alignment: .leading) {
+                    ForEach(drives) { drive in
+                        Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
+                              image: DisplayHelpers.imageForDrive(drive.drive, mediaType: drive.mediaType, platform: backup.manifest.platform ?? .epoc32))
+                    }
+                }
+                .padding()
+            }
+
+        }
+        .navigationTitle("Backup")
+    }
+
+}
