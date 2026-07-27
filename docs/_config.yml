@@ -20,7 +20,7 @@ navigation:
   - title: More
     href: https://jbmorley.co.uk/software/
   - title: Donate ❤️
-    href: https://jbmorley.co.uk/support/
+    href: https://jbmorley.co.uk/donate/
 
 footer:
   - title: Privacy Policy
@@ -34,6 +34,9 @@ destination: ../_site
 
 toc:
   ordered_list: true
+
+gfm_admonitions:
+  inject_css: false
 
 defaults:
   - values:
