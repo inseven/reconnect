@@ -22,13 +22,19 @@ import OpoLuaCore
 
 import ReconnectCore
 
+// TODO: Consider having a backup delegate? DeviceModelBackupDelegate?
+
 // Called on main.
 protocol DeviceModelDelegate: AnyObject {
 
     func deviceModel(deviceModel: DeviceModel, didUpdateName name: String)
+
     func deviceModel(deviceModel: DeviceModel, willStartBackupWithIdentifier identifier: UUID)
+//    func deviceModel(deviceModel: DeviceModel, didCreateBackupWithIdentifier identifier: UUID, backup: Backup)
     func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup)
     func deviceModel(deviceModel: DeviceModel, didFailBackupWithIdentifier identifier: UUID, error: Error)
+
+    func deviceModel(deviceModel: DeviceModel, backupForIdentifier identifier: UUID) -> Backup?
 
 }
 
@@ -177,6 +183,10 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
     var screenshotToolPath: String {
         return machineType.isEpoc32 ? .epoc32ScreenshotToolPath : .epoc16ScreenshotToolPath
+    }
+
+    var lastBackupIdentifierPath: String {
+        return machineType.isEpoc32 ? .epoc32LastBackupIdentifierPath : .epoc16LastBackupIdentifierPath
     }
 
     @ObservationIgnored
@@ -418,12 +428,99 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 try cancellationToken.checkCancellation()
             }
 
+            // Check to see if there's a last backup identifier and that it has the archive bit set (see note below).
+            let lastBackupIdentifier: UUID?
+            if try transfersFileServer.exists(path: lastBackupIdentifierPath),
+               (try transfersFileServer.getAttributes(path: lastBackupIdentifierPath).contains(.archive)),
+               let uuidString = String(data: try transfersFileServer.readFile(path: lastBackupIdentifierPath), encoding: .ascii){
+                lastBackupIdentifier = UUID(uuidString: uuidString)
+            } else {
+                lastBackupIdentifier = nil
+            }
+
+            print("Last Backup Identifier = \(lastBackupIdentifier?.uuidString ?? "nil")")
+
+            // See if we have a backup for that identifier.
+            let lastBackup: Backup? = DispatchQueue.main.sync {
+                guard let lastBackupIdentifier else {
+                    return nil
+                }
+                return delegate?.deviceModel(deviceModel: self, backupForIdentifier: lastBackupIdentifier)
+            }
+
+            if lastBackup != nil {
+                print("Successfully found a matching backup! :)")
+            } else {
+                print("Failed to find a matching backup. :'(")
+            }
+
+            // TODO: Check if we can perform an incremental bakcup.
+            // We should probably do a pre-flight check to ensure that every file which hasn't got the archive bit set
+            // is available to us.
+            // TODO: We should also assert that the device has the same disk SSD configuration?
+
+            // TODO: Check drive identifiers match.
+
+            // TODO: This should only happen if we _think_ we can perform an incremental backup.
+            // TODO: Make this a convenience function; maybe we can just inject the file server?
+            var canPerformIncrementalBackup = true
+            if let lastBackup {
+                print("Sanity checking backup...")
+                for (drive, driveFiles) in files {
+                    for file in driveFiles {
+
+                        if !file.attributes.contains(.archive) {
+                            print("Checking '\(file.path)'")
+
+                            // TODO: This whole string manipulation is butt-ugly.
+//                            let nakedPath = String(file.path.dropFirst(drive.path.count))
+//                            let expectedURL = lastBackup.url.appendingPathComponents([drive.drive, nakedPath])
+
+                            // TODO: Hoist this.
+                            let driveBackupURL = lastBackup.url.appendingPathComponent(drive.drive, isDirectory: true)
+                            let relativePath = String(file.path.dropFirst(drive.path.count))
+                            let expectedURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
+
+                            print(expectedURL)
+
+                            if !fileManager.fileExists(at: expectedURL) {
+                                print("Well shit, we can't back up.")
+                                canPerformIncrementalBackup = false
+                                break
+                            }
+
+                        }
+
+                        // Skip files without the archive bit.
+                        guard file.attributes.contains(.archive) else {
+                            continue
+                        }
+
+                        print("'\(file.path)' needs backup...")
+                    }
+
+                    if !canPerformIncrementalBackup {
+                        break
+                    }
+                }
+            } else {
+                canPerformIncrementalBackup = false
+            }
+
+            print("canPerformIncrementalBackup = \(canPerformIncrementalBackup)")
+
+//            throw ReconnectError.cancelled
+
             // Update the progress for the new file count.
+            // TODO: We need to update this to 2x since we've also got to set the archive bit on a successful backup.
             let fileCount = files.map { $1.count }.reduce(0, +)
             progress.totalUnitCount = Int64(fileCount)
             progress.localizedDescription = "Copying files..."
 
+            var completeFiles: [FileServer.DirectoryEntry] = []
+
             // Iterate over the drives again, this time copying the files.
+            // TODO: Consider storing the files in the manifest.
             for (drive, driveFiles) in files {
 
                 // Create the target directory.
@@ -448,14 +545,26 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                         try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
                         progress.completedUnitCount += 1
                     } else {
-                        let copyProgress = Progress()
-                        progress.addChild(copyProgress, withPendingUnitCount: 1)
-                        _ = try _downloadFile(sourceDirectoryEntry: file,
-                                              destinationURL: innerDestinationURL,
-                                              context: .backup,
-                                              progress: copyProgress,
-                                              cancellationToken: cancellationToken)
+                        if let lastBackup, canPerformIncrementalBackup, !file.attributes.contains(.archive) {
+                            let driveBackupURL = lastBackup.url.appendingPathComponent(drive.drive, isDirectory: true)
+                            let relativePath = String(file.path.dropFirst(drive.path.count))
+                            let archiveURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
+                            let copyProgress = Progress()
+                            progress.addChild(copyProgress, withPendingUnitCount: 1)
+                            print("Copying from '\(archiveURL)' to '\(innerDestinationURL)'...")
+                            try fileManager.copyItem(at: archiveURL, to: innerDestinationURL)
+                            copyProgress.completedUnitCount = copyProgress.totalUnitCount
+                        } else {
+                            let copyProgress = Progress()
+                            progress.addChild(copyProgress, withPendingUnitCount: 1)
+                            _ = try _downloadFile(sourceDirectoryEntry: file,
+                                                  destinationURL: innerDestinationURL,
+                                                  context: .backup,
+                                                  progress: copyProgress,
+                                                  cancellationToken: cancellationToken)
+                        }
                     }
+                    completeFiles.append(file)
 
                     // Check to see if we've been cancelled.
                     try cancellationToken.checkCancellation()
@@ -472,7 +581,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                                             driveAttributes: drive.driveAttributes,
                                             name: drive.name)
             }
-            let manifest = BackupManifest(device: deviceConfiguration,
+            let manifest = BackupManifest(id: backupIdentifier,
+                                          device: deviceConfiguration,
                                           platform: platform,
                                           date: .now,
                                           drives: driveManifests)
@@ -481,6 +591,43 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             // Move the backup to the final destination.
             try fileManager.moveItem(at: backupURL, to: destinationURL)
             let backup = Backup(manifest: manifest, url: destinationURL)
+
+            // TODO: Perhaps we need to notify the backup service here.
+
+            // TODO: We need to clear the identifier here because it ceases to be valid immediately after we start
+            // setting the archive flags.
+
+            // Clear the archive flag.
+            progress.localizedDescription = "Setting archive flag..."
+            for file in completeFiles {
+                guard file.attributes.contains(.archive) else {
+                    continue
+                }
+                try transfersFileServer.updateAttributes(path: file.path, clearing: .archive)
+            }
+
+            // Write the last-backup marker.
+
+            // Ensure the directory exists.
+            let lastBackupIdentifierPath = self.lastBackupIdentifierPath
+            let lastBackupIdentifierDirectoryPath = lastBackupIdentifierPath.deletingLastWindowsPathComponent
+            if !(try fileServer.exists(path: lastBackupIdentifierDirectoryPath)) {
+                try fileServer.mkdir(path: lastBackupIdentifierDirectoryPath)
+            }
+
+            // Create the backup file.
+            guard let identifierData = backupIdentifier.uuidString.data(using: .ascii) else {
+                throw ReconnectError.unknown
+            }
+            try transfersFileServer.writeFile(path: lastBackupIdentifierPath, data: identifierData)
+
+            // Mark this file as needing archive (set the archive flag). We use this as an imperfect canary to help us
+            // detect scenarios where the user has backed up their machine via a different system, invalidating our use
+            // of the archive flag. The theory goes that another backup solution will treat this like any other file,
+            // clearing the archive flag on backup. If we ever find it isn't set, we know it's unsafe to perform an
+            // incremental backup. Note that this does rely on the user never both backing up using a different system
+            // _and_ manually editing this file.
+            try transfersFileServer.updateAttributes(path: lastBackupIdentifierPath, setting: .archive)
 
             // Notify our delegate.
             DispatchQueue.main.async {

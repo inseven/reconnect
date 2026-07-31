@@ -455,6 +455,10 @@ extension ApplicationModel: @MainActor DeviceModelDelegate {
         self.longRunningOperations.remove(identifier)
     }
 
+    func deviceModel(deviceModel: DeviceModel, backupForIdentifier identifier: UUID) -> Backup? {
+        self.backupsModel.backupForIdentifier(identifier)
+    }
+
 }
 
 extension ApplicationModel: LibraryModelDelegate {

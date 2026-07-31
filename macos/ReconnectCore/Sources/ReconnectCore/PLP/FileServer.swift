@@ -315,6 +315,18 @@ public class FileServer: @unchecked Sendable {
         return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
     }
 
+    private func workQueue_updateAttributes(path: String,
+                                            setting attributesToSet: FileServer.FileAttributes,
+                                            clearing attributesToClear: FileServer.FileAttributes) throws(ReconnectError) {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+
+        let result = client.fsetattr(path, attributesToSet.rawValue, attributesToClear.rawValue)
+        guard result == .E_PSI_GEN_NONE else {
+            throw .updateAttributesError(result, path)
+        }
+    }
+
     private func workQueue_copyFile(fromRemotePath remoteSourcePath: String,
                                     toLocalPath localDestinationPath: String,
                                     callback: @escaping (UInt32, UInt32) -> ProgressResponse) throws(ReconnectError) {
@@ -490,15 +502,27 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func getAttributes(path: String) throws -> UInt32 {
+    public func getAttributes(path: String) throws -> FileServer.FileAttributes {
         return try perform { () throws(ReconnectError) in
-            return try self.workQueue_getAttributes(path: path)
+            // TODO: Push this down.
+            let rawValue = try self.workQueue_getAttributes(path: path)
+            return FileServer.FileAttributes(rawValue: rawValue)
         }
     }
 
     public func getExtendedAttributes(path: String) throws -> DirectoryEntry {
         return try perform { () throws(ReconnectError) in
             return try self.workQueue_getExtendedAttributes(path: path)
+        }
+    }
+
+    public func updateAttributes(path: String,
+                                 setting attributesToSet: FileServer.FileAttributes = [],
+                                 clearing attributesToClear: FileServer.FileAttributes = []) throws(ReconnectError) {
+        return try perform { () throws(ReconnectError) in
+            return try self.workQueue_updateAttributes(path: path,
+                                                       setting: attributesToSet,
+                                                       clearing: attributesToClear)
         }
     }
 

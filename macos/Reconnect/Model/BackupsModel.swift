@@ -77,6 +77,7 @@ class BackupsModel {
     private let rootURL: URL
     private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
 
+    // TODO: I assume this is MainActor? Perhaps check this.
     var backupSets: [BackupSet] = []
     var prompt: Prompt? = nil
 
@@ -133,6 +134,19 @@ class BackupsModel {
                 print("Failed to enumerate directories with error \(error).")
             }
         }
+    }
+
+    @MainActor
+    func backupForIdentifier(_ identifier: UUID) -> Backup? {
+        // TODO: Actual lookup?
+        for backupSet in backupSets {
+            for backup in backupSet.backups {
+                if backup.manifest.id == identifier {
+                    return backup
+                }
+            }
+        }
+        return nil
     }
 
     /**

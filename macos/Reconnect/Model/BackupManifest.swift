@@ -22,7 +22,7 @@ import plptools
 
 import ReconnectCore
 
-struct BackupManifest: Equatable, Hashable, Codable {
+struct BackupManifest: Equatable, Hashable, Codable, Identifiable {
 
     struct Drive: Equatable, Hashable, Codable, Identifiable {
 
@@ -36,12 +36,14 @@ struct BackupManifest: Equatable, Hashable, Codable {
         let name: String?
     }
 
+    let id: UUID?
     let device: DeviceConfiguration
     let platform: Platform?
     let date: Date
     let drives: [Drive]
 
-    init(device: DeviceConfiguration, platform: Platform, date: Date, drives: [Drive]) {
+    init(id: UUID, device: DeviceConfiguration, platform: Platform, date: Date, drives: [Drive]) {
+        self.id = id
         self.device = device
         self.platform = platform
         self.date = date

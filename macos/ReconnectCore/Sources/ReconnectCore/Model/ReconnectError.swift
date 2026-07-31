@@ -41,6 +41,7 @@ public enum ReconnectError: Error {
     case existenceCheckError(PLPToolsError, String)
     case createDirectoryError(PLPToolsError, String)
     case extendedAttributesError(PLPToolsError, String)
+    case updateAttributesError(PLPToolsError, String)
 }
 
 extension ReconnectError: LocalizedError {
@@ -103,6 +104,12 @@ extension ReconnectError: LocalizedError {
             } else {
                 return "Failed to get extended attributes for file '\(path)'."
             }
+        case .updateAttributesError(let epocError, let path):
+            if let description = epocError.errorDescription {
+                return "Failed to update attributes for file '\(path)' with error '\(description)'."
+            } else {
+                return "Failed to update attributes for file '\(path)'."
+            }
         }
     }
 
@@ -151,6 +158,8 @@ extension ReconnectError {
         case .createDirectoryError(let epocError, _):
             return epocError.rawValue
         case .extendedAttributesError(let epocError, _):
+            return epocError.rawValue
+        case .updateAttributesError(let epocError, _):
             return epocError.rawValue
         }
     }
