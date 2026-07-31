@@ -305,6 +305,10 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
         progress.totalUnitCount = Int64(drives.count) * 3
 
+        // Stop running programs.
+        progress.localizedDescription = "Stopping programs..."
+        try remoteCommandServicesClient.stopPrograms()
+
         // Restore each drive in turn.
         for drive in drives {
             let driveDescription = drive.drive + ":\\"
@@ -399,8 +403,9 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 }
             }
 
-            // TODO: Quit running apps.
-            //       This needs some kind of mechanism to allow the user to force-close apps if necessary.
+            // Stop running programs.
+            progress.localizedDescription = "Stopping programs..."
+            try remoteCommandServicesClient.stopPrograms()
 
             // Recursively list all the files to be backed up, across all drives.
             // We do this all at once to allow us to report the progress more cleanly.
