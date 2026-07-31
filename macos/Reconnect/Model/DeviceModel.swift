@@ -109,20 +109,13 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 //    give us a way to identify device sessions (between hard resets) instead of the device hardware
                 //    itself.
 
+                // Create or read the device config.
                 let configPath: String = epoc16 ? .epoc16ConfigPath : .epoc32ConfigPath
-
-                // Ensure the config directory exists.
-                let configDirectoryPath = configPath.deletingLastWindowsPathComponent
-                if !(try fileServer.exists(path: configDirectoryPath)) {
-                    try fileServer.mkdir(path: configDirectoryPath)
-                }
-
-                // Ccreate or read the device config.
                 let deviceConfiguration: DeviceConfiguration
                 if !(try fileServer.exists(path: configPath)) {
                     deviceConfiguration = DeviceConfiguration()
                     let data = try deviceConfiguration.data()
-                    try fileServer.writeFile(path: configPath, data: data)
+                    try fileServer.writeFile(path: configPath, data: data, createIntermediateDirectories: true)
                 } else {
                     let data = try fileServer.readFile(path: configPath)
                     let configuration = try DeviceConfiguration(data: data)
@@ -608,25 +601,19 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
             // Write the last-backup marker.
 
-            // Ensure the directory exists.
-            let lastBackupIdentifierPath = self.lastBackupIdentifierPath
-            let lastBackupIdentifierDirectoryPath = lastBackupIdentifierPath.deletingLastWindowsPathComponent
-            if !(try fileServer.exists(path: lastBackupIdentifierDirectoryPath)) {
-                try fileServer.mkdir(path: lastBackupIdentifierDirectoryPath)
-            }
-
             // Create the backup file.
+            // We mark this file as needing archive by setting the archive flag. This serves as an imperfect canary to
+            // help us detect scenarios where the user has backed up their machine via a different system, invalidating
+            // our understanding of the archive flag. The theory is that another backup solution will treat this like
+            // any other file, clearing the archive flag on backup. This means that if we ever find it isn't set, we
+            // know it's unsafe to perform an incremental backup. If the user backs up using a different system and then
+            // manually edits this file, there's not much we can do.
             guard let identifierData = backupIdentifier.uuidString.data(using: .ascii) else {
                 throw ReconnectError.unknown
             }
-            try transfersFileServer.writeFile(path: lastBackupIdentifierPath, data: identifierData)
-
-            // Mark this file as needing archive (set the archive flag). We use this as an imperfect canary to help us
-            // detect scenarios where the user has backed up their machine via a different system, invalidating our use
-            // of the archive flag. The theory goes that another backup solution will treat this like any other file,
-            // clearing the archive flag on backup. If we ever find it isn't set, we know it's unsafe to perform an
-            // incremental backup. Note that this does rely on the user never both backing up using a different system
-            // _and_ manually editing this file.
+            try transfersFileServer.writeFile(path: lastBackupIdentifierPath,
+                                              data: identifierData,
+                                              createIntermediateDirectories: true)
             try transfersFileServer.updateAttributes(path: lastBackupIdentifierPath, setting: .archive)
 
             // Notify our delegate.

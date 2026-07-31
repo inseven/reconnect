@@ -492,7 +492,25 @@ public class FileServer: @unchecked Sendable {
         return try Data(contentsOf: temporaryURL)
     }
 
-    public func writeFile(path: String, data: Data) throws {
+    /**
+     Create or overwrite the file at `path` with contents `data`.
+
+     Internally, this writes the data to a temporary local file and copies it to the Psion.
+
+     @param path Windows-format path for the file to create or overwrite
+     @param data Data to write
+     @param createIntermediateDirectories Create any intermediate directories that don't exist
+     */
+    public func writeFile(path: String, data: Data, createIntermediateDirectories: Bool = false) throws {
+
+        // Optionally create the intermediate directories if they don't exist.
+        if createIntermediateDirectories {
+            let intermediatePath = path.deletingLastWindowsPathComponent
+            if !(try exists(path: intermediatePath)) {
+                try mkdir(path: intermediatePath)
+            }
+        }
+
         let fileManager = FileManager.default
         let temporaryURL = fileManager.temporaryURL()
         defer { try? fileManager.removeItem(at: temporaryURL) }
