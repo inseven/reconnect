@@ -446,8 +446,11 @@ extension ApplicationModel: @MainActor DeviceModelDelegate {
         self.longRunningOperations.insert(identifier)
     }
 
-    func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup) {
+    func deviceModel(deviceModel: DeviceModel, didCreateBackupWithIdentifier identifier: UUID, backup: Backup) {
         self.backupsModel.update()
+    }
+
+    func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup) {
         self.longRunningOperations.remove(identifier)
     }
 

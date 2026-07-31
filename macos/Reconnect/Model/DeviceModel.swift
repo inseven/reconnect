@@ -22,15 +22,13 @@ import OpoLuaCore
 
 import ReconnectCore
 
-// TODO: Consider having a backup delegate? DeviceModelBackupDelegate?
-
 // Called on main.
 protocol DeviceModelDelegate: AnyObject {
 
     func deviceModel(deviceModel: DeviceModel, didUpdateName name: String)
 
     func deviceModel(deviceModel: DeviceModel, willStartBackupWithIdentifier identifier: UUID)
-//    func deviceModel(deviceModel: DeviceModel, didCreateBackupWithIdentifier identifier: UUID, backup: Backup)
+    func deviceModel(deviceModel: DeviceModel, didCreateBackupWithIdentifier identifier: UUID, backup: Backup)
     func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup)
     func deviceModel(deviceModel: DeviceModel, didFailBackupWithIdentifier identifier: UUID, error: Error)
 

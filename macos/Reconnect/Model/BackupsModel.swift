@@ -79,6 +79,7 @@ class BackupsModel {
 
     // TODO: I assume this is MainActor? Perhaps check this.
     var backupSets: [BackupSet] = []
+    var backupsByIdentifier: [UUID: Backup] = [:]
     var prompt: Prompt? = nil
 
     @ObservationIgnored
@@ -124,9 +125,20 @@ class BackupsModel {
                         return BackupSet(device: deviceConfiguration, backups: backups)
                     }
 
+                // Generate a lookup of backups by identifier.
+                let backupsByIdentiifer = backupSets.map { $0.backups }
+                    .flatMap { $0 }
+                    .reduce(into: [UUID: Backup]()) { partialResult, backup in
+                        guard let id = backup.manifest.id else {
+                            return
+                        }
+                        partialResult[id] = backup
+                    }
+
                 // Update the model state.
                 DispatchQueue.main.async {
                     self.backupSets = backupSets
+                    self.backupsByIdentifier = backupsByIdentiifer
                     self.delegate?.backupsModel(self, didUpdateBackupSets: backupSets)
                 }
 
@@ -138,15 +150,7 @@ class BackupsModel {
 
     @MainActor
     func backupForIdentifier(_ identifier: UUID) -> Backup? {
-        // TODO: Actual lookup?
-        for backupSet in backupSets {
-            for backup in backupSet.backups {
-                if backup.manifest.id == identifier {
-                    return backup
-                }
-            }
-        }
-        return nil
+        return backupsByIdentifier[identifier]
     }
 
     /**
