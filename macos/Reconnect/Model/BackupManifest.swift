@@ -22,7 +22,7 @@ import plptools
 
 import ReconnectCore
 
-struct BackupManifest: Equatable, Hashable, Codable, Identifiable {
+struct BackupManifest: Equatable, Hashable, Codable {
 
     struct Drive: Equatable, Hashable, Codable, Identifiable {
 
