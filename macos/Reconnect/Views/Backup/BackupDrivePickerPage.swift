@@ -68,12 +68,12 @@ struct BackupDrivePickerPage: View {
                         .font(.headline)
                         .gridColumnAlignment(.trailing)
                     VStack(alignment: .leading) {
-                        Toggle("Prefer incremental backup", isOn: $preferIncrementalBackup)
+                        Toggle("Prefer incremental backups", isOn: $preferIncrementalBackup)
                             .gridColumnAlignment(.leading)
-                        Text("Reconnect uses the archive flag to determine which files to back up. Do not use this if you also use other systems to back up your Psion.")
+                        Text("Reconnect uses FAT archive flags to determine which files have changed when performing incremental backups. These may modified by other backup programs and should not be used if you back up your Psion on other devices.")
                             .multilineTextAlignment(.leading)
                             .font(.footnote)
-                            .frame(width: 300, alignment: .leading)
+                            .frame(width: 320, alignment: .leading)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
