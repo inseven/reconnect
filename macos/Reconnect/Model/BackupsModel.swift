@@ -77,7 +77,6 @@ class BackupsModel {
     private let rootURL: URL
     private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
 
-    // TODO: I assume this is MainActor? Perhaps check this.
     var backupSets: [BackupSet] = []
     var backupsByIdentifier: [UUID: Backup] = [:]
     var prompt: Prompt? = nil

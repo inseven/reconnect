@@ -364,6 +364,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     }
 
     func backUp(drives: Set<FileServer.DriveInfo>,
+                preferIncrementalBackup: Bool,
                 progress: Progress,
                 cancellationToken: CancellationToken) throws -> Backup {
         dispatchPrecondition(condition: .notOnQueue(.main))
@@ -419,93 +420,39 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 try cancellationToken.checkCancellation()
             }
 
-            // Check to see if there's a last backup identifier and that it has the archive bit set (see note below).
-            let lastBackupIdentifier: UUID?
-            if try transfersFileServer.exists(path: lastBackupIdentifierPath),
-               (try transfersFileServer.getAttributes(path: lastBackupIdentifierPath).contains(.archive)),
-               let uuidString = String(data: try transfersFileServer.readFile(path: lastBackupIdentifierPath), encoding: .ascii){
-                lastBackupIdentifier = UUID(uuidString: uuidString)
-            } else {
-                lastBackupIdentifier = nil
-            }
+            // Check for a previous backup if the user has requested incremental backups.
+            // Code following this uses a non-nil `previousBackup` to indicate we should perform an incremental backup.
+            var previousBackup: Backup? = nil
+            if preferIncrementalBackup,
+               let lastBackupIdentifier = try fileServer.lastBackupIdentifier,
+               let backup = DispatchQueue.main.sync(execute: {
+                   delegate?.deviceModel(deviceModel: self, backupForIdentifier: lastBackupIdentifier)
+               }) {
 
-            print("Last Backup Identifier = \(lastBackupIdentifier?.uuidString ?? "nil")")
+                // TODO: Check the drive identifiers match.
 
-            // See if we have a backup for that identifier.
-            let lastBackup: Backup? = DispatchQueue.main.sync {
-                guard let lastBackupIdentifier else {
-                    return nil
-                }
-                return delegate?.deviceModel(deviceModel: self, backupForIdentifier: lastBackupIdentifier)
-            }
-
-            if lastBackup != nil {
-                print("Successfully found a matching backup! :)")
-            } else {
-                print("Failed to find a matching backup. :'(")
-            }
-
-            // TODO: Check if we can perform an incremental bakcup.
-            // We should probably do a pre-flight check to ensure that every file which hasn't got the archive bit set
-            // is available to us.
-            // TODO: We should also assert that the device has the same disk SSD configuration?
-
-            // TODO: Check drive identifiers match.
-
-            // TODO: This should only happen if we _think_ we can perform an incremental backup.
-            // TODO: Make this a convenience function; maybe we can just inject the file server?
-            var canPerformIncrementalBackup = true
-            if let lastBackup {
-                print("Sanity checking backup...")
-                for (drive, driveFiles) in files {
-                    for file in driveFiles {
-
-                        if !file.attributes.contains(.archive) {
-                            print("Checking '\(file.path)'")
-
-                            // TODO: This whole string manipulation is butt-ugly.
-//                            let nakedPath = String(file.path.dropFirst(drive.path.count))
-//                            let expectedURL = lastBackup.url.appendingPathComponents([drive.drive, nakedPath])
-
-                            // TODO: Hoist this.
-                            let driveBackupURL = lastBackup.url.appendingPathComponent(drive.drive, isDirectory: true)
-                            let relativePath = String(file.path.dropFirst(drive.path.count))
-                            let expectedURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
-
-                            print(expectedURL)
-
-                            if !fileManager.fileExists(at: expectedURL) {
-                                print("Well shit, we can't back up.")
-                                canPerformIncrementalBackup = false
-                                break
-                            }
-
+                // Filter the set of unmodified files and ensure they exist in the backup, and are of the the same size.
+                let isBackupValid = try files
+                    .flatMap { $0.1 }  // Flatten the array.
+                    .filter { !$0.attributes.contains(.archive) }  // Include only unmodified files.
+                    .map { file in  // true if files exist and match in size; false otherwise.
+                        guard let backupFileURL = backup.url(forPath: file.path),
+                              try file.isDirectory || (fileManager.size(of: backupFileURL) == file.size)
+                        else {
+                            return false
                         }
-
-                        // Skip files without the archive bit.
-                        guard file.attributes.contains(.archive) else {
-                            continue
-                        }
-
-                        print("'\(file.path)' needs backup...")
+                        return true
                     }
+                    .reduce(true) { $0 && $1 }  // And together all check results.
 
-                    if !canPerformIncrementalBackup {
-                        break
-                    }
+                if isBackupValid {  // Incremental backup is safe!
+                    previousBackup = backup
                 }
-            } else {
-                canPerformIncrementalBackup = false
             }
 
-            print("canPerformIncrementalBackup = \(canPerformIncrementalBackup)")
-
-//            throw ReconnectError.cancelled
-
-            // Update the progress for the new file count.
-            // TODO: We need to update this to 2x since we've also got to set the archive bit on a successful backup.
-            let fileCount = files.map { $1.count }.reduce(0, +)
-            progress.totalUnitCount = Int64(fileCount)
+            // Update the progress to match the size of the files.
+            let totalFileSize = files.flatMap({ $0.1 }).map { $0.size }.reduce(0, +)
+            progress.totalUnitCount = Int64(totalFileSize)
             progress.localizedDescription = "Copying files..."
 
             var completeFiles: [FileServer.DirectoryEntry] = []
@@ -531,23 +478,22 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                     let innerDestinationURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
 
                     // Create the destination directory, or copy the file.
-                    progress.localizedAdditionalDescription = file.path
+                    // While it might seem sensible to update the progress' additional description here, we don't do it
+                    // because it seems to flood SwiftUI, leading to hangs. Instead, we _only_ set the description
+                    // when we know we're performing a long-running operation.
                     if file.path.isWindowsDirectory {
                         try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
-                        progress.completedUnitCount += 1
                     } else {
-                        if let lastBackup, canPerformIncrementalBackup, !file.attributes.contains(.archive) {
-                            let driveBackupURL = lastBackup.url.appendingPathComponent(drive.drive, isDirectory: true)
+                        let copyProgress = Progress()
+                        progress.addChild(copyProgress, withPendingUnitCount: Int64(file.size))
+                        if let previousBackup, !file.attributes.contains(.archive) {
+                            let driveBackupURL = previousBackup.url.appendingPathComponent(drive.drive, isDirectory: true)
                             let relativePath = String(file.path.dropFirst(drive.path.count))
                             let archiveURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
-                            let copyProgress = Progress()
-                            progress.addChild(copyProgress, withPendingUnitCount: 1)
-                            print("Copying from '\(archiveURL)' to '\(innerDestinationURL)'...")
                             try fileManager.copyItem(at: archiveURL, to: innerDestinationURL)
                             copyProgress.completedUnitCount = copyProgress.totalUnitCount
                         } else {
-                            let copyProgress = Progress()
-                            progress.addChild(copyProgress, withPendingUnitCount: 1)
+                            progress.localizedAdditionalDescription = file.path  // See comment above.
                             _ = try _downloadFile(sourceDirectoryEntry: file,
                                                   destinationURL: innerDestinationURL,
                                                   context: .backup,
@@ -583,23 +529,24 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             try fileManager.moveItem(at: backupURL, to: destinationURL)
             let backup = Backup(manifest: manifest, url: destinationURL)
 
-            // TODO: Perhaps we need to notify the backup service here.
-
-            // TODO: We need to clear the identifier here because it ceases to be valid immediately after we start
-            // setting the archive flags.
+            // Notify our delegate that we've written the backup.
+            DispatchQueue.main.async {
+                self.delegate?.deviceModel(deviceModel: self,
+                                           didCreateBackupWithIdentifier: backupIdentifier,
+                                           backup: backup)
+            }
 
             // Clear the archive flag.
+            // This step fails safe as the worst thing that happens is we back up some additional files next time.
             progress.localizedDescription = "Setting archive flag..."
-            for file in completeFiles {
-                guard file.attributes.contains(.archive) else {
-                    continue
-                }
+            let modifiedFiles = files
+                .flatMap { $0.1 }
+                .filter { $0.attributes.contains(.archive) }
+            for file in modifiedFiles {
                 try transfersFileServer.updateAttributes(path: file.path, clearing: .archive)
             }
 
-            // Write the last-backup marker.
-
-            // Create the backup file.
+            // Finally, write the last-backup marker.
             // We mark this file as needing archive by setting the archive flag. This serves as an imperfect canary to
             // help us detect scenarios where the user has backed up their machine via a different system, invalidating
             // our understanding of the archive flag. The theory is that another backup solution will treat this like
@@ -1181,6 +1128,33 @@ extension DeviceModel {
         try cancellationToken.checkCancellation()
 
         return directoryEntry
+    }
+
+}
+
+extension FileServer {
+
+    /**
+     Get the last backup identifier if and only if one is set and the identifier is still considered valid (the file
+     still has the archive bit set).
+     */
+    // TODO: Make this a function.
+    var lastBackupIdentifier: UUID? {
+        get throws {
+
+            let lastBackupIdentifierPath: String = ((try protocolVersion()) == 3
+                                                    ? .epoc16LastBackupIdentifierPath
+                                                    : .epoc32LastBackupIdentifierPath)
+
+            // Check to see if there's a last backup identifier and that it has the archive bit set (see note below).
+            guard try exists(path: lastBackupIdentifierPath),
+                  (try getAttributes(path: lastBackupIdentifierPath).contains(.archive)),
+                  let uuidString = String(data: try readFile(path: lastBackupIdentifierPath), encoding: .ascii)
+            else {
+                return nil
+            }
+            return UUID(uuidString: uuidString)
+        }
     }
 
 }

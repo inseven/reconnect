@@ -25,6 +25,7 @@ struct BackupDrivePickerPage: View {
     let driveQuery: BackupViewModel.DriveQuery
 
     @State var selectedDrives: Set<FileServer.DriveInfo>
+    @State var preferIncrementalBackup: Bool = true
 
     init(driveQuery: BackupViewModel.DriveQuery) {
         self.driveQuery = driveQuery
@@ -55,13 +56,15 @@ struct BackupDrivePickerPage: View {
                                                                   platform: driveQuery.platform))
                     }
                 }
+                Toggle("Prefer Incremental Backup", isOn: $preferIncrementalBackup)
             }
         } actions: {
             Button("Cancel", role: .destructive) {
                 driveQuery.cancel()
             }
             Button("Continue") {
-                driveQuery.continue(drives: selectedDrives)
+                driveQuery.continue(.init(drives: selectedDrives,
+                                          preferIncrementalBackup: preferIncrementalBackup))
             }
             .keyboardShortcut(.defaultAction)
         }

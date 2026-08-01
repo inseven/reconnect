@@ -443,6 +443,7 @@ public class FileServer: @unchecked Sendable {
     }
 
     func workQueue_drives() throws(ReconnectError) -> [DriveInfo] {
+        dispatchPrecondition(condition: .onQueue(workQueue))
         var result: [DriveInfo] = []
         for drive in try self.workQueue_devlist() {
             do {
@@ -452,6 +453,12 @@ public class FileServer: @unchecked Sendable {
             }
         }
         return result
+    }
+
+    func workQueue_protocolVersion() throws(ReconnectError) -> Int32 {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        return client.getProtocolVersion()
     }
 
     public func dir(path: String,
@@ -577,6 +584,12 @@ public class FileServer: @unchecked Sendable {
     public func drives() throws(ReconnectError) -> [DriveInfo] {
         return try perform { () throws(ReconnectError) -> [DriveInfo] in
             return try self.workQueue_drives()
+        }
+    }
+
+    public func protocolVersion() throws (ReconnectError) -> Int32 {
+        return try perform { () throws(ReconnectError) -> Int32 in
+            return try self.workQueue_protocolVersion()
         }
     }
 
