@@ -424,7 +424,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             // Code following this uses a non-nil `previousBackup` to indicate we should perform an incremental backup.
             var previousBackup: Backup? = nil
             if preferIncrementalBackup,
-               let lastBackupIdentifier = try fileServer.lastBackupIdentifier,
+               let lastBackupIdentifier = try fileServer.lastBackupIdentifier(),
                let backup = DispatchQueue.main.sync(execute: {
                    delegate?.deviceModel(deviceModel: self, backupForIdentifier: lastBackupIdentifier)
                }) {
@@ -1128,33 +1128,6 @@ extension DeviceModel {
         try cancellationToken.checkCancellation()
 
         return directoryEntry
-    }
-
-}
-
-extension FileServer {
-
-    /**
-     Get the last backup identifier if and only if one is set and the identifier is still considered valid (the file
-     still has the archive bit set).
-     */
-    // TODO: Make this a function.
-    var lastBackupIdentifier: UUID? {
-        get throws {
-
-            let lastBackupIdentifierPath: String = ((try protocolVersion()) == 3
-                                                    ? .epoc16LastBackupIdentifierPath
-                                                    : .epoc32LastBackupIdentifierPath)
-
-            // Check to see if there's a last backup identifier and that it has the archive bit set (see note below).
-            guard try exists(path: lastBackupIdentifierPath),
-                  (try getAttributes(path: lastBackupIdentifierPath).contains(.archive)),
-                  let uuidString = String(data: try readFile(path: lastBackupIdentifierPath), encoding: .ascii)
-            else {
-                return nil
-            }
-            return UUID(uuidString: uuidString)
-        }
     }
 
 }
