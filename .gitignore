@@ -7,3 +7,4 @@
 /docs/_site
 /docs/.jekyll-cache
 /docs/releases
+/scripts/Pipfile.lock
