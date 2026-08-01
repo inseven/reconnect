@@ -46,17 +46,37 @@ struct BackupDrivePickerPage: View {
 
     var body: some View {
         WizardPage {
-            VStack(alignment: .leading) {
-                Text("Select drives:")
-                ForEach(driveQuery.drives) { drive in
-                    Toggle(isOn: binding(for: drive)) {
-                        Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
-                              image: DisplayHelpers.imageForDrive(drive.drive,
-                                                                  mediaType: drive.mediaType,
-                                                                  platform: driveQuery.platform))
+            Grid(alignment: .top, verticalSpacing: 16.0) {
+                GridRow {
+                    Text("Drives:")
+                        .font(.headline)
+                        .gridColumnAlignment(.trailing)
+                    VStack(alignment: .leading) {
+                        ForEach(driveQuery.drives) { drive in
+                            Toggle(isOn: binding(for: drive)) {
+                                Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
+                                      image: DisplayHelpers.imageForDrive(drive.drive,
+                                                                          mediaType: drive.mediaType,
+                                                                          platform: driveQuery.platform))
+                            }
+                        }
+                    }
+                    .gridColumnAlignment(.leading)
+                }
+                GridRow {
+                    Text("Strategy:")
+                        .font(.headline)
+                        .gridColumnAlignment(.trailing)
+                    VStack(alignment: .leading) {
+                        Toggle("Prefer incremental backup", isOn: $preferIncrementalBackup)
+                            .gridColumnAlignment(.leading)
+                        Text("Reconnect uses the archive flag to determine which files to back up. Do not use this if you also use other systems to back up your Psion.")
+                            .multilineTextAlignment(.leading)
+                            .font(.footnote)
+                            .frame(width: 300, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                Toggle("Prefer Incremental Backup", isOn: $preferIncrementalBackup)
             }
         } actions: {
             Button("Cancel", role: .destructive) {
