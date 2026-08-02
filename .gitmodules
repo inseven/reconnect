@@ -15,6 +15,7 @@
 [submodule "dependencies/opolua/opolua"]
 	path = macos/dependencies/opolua
 	url = https://github.com/inseven/opolua.git
+	branch = main
 [submodule "docs/_theme"]
 	path = docs/_theme
 	url = https://github.com/jbmorley/showcase-theme.git
