@@ -78,6 +78,7 @@ class BackupsModel {
     private let workQueue = DispatchQueue(label: "BackupsModel.workQueue")
 
     var backupSets: [BackupSet] = []
+    var backupsByIdentifier: [UUID: Backup] = [:]
     var prompt: Prompt? = nil
 
     @ObservationIgnored
@@ -123,9 +124,20 @@ class BackupsModel {
                         return BackupSet(device: deviceConfiguration, backups: backups)
                     }
 
+                // Generate a lookup of backups by identifier.
+                let backupsByIdentiifer = backupSets.map { $0.backups }
+                    .flatMap { $0 }
+                    .reduce(into: [UUID: Backup]()) { partialResult, backup in
+                        guard let id = backup.manifest.id else {
+                            return
+                        }
+                        partialResult[id] = backup
+                    }
+
                 // Update the model state.
                 DispatchQueue.main.async {
                     self.backupSets = backupSets
+                    self.backupsByIdentifier = backupsByIdentiifer
                     self.delegate?.backupsModel(self, didUpdateBackupSets: backupSets)
                 }
 
@@ -133,6 +145,11 @@ class BackupsModel {
                 print("Failed to enumerate directories with error \(error).")
             }
         }
+    }
+
+    @MainActor
+    func backupForIdentifier(_ identifier: UUID) -> Backup? {
+        return backupsByIdentifier[identifier]
     }
 
     /**

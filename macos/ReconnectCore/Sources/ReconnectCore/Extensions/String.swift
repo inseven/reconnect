@@ -22,13 +22,20 @@ public extension String {
 
     static let epoc16ConfigPath = "M:\\sync\\config.ini"
     static let epoc32ConfigPath = "C:\\System\\Sync\\config.ini"
+    static let epoc16LastBackupIdentifierPath = "M:\\sync\\lastback.txt"
+    static let epoc32LastBackupIdentifierPath = "C:\\System\\Sync\\lastbackup.txt"
+
     static let epoc16InstallDirectory = "M:\\Install\\"
     static let epoc32InstallDirectory = "C:\\System\\Install\\"
+
     static let reconnectToolsStubPath = "C:\\System\\Install\\ReconnectTools.sis"
+
     static let epoc16ScreenshotPath = "M:\\RCONNECT\\SCRNSHOT.PIC"
     static let epoc32ScreenshotPath = "C:\\screenshot.mbm"
+
     static let epoc16ScreenshotToolPath = "M:\\RCONNECT\\SCRNSHOT.IMG"
     static let epoc32ScreenshotToolPath = "C:\\System\\Reconnect\\screenshot.exe"
+
     static let windowsPathSeparator = "\\"
 
     static let browserApplicationBundleIdentifier = "uk.co.jbmorley.reconnect.apps.apple"

@@ -26,25 +26,30 @@ class BackupViewModel: Runnable {
 
     struct DriveQuery: Identifiable {
 
+        struct Response {
+            let drives: Set<FileServer.DriveInfo>
+            let preferIncrementalBackup: Bool
+        }
+
         let id = UUID()
         let drives: [FileServer.DriveInfo]
         let defaultSelection: Set<FileServer.DriveInfo>
         let platform: Platform
 
-        private let completion: (Result<Set<FileServer.DriveInfo>, Error>) -> Void
+        private let completion: (Result<Response, Error>) -> Void
 
         init(drives: [FileServer.DriveInfo],
              defaultSelection: Set<FileServer.DriveInfo>,
              platform: Platform,
-             completion: @escaping (Result<Set<FileServer.DriveInfo>, Error>) -> Void) {
+             completion: @escaping (Result<Response, Error>) -> Void) {
             self.drives = drives
             self.defaultSelection = defaultSelection
             self.platform = platform
             self.completion = completion
         }
 
-        func `continue`(drives: Set<FileServer.DriveInfo>) {
-            completion(.success(drives))
+        func `continue`(_ response: Response) {
+            completion(.success(response))
         }
 
         func cancel() {
@@ -93,16 +98,16 @@ class BackupViewModel: Runnable {
         dispatchPrecondition(condition: .notOnQueue(.main))
 
         // Show the drive picker.
-        let drivesFuture = UnsafeFuture<Set<FileServer.DriveInfo>, Error>()
+        let responseFuture = UnsafeFuture<DriveQuery.Response, Error>()
         let driveQuery = DriveQuery(drives: deviceModel.drives,
                                     defaultSelection: [deviceModel.internalDrive],
                                     platform: deviceModel.platform) { result in
-            drivesFuture.resolve(result: result)
+            responseFuture.resolve(result: result)
         }
         DispatchQueue.main.sync {
             self.page = .selectDrives(driveQuery)
         }
-        let drives = try drivesFuture.get()
+        let response = try responseFuture.get()
 
         // Show the progress page.
         // Since this observes the progress object we've injected in, we don't need to do anything to ensure it updates.
@@ -113,7 +118,10 @@ class BackupViewModel: Runnable {
         }
 
         // Perform the backup.
-        _ = try deviceModel.backUp(drives: drives, progress: progress, cancellationToken: cancellationToken)
+        _ = try deviceModel.backUp(drives: response.drives,
+                                   preferIncrementalBackup: response.preferIncrementalBackup,
+                                   progress: progress,
+                                   cancellationToken: cancellationToken)
 
         // Show complete page.
         DispatchQueue.main.sync {

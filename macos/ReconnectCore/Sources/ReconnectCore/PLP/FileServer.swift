@@ -281,12 +281,12 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    private func workQueue_getAttributes(path: String) throws(ReconnectError) -> UInt32 {
+    private func workQueue_getAttributes(path: String) throws(ReconnectError) -> FileAttributes {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var attributes: UInt32 = 0
         try client.fgetattr(path, &attributes).check()
-        return attributes
+        return FileServer.FileAttributes(rawValue: attributes)
     }
 
     private func workQueue_getExtendedAttributes(path: String) throws(ReconnectError) -> DirectoryEntry {
@@ -313,6 +313,18 @@ public class FileServer: @unchecked Sendable {
             throw .extendedAttributesError(result, path)
         }
         return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent, entry: entry)
+    }
+
+    private func workQueue_updateAttributes(path: String,
+                                            setting attributesToSet: FileServer.FileAttributes,
+                                            clearing attributesToClear: FileServer.FileAttributes) throws(ReconnectError) {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+
+        let result = client.fsetattr(path, attributesToSet.rawValue, attributesToClear.rawValue)
+        guard result == .E_PSI_GEN_NONE else {
+            throw .updateAttributesError(result, path)
+        }
     }
 
     private func workQueue_copyFile(fromRemotePath remoteSourcePath: String,
@@ -431,6 +443,7 @@ public class FileServer: @unchecked Sendable {
     }
 
     func workQueue_drives() throws(ReconnectError) -> [DriveInfo] {
+        dispatchPrecondition(condition: .onQueue(workQueue))
         var result: [DriveInfo] = []
         for drive in try self.workQueue_devlist() {
             do {
@@ -440,6 +453,12 @@ public class FileServer: @unchecked Sendable {
             }
         }
         return result
+    }
+
+    func workQueue_protocolVersion() throws(ReconnectError) -> Int32 {
+        dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
+        return client.getProtocolVersion()
     }
 
     public func dir(path: String,
@@ -480,7 +499,25 @@ public class FileServer: @unchecked Sendable {
         return try Data(contentsOf: temporaryURL)
     }
 
-    public func writeFile(path: String, data: Data) throws {
+    /**
+     Create or overwrite the file at `path` with contents `data`.
+
+     Internally, this writes the data to a temporary local file and copies it to the Psion.
+
+     @param path Windows-format path for the file to create or overwrite
+     @param data Data to write
+     @param createIntermediateDirectories Create any intermediate directories that don't exist
+     */
+    public func writeFile(path: String, data: Data, createIntermediateDirectories: Bool = false) throws {
+
+        // Optionally create the intermediate directories if they don't exist.
+        if createIntermediateDirectories {
+            let intermediatePath = path.deletingLastWindowsPathComponent
+            if !(try exists(path: intermediatePath)) {
+                try mkdir(path: intermediatePath)
+            }
+        }
+
         let fileManager = FileManager.default
         let temporaryURL = fileManager.temporaryURL()
         defer { try? fileManager.removeItem(at: temporaryURL) }
@@ -490,7 +527,7 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    public func getAttributes(path: String) throws -> UInt32 {
+    public func getAttributes(path: String) throws -> FileServer.FileAttributes {
         return try perform { () throws(ReconnectError) in
             return try self.workQueue_getAttributes(path: path)
         }
@@ -499,6 +536,16 @@ public class FileServer: @unchecked Sendable {
     public func getExtendedAttributes(path: String) throws -> DirectoryEntry {
         return try perform { () throws(ReconnectError) in
             return try self.workQueue_getExtendedAttributes(path: path)
+        }
+    }
+
+    public func updateAttributes(path: String,
+                                 setting attributesToSet: FileServer.FileAttributes = [],
+                                 clearing attributesToClear: FileServer.FileAttributes = []) throws(ReconnectError) {
+        return try perform { () throws(ReconnectError) in
+            return try self.workQueue_updateAttributes(path: path,
+                                                       setting: attributesToSet,
+                                                       clearing: attributesToClear)
         }
     }
 
@@ -535,6 +582,12 @@ public class FileServer: @unchecked Sendable {
     public func drives() throws(ReconnectError) -> [DriveInfo] {
         return try perform { () throws(ReconnectError) -> [DriveInfo] in
             return try self.workQueue_drives()
+        }
+    }
+
+    public func protocolVersion() throws (ReconnectError) -> Int32 {
+        return try perform { () throws(ReconnectError) -> Int32 in
+            return try self.workQueue_protocolVersion()
         }
     }
 

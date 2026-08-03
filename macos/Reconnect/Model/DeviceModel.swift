@@ -26,9 +26,13 @@ import ReconnectCore
 protocol DeviceModelDelegate: AnyObject {
 
     func deviceModel(deviceModel: DeviceModel, didUpdateName name: String)
+
     func deviceModel(deviceModel: DeviceModel, willStartBackupWithIdentifier identifier: UUID)
+    func deviceModel(deviceModel: DeviceModel, didCreateBackupWithIdentifier identifier: UUID, backup: Backup)
     func deviceModel(deviceModel: DeviceModel, didFinishBackupWithIdentifier identifier: UUID, backup: Backup)
     func deviceModel(deviceModel: DeviceModel, didFailBackupWithIdentifier identifier: UUID, error: Error)
+
+    func deviceModel(deviceModel: DeviceModel, backupForIdentifier identifier: UUID) -> Backup?
 
 }
 
@@ -103,20 +107,13 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 //    give us a way to identify device sessions (between hard resets) instead of the device hardware
                 //    itself.
 
+                // Create or read the device config.
                 let configPath: String = epoc16 ? .epoc16ConfigPath : .epoc32ConfigPath
-
-                // Ensure the config directory exists.
-                let configDirectoryPath = configPath.deletingLastWindowsPathComponent
-                if !(try fileServer.exists(path: configDirectoryPath)) {
-                    try fileServer.mkdir(path: configDirectoryPath)
-                }
-
-                // Ccreate or read the device config.
                 let deviceConfiguration: DeviceConfiguration
                 if !(try fileServer.exists(path: configPath)) {
                     deviceConfiguration = DeviceConfiguration()
                     let data = try deviceConfiguration.data()
-                    try fileServer.writeFile(path: configPath, data: data)
+                    try fileServer.writeFile(path: configPath, data: data, createIntermediateDirectories: true)
                 } else {
                     let data = try fileServer.readFile(path: configPath)
                     let configuration = try DeviceConfiguration(data: data)
@@ -177,6 +174,10 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
     var screenshotToolPath: String {
         return machineType.isEpoc32 ? .epoc32ScreenshotToolPath : .epoc16ScreenshotToolPath
+    }
+
+    var lastBackupIdentifierPath: String {
+        return machineType.isEpoc32 ? .epoc32LastBackupIdentifierPath : .epoc16LastBackupIdentifierPath
     }
 
     @ObservationIgnored
@@ -363,6 +364,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     }
 
     func backUp(drives: Set<FileServer.DriveInfo>,
+                preferIncrementalBackup: Bool,
                 progress: Progress,
                 cancellationToken: CancellationToken) throws -> Backup {
         dispatchPrecondition(condition: .notOnQueue(.main))
@@ -418,10 +420,40 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 try cancellationToken.checkCancellation()
             }
 
-            // Update the progress for the new file count.
-            let fileCount = files.map { $1.count }.reduce(0, +)
-            progress.totalUnitCount = Int64(fileCount)
+            // Check for a previous backup if the user has requested incremental backups.
+            // Code following this uses a non-nil `previousBackup` to indicate we should perform an incremental backup.
+            var previousBackup: Backup? = nil
+            if preferIncrementalBackup,
+               let lastBackupIdentifier = try fileServer.lastBackupIdentifier(),
+               let backup = DispatchQueue.main.sync(execute: {
+                   delegate?.deviceModel(deviceModel: self, backupForIdentifier: lastBackupIdentifier)
+               }) {
+
+                // Filter the set of unmodified files and ensure they exist in the backup, and are of the the same size.
+                let isBackupValid = try files
+                    .flatMap { $0.1 }  // Flatten the array.
+                    .filter { !$0.attributes.contains(.archive) }  // Include only unmodified files.
+                    .map { file in  // true if files exist and match in size; false otherwise.
+                        guard let backupFileURL = backup.url(forPath: file.path),
+                              try file.isDirectory || (fileManager.size(of: backupFileURL) == file.size)
+                        else {
+                            return false
+                        }
+                        return true
+                    }
+                    .reduce(true) { $0 && $1 }  // And together all check results.
+
+                if isBackupValid {  // Incremental backup is safe!
+                    previousBackup = backup
+                }
+            }
+
+            // Update the progress to match the size of the files.
+            let totalFileSize = files.flatMap({ $0.1 }).map { $0.size }.reduce(0, +)
+            progress.totalUnitCount = Int64(totalFileSize)
             progress.localizedDescription = "Copying files..."
+
+            var completeFiles: [FileServer.DirectoryEntry] = []
 
             // Iterate over the drives again, this time copying the files.
             for (drive, driveFiles) in files {
@@ -443,19 +475,30 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                     let innerDestinationURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
 
                     // Create the destination directory, or copy the file.
-                    progress.localizedAdditionalDescription = file.path
+                    // While it might seem sensible to update the progress' additional description here, we don't do it
+                    // because it seems to flood SwiftUI, leading to hangs. Instead, we _only_ set the description
+                    // when we know we're performing a long-running operation.
                     if file.path.isWindowsDirectory {
                         try fileManager.createDirectory(at: innerDestinationURL, withIntermediateDirectories: true)
-                        progress.completedUnitCount += 1
                     } else {
                         let copyProgress = Progress()
-                        progress.addChild(copyProgress, withPendingUnitCount: 1)
-                        _ = try _downloadFile(sourceDirectoryEntry: file,
-                                              destinationURL: innerDestinationURL,
-                                              context: .backup,
-                                              progress: copyProgress,
-                                              cancellationToken: cancellationToken)
+                        progress.addChild(copyProgress, withPendingUnitCount: Int64(file.size))
+                        if let previousBackup, !file.attributes.contains(.archive) {
+                            let driveBackupURL = previousBackup.url.appendingPathComponent(drive.drive, isDirectory: true)
+                            let relativePath = String(file.path.dropFirst(drive.path.count))
+                            let archiveURL = driveBackupURL.appendingPathComponents(relativePath.windowsPathComponents)
+                            try fileManager.copyItem(at: archiveURL, to: innerDestinationURL)
+                            copyProgress.completedUnitCount = copyProgress.totalUnitCount
+                        } else {
+                            progress.localizedAdditionalDescription = file.path  // See comment above.
+                            _ = try _downloadFile(sourceDirectoryEntry: file,
+                                                  destinationURL: innerDestinationURL,
+                                                  context: .backup,
+                                                  progress: copyProgress,
+                                                  cancellationToken: cancellationToken)
+                        }
                     }
+                    completeFiles.append(file)
 
                     // Check to see if we've been cancelled.
                     try cancellationToken.checkCancellation()
@@ -472,7 +515,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                                             driveAttributes: drive.driveAttributes,
                                             name: drive.name)
             }
-            let manifest = BackupManifest(device: deviceConfiguration,
+            let manifest = BackupManifest(id: backupIdentifier,
+                                          device: deviceConfiguration,
                                           platform: platform,
                                           date: .now,
                                           drives: driveManifests)
@@ -481,6 +525,38 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             // Move the backup to the final destination.
             try fileManager.moveItem(at: backupURL, to: destinationURL)
             let backup = Backup(manifest: manifest, url: destinationURL)
+
+            // Notify our delegate that we've written the backup.
+            DispatchQueue.main.async {
+                self.delegate?.deviceModel(deviceModel: self,
+                                           didCreateBackupWithIdentifier: backupIdentifier,
+                                           backup: backup)
+            }
+
+            // Clear the archive flag.
+            // This step fails safe as the worst thing that happens is we back up some additional files next time.
+            progress.localizedDescription = "Setting archive flag..."
+            let modifiedFiles = files
+                .flatMap { $0.1 }
+                .filter { $0.attributes.contains(.archive) }
+            for file in modifiedFiles {
+                try transfersFileServer.updateAttributes(path: file.path, clearing: .archive)
+            }
+
+            // Finally, write the last-backup marker.
+            // We mark this file as needing archive by setting the archive flag. This serves as an imperfect canary to
+            // help us detect scenarios where the user has backed up their machine via a different system, invalidating
+            // our understanding of the archive flag. The theory is that another backup solution will treat this like
+            // any other file, clearing the archive flag on backup. This means that if we ever find it isn't set, we
+            // know it's unsafe to perform an incremental backup. If the user backs up using a different system and then
+            // manually edits this file, there's not much we can do.
+            guard let identifierData = backupIdentifier.uuidString.data(using: .ascii) else {
+                throw ReconnectError.unknown
+            }
+            try transfersFileServer.writeFile(path: lastBackupIdentifierPath,
+                                              data: identifierData,
+                                              createIntermediateDirectories: true)
+            try transfersFileServer.updateAttributes(path: lastBackupIdentifierPath, setting: .archive)
 
             // Notify our delegate.
             DispatchQueue.main.async {

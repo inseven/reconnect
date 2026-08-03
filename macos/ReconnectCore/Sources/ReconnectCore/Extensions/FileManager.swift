@@ -85,4 +85,8 @@ extension FileManager {
         throw POSIXError(.EEXIST)
     }
 
+    public func size(of url: URL) throws -> UInt64 {
+        return try attributesOfItem(atPath: url.path)[FileAttributeKey.size] as! UInt64
+    }
+
 }

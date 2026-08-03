@@ -22,3 +22,34 @@ struct Backup: Equatable, Hashable {
     let manifest: BackupManifest
     let url: URL
 }
+
+extension Backup {
+
+    /**
+     Return the URL of a file in the backup.
+
+     @param path The Psion-format path of the file to lookup; must be absolute
+
+     @return File URL of the file if it exists in the backup; nil otherwise
+     */
+    func url(forPath path: String) -> URL? {
+
+        // Construct the URL.
+        let components = path.windowsPathComponents
+        guard let drive = components.first else {
+            return nil
+        }
+        let driveLetter = String(drive[..<drive.index(drive.startIndex, offsetBy: 1)])
+        let fileURL = url
+            .appendingPathComponent(driveLetter)
+            .appendingPathComponents(Array(components[1...]))
+
+        // Ensure the file exists.
+        guard FileManager.default.fileExists(at: fileURL) else {
+            return nil
+        }
+
+        return fileURL
+    }
+
+}

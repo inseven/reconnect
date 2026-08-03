@@ -38,7 +38,11 @@ struct BackupSummaryView: View {
                 Form {
                     LabeledContent("Name:", value: backup.manifest.device.name)
                     Spacer()
-                    LabeledContent("Sync Identiifer:", value: backup.manifest.device.id.uuidString)
+                    LabeledContent("Sync Identifier:", value: backup.manifest.device.id.uuidString)
+                    Spacer()
+                    if let backupId = backup.manifest.id {
+                        LabeledContent("Backup Identifier:", value: backupId.uuidString)
+                    }
                     Spacer()
                     LabeledContent {
                         Text(backup.manifest.date, format: Date.FormatStyle(date: .long))
@@ -52,6 +56,7 @@ struct BackupSummaryView: View {
                     }
                 }
                 .padding()
+                .textSelection(.enabled)
             } header: {
                 Text("Summary")
             } footer: {

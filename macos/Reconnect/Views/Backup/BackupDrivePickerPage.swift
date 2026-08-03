@@ -25,6 +25,7 @@ struct BackupDrivePickerPage: View {
     let driveQuery: BackupViewModel.DriveQuery
 
     @State var selectedDrives: Set<FileServer.DriveInfo>
+    @State var preferIncrementalBackup: Bool = true
 
     init(driveQuery: BackupViewModel.DriveQuery) {
         self.driveQuery = driveQuery
@@ -45,14 +46,35 @@ struct BackupDrivePickerPage: View {
 
     var body: some View {
         WizardPage {
-            VStack(alignment: .leading) {
-                Text("Select drives:")
-                ForEach(driveQuery.drives) { drive in
-                    Toggle(isOn: binding(for: drive)) {
-                        Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
-                              image: DisplayHelpers.imageForDrive(drive.drive,
-                                                                  mediaType: drive.mediaType,
-                                                                  platform: driveQuery.platform))
+            Grid(alignment: .top, verticalSpacing: 16.0) {
+                GridRow {
+                    Text("Drives:")
+                        .font(.headline)
+                        .gridColumnAlignment(.trailing)
+                    VStack(alignment: .leading) {
+                        ForEach(driveQuery.drives) { drive in
+                            Toggle(isOn: binding(for: drive)) {
+                                Label(DisplayHelpers.displayNameForDrive(drive.drive, name: drive.name),
+                                      image: DisplayHelpers.imageForDrive(drive.drive,
+                                                                          mediaType: drive.mediaType,
+                                                                          platform: driveQuery.platform))
+                            }
+                        }
+                    }
+                    .gridColumnAlignment(.leading)
+                }
+                GridRow {
+                    Text("Strategy:")
+                        .font(.headline)
+                        .gridColumnAlignment(.trailing)
+                    VStack(alignment: .leading) {
+                        Toggle("Prefer incremental backups", isOn: $preferIncrementalBackup)
+                            .gridColumnAlignment(.leading)
+                        Text("Reconnect uses FAT archive flags to determine which files have changed when performing incremental backups. These may by modified by other backup programs and should not be used if you back up your Psion on other devices.")
+                            .multilineTextAlignment(.leading)
+                            .font(.footnote)
+                            .frame(width: 320, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
@@ -61,7 +83,8 @@ struct BackupDrivePickerPage: View {
                 driveQuery.cancel()
             }
             Button("Continue") {
-                driveQuery.continue(drives: selectedDrives)
+                driveQuery.continue(.init(drives: selectedDrives,
+                                          preferIncrementalBackup: preferIncrementalBackup))
             }
             .keyboardShortcut(.defaultAction)
         }
