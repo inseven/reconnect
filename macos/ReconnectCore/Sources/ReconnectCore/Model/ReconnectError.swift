@@ -42,6 +42,7 @@ public enum ReconnectError: Error {
     case createDirectoryError(PLPToolsError, String)
     case extendedAttributesError(PLPToolsError, String)
     case updateAttributesError(PLPToolsError, String)
+    case removeDirectoryError(PLPToolsError, String)
 }
 
 extension ReconnectError: LocalizedError {
@@ -110,6 +111,12 @@ extension ReconnectError: LocalizedError {
             } else {
                 return "Failed to update attributes for file '\(path)'."
             }
+        case .removeDirectoryError(let epocError, let path):
+            if let description = epocError.errorDescription {
+                return "Failed to remove directory '\(path)' with error '\(description)'."
+            } else {
+                return "Failed to remove directory '\(path)'."
+            }
         }
     }
 
@@ -160,6 +167,8 @@ extension ReconnectError {
         case .extendedAttributesError(let epocError, _):
             return epocError.rawValue
         case .updateAttributesError(let epocError, _):
+            return epocError.rawValue
+        case .removeDirectoryError(let epocError, _):
             return epocError.rawValue
         }
     }
