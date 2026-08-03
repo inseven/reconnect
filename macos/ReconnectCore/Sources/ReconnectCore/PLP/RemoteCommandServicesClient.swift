@@ -27,14 +27,16 @@ public class RemoteCommandServicesClient {
 
     private let host: String
     private let port: Int32
+    private let deviceEncoding: StringEncoding
 
     private let workQueue = DispatchQueue(label: "RemoteCommandServicesClient.workQueue")
 
     private var client = RPCSClient()
 
-    public init(host: String = "127.0.0.1", port: Int32) {
+    public init(host: String = "127.0.0.1", port: Int32, deviceEncoding: StringEncoding) {
         self.host = host
         self.port = port
+        self.deviceEncoding = deviceEncoding
     }
 
     private func workQueue_connect<T>(perform: (inout RPCSClient) throws -> T) throws -> T {
@@ -67,7 +69,6 @@ public class RemoteCommandServicesClient {
         }
     }
 
-    // TODO: Inject the code page?
     public func getOwnerInfo() throws -> [String] {
         return try withClient { client in
             var buf: BufferArray = BufferArray()
@@ -76,7 +77,7 @@ public class RemoteCommandServicesClient {
             while !buf.empty() {
                 let data = Data(store: buf.pop())
                 let line = data.withUnsafeBytes { bytes in
-                    return String(cString: bytes.bindMemory(to: CChar.self).baseAddress!, encoding: .windowsCP1252)!
+                    return String(cString: bytes.bindMemory(to: CChar.self).baseAddress!, encoding: deviceEncoding)!
                 }
                 ownerInfo.append(line)
             }

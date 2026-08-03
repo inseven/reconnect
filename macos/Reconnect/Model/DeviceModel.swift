@@ -66,7 +66,8 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                 // Create the servers for communicating with the Psion. These will be handed off, on success, to the
                 // new device model.
                 let fileServer = FileServer(port: connectionDetails.port)
-                let remoteCommandServicesClient = RemoteCommandServicesClient(port: connectionDetails.port)
+                let remoteCommandServicesClient = RemoteCommandServicesClient(port: connectionDetails.port,
+                                                                              deviceEncoding: try fileServer.deviceEncoding())
 
                 // 1) Perform a drive listing. We know we can always safely do this.
                 try cancellationToken.checkCancellation()
@@ -79,7 +80,7 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
                 // 3) Infer that we're talking to an EPOC16 device by the presence of a RAM-drive labeled M.
                 try cancellationToken.checkCancellation()
-                let epoc16 = internalDrive.drive == "M"
+                let epoc16 = try fileServer.protocolVersion() == 3
 
                 // 3) If we're EPOC16, we need to ensure the RPCS server is installed on the Psion, copying it if not.
                 try cancellationToken.checkCancellation()
