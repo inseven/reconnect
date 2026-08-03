@@ -281,12 +281,12 @@ public class FileServer: @unchecked Sendable {
         }
     }
 
-    private func workQueue_getAttributes(path: String) throws(ReconnectError) -> UInt32 {
+    private func workQueue_getAttributes(path: String) throws(ReconnectError) -> FileAttributes {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var attributes: UInt32 = 0
         try client.fgetattr(path, &attributes).check()
-        return attributes
+        return FileServer.FileAttributes(rawValue: attributes)
     }
 
     private func workQueue_getExtendedAttributes(path: String) throws(ReconnectError) -> DirectoryEntry {
@@ -529,9 +529,7 @@ public class FileServer: @unchecked Sendable {
 
     public func getAttributes(path: String) throws -> FileServer.FileAttributes {
         return try perform { () throws(ReconnectError) in
-            // TODO: Push this down.
-            let rawValue = try self.workQueue_getAttributes(path: path)
-            return FileServer.FileAttributes(rawValue: rawValue)
+            return try self.workQueue_getAttributes(path: path)
         }
     }
 

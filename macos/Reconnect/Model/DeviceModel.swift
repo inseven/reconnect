@@ -429,8 +429,6 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
                    delegate?.deviceModel(deviceModel: self, backupForIdentifier: lastBackupIdentifier)
                }) {
 
-                // TODO: Check the drive identifiers match.
-
                 // Filter the set of unmodified files and ensure they exist in the backup, and are of the the same size.
                 let isBackupValid = try files
                     .flatMap { $0.1 }  // Flatten the array.
@@ -458,7 +456,6 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
             var completeFiles: [FileServer.DirectoryEntry] = []
 
             // Iterate over the drives again, this time copying the files.
-            // TODO: Consider storing the files in the manifest.
             for (drive, driveFiles) in files {
 
                 // Create the target directory.
