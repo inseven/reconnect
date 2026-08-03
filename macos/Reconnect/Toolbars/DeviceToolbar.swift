@@ -31,6 +31,13 @@ struct DeviceToolbar: CustomizableToolbarContent {
         return true
     }
 
+    var canBackUp: Bool {
+        guard let deviceModel = deviceProxy?.deviceModel, !deviceModel.isBackingUp else {
+            return false
+        }
+        return true
+    }
+
     init() {
     }
 
@@ -53,7 +60,7 @@ struct DeviceToolbar: CustomizableToolbarContent {
                 Label("Back Up", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
             }
             .help("Back up your Psion's internal drive")
-            .disabled(deviceProxy == nil)
+            .disabled(!canBackUp)
         }
 
     }
