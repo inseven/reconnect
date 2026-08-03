@@ -264,7 +264,7 @@ public class FileServer: @unchecked Sendable {
                 // If the path is a directory (trailing forward slash) then this call will throw if the path is
                 // invalid (which we interpret below), and succeed if the directory path is valid and exists on the
                 // system.
-                try client.pathtest(path).check()
+                try client.pathtest(path.cString(using: deviceEncoding)).check()
             } else {
                 // Similarly to the directory case we treat a successful call to get file attributes as an
                 // indication that the file exists and massage any error returned into a meaningful response.
@@ -286,7 +286,7 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var attributes: UInt32 = 0
-        try client.fgetattr(path, &attributes).check()
+        try client.fgetattr(path.cString(using: deviceEncoding), &attributes).check()
         return FileServer.FileAttributes(rawValue: attributes)
     }
 
@@ -324,7 +324,9 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
 
-        let result = client.fsetattr(path, attributesToSet.rawValue, attributesToClear.rawValue)
+        let result = client.fsetattr(path.cString(using: deviceEncoding),
+                                     attributesToSet.rawValue,
+                                     attributesToClear.rawValue)
         guard result == .E_PSI_GEN_NONE else {
             throw .updateAttributesError(result, path)
         }
@@ -419,7 +421,7 @@ public class FileServer: @unchecked Sendable {
     func workQueue_remove(path: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        try client.remove(path).check()
+        try client.remove(path.cString(using: deviceEncoding)).check()
     }
 
     func workQueue_rename(from fromPath: String, to toPath: String) throws(ReconnectError) {
