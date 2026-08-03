@@ -381,7 +381,7 @@ public class FileServer: @unchecked Sendable {
     func workQueue_mkdir(path: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        let result = client.mkdir(path)
+        let result = client.mkdir(path.cString(using: deviceEncoding))
         guard result == .E_PSI_GEN_NONE else {
             throw .createDirectoryError(result, path)
         }
