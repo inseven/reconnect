@@ -154,7 +154,7 @@ public class FileServer: @unchecked Sendable {
             self.uid3 = uid3
         }
 
-        init(directoryPath: String, entry: PlpDirent, encoding: String.Encoding) {
+        init(directoryPath: String, entry: PlpDirent, encoding: StringEncoding) {
             var entry = entry
             let name = String(cString: plpdirent_get_name(&entry), encoding: encoding)!
             let attributes = FileAttributes(rawValue: entry.getAttr())
@@ -204,12 +204,12 @@ public class FileServer: @unchecked Sendable {
 
     private var client = RFSVClient()
 
-    private var workQueue_deviceEncoding: String.Encoding {
+    private var workQueue_deviceEncoding: StringEncoding {
         dispatchPrecondition(condition: .onQueue(workQueue))
         if client.getProtocolVersion() == 3 {  // EPOC16
-            return .isoLatin1
+            return .cfStringEncoding(.dosLatin1)
         } else {  // EPOC32
-            return .windowsCP1252
+            return .stringEncoding(.windowsCP1252)
         }
     }
 
