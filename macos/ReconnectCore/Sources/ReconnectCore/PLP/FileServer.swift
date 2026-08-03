@@ -433,7 +433,7 @@ public class FileServer: @unchecked Sendable {
     func workQueue_devinfo(drive: String) throws(ReconnectError) -> DriveInfo {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        let d = drive.cString(using: .windowsCP1252)!.first!
+        let d = drive.cString(using: .ascii)!.first!
         var driveInfo = Drive()
         try client.devinfo(d, &driveInfo).check()
         return DriveInfo(drive: drive,
