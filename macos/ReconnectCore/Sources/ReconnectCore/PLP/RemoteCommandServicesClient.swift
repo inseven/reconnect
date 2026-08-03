@@ -67,7 +67,6 @@ public class RemoteCommandServicesClient {
         }
     }
 
-    // TODO: Inject the code page?
     public func getOwnerInfo() throws -> [String] {
         return try withClient { client in
             var buf: BufferArray = BufferArray()
@@ -76,6 +75,7 @@ public class RemoteCommandServicesClient {
             while !buf.empty() {
                 let data = Data(store: buf.pop())
                 let line = data.withUnsafeBytes { bytes in
+                    // TODO: Determine the codepage on initial creation.
                     return String(cString: bytes.bindMemory(to: CChar.self).baseAddress!, encoding: .windowsCP1252)!
                 }
                 ownerInfo.append(line)
