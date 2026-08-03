@@ -204,8 +204,9 @@ public class FileServer: @unchecked Sendable {
 
     private var client = RFSVClient()
 
-    private var workQueue_deviceEncoding: StringEncoding {
+    private func workQueue_deviceEncoding() throws(ReconnectError) -> StringEncoding {
         dispatchPrecondition(condition: .onQueue(workQueue))
+        try workQueue_connect()
         if client.getProtocolVersion() == 3 {  // EPOC16
             return .cfStringEncoding(.dosLatin1)
         } else {  // EPOC32
@@ -238,11 +239,11 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var details = PlpDir()
-        try client.dir(path.cString(using: workQueue_deviceEncoding), &details).check()
+        try client.dir(path.cString(using: workQueue_deviceEncoding()), &details).check()
 
         var entries: [DirectoryEntry] = []
         for i in 0..<details.count {
-            entries.append(DirectoryEntry(directoryPath: path, entry: details[i], encoding: workQueue_deviceEncoding))
+            entries.append(DirectoryEntry(directoryPath: path, entry: details[i], encoding: try workQueue_deviceEncoding()))
         }
         guard recursive else {
             return entries
@@ -272,7 +273,7 @@ public class FileServer: @unchecked Sendable {
                 // If the path is a directory (trailing forward slash) then this call will throw if the path is
                 // invalid (which we interpret below), and succeed if the directory path is valid and exists on the
                 // system.
-                try client.pathtest(path.cString(using: workQueue_deviceEncoding)).check()
+                try client.pathtest(path.cString(using: workQueue_deviceEncoding())).check()
             } else {
                 // Similarly to the directory case we treat a successful call to get file attributes as an
                 // indication that the file exists and massage any error returned into a meaningful response.
@@ -294,7 +295,7 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
         var attributes: UInt32 = 0
-        try client.fgetattr(path.cString(using: workQueue_deviceEncoding), &attributes).check()
+        try client.fgetattr(path.cString(using: workQueue_deviceEncoding()), &attributes).check()
         return FileServer.FileAttributes(rawValue: attributes)
     }
 
@@ -317,13 +318,13 @@ public class FileServer: @unchecked Sendable {
         }
 
         var entry = PlpDirent()
-        let result = client.fgeteattr(path.cString(using: workQueue_deviceEncoding), &entry)
+        let result = client.fgeteattr(path.cString(using: try workQueue_deviceEncoding()), &entry)
         guard result == .E_PSI_GEN_NONE else {
             throw .extendedAttributesError(result, path)
         }
         return DirectoryEntry(directoryPath: path.deletingLastWindowsPathComponent,
                               entry: entry,
-                              encoding: workQueue_deviceEncoding)
+                              encoding: try workQueue_deviceEncoding())
     }
 
     private func workQueue_updateAttributes(path: String,
@@ -332,7 +333,7 @@ public class FileServer: @unchecked Sendable {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
 
-        let result = client.fsetattr(path.cString(using: workQueue_deviceEncoding),
+        let result = client.fsetattr(path.cString(using: try workQueue_deviceEncoding()),
                                      attributesToSet.rawValue,
                                      attributesToClear.rawValue)
         guard result == .E_PSI_GEN_NONE else {
@@ -349,7 +350,7 @@ public class FileServer: @unchecked Sendable {
         let attributes = try workQueue_getExtendedAttributes(path: remoteSourcePath)
         let o = FileTransferContext(size: attributes.size, callback: callback)
         let context = Unmanaged.passUnretained(o).toOpaque()
-        let result = client.copyFromPsion(remoteSourcePath.cString(using: workQueue_deviceEncoding),
+        let result = client.copyFromPsion(remoteSourcePath.cString(using: try workQueue_deviceEncoding()),
                                           localDestinationPath,
                                           context) { context, status in
             guard let context else {
@@ -375,7 +376,7 @@ public class FileServer: @unchecked Sendable {
         let o = FileTransferContext(size: UInt32(size.intValue), callback: callback)
         let context = Unmanaged.passUnretained(o).toOpaque()
         let result = client.copyToPsion(localSourcePath,
-                                        remoteDestinationPath.cString(using: workQueue_deviceEncoding),
+                                        remoteDestinationPath.cString(using: try workQueue_deviceEncoding()),
                                         context) { context, status in
             guard let context else {
                 return 0
@@ -391,7 +392,7 @@ public class FileServer: @unchecked Sendable {
     func workQueue_mkdir(path: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        let result = client.mkdir(path.cString(using: workQueue_deviceEncoding))
+        let result = client.mkdir(path.cString(using: try workQueue_deviceEncoding()))
         guard result == .E_PSI_GEN_NONE else {
             throw .createDirectoryError(result, path)
         }
@@ -413,13 +414,13 @@ public class FileServer: @unchecked Sendable {
             // being given in a depth-first search order.
             for file in files.reversed() {
                 if file.isDirectory {
-                    try client.rmdir(file.path.cString(using: workQueue_deviceEncoding)).check()
+                    try client.rmdir(file.path.cString(using: workQueue_deviceEncoding())).check()
                 } else {
-                    try client.remove(file.path.cString(using: workQueue_deviceEncoding)).check()
+                    try client.remove(file.path.cString(using: workQueue_deviceEncoding())).check()
                 }
             }
 
-            try client.rmdir(path.cString(using: workQueue_deviceEncoding)).check()
+            try client.rmdir(path.cString(using: workQueue_deviceEncoding())).check()
 
         } catch .epocError(let error) {
             throw .removeDirectoryError(error, path)
@@ -429,14 +430,14 @@ public class FileServer: @unchecked Sendable {
     func workQueue_remove(path: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        try client.remove(path.cString(using: workQueue_deviceEncoding)).check()
+        try client.remove(path.cString(using: workQueue_deviceEncoding())).check()
     }
 
     func workQueue_rename(from fromPath: String, to toPath: String) throws(ReconnectError) {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        try client.rename(fromPath.cString(using: workQueue_deviceEncoding),
-                          toPath.cString(using: workQueue_deviceEncoding)).check()
+        try client.rename(fromPath.cString(using: workQueue_deviceEncoding()),
+                          toPath.cString(using: workQueue_deviceEncoding())).check()
     }
 
     func workQueue_devlist() throws(ReconnectError) -> [String] {
@@ -457,13 +458,14 @@ public class FileServer: @unchecked Sendable {
     func workQueue_devinfo(drive: String) throws(ReconnectError) -> DriveInfo {
         dispatchPrecondition(condition: .onQueue(workQueue))
         try workQueue_connect()
-        let d = drive.cString(using: workQueue_deviceEncoding)!.first!
+        let d = drive.cString(using: try workQueue_deviceEncoding())!.first!
         var driveInfo = Drive()
         try client.devinfo(d, &driveInfo).check()
         return DriveInfo(drive: drive,
                          mediaType: driveInfo.getMediaType(),
                          driveAttributes: DriveAttributes(rawValue: driveInfo.getDriveAttributes()),
-                         name: String(cString: string_cstr(driveInfo.getName())!, encoding: workQueue_deviceEncoding))
+                         name: String(cString: string_cstr(driveInfo.getName())!,
+                                      encoding: try workQueue_deviceEncoding()))
     }
 
     func workQueue_drives() throws(ReconnectError) -> [DriveInfo] {
@@ -612,6 +614,12 @@ public class FileServer: @unchecked Sendable {
     public func protocolVersion() throws (ReconnectError) -> Int32 {
         return try perform { () throws(ReconnectError) -> Int32 in
             return try self.workQueue_protocolVersion()
+        }
+    }
+
+    public func deviceEncoding() throws (ReconnectError) -> StringEncoding {
+        return try perform { () throws(ReconnectError) -> StringEncoding in
+            return try self.workQueue_deviceEncoding()
         }
     }
 
