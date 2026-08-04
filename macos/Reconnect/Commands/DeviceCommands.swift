@@ -31,6 +31,14 @@ public struct DeviceCommands: Commands {
         return true
     }
 
+    var canBackUp: Bool {
+        guard let deviceModel = deviceProxy?.deviceModel, !deviceModel.isBackingUp else {
+            return false
+        }
+        return true
+
+    }
+
     public var body: some Commands {
 
         CommandMenu("Device") {
@@ -51,7 +59,7 @@ public struct DeviceCommands: Commands {
             Button("Install Reconnect Tools...", systemImage: "shippingbox") {
                 deviceProxy?.deviceModel.installGuestTools()
             }
-            .disabled(deviceProxy == nil)
+            .disabled(!canBackUp)
 
         }
 
