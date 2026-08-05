@@ -157,6 +157,9 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
     @MainActor
     var isCapturingScreenshot: Bool = false
 
+    @MainActor
+    var isBackingUp: Bool = false
+
     var id: UUID {
         return deviceConfiguration.id
     }
@@ -372,7 +375,14 @@ class DeviceModel: Identifiable, Equatable, @unchecked Sendable {
 
         let backupIdentifier = UUID()
         DispatchQueue.main.sync {
+            isBackingUp = true
             self.delegate?.deviceModel(deviceModel: self, willStartBackupWithIdentifier: backupIdentifier)
+        }
+
+        defer {
+            DispatchQueue.main.sync {
+                isBackingUp = false
+            }
         }
 
         do {
