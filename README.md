@@ -14,7 +14,7 @@ Please recognize Reconnect is a labour of love, and be respectful of others in y
 
 ## License
 
-Reconnect is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
+Reconnect is Copyright (C) 2024-2026 Jason Morley (see [COPYRIGHT](COPYRIGHT)) and is licensed under the GNU General Public License (GPL) version 2 (see [LICENSE](LICENSE)). It depends on the following separately licensed third-party libraries and components:
 
 - [Diligence](https://github.com/inseven/diligence), MIT License
 - [Glitter](https://github.com/inseven/glitter), MIT License
