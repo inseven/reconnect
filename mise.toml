@@ -4,5 +4,7 @@ python = "3.12.13"
 ruby = "3.4.8"
 uv = "latest"
 
+"github:sparkle-project/Sparkle" = { version = "2.10.0", asset_pattern = "Sparkle-*.tar.xz", bin_path = "bin" }
+
 "pipx:changes-semver" = "6"
 "pipx:inseven-build-tools" = "1"
