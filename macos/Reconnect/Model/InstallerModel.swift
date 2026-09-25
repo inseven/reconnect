@@ -408,15 +408,19 @@ extension InstallerModel: SisInstallIoHandler {
         return result
     }
 
-    func sisInstallRun(sis: Sis.File, path: String, flags: Sis.RunFlags) {
+    func sisInstallRun(sis: Sis.File, path: String, flags: Sis.RunFlags) -> OpoLuaCore.Sis.RunResult {
         dispatchPrecondition(condition: .notOnQueue(.main))
         do {
             guard let device else {
                 throw PLPToolsError.E_PSI_FILE_DISC
             }
             try device.runProgram(path: path)
+            return .continue
         } catch {
             print("Failed to run path '\(path)' with error '\(error)'.")
+            // TODO: Installer silently swallows errors running programs #467
+            //       https://github.com/inseven/reconnect/issues/467
+            return .continue
         }
     }
 

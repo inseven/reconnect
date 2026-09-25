@@ -1,13 +1,85 @@
 {
-  "originHash" : "e579449baab131bb5b24393fc14b027af359789d472d38e8811577b7e49dda6a",
+  "originHash" : "4cd937a536f1ad966426eba1a255ced6447fe0e31f95a517de88390fa722e29a",
   "pins" : [
+    {
+      "identity" : "glitter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/inseven/glitter.git",
+      "state" : {
+        "revision" : "91587b2f234df22b762a39a1a532acad122ecdeb",
+        "version" : "0.1.4"
+      }
+    },
     {
       "identity" : "licensable",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/inseven/licensable",
       "state" : {
-        "revision" : "a8ad62c6fde5aca29a47459b0687e580eee203dd",
-        "version" : "0.0.13"
+        "revision" : "71a2e900833316ea7bc8a29205c374a628be7784",
+        "version" : "0.1.2"
+      }
+    },
+    {
+      "identity" : "sparkle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparkle-project/Sparkle",
+      "state" : {
+        "revision" : "eef1a539a373c1f1a320624b1130fc5de7b2e100",
+        "version" : "2.10.0"
+      }
+    },
+    {
+      "identity" : "ssswiftuigifview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SimformSolutionsPvtLtd/SSSwiftUIGIFView.git",
+      "state" : {
+        "revision" : "bd16555ae068ec4c01f9bdb913526caa08eb30b1",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms.git",
+      "state" : {
+        "revision" : "87e50f483c54e6efd60e885f7f5aa946cee68023",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "state" : {
+        "revision" : "6a52f3251125d74daf04fcbd5e6f08a75d074382",
+        "version" : "1.8.2"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics.git",
+      "state" : {
+        "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "swiftygif",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/alexiscreuzot/SwiftyGif.git",
+      "state" : {
+        "revision" : "4430cbc148baa3907651d40562d96325426f409a",
+        "version" : "5.4.5"
+      }
+    },
+    {
+      "identity" : "word2text",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smittytone/Word2Text.git",
+      "state" : {
+        "revision" : "452bf44631b572d2c4c323c8786f6e19213f0f4a",
+        "version" : "0.3.0"
       }
     }
   ],
