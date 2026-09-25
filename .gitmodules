@@ -9,9 +9,6 @@
 	path = macos/dependencies/interact
 	url = https://github.com/inseven/interact.git
 	branch = main
-[submodule "scripts/Sparkle"]
-	path = scripts/Sparkle
-	url = https://github.com/sparkle-project/Sparkle
 [submodule "dependencies/opolua/opolua"]
 	path = macos/dependencies/opolua
 	url = https://github.com/inseven/opolua.git
