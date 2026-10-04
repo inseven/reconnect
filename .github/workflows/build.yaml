@@ -66,7 +66,7 @@ jobs:
 
     needs: [macos-build]
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
 
@@ -121,7 +121,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Deploy to GitHub Pages
@@ -132,7 +132,7 @@ jobs:
     needs: macos-build
     if: ${{ github.ref == 'refs/heads/main' }}
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
 
     - name: Update Sparkle archives
