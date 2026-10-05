@@ -476,7 +476,6 @@
 			mainGroup = D84964CD2C1BFCB600405656;
 			packageReferences = (
 				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
-				D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */,
 				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */,
@@ -1108,10 +1107,6 @@
 		D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = dependencies/interact;
-		};
-		D8E31EB12C26E09500350082 /* XCLocalSwiftPackageReference "dependencies/diligence" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/diligence;
 		};
 /* End XCLocalSwiftPackageReference section */
 
