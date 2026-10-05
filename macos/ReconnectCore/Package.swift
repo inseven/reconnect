@@ -17,12 +17,14 @@ let package = Package(
         .package(path: "../dependencies/opolua"),
         .package(path: "../dependencies/plptools"),
         .package(url: "https://github.com/inseven/diligence.git", from: "2.0.1"),
+        .package(url: "https://github.com/inseven/interact.git", from: "3.10.7"),
     ],
     targets: [
         .target(
             name: "ReconnectCore",
             dependencies: [
                 .product(name: "Diligence", package: "diligence"),
+                .product(name: "Interact", package: "interact"),
                 .product(name: "OpoLuaCore", package: "opolua"),
                 .product(name: "plptools", package: "plptools"),
             ],

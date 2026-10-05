@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8068F6E2C4AFCF4004177F6 /* ReconnectCore */; };
-		D815EC862E3D9F04000A26B1 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D815EC852E3D9F04000A26B1 /* Interact */; };
 		D83B17D02F33B8F7001864E5 /* Word2text in Frameworks */ = {isa = PBXBuildFile; productRef = D83B17CF2F33B8F7001864E5 /* Word2text */; };
 		D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD9652DE862AB0075902D /* SwiftyGif */; };
 		D83BD96E2DE86C100075902D /* SSSwiftUIGIFView in Frameworks */ = {isa = PBXBuildFile; productRef = D83BD96D2DE86C100075902D /* SSSwiftUIGIFView */; };
@@ -21,10 +20,8 @@
 		D8B1AC5B2E0F68A90084BFD5 /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8B1AC5A2E0F68A90084BFD5 /* ReconnectCore */; };
 		D8B2B2692E308DAF00F4B27E /* reconnectd in Resources */ = {isa = PBXBuildFile; fileRef = D851ED232E2C31B60067E0CD /* reconnectd */; };
 		D8CBAC652C4A02580035FC3D /* ReconnectCore in Frameworks */ = {isa = PBXBuildFile; productRef = D8CBAC642C4A02580035FC3D /* ReconnectCore */; };
-		D8D3E79F2C2540D9003E696D /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8D3E79E2C2540D9003E696D /* Interact */; };
 		D8E31EB32C26E09500350082 /* Diligence in Frameworks */ = {isa = PBXBuildFile; productRef = D8E31EB22C26E09500350082 /* Diligence */; };
 		D8EBFD572F35349E008D7F47 /* Word2text in Frameworks */ = {isa = PBXBuildFile; productRef = D8EBFD562F35349E008D7F47 /* Word2text */; };
-		D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */ = {isa = PBXBuildFile; productRef = D8F1A5B72C4A4F8000931C00 /* Interact */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -193,7 +190,6 @@
 				D83BD9662DE862AB0075902D /* SwiftyGif in Frameworks */,
 				D83B17D02F33B8F7001864E5 /* Word2text in Frameworks */,
 				D8E31EB32C26E09500350082 /* Diligence in Frameworks */,
-				D8D3E79F2C2540D9003E696D /* Interact in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,7 +211,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D815EC862E3D9F04000A26B1 /* Interact in Frameworks */,
 				D851ED2E2E2C33C70067E0CD /* ReconnectCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -233,7 +228,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8F1A5B82C4A4F8000931C00 /* Interact in Frameworks */,
 				D8068F6F2C4AFCF4004177F6 /* ReconnectCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,7 +298,6 @@
 			);
 			name = Reconnect;
 			packageProductDependencies = (
-				D8D3E79E2C2540D9003E696D /* Interact */,
 				D8E31EB22C26E09500350082 /* Diligence */,
 				D8CBAC642C4A02580035FC3D /* ReconnectCore */,
 				D8A8A8072DE19312007A657B /* Algorithms */,
@@ -378,7 +371,6 @@
 			name = reconnectd;
 			packageProductDependencies = (
 				D851ED2D2E2C33C70067E0CD /* ReconnectCore */,
-				D815EC852E3D9F04000A26B1 /* Interact */,
 			);
 			productName = reconnectd;
 			productReference = D851ED232E2C31B60067E0CD /* reconnectd */;
@@ -426,7 +418,6 @@
 			);
 			name = "Reconnect Menu";
 			packageProductDependencies = (
-				D8F1A5B72C4A4F8000931C00 /* Interact */,
 				D8068F6E2C4AFCF4004177F6 /* ReconnectCore */,
 			);
 			productName = "Reconnect Menu";
@@ -475,7 +466,6 @@
 			);
 			mainGroup = D84964CD2C1BFCB600405656;
 			packageReferences = (
-				D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */,
 				D890718F2C4B025D00C11DE8 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 				D8A8A8062DE19312007A657B /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */,
@@ -1103,13 +1093,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = dependencies/interact;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		D83BD9642DE862AB0075902D /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1166,11 +1149,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
 		};
-		D815EC852E3D9F04000A26B1 /* Interact */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
-			productName = Interact;
-		};
 		D83B17CF2F33B8F7001864E5 /* Word2text */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Word2text;
@@ -1207,11 +1185,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ReconnectCore;
 		};
-		D8D3E79E2C2540D9003E696D /* Interact */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
-			productName = Interact;
-		};
 		D8E31EB22C26E09500350082 /* Diligence */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Diligence;
@@ -1220,11 +1193,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8EBFD552F35349E008D7F47 /* XCRemoteSwiftPackageReference "Word2Text" */;
 			productName = Word2text;
-		};
-		D8F1A5B72C4A4F8000931C00 /* Interact */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8D3E79B2C25405A003E696D /* XCLocalSwiftPackageReference "dependencies/interact" */;
-			productName = Interact;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,5 +1,5 @@
 {
-  "originHash" : "53aa8479c97ac82fab641401313f5fc31ae9b2d718a13102f7c7fdf90678a401",
+  "originHash" : "9806d2d537295344b9e66597056d7a154af5e6e7eec4a07af701334eada4fe06",
   "pins" : [
     {
       "identity" : "diligence",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "5faa62e7f528faa6aa2d1b5d022b78fe3698c62a",
         "version" : "2.0.1"
+      }
+    },
+    {
+      "identity" : "interact",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/inseven/interact.git",
+      "state" : {
+        "revision" : "f54eb2dcd05b40f02ecab721044d87049fbaca78",
+        "version" : "3.10.7"
       }
     },
     {
