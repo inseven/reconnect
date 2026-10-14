@@ -4,5 +4,12 @@
     "local>inseven/renovate-config"
   ],
   "cloneSubmodules": true,
-  "cloneSubmodulesFilter": ["docs/_theme"]
+  "cloneSubmodulesFilter": ["docs/_theme"],
+  "packageRules": [
+    {
+      "matchManagers": ["git-submodules"],
+      "matchDepNames": ["macos/dependencies/opolua"],
+      "automerge": true
+    }
+  ]
 }
