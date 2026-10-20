@@ -42,7 +42,7 @@ jobs:
         key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v5.2.0
+      uses: jdx/mise-action@v5.2.1
       with:
         version: 2026.10.14
         cache: false
@@ -103,7 +103,7 @@ jobs:
         key: ${{ runner.os }}-${{ runner.arch }}-mise--${{ hashFiles('mise.toml') }}
 
     - name: Install mise
-      uses: jdx/mise-action@v5.2.0
+      uses: jdx/mise-action@v5.2.1
       with:
         version: 2026.10.14
         cache: false
