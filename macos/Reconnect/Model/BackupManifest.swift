@@ -37,12 +37,12 @@ struct BackupManifest: Equatable, Hashable, Codable {
     }
 
     let id: UUID?
-    let device: DeviceConfiguration
+    let device: ReconnectCore.DeviceConfiguration
     let platform: Platform?
     let date: Date
     let drives: [Drive]
 
-    init(id: UUID, device: DeviceConfiguration, platform: Platform, date: Date, drives: [Drive]) {
+    init(id: UUID, device: ReconnectCore.DeviceConfiguration, platform: Platform, date: Date, drives: [Drive]) {
         self.id = id
         self.device = device
         self.platform = platform
