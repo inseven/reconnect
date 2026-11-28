@@ -16,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(path: "../dependencies/opolua"),
         .package(path: "../dependencies/plptools"),
-        .package(url: "https://github.com/inseven/diligence.git", from: "2.0.1"),
+        .package(url: "https://github.com/inseven/diligence.git", from: "2.0.2"),
         .package(url: "https://github.com/inseven/interact.git", from: "3.10.8"),
     ],
     targets: [
